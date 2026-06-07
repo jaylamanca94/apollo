@@ -1,0 +1,51 @@
+const { requestNasa, sendJson } = require("./_nasa");
+
+const NEO_CACHE_SECONDS = 60 * 30;
+
+function isIsoDate(value) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+module.exports = async function handler(request, response) {
+  if (request.method !== "GET") {
+    sendJson(response, 405, {
+      error: {
+        code: "METHOD_NOT_ALLOWED",
+        message: "Use GET for this endpoint."
+      }
+    });
+    return;
+  }
+
+  const date = request.query?.date;
+
+  if (!isIsoDate(date)) {
+    sendJson(response, 400, {
+      error: {
+        code: "INVALID_DATE",
+        message: "Provide date as YYYY-MM-DD."
+      }
+    });
+    return;
+  }
+
+  try {
+    const payload = await requestNasa(
+      "/neo/rest/v1/feed",
+      {
+        start_date: date,
+        end_date: date
+      },
+      `neo:${date}`,
+      NEO_CACHE_SECONDS
+    );
+    sendJson(response, 200, payload, NEO_CACHE_SECONDS);
+  } catch (error) {
+    sendJson(response, error.status || 500, error.payload || {
+      error: {
+        code: "NASA_PROXY_ERROR",
+        message: "Could not load NASA asteroid data."
+      }
+    });
+  }
+};
