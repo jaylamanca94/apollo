@@ -1,6 +1,6 @@
-# Space Data Dashboard
+# Apollo
 
-A small Bootstrap MVP dashboard that pulls public space data into a responsive card layout. It includes NASA Astronomy Picture of the Day, ISS position, people currently in space, upcoming SpaceX launches, and a NASA Near-Earth Object summary.
+Apollo is a small Bootstrap MVP dashboard that pulls public space data into a responsive card layout. It includes NASA Astronomy Picture of the Day, ISS position, people currently in space, upcoming SpaceX launches, and a NASA Near-Earth Object summary.
 
 ## Recommended Architecture
 
