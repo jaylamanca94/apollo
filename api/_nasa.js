@@ -33,6 +33,30 @@ function setCached(cacheKey, payload, ttlSeconds) {
   });
 }
 
+function scrubNasaApiKey(value) {
+  if (Array.isArray(value)) {
+    return value.map(scrubNasaApiKey);
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, scrubNasaApiKey(item)])
+    );
+  }
+
+  if (typeof value === "string" && value.includes("api_key=")) {
+    try {
+      const url = new URL(value);
+      url.searchParams.delete("api_key");
+      return url.toString();
+    } catch (error) {
+      return value.replace(/([?&])api_key=[^&]+&?/g, "$1").replace(/[?&]$/, "");
+    }
+  }
+
+  return value;
+}
+
 async function requestNasa(path, params, cacheKey, ttlSeconds) {
   const cached = getCached(cacheKey);
 
@@ -83,8 +107,10 @@ async function requestNasa(path, params, cacheKey, ttlSeconds) {
     throw error;
   }
 
-  setCached(cacheKey, payload, ttlSeconds);
-  return payload;
+  const sanitizedPayload = scrubNasaApiKey(payload);
+
+  setCached(cacheKey, sanitizedPayload, ttlSeconds);
+  return sanitizedPayload;
 }
 
 module.exports = {
