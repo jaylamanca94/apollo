@@ -11,6 +11,7 @@ const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily paused because NASA is
 
 const els = {
   refreshButton: document.querySelector("#refreshButton"),
+  refreshButtonMobile: document.querySelector("#refreshButtonMobile"),
   peopleCount: document.querySelector("#peopleCount"),
   peopleUpdated: document.querySelector("#peopleUpdated"),
   peopleDetailUpdated: document.querySelector("#peopleDetailUpdated"),
@@ -311,8 +312,10 @@ async function loadNeo() {
 }
 
 async function loadDashboard() {
-  els.refreshButton.disabled = true;
-  els.refreshButton.textContent = "Refreshing...";
+  [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
+    button.disabled = true;
+    button.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refreshing`;
+  });
   await Promise.allSettled([
     loadApod(),
     loadIss(),
@@ -320,9 +323,17 @@ async function loadDashboard() {
     loadLaunches(),
     loadNeo()
   ]);
-  els.refreshButton.disabled = false;
-  els.refreshButton.textContent = "Refresh data";
+  if (els.refreshButton) {
+    els.refreshButton.disabled = false;
+    els.refreshButton.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refresh data`;
+  }
+  if (els.refreshButtonMobile) {
+    els.refreshButtonMobile.disabled = false;
+    els.refreshButtonMobile.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refresh`;
+  }
 }
 
-els.refreshButton.addEventListener("click", loadDashboard);
+[els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
+  button.addEventListener("click", loadDashboard);
+});
 loadDashboard();
