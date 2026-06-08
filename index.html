@@ -9,182 +9,169 @@
     <link href="./styles.css" rel="stylesheet">
   </head>
   <body>
-    <div class="app-shell">
-      <aside class="app-sidebar d-none d-xl-flex flex-column">
-        <div class="d-flex align-items-center justify-content-between mb-5">
-          <div class="brand-mark">
-            <i class="fa-solid fa-meteor"></i>
+    <div class="apollo-app text-body">
+      <nav class="navbar navbar-expand bg-body border-bottom">
+        <div class="container-fluid apollo-navbar-inner px-3 px-sm-4">
+          <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="#dashboard">
+            <i class="fa-solid fa-meteor apollo-brand-icon"></i>
+            Apollo
+          </a>
+
+          <div class="navbar-nav apollo-navbar-nav me-auto" aria-label="Apollo navigation">
+            <a class="nav-link active fw-semibold" href="#dashboard">Dashboard</a>
+            <a class="nav-link" href="#apod">APOD</a>
+            <a class="nav-link" href="#iss-position">ISS</a>
+            <a class="nav-link" href="#launches">Launches</a>
+            <a class="nav-link" href="#crew">Crew</a>
           </div>
-          <span class="sidebar-toggle" aria-hidden="true"><i class="fa-solid fa-arrow-left-long"></i></span>
-        </div>
 
-        <nav class="sidebar-nav flex-grow-1" aria-label="Apollo navigation">
-          <p class="sidebar-label">Main</p>
-          <a class="sidebar-link active" href="#dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
-          <a class="sidebar-link" href="#iss-position"><i class="fa-solid fa-satellite"></i><span>ISS Position</span></a>
-          <a class="sidebar-link" href="#crew"><i class="fa-solid fa-user-astronaut"></i><span>Crew</span></a>
-          <a class="sidebar-link" href="#launches"><i class="fa-solid fa-rocket"></i><span>Launches</span></a>
-          <a class="sidebar-link" href="#asteroids"><i class="fa-solid fa-circle-nodes"></i><span>Asteroids</span></a>
-
-          <div class="sidebar-divider"></div>
-          <p class="sidebar-label">Sources</p>
-          <a class="sidebar-link" href="#apod"><i class="fa-solid fa-building-columns"></i><span>NASA APOD</span></a>
-          <a class="sidebar-link" href="#launches"><i class="fa-solid fa-tower-broadcast"></i><span>Launch APIs</span></a>
-        </nav>
-
-        <div class="upgrade-card">
-          <div class="upgrade-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-          <h2 class="h5 mb-2">Apollo Live</h2>
-          <p class="small text-secondary mb-3">Public space data, refreshed on demand.</p>
-          <button class="btn btn-apollo btn-sm w-100" id="refreshButton" type="button">
-            <i class="fa-solid fa-rotate me-2"></i>Refresh data
-          </button>
-        </div>
-      </aside>
-
-      <main class="app-main" id="dashboard">
-        <header class="app-header">
-          <div>
-            <p class="text-uppercase text-secondary small fw-semibold mb-2">Apollo</p>
-            <h1 class="page-title mb-1">Dashboard</h1>
-            <p class="text-secondary mb-0">Live orbital activity, launches, astronomy, and nearby asteroid data.</p>
-          </div>
-          <div class="header-actions">
-            <button class="btn btn-dark-soft d-xl-none" id="refreshButtonMobile" type="button">
+          <div class="apollo-navbar-actions">
+            <button class="btn btn-primary btn-sm" id="refreshButton" type="button">
               <i class="fa-solid fa-rotate me-2"></i>Refresh
             </button>
-            <span class="avatar">A</span>
           </div>
-        </header>
+        </div>
+      </nav>
 
-        <section class="row g-4 mb-4 stats-section" aria-label="Apollo dashboard statistics">
-          <div class="col-12 col-md-6 col-xxl-3">
-            <div class="card stat-card h-100">
-              <div class="card-body stat-card-body">
-                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-                  <p class="stat-label mb-0">People currently in orbit</p>
-                  <span class="stat-chip"><i class="fa-solid fa-user-astronaut"></i></span>
-                </div>
-                <p id="peopleCount" class="stat-value mb-2">--</p>
-                <p class="source-label text-secondary small mb-2">Open crew data</p>
-                <p id="peopleUpdated" class="text-secondary small mb-0">Loading...</p>
-              </div>
+      <main class="apollo-shell" id="dashboard">
+        <div class="d-flex flex-column apollo-page-stack">
+          <header class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-end">
+            <div>
+              <p class="text-uppercase text-secondary small fw-semibold mb-2">Apollo</p>
+              <h1 class="display-6 fw-semibold mb-0">Dashboard</h1>
             </div>
-          </div>
-          <div class="col-12 col-md-6 col-xxl-3">
-            <div class="card stat-card h-100">
-              <div class="card-body stat-card-body">
-                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-                  <p class="stat-label mb-0">Space station position</p>
-                  <span class="stat-chip"><i class="fa-solid fa-location-crosshairs"></i></span>
-                </div>
-                <p id="issLat" class="stat-value mb-2">--</p>
-                <p class="source-label text-secondary small mb-2">ISS live coordinates</p>
-                <p id="issUpdated" class="text-secondary small mb-0">Loading...</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-md-6 col-xxl-3">
-            <div class="card stat-card h-100">
-              <div class="card-body stat-card-body">
-                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-                  <p class="stat-label mb-0">Asteroids near Earth today</p>
-                  <span class="stat-chip"><i class="fa-solid fa-circle-dot"></i></span>
-                </div>
-                <p id="neoCount" class="stat-value mb-2">--</p>
-                <p class="source-label text-secondary small mb-2">NASA NeoWs</p>
-                <p id="neoUpdated" class="text-secondary small mb-0">Loading...</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-md-6 col-xxl-3">
-            <div class="card stat-card h-100">
-              <div class="card-body stat-card-body">
-                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-                  <p class="stat-label mb-0">Upcoming launches shown</p>
-                  <span class="stat-chip"><i class="fa-solid fa-rocket"></i></span>
-                </div>
-                <p id="launchCount" class="stat-value mb-2">--</p>
-                <p class="source-label text-secondary small mb-2">SpaceX + fallback</p>
-                <p id="launchUpdated" class="text-secondary small mb-0">Loading...</p>
-              </div>
-            </div>
-          </div>
-        </section>
+            <p class="text-secondary mb-0 apollo-header-copy">Live orbital activity, launches, astronomy, and nearby asteroid data.</p>
+          </header>
 
-        <section class="dashboard-grid">
-          <article class="card panel-card apod-panel" id="apod">
-            <div class="card-header section-card-header d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
-              <div>
-                <h2 class="section-title mb-1">Astronomy Picture of the Day</h2>
-                <p class="source-label text-secondary small mb-0">Source: NASA APOD</p>
-              </div>
-              <span id="apodUpdated" class="timestamp text-secondary small">Loading...</span>
-            </div>
-            <div class="card-body section-card-body" id="apodBody">
-              <div class="placeholder-glow">
-                <span class="placeholder col-12 apod-placeholder mb-3"></span>
-                <span class="placeholder col-7"></span>
-                <span class="placeholder col-4"></span>
-                <span class="placeholder col-10"></span>
-              </div>
-            </div>
-          </article>
-
-          <aside class="right-rail">
-            <section class="card panel-card" id="iss-position">
-              <div class="card-header section-card-header d-flex justify-content-between align-items-start gap-2">
-                <div>
-                  <h2 class="section-title mb-1">ISS Current Position</h2>
-                  <p class="source-label text-secondary small mb-0">ISS live coordinates</p>
+          <section class="row g-4" aria-label="Apollo dashboard statistics">
+            <div class="col-12 col-md-6 col-xxl-3">
+              <div class="card apollo-card h-100">
+                <div class="card-body stat-card-body">
+                  <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <p class="stat-label mb-0">People currently in orbit</p>
+                    <span class="stat-chip"><i class="fa-solid fa-user-astronaut"></i></span>
+                  </div>
+                  <p id="peopleCount" class="stat-value mb-2">--</p>
+                  <p class="source-label text-secondary small mb-2">Open crew data</p>
+                  <p id="peopleUpdated" class="text-secondary small mb-0">Loading...</p>
                 </div>
-                <span id="issDetailUpdated" class="timestamp text-secondary small">Loading...</span>
               </div>
-              <div class="card-body section-card-body" id="issBody">
-                <p class="state-message text-secondary mb-0">Loading ISS location...</p>
-              </div>
-            </section>
-
-            <section class="card panel-card" id="asteroids">
-              <div class="card-header section-card-header d-flex justify-content-between align-items-start gap-2">
-                <div>
-                  <h2 class="section-title mb-1">Asteroid Summary</h2>
-                  <p class="source-label text-secondary small mb-0">NASA NeoWs</p>
-                </div>
-                <span id="neoDetailUpdated" class="timestamp text-secondary small">Loading...</span>
-              </div>
-              <div class="card-body section-card-body" id="neoBody">
-                <p class="state-message text-secondary mb-0">Loading asteroid summary...</p>
-              </div>
-            </section>
-          </aside>
-
-          <section class="card panel-card" id="launches">
-            <div class="card-header section-card-header d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
-              <div>
-                <h2 class="section-title mb-1">Upcoming SpaceX Launches</h2>
-                <p class="source-label text-secondary small mb-0">Source: SpaceX, with Launch Library fallback</p>
-              </div>
-              <span id="launchDetailUpdated" class="timestamp text-secondary small">Loading...</span>
             </div>
-            <div class="card-body section-card-body" id="launchBody">
-              <p class="state-message text-secondary mb-0">Loading launch data...</p>
+            <div class="col-12 col-md-6 col-xxl-3">
+              <div class="card apollo-card h-100">
+                <div class="card-body stat-card-body">
+                  <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <p class="stat-label mb-0">Space station position</p>
+                    <span class="stat-chip"><i class="fa-solid fa-location-crosshairs"></i></span>
+                  </div>
+                  <p id="issLat" class="stat-value mb-2">--</p>
+                  <p class="source-label text-secondary small mb-2">ISS live coordinates</p>
+                  <p id="issUpdated" class="text-secondary small mb-0">Loading...</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xxl-3">
+              <div class="card apollo-card h-100">
+                <div class="card-body stat-card-body">
+                  <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <p class="stat-label mb-0">Asteroids near Earth today</p>
+                    <span class="stat-chip"><i class="fa-solid fa-circle-dot"></i></span>
+                  </div>
+                  <p id="neoCount" class="stat-value mb-2">--</p>
+                  <p class="source-label text-secondary small mb-2">NASA NeoWs</p>
+                  <p id="neoUpdated" class="text-secondary small mb-0">Loading...</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xxl-3">
+              <div class="card apollo-card h-100">
+                <div class="card-body stat-card-body">
+                  <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <p class="stat-label mb-0">Upcoming launches shown</p>
+                    <span class="stat-chip"><i class="fa-solid fa-rocket"></i></span>
+                  </div>
+                  <p id="launchCount" class="stat-value mb-2">--</p>
+                  <p class="source-label text-secondary small mb-2">SpaceX + fallback</p>
+                  <p id="launchUpdated" class="text-secondary small mb-0">Loading...</p>
+                </div>
+              </div>
             </div>
           </section>
 
-          <section class="card panel-card" id="crew">
-            <div class="card-header section-card-header d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
-              <div>
-                <h2 class="section-title mb-1">People Currently in Space</h2>
-                <p class="source-label text-secondary small mb-0">Source: Open space station crew data</p>
+          <section class="dashboard-grid">
+            <article class="card apollo-card apod-panel" id="apod">
+              <div class="card-header section-card-header d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
+                <div>
+                  <h2 class="section-title mb-1">Astronomy Picture of the Day</h2>
+                  <p class="source-label text-secondary small mb-0">Source: NASA APOD</p>
+                </div>
+                <span id="apodUpdated" class="timestamp text-secondary small">Loading...</span>
               </div>
-              <span id="peopleDetailUpdated" class="timestamp text-secondary small">Loading...</span>
-            </div>
-            <div class="card-body section-card-body" id="peopleBody">
-              <p class="state-message text-secondary mb-0">Loading crew data...</p>
-            </div>
+              <div class="card-body section-card-body" id="apodBody">
+                <div class="placeholder-glow">
+                  <span class="placeholder col-12 apod-placeholder mb-3"></span>
+                  <span class="placeholder col-7"></span>
+                  <span class="placeholder col-4"></span>
+                  <span class="placeholder col-10"></span>
+                </div>
+              </div>
+            </article>
+
+            <aside class="right-rail">
+              <section class="card apollo-card" id="iss-position">
+                <div class="card-header section-card-header d-flex justify-content-between align-items-start gap-2">
+                  <div>
+                    <h2 class="section-title mb-1">ISS Current Position</h2>
+                    <p class="source-label text-secondary small mb-0">ISS live coordinates</p>
+                  </div>
+                  <span id="issDetailUpdated" class="timestamp text-secondary small">Loading...</span>
+                </div>
+                <div class="card-body section-card-body" id="issBody">
+                  <p class="state-message text-secondary mb-0">Loading ISS location...</p>
+                </div>
+              </section>
+
+              <section class="card apollo-card" id="asteroids">
+                <div class="card-header section-card-header d-flex justify-content-between align-items-start gap-2">
+                  <div>
+                    <h2 class="section-title mb-1">Asteroid Summary</h2>
+                    <p class="source-label text-secondary small mb-0">NASA NeoWs</p>
+                  </div>
+                  <span id="neoDetailUpdated" class="timestamp text-secondary small">Loading...</span>
+                </div>
+                <div class="card-body section-card-body" id="neoBody">
+                  <p class="state-message text-secondary mb-0">Loading asteroid summary...</p>
+                </div>
+              </section>
+            </aside>
+
+            <section class="card apollo-card" id="launches">
+              <div class="card-header section-card-header d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
+                <div>
+                  <h2 class="section-title mb-1">Upcoming SpaceX Launches</h2>
+                  <p class="source-label text-secondary small mb-0">Source: SpaceX, with Launch Library fallback</p>
+                </div>
+                <span id="launchDetailUpdated" class="timestamp text-secondary small">Loading...</span>
+              </div>
+              <div class="card-body section-card-body" id="launchBody">
+                <p class="state-message text-secondary mb-0">Loading launch data...</p>
+              </div>
+            </section>
+
+            <section class="card apollo-card" id="crew">
+              <div class="card-header section-card-header d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
+                <div>
+                  <h2 class="section-title mb-1">People Currently in Space</h2>
+                  <p class="source-label text-secondary small mb-0">Source: Open space station crew data</p>
+                </div>
+                <span id="peopleDetailUpdated" class="timestamp text-secondary small">Loading...</span>
+              </div>
+              <div class="card-body section-card-body" id="peopleBody">
+                <p class="state-message text-secondary mb-0">Loading crew data...</p>
+              </div>
+            </section>
           </section>
-        </section>
+        </div>
       </main>
     </div>
 

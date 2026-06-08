@@ -54,7 +54,7 @@ Out of scope for the MVP:
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
 - Frontend rendering escapes API-provided text before inserting it into the page.
 - Other public APIs remain browser-side for MVP simplicity.
-- Visual direction is inspired by a dense finance-style dashboard while preserving Apollo's space-data product scope.
+- Visual direction now follows the quieter Odyssey-style product shell: Bootstrap-first top navigation, neutral surfaces, simple cards, and low-maintenance spacing.
 - Unsupported controls such as export, search, notifications, settings, and new observations are omitted until those workflows are requested.
 
 ## Roadmap

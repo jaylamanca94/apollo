@@ -360,7 +360,7 @@ async function loadDashboard() {
   ]);
   if (els.refreshButton) {
     els.refreshButton.disabled = false;
-    els.refreshButton.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refresh data`;
+    els.refreshButton.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refresh`;
   }
   if (els.refreshButtonMobile) {
     els.refreshButtonMobile.disabled = false;
