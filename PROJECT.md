@@ -33,7 +33,7 @@ Out of scope for the MVP:
 
 ## Features
 
-- Dark Apollo dashboard shell with sidebar, toolbar, stat cards, and data panels.
+- Responsive Apollo dashboard shell with system light/dark theme support.
 - APOD feature panel.
 - ISS latitude, longitude, altitude, and velocity.
 - Crew count and crew list.
@@ -52,8 +52,10 @@ Out of scope for the MVP:
 - NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`.
 - NASA API keys stay server-side via `NASA_API_KEY`.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
+- Frontend rendering escapes API-provided text before inserting it into the page.
 - Other public APIs remain browser-side for MVP simplicity.
-- Dark visual direction is inspired by a dense finance-style dashboard while preserving Apollo's space-data product scope.
+- Visual direction is inspired by a dense finance-style dashboard while preserving Apollo's space-data product scope.
+- Unsupported controls such as export, search, notifications, settings, and new observations are omitted until those workflows are requested.
 
 ## Roadmap
 
@@ -63,7 +65,7 @@ Recommended next steps:
 2. Run final production QA after key rotation.
 3. Add basic monitoring/error visibility if Apollo gets shared more broadly.
 4. Add schema validation for API responses.
-5. Consider light mode support once the current dark design is approved.
+5. Add accessibility QA and browser coverage before a broader public launch.
 
 Future enhancements only if requested:
 
@@ -80,5 +82,4 @@ Future enhancements only if requested:
 - Vercel in-memory cache is per warm serverless function instance and may reset.
 - Third-party public APIs can fail or change response formats.
 - SpaceX official API can be unavailable; Launch Library is used as a fallback.
-- Current UI is dark-first and does not yet fully support light mode.
 - No automated end-to-end test suite yet.

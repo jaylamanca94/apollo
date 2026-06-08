@@ -8,6 +8,7 @@ Use a static frontend with serverless API routes.
 
 - Frontend: vanilla HTML, CSS, and JavaScript
 - UI: Bootstrap CDN
+- Theme: responsive light/dark mode using the system OS preference
 - NASA proxy: Vercel serverless functions in `/api`
 - Hosting: Vercel
 - Secrets: `NASA_API_KEY` stored as a server-side environment variable
@@ -76,6 +77,12 @@ Start the Vercel local dev server:
 npm run dev
 ```
 
+If the Vercel CLI prompts for authentication on a new machine, sign in with:
+
+```bash
+npx vercel login
+```
+
 Open the local URL printed by Vercel, usually:
 
 ```text
@@ -108,6 +115,7 @@ This reduces rate-limit pressure and keeps the dashboard usable during normal tr
 - Public APIs can fail, timeout, or change response formats.
 - SpaceX official API availability can vary; the dashboard falls back to Launch Library for launch listings.
 - This MVP does not include maps, charts, filters, auth, saved settings, or persistence.
+- Export, search, notifications, and observation-creation workflows are intentionally not included yet.
 
 ## Production Notes
 

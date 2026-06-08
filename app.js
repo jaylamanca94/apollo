@@ -48,6 +48,24 @@ function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("\"", "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function safeHttpUrl(value) {
+  try {
+    const url = new URL(value);
+    return ["http:", "https:"].includes(url.protocol) ? url.toString() : "";
+  } catch (error) {
+    return "";
+  }
+}
+
 function setError(container, message) {
   container.innerHTML = `
     <div class="alert alert-warning mb-0 py-3" role="alert">
@@ -105,15 +123,19 @@ async function fetchJson(url, options = {}) {
 async function loadApod() {
   try {
     const data = await fetchJson(API.apod);
-    const media = data.media_type === "image"
-      ? `<img class="img-fluid rounded apod-media mb-3" src="${data.url}" alt="${data.title}">`
-      : `<div class="ratio ratio-16x9 mb-3"><iframe class="rounded" src="${data.url}" title="${data.title}" allowfullscreen></iframe></div>`;
+    const title = escapeHtml(data.title || "Astronomy Picture of the Day");
+    const mediaUrl = safeHttpUrl(data.url);
+    const media = mediaUrl && data.media_type === "image"
+      ? `<img class="img-fluid rounded apod-media mb-3" src="${mediaUrl}" alt="${title}">`
+      : mediaUrl
+        ? `<div class="ratio ratio-16x9 mb-3"><iframe class="rounded" src="${mediaUrl}" title="${title}" allowfullscreen></iframe></div>`
+        : "";
 
     els.apodBody.innerHTML = `
       ${media}
-      <h3 class="h5 fw-semibold mb-1">${data.title || "Astronomy Picture of the Day"}</h3>
+      <h3 class="h5 fw-semibold mb-1">${title}</h3>
       <p class="text-secondary small mb-2">${data.date ? formatDate(data.date) : "Today"}</p>
-      <p class="mb-0">${data.explanation || "No description available."}</p>
+      <p class="mb-0">${escapeHtml(data.explanation || "No description available.")}</p>
     `;
     setTimestamp([els.apodUpdated]);
   } catch (error) {
@@ -182,8 +204,8 @@ async function loadPeople() {
       <ul class="list-group list-group-flush">
         ${people.map((person) => `
           <li class="list-group-item px-0 py-3 d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3">
-            <span class="fw-semibold">${person.name}</span>
-            <span class="text-secondary text-sm-end">${person.craft || "Spacecraft unknown"}</span>
+            <span class="fw-semibold">${escapeHtml(person.name)}</span>
+            <span class="text-secondary text-sm-end">${escapeHtml(person.craft || "Spacecraft unknown")}</span>
           </li>
         `).join("")}
       </ul>
@@ -230,20 +252,21 @@ async function loadLaunches() {
     els.launchBody.innerHTML = `
       <div class="list-group list-group-flush">
         ${launches.map((launch) => {
+          const patchUrl = safeHttpUrl(launch.links?.patch?.small);
           const badge = launch.upcoming
             ? `<span class="badge text-bg-primary">Upcoming</span>`
             : `<span class="badge text-bg-secondary">${launch.success ? "Success" : "Completed"}</span>`;
           return `
             <article class="list-group-item px-0 py-3">
               <div class="d-flex gap-3">
-                ${launch.links?.patch?.small ? `<img src="${launch.links.patch.small}" alt="" width="44" height="44" class="d-none d-sm-block">` : ""}
+                ${patchUrl ? `<img src="${patchUrl}" alt="" width="44" height="44" class="d-none d-sm-block">` : ""}
                 <div class="flex-grow-1">
                   <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
-                    <h3 class="h6 mb-0">${launch.name}</h3>
+                    <h3 class="h6 mb-0">${escapeHtml(launch.name)}</h3>
                     <div>${badge}</div>
                   </div>
                   <p class="text-secondary small mb-2">${formatDate(launch.date_utc)}</p>
-                  <p class="mb-0 text-body-secondary">${launch.details || "No mission details available."}</p>
+                  <p class="mb-0 text-body-secondary">${escapeHtml(launch.details || "No mission details available.")}</p>
                 </div>
               </div>
             </article>
@@ -296,7 +319,7 @@ async function loadNeo() {
         <ul class="list-group list-group-flush">
           ${asteroids.slice(0, 4).map((item) => `
             <li class="list-group-item px-0 py-3 d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3">
-              <span>${item.name}</span>
+              <span>${escapeHtml(item.name)}</span>
               <span class="text-secondary text-sm-end">${Math.round(Number(item.estimated_diameter.kilometers.estimated_diameter_max) * 1000)} m max</span>
             </li>
           `).join("")}
