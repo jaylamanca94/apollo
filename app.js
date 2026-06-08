@@ -44,6 +44,20 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
+function formatNumber(value, options = {}) {
+  const number = Number(value);
+
+  if (!Number.isFinite(number)) {
+    return "Unavailable";
+  }
+
+  const { maximumFractionDigits = 0, minimumFractionDigits = 0, suffix = "" } = options;
+  return `${number.toLocaleString([], {
+    maximumFractionDigits,
+    minimumFractionDigits
+  })}${suffix}`;
+}
+
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -149,31 +163,29 @@ async function loadIss() {
     const data = await fetchJson(API.iss);
     const latitude = Number(data.latitude);
     const longitude = Number(data.longitude);
-    const altitude = Number(data.altitude);
-    const velocity = Number(data.velocity);
     const updated = formatUpdated();
 
     els.issLat.innerHTML = Number.isFinite(latitude) && Number.isFinite(longitude)
-      ? `<span>${latitude.toFixed(2)}</span><span class="coordinate-divider"> / </span><span>${longitude.toFixed(2)}</span>`
+      ? `<span>${formatNumber(latitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</span><span class="coordinate-divider"> / </span><span>${formatNumber(longitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</span>`
       : "--";
     setTimestamp([els.issUpdated, els.issDetailUpdated], updated);
     els.issBody.innerHTML = `
       <div class="metadata-grid">
         <div>
           <p class="text-secondary small mb-1">Current latitude</p>
-          <p class="fw-semibold mb-0">${latitude.toFixed(4)}</p>
+          <p class="fw-semibold mb-0">${formatNumber(data.latitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</p>
         </div>
         <div>
           <p class="text-secondary small mb-1">Current longitude</p>
-          <p class="fw-semibold mb-0">${longitude.toFixed(4)}</p>
+          <p class="fw-semibold mb-0">${formatNumber(data.longitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</p>
         </div>
         <div>
           <p class="text-secondary small mb-1">Altitude</p>
-          <p class="fw-semibold mb-0">${altitude.toFixed(0)} km</p>
+          <p class="fw-semibold mb-0">${formatNumber(data.altitude, { suffix: " km" })}</p>
         </div>
         <div>
           <p class="text-secondary small mb-1">Velocity</p>
-          <p class="fw-semibold mb-0">${velocity.toFixed(0)} km/h</p>
+          <p class="fw-semibold mb-0">${formatNumber(data.velocity, { suffix: " km/h" })}</p>
         </div>
       </div>
       <p class="text-secondary small mb-0 mt-3">These coordinates show the station's current position above Earth.</p>
