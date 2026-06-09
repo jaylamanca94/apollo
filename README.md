@@ -26,7 +26,9 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 
 ## File Overview
 
+- `AGENT-README.md` - Apollo product-agent workflow, approval rules, work modes, and output format
 - `PRODUCT-README.md` - Apollo mission, goals, scope, decisions, roadmap, and known limitations
+- `DESIGN-README.md` - Apollo design standards, UI utilities, and interaction guidance
 - `index.html` - dashboard markup
 - `styles.css` - minimal Bootstrap-aligned styling
 - `app.js` - frontend data loading and rendering
