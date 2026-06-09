@@ -7,7 +7,7 @@ const API = {
   neo: "/api/neo"
 };
 
-const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily paused because NASA is limiting requests or the server API key needs attention. The rest of the dashboard is still live.";
+const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily unavailable because NASA is limiting requests. Other dashboard sections are still live.";
 
 const els = {
   refreshButton: document.querySelector("#refreshButton"),
@@ -153,7 +153,7 @@ async function loadApod() {
     `;
     setTimestamp([els.apodUpdated]);
   } catch (error) {
-    setError(els.apodBody, getApiErrorMessage(error, "NASA APOD is unavailable right now. This feature card will update again when NASA responds, and the rest of the dashboard remains live."));
+    setError(els.apodBody, getApiErrorMessage(error, "NASA's astronomy picture is unavailable right now. This card will update when NASA responds."));
     els.apodUpdated.textContent = "Error";
   }
 }
@@ -315,7 +315,7 @@ async function loadNeo() {
           <p class="fw-semibold mb-0">${asteroids.length}</p>
         </div>
         <div>
-          <p class="text-secondary small mb-1">Potentially hazardous</p>
+          <p class="text-secondary small mb-1">Flagged as potentially hazardous</p>
           <p class="fw-semibold mb-0">${hazardous}</p>
         </div>
         <div>
@@ -323,7 +323,7 @@ async function loadNeo() {
           <p class="fw-semibold mb-0">${Number.isFinite(closest) ? `${Math.round(closest).toLocaleString()} km` : "Unavailable"}</p>
         </div>
         <div>
-          <p class="text-secondary small mb-1">Date window</p>
+          <p class="text-secondary small mb-1">Report date</p>
           <p class="fw-semibold mb-0">${formatDate(date)}</p>
         </div>
       </div>
@@ -336,7 +336,7 @@ async function loadNeo() {
             </li>
           `).join("")}
         </ul>
-      ` : stateMessage("No near-Earth objects reported for today.")}
+      ` : stateMessage("No near-Earth objects are listed for today.")}
     `;
   } catch (error) {
     els.neoCount.textContent = "--";

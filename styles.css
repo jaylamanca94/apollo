@@ -218,8 +218,8 @@ body {
     --bs-navbar-nav-link-padding-x: 0.5rem;
   }
 
-  .apollo-navbar-inner {
-    display: grid;
+  .apollo-app .navbar > .apollo-navbar-inner {
+    display: grid !important;
     grid-template-columns: minmax(0, 1fr) auto;
     row-gap: 0.75rem;
   }

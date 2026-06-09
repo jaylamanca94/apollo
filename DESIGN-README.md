@@ -10,13 +10,14 @@ The interface should feel quiet, personal, practical, and easy to scan.
 
 - Prefer Bootstrap conventions before custom UI patterns.
 - Keep visual decisions simple enough for a solo product builder to maintain.
+- Prefer evergreen design patterns and utilities that can scale with the product without becoming fragile or overly custom.
 - Use familiar, predictable interface patterns.
 - Prioritize clarity, speed, and maintainability over visual novelty.
 - Avoid adding decorative complexity unless it directly improves the product experience.
 
 ## UI Foundation
 
-Use this file as the visual source of truth for Apollo. Update it whenever spacing, color, typography, icon sizing, form layout, interaction feel, accessibility, or shared utilities change.
+Use this file as the visual source of truth for `Apollo`. Update it whenever spacing, color, typography, icon sizing, form layout, interaction feel, accessibility, or reusable utilities change.
 
 ## Color
 
@@ -133,7 +134,7 @@ Use `8px` or less for normal cards and repeated list items unless a larger conta
 
 ## Utility Guidance
 
-Add shared utilities here when a pattern is reusable across products.
+Add reusable utilities here when a pattern is reusable across this product.
 
 Good utility candidates:
 
@@ -155,6 +156,12 @@ Avoid utilities for:
 
 ## Maintenance Rule
 
-When a UX detail, UI pattern, visual utility, component behavior, accessibility expectation, or responsive rule changes, update this file in the same work.
+This file is the living design standards README for Apollo.
+
+When a UX detail, UI pattern, visual utility, component behavior, accessibility expectation, responsive rule, or product-specific design convention changes, update this file in the same work.
+
+Keep making this file more relevant to the product as design choices, utilities, UI conventions, and quality expectations become clearer.
+
+Do not update it just for the sake of changing it. Update it when there is meaningful new design context, a confirmed convention, a recurring UI pattern, or a clearer way to preserve product design intent.
 
 This file should remain the source of truth for baseline UX/UI decisions and reusable design utilities.

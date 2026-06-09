@@ -2,13 +2,14 @@
 
 Use this file as the overview and working agreement for Apollo and Codex agent teams. Keep this document updated as Apollo evolves.
 
-As of now, the instruction set has five files: foundation, design, code, content, and quality.
+As of now, the instruction set has six files: foundation, product, design, code, content, and quality.
 
 ## Instruction Set
 
 | File | Role | Purpose |
 | --- | --- | --- |
 | `FOUNDATION-README.md` | Product foundation | Shared product principles, team workflow, documentation expectations, and source-of-truth rules |
+| `PRODUCT-README.md` | Product | Product-specific North Star, mission, audience, requirements, goals, scope, and decisions |
 | `DESIGN-README.md` | Design | Shared UI, layout, spacing, typography, color, icon, form, interaction, accessibility, and utility rules |
 | `CODE-README.md` | Code | Build, change, debug, document, test, and deploy product work |
 | `CONTENT-README.md` | Content | Review, recommend, and make approved updates to product content, messaging, labels, guidance, and user-facing copy |
@@ -18,12 +19,13 @@ As of now, the instruction set has five files: foundation, design, code, content
 
 Use the files in this order when deciding where guidance belongs:
 
-1. `FOUNDATION-README.md` for shared product and team rules.
-2. `DESIGN-README.md` for reusable interface standards and utilities.
-3. `CODE-README.md` for code execution behavior.
-4. `CONTENT-README.md` for content review behavior, content recommendations, approved content updates, and copywriting standards.
-5. `QUALITY-README.md` for UX QA behavior, approved quality fixes, severity, and reporting.
-6. Product-specific docs for decisions that apply only to one product.
+1. `FOUNDATION-README.md` for product and team rules.
+2. `PRODUCT-README.md` for the specific product's mission, audience, requirements, goals, scope, and decisions.
+3. `DESIGN-README.md` for reusable interface standards and utilities.
+4. `CODE-README.md` for code execution behavior.
+5. `CONTENT-README.md` for content review behavior, content recommendations, approved content updates, and copywriting standards.
+6. `QUALITY-README.md` for UX QA behavior, approved quality fixes, severity, and reporting.
+7. Other product-specific docs for decisions that apply only to one product.
 
 If files conflict, ask the founder which source should win.
 
@@ -50,7 +52,7 @@ Findings
 [Issues, observations, or recommendations grouped by severity or priority, or None]
 
 Standards Updates
-[Reusable rules or guidelines that should be added to shared instruction files, or None]
+[Reusable rules or guidelines that should be added to the relevant local README files, or None]
 
 Blockers
 [Current blockers or None]
@@ -68,6 +70,7 @@ Omit `Tasks for Founder` when there is nothing specific for the founder to do.
 
 - Build the smallest working solution first.
 - Keep solutions simple, maintainable, portable, and production-ready.
+- Design decisions, code, content, documentation, and workflows to be evergreen and technically sustainable indefinitely, as much as practical.
 - Avoid scope creep, premature optimization, clever abstractions, and over-engineering.
 - Follow modern engineering and product quality best practices.
 - Prefer convention over customization.
@@ -86,6 +89,7 @@ Before suggesting, building, or reviewing anything, consider:
 3. Is there a simpler solution?
 4. What is the highest-leverage next step?
 5. Will this increase long-term maintenance burden?
+6. Is this evergreen and technically sustainable as the product evolves?
 
 ## Product Team Workflow
 
@@ -99,13 +103,14 @@ For a normal feature cycle:
 6. Content makes approved content updates when the next step is confirmed.
 7. Quality makes approved UX QA, usability, accessibility, responsive, interaction, and visual consistency fixes when the next step is confirmed.
 8. Code fixes approved code or implementation findings when needed.
-9. Shared documentation is updated when reusable guidance changes.
+9. `PRODUCT-README.md` is updated when product-specific mission, requirements, scope, goals, or decisions change.
+10. Shared documentation is updated when reusable guidance changes.
 
 ## Project Infrastructure Standards
 
 Design projects so they remain portable across devices and easy to maintain.
 
-Assume development may happen from multiple Macs over time. Everything should be named and organized by Apollo so multiple engineers or Codex agents can work on the same product without confusion.
+Assume development may happen from multiple Macs over time. Everything should be named and organized by `Apollo` so multiple engineers or Codex agents can work on the same product without confusion.
 
 ### Prefer
 
@@ -147,9 +152,13 @@ Maintain documentation as the project evolves. Update documentation whenever imp
 - Environment variables
 - Deployment instructions
 
-`PROJECT.md` should include:
+`PRODUCT-README.md` should include:
 
+- Product mission
+- Audience
+- Problem
 - Goals
+- Requirements
 - Scope
 - Features
 - Design decisions
@@ -158,13 +167,18 @@ Maintain documentation as the project evolves. Update documentation whenever imp
 
 ## Living Foundation Rule
 
-These documents are not static. Any agent, code role, content role, quality role, or chat working from them should treat them as a living foundation for future products.
+These documents are living README files for Apollo. Any agent, code role, content role, quality role, or chat working from them should keep them accurate as the product evolves.
 
-When reusable guidance is added, clarified, corrected, or improved during product work, update the relevant instruction file as part of the same work.
+The goal is for the README files to become more accurate, specific, and useful as the product evolves, so the product purpose, requirements, standards, and working agreements do not get lost.
+
+When the founder provides new information, makes a decision, changes direction, approves a pattern, or reveals a recurring need, update the relevant README file as part of the same work.
+
+Do not rewrite these files just for the sake of rewriting them. Update them when there is meaningful new context, a confirmed decision, a recurring pattern, or a clearer way to preserve product intent.
 
 Update the instruction set when changes affect:
 
 - Generic engineering best practices
+- Product mission, audience, goals, scope, requirements, or decisions
 - Reusable UX/UI guidelines
 - Shared design utilities
 - Common layout, spacing, typography, color, icon, or form rules
@@ -173,11 +187,13 @@ Update the instruction set when changes affect:
 - Workflow expectations
 - Communication preferences
 - Evaluation filters
-- Repeatable patterns that should apply to future products
+- Repeatable patterns that should apply to Apollo
 
-Do not update the shared instruction set for one-off, product-specific implementation details unless they reveal a reusable rule or pattern worth carrying forward.
+Product-specific facts belong in `PRODUCT-README.md`. Product standards belong in the relevant local README.
 
-When in doubt, ask: "Should this help future products too?" If yes, update the shared instruction set.
+Do not update the local instruction set for one-off, product-specific implementation details unless they reveal a reusable rule or pattern worth carrying forward.
+
+When in doubt, ask: "Should this help Apollo too?" If yes, update the local instruction set.
 
 ## Communication Style
 
