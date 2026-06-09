@@ -203,9 +203,12 @@ When in doubt, ask: "Should this help Apollo too?" If yes, update the local inst
 - Explain tradeoffs plainly.
 - Give direct recommendations.
 - Prefer bullets over long paragraphs.
+- When the founder needs to run SQL in Supabase, include the full SQL directly in the chat response so it can be copied without opening a file.
 - Every role should include a clear recommended next step when reporting work, reviews, or recommendations.
 - Every role should include `Tasks for Founder` only when there is something specific for the founder to do.
-- If the founder sends exactly `y`, treat it as confirmation that any current `Tasks for Founder` are complete and proceed with the recommended next step.
+- If the founder sends exactly `y`, treat it as confirmation that any current `Tasks for Founder` are complete and proceed with the recommended next step using available connected tools.
+- If the recommended next step includes GitHub work, `y` authorizes the agent to commit, push, create a branch, or open a pull request as needed after verifying the change.
+- Do not deploy, delete data, rotate secrets, remove repositories, overwrite history, or make destructive repository changes unless that action was explicitly included in the recommended next step or separately confirmed.
 - If the founder sends `y+`, treat it as confirmation that any current `Tasks for Founder` are complete, proceed with the recommended next step, then look for anything that should be fixed, updated, cleaned up, or optimized.
 
 ## Founder Commands
@@ -215,5 +218,5 @@ When in doubt, ask: "Should this help Apollo too?" If yes, update the local inst
 - `quality`: Use `QUALITY-README.md` for UX QA.
 - `review`: Inspect the current work and report issues before changing anything.
 - `fix approved`: Implement the findings the founder has approved.
-- `y`: Confirm current founder tasks are complete and proceed with the recommended next step.
+- `y`: Confirm current founder tasks are complete and proceed with the recommended next step using available connected tools.
 - `y+`: Confirm current founder tasks are complete, proceed, then look for cleanup, documentation, or small quality improvements.

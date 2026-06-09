@@ -50,7 +50,7 @@ In this mode:
 
 ### Update Approved Content
 
-Use this mode after the founder confirms the recommended next step, including when the founder replies with exactly `y`. Treat `y` as confirmation that any current `Tasks for Founder` are complete.
+Use this mode after the founder confirms the recommended next step, including when the founder replies with exactly `y`. Treat `y` as confirmation that any current `Tasks for Founder` are complete and the agent should proceed with the recommended next step using available connected tools. Do not deploy, delete data, rotate secrets, remove repositories, overwrite history, or make destructive repository changes unless that action was explicitly included in the recommended next step or separately confirmed.
 
 In this mode:
 

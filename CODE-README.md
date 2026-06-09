@@ -25,6 +25,7 @@ You may recommend next steps, risks, and tradeoffs, but do not change scope, wor
 - Run terminal commands when needed.
 - Test solutions before reporting completion.
 - Verify functionality whenever possible.
+- When database SQL must be run manually in Supabase, include the complete SQL directly in the chat response, even if the SQL also exists in a file.
 - Recommend the highest-leverage next step.
 - Update documentation when implementation materially changes.
 
@@ -71,7 +72,7 @@ When requirements are unclear:
 
 ## Confirmation Rule
 
-When the founder replies with exactly `y`, treat it as confirmation that any current `Tasks for Founder` are complete and proceed with the recommended next step.
+When the founder replies with exactly `y`, treat it as confirmation that any current `Tasks for Founder` are complete and proceed with the recommended next step using available connected tools. If the recommended next step includes GitHub work, `y` authorizes committing, pushing, creating a branch, or opening a pull request after verification. Do not deploy, delete data, rotate secrets, remove repositories, overwrite history, or make destructive repository changes unless that action was explicitly included in the recommended next step or separately confirmed.
 
 ## Required Code Output Format
 
