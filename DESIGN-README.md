@@ -31,7 +31,19 @@ Use this file as the visual source of truth for `Apollo`. Update it whenever spa
 - Page background: `#2B2F32`
 - Content surface: `#212529`
 
-Default to the user's system OS theme setting.
+Default to the user's system OS theme setting and provide a compact header selector for System, Light, and Dark.
+
+### Data Accents
+
+Use restrained Bootstrap-aligned accent colors to distinguish dashboard data families without making the page feel decorative.
+
+- APOD: `#6f42c1`
+- ISS: `#198754`
+- Asteroids/NEO: `#fd7e14`
+- Launches: `#dc3545`
+- Crew: `#0d6efd`
+
+Apply accents to stat chips, card top borders, and related badges. Keep the main surfaces neutral.
 
 ## Layout Grid
 

@@ -4,9 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Apollo</title>
+    <script>
+      (() => {
+        try {
+          const storageKey = "apollo-theme";
+          const storedTheme = window.localStorage.getItem(storageKey);
+          const mode = ["light", "dark", "system"].includes(storedTheme) ? storedTheme : "system";
+          const theme = mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : mode === "system" ? "light" : mode;
+          document.documentElement.setAttribute("data-bs-theme", theme);
+        } catch (error) {
+          document.documentElement.setAttribute("data-bs-theme", "light");
+        }
+      })();
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link href="./styles.css?v=odyssey-shell" rel="stylesheet">
+    <link href="./styles.css?v=odyssey-polish" rel="stylesheet">
   </head>
   <body>
     <div class="apollo-app text-body">
@@ -25,7 +38,15 @@
             <a class="nav-link" href="#crew">Crew</a>
           </div>
 
-          <div class="apollo-navbar-actions">
+          <div class="apollo-navbar-actions d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-2 apollo-theme-control">
+              <label class="small text-secondary mb-0 d-none d-sm-inline" for="themeMode">Theme</label>
+              <select class="form-select form-select-sm w-auto" id="themeMode" aria-label="Theme">
+                <option value="system">System</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
             <button class="btn btn-primary btn-sm" id="refreshButton" type="button" aria-describedby="dashboardStatus">
               <i class="fa-solid fa-rotate me-2"></i>Refresh
             </button>
@@ -46,7 +67,7 @@
 
           <section class="row g-4" aria-label="Apollo dashboard statistics">
             <div class="col-12 col-md-6 col-xxl-3">
-              <div class="card apollo-card h-100">
+              <div class="card apollo-card apollo-data-card apollo-accent-crew h-100">
                 <div class="card-body stat-card-body">
                   <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
                     <p class="stat-label mb-0">People currently in space</p>
@@ -59,7 +80,7 @@
               </div>
             </div>
             <div class="col-12 col-md-6 col-xxl-3">
-              <div class="card apollo-card h-100">
+              <div class="card apollo-card apollo-data-card apollo-accent-iss h-100">
                 <div class="card-body stat-card-body">
                   <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
                     <p class="stat-label mb-0">Space station position</p>
@@ -72,7 +93,7 @@
               </div>
             </div>
             <div class="col-12 col-md-6 col-xxl-3">
-              <div class="card apollo-card h-100">
+              <div class="card apollo-card apollo-data-card apollo-accent-neo h-100">
                 <div class="card-body stat-card-body">
                   <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
                     <p class="stat-label mb-0">Asteroids near Earth today</p>
@@ -85,7 +106,7 @@
               </div>
             </div>
             <div class="col-12 col-md-6 col-xxl-3">
-              <div class="card apollo-card h-100">
+              <div class="card apollo-card apollo-data-card apollo-accent-launch h-100">
                 <div class="card-body stat-card-body">
                   <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
                     <p class="stat-label mb-0">Upcoming launches</p>
@@ -100,7 +121,7 @@
           </section>
 
           <section class="dashboard-grid">
-            <article class="card apollo-card apod-panel" id="apod">
+            <article class="card apollo-card apollo-data-card apollo-accent-apod apod-panel" id="apod">
               <div class="card-header section-card-header d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
                 <div>
                   <h2 class="section-title mb-1">Astronomy Picture of the Day</h2>
@@ -119,7 +140,7 @@
             </article>
 
             <aside class="right-rail">
-              <section class="card apollo-card" id="iss-position">
+              <section class="card apollo-card apollo-data-card apollo-accent-iss" id="iss-position">
                 <div class="card-header section-card-header d-flex justify-content-between align-items-start gap-2">
                   <div>
                     <h2 class="section-title mb-1">ISS Current Position</h2>
@@ -132,7 +153,7 @@
                 </div>
               </section>
 
-              <section class="card apollo-card" id="asteroids">
+              <section class="card apollo-card apollo-data-card apollo-accent-neo" id="asteroids">
                 <div class="card-header section-card-header d-flex justify-content-between align-items-start gap-2">
                   <div>
                     <h2 class="section-title mb-1">Asteroid Summary</h2>
@@ -146,7 +167,7 @@
               </section>
             </aside>
 
-            <section class="card apollo-card" id="launches">
+            <section class="card apollo-card apollo-data-card apollo-accent-launch" id="launches">
               <div class="card-header section-card-header d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
                 <div>
                   <h2 class="section-title mb-1">Upcoming SpaceX Launches</h2>
@@ -159,7 +180,7 @@
               </div>
             </section>
 
-            <section class="card apollo-card" id="crew">
+            <section class="card apollo-card apollo-data-card apollo-accent-crew" id="crew">
               <div class="card-header section-card-header d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
                 <div>
                   <h2 class="section-title mb-1">People Currently in Space</h2>
@@ -177,6 +198,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="./app.js?v=odyssey-shell"></script>
+    <script src="./app.js?v=odyssey-polish"></script>
   </body>
 </html>

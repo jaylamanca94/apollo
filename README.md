@@ -8,7 +8,7 @@ Use a static frontend with serverless API routes.
 
 - Frontend: vanilla HTML, CSS, and JavaScript
 - UI: Bootstrap CDN
-- Theme: responsive light/dark mode using the system OS preference
+- Theme: responsive System, Light, and Dark modes
 - API proxies: Vercel serverless functions in `/api`
 - Hosting: Vercel
 - Secrets: `NASA_API_KEY` stored as a server-side environment variable

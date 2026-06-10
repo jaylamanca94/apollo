@@ -8,8 +8,20 @@
   color-scheme: light;
 }
 
+html[data-bs-theme="dark"] {
+  --apollo-page-bg: #2b2f32;
+  --apollo-surface-bg: #212529;
+  --apollo-accent-soft: rgba(13, 110, 253, 0.2);
+  --bs-body-bg: var(--apollo-page-bg);
+  --bs-body-color: #f8f9fa;
+  --bs-secondary-color: rgba(248, 249, 250, 0.68);
+  --bs-tertiary-bg: #2b3035;
+  --bs-border-color: rgba(255, 255, 255, 0.16);
+  color-scheme: dark;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  html:not([data-bs-theme]) {
     --apollo-page-bg: #2b2f32;
     --apollo-surface-bg: #212529;
     --apollo-accent-soft: rgba(13, 110, 253, 0.2);
@@ -56,6 +68,10 @@ body {
   flex: 0 0 auto;
 }
 
+.apollo-theme-control .form-select {
+  min-width: 116px;
+}
+
 .apollo-brand-icon {
   flex: 0 0 auto;
   height: 1rem;
@@ -80,6 +96,56 @@ body {
   border: 1px solid var(--bs-border-color);
   border-radius: 0.5rem;
   box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
+}
+
+.apollo-data-card {
+  border-top: 3px solid var(--apollo-accent);
+  overflow: hidden;
+}
+
+.apollo-accent-apod {
+  --apollo-accent: #6f42c1;
+  --apollo-accent-soft: rgba(111, 66, 193, 0.14);
+}
+
+.apollo-accent-iss {
+  --apollo-accent: #198754;
+  --apollo-accent-soft: rgba(25, 135, 84, 0.14);
+}
+
+.apollo-accent-neo {
+  --apollo-accent: #fd7e14;
+  --apollo-accent-soft: rgba(253, 126, 20, 0.16);
+}
+
+.apollo-accent-launch {
+  --apollo-accent: #dc3545;
+  --apollo-accent-soft: rgba(220, 53, 69, 0.14);
+}
+
+.apollo-accent-crew {
+  --apollo-accent: #0d6efd;
+  --apollo-accent-soft: rgba(13, 110, 253, 0.14);
+}
+
+html[data-bs-theme="dark"] .apollo-accent-apod {
+  --apollo-accent-soft: rgba(111, 66, 193, 0.2);
+}
+
+html[data-bs-theme="dark"] .apollo-accent-iss {
+  --apollo-accent-soft: rgba(25, 135, 84, 0.2);
+}
+
+html[data-bs-theme="dark"] .apollo-accent-neo {
+  --apollo-accent-soft: rgba(253, 126, 20, 0.22);
+}
+
+html[data-bs-theme="dark"] .apollo-accent-launch {
+  --apollo-accent-soft: rgba(220, 53, 69, 0.2);
+}
+
+html[data-bs-theme="dark"] .apollo-accent-crew {
+  --apollo-accent-soft: rgba(13, 110, 253, 0.2);
 }
 
 .section-card-header {
@@ -248,6 +314,10 @@ body {
     grid-row: 1;
     justify-self: end;
     min-width: 0;
+  }
+
+  .apollo-theme-control {
+    display: none !important;
   }
 
   .apollo-shell {

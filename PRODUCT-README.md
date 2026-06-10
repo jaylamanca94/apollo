@@ -33,7 +33,7 @@ Out of scope for the MVP:
 
 ## Features
 
-- Responsive Apollo dashboard shell with system light/dark theme support.
+- Responsive Apollo dashboard shell with System, Light, and Dark theme support.
 - APOD feature panel.
 - ISS latitude, longitude, altitude, and velocity.
 - Crew count and crew list.
@@ -57,6 +57,7 @@ Out of scope for the MVP:
 - Frontend data loaders normalize third-party payloads before rendering visible values.
 - Other public APIs remain browser-side for MVP simplicity.
 - Visual direction now follows the quieter Odyssey-style product shell: Bootstrap-first top navigation, neutral surfaces, simple cards, and low-maintenance spacing.
+- Dashboard data families use subtle accent colors for APOD, ISS, asteroids, launches, and crew while keeping surfaces neutral.
 - Unsupported controls such as export, search, notifications, settings, and new observations are omitted until those workflows are requested.
 
 ## Roadmap

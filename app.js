@@ -7,10 +7,12 @@ const API = {
 };
 
 const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily unavailable because NASA is limiting requests. Other dashboard sections are still live.";
+const THEME_STORAGE_KEY = "apollo-theme";
 
 const els = {
   refreshButton: document.querySelector("#refreshButton"),
   refreshButtonMobile: document.querySelector("#refreshButtonMobile"),
+  themeMode: document.querySelector("#themeMode"),
   peopleCount: document.querySelector("#peopleCount"),
   peopleUpdated: document.querySelector("#peopleUpdated"),
   peopleDetailUpdated: document.querySelector("#peopleDetailUpdated"),
@@ -88,6 +90,53 @@ function safeHttpUrl(value) {
   } catch (error) {
     return "";
   }
+}
+
+function getStoredTheme() {
+  let storedTheme = null;
+
+  try {
+    storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+  } catch (error) {
+    storedTheme = null;
+  }
+
+  return ["light", "dark", "system"].includes(storedTheme) ? storedTheme : "system";
+}
+
+function getSystemTheme() {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function applyTheme(mode) {
+  const theme = mode === "system" ? getSystemTheme() : mode;
+  document.documentElement.setAttribute("data-bs-theme", theme);
+}
+
+function initThemeControl() {
+  if (!els.themeMode) {
+    return;
+  }
+
+  const storedTheme = getStoredTheme();
+  els.themeMode.value = storedTheme;
+  applyTheme(storedTheme);
+
+  els.themeMode.addEventListener("change", (event) => {
+    const mode = event.target.value;
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, mode);
+    } catch (error) {
+      // Theme still applies for the current page when storage is unavailable.
+    }
+    applyTheme(mode);
+  });
+
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    if (getStoredTheme() === "system") {
+      applyTheme("system");
+    }
+  });
 }
 
 function getText(value, fallback = "") {
@@ -460,4 +509,5 @@ async function loadDashboard() {
 [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
   button.addEventListener("click", loadDashboard);
 });
+initThemeControl();
 loadDashboard();
