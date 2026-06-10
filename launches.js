@@ -32,7 +32,7 @@ function safeHttpUrl(value) {
 }
 
 function formatUpdated(date = new Date()) {
-  return `Last updated ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+  return `Last updated: ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
 }
 
 function formatDateTime(value) {
@@ -132,6 +132,11 @@ function splitLaunchName(name) {
     vehicle: parts[0] || "Launch",
     mission: parts.slice(1).join(" | ")
   };
+}
+
+function formatLaunchImageAlt(launch, launchName = splitLaunchName(launch?.name)) {
+  const mission = launchName.mission || launch.name;
+  return `Mission image for ${mission || launchName.vehicle}`;
 }
 
 function getStoredTheme() {
@@ -267,7 +272,7 @@ function renderLaunches(launches) {
           <article class="launch-page-card">
             <div class="launch-page-media">
               ${launch.imageUrl
-                ? `<img src="${escapeHtml(launch.imageUrl)}" alt="">`
+                ? `<img src="${escapeHtml(launch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(launch, launchName))}">`
                 : `<div class="launch-page-media-placeholder"><i class="fa-solid fa-rocket" aria-hidden="true"></i></div>`}
             </div>
             <div class="launch-page-content">
@@ -286,7 +291,7 @@ function renderLaunches(launches) {
               ${launch.sourceUrl ? `
                 <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
                   <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                  Launch data source
+                  Launch source
                 </a>
               ` : ""}
             </div>
@@ -318,7 +323,7 @@ async function loadLaunches() {
 
     if (els.refreshButton) {
       els.refreshButton.disabled = false;
-      els.refreshButton.innerHTML = "Refresh Data";
+      els.refreshButton.innerHTML = "Refresh data";
     }
   }
 }

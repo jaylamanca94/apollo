@@ -26,7 +26,7 @@ const els = {
 };
 
 function formatUpdated(date = new Date()) {
-  return `Last updated ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+  return `Last updated: ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
 }
 
 function formatDate(value) {
@@ -363,6 +363,11 @@ function splitLaunchName(name) {
   };
 }
 
+function formatLaunchImageAlt(launch, launchName = splitLaunchName(launch?.name)) {
+  const mission = launchName.mission || launch.name;
+  return `Mission image for ${mission || launchName.vehicle}`;
+}
+
 function normalizeNeo(data, date) {
   if (Array.isArray(data?.asteroids)) {
     return data.asteroids.map((item) => ({
@@ -615,12 +620,12 @@ async function loadApod() {
             ${data.mediaType === "image" && fullImageUrl ? `
               <a class="source-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
                 <i class="fa-regular fa-image" aria-hidden="true"></i>
-                View Image
+                View image
               </a>
             ` : ""}
             <a class="source-link" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
               <i class="fa-solid fa-earth-americas" aria-hidden="true"></i>
-              NASA Source
+              NASA source
             </a>
           </div>
         </div>
@@ -714,7 +719,6 @@ async function loadLaunches() {
           ${visibleLaunches.map((launch) => {
           const launchName = splitLaunchName(launch.name);
           const launchWindow = formatLaunchWindow(launch);
-          const summaryDetails = escapeHtml(truncateText(launch.details, 190));
           const fullDetails = escapeHtml(launch.details);
           const detailRows = [
             ["Vehicle", launch.vehicle],
@@ -734,7 +738,7 @@ async function loadLaunches() {
 
           return `
             <article class="launch-card">
-              ${launch.imageUrl ? `<img src="${escapeHtml(launch.imageUrl)}" alt="" class="launch-thumb">` : `<span class="stat-chip"><i class="fa-solid fa-rocket" aria-hidden="true"></i></span>`}
+              ${launch.imageUrl ? `<img src="${escapeHtml(launch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(launch, launchName))}" class="launch-thumb">` : `<span class="stat-chip"><i class="fa-solid fa-rocket" aria-hidden="true"></i></span>`}
               <div class="launch-main">
                 <p class="launch-meta">${formatDateTime(launch.dateUtc)} · ${formatCountdown(launch.dateUtc)}</p>
                 <div class="launch-title-row">
@@ -743,15 +747,14 @@ async function loadLaunches() {
                 </div>
                 <div class="launch-footer">
                   <details class="data-details launch-details">
-                    <summary><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Mission Details</summary>
+                    <summary><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Mission details</summary>
                     <div class="data-detail-panel">
-                      <p class="mb-3">${summaryDetails}</p>
-                      ${fullDetails !== summaryDetails ? `<p class="mb-3">${fullDetails}</p>` : ""}
+                      <p class="mb-3">${fullDetails}</p>
                       ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
                       ${launch.sourceUrl ? `
                         <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
                           <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                          Launch data source
+                          Launch source
                         </a>
                       ` : ""}
                     </div>
@@ -763,7 +766,7 @@ async function loadLaunches() {
           `;
         }).join("")}
         </div>
-        <a class="btn launch-show-all mt-4" href="./launches.html">View All Launches</a>
+        <a class="btn launch-show-all mt-4" href="./launches.html">View all launches</a>
       `;
     };
 
@@ -935,11 +938,11 @@ async function loadDashboard() {
   setDashboardUpdated();
   if (els.refreshButton) {
     els.refreshButton.disabled = false;
-    els.refreshButton.innerHTML = "Refresh Data";
+    els.refreshButton.innerHTML = "Refresh data";
   }
   if (els.refreshButtonMobile) {
     els.refreshButtonMobile.disabled = false;
-    els.refreshButtonMobile.innerHTML = "Refresh Data";
+    els.refreshButtonMobile.innerHTML = "Refresh data";
   }
 }
 

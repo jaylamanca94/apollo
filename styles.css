@@ -30,9 +30,9 @@ html[data-bs-theme="light"] {
   --apollo-surface-raised: #eef1f4;
   --apollo-border: #d1d8de;
   --apollo-border-strong: #b9c4cc;
-  --apollo-accent: #e83149;
+  --apollo-accent: #d9233b;
   --apollo-accent-hover: #c91f36;
-  --apollo-accent-soft: rgba(232, 49, 73, 0.12);
+  --apollo-accent-soft: rgba(217, 35, 59, 0.12);
   --apollo-success: #218a55;
   --apollo-success-soft: rgba(33, 138, 85, 0.12);
   --apollo-warning: #996b00;
@@ -160,10 +160,10 @@ body {
 }
 
 .apollo-dashboard-actions {
-  align-items: center;
+  align-items: end;
   display: grid;
   gap: 14px;
-  justify-items: center;
+  justify-items: end;
   padding-top: 3px;
 }
 
@@ -520,6 +520,7 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   gap: 0.5rem;
   text-decoration: underline;
   text-underline-offset: 2px;
+  overflow-wrap: anywhere;
 }
 
 .source-link i {
@@ -529,6 +530,12 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
 .source-link:hover,
 .source-link:focus-visible {
   color: var(--apollo-accent);
+}
+
+.source-link:focus-visible {
+  border-radius: 0.25rem;
+  outline: 3px solid rgba(255, 64, 86, 0.45);
+  outline-offset: 3px;
 }
 
 .launch-count {
@@ -565,9 +572,10 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
 }
 
 .launch-meta {
-  color: color-mix(in srgb, var(--apollo-muted) 70%, transparent);
+  color: var(--apollo-muted);
   font-size: 0.875rem;
   margin-bottom: 6px;
+  overflow-wrap: anywhere;
 }
 
 .launch-title-row {
@@ -611,6 +619,8 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   justify-content: center;
   min-height: 28px;
   min-width: 130px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   padding: 0.25rem 0.9rem;
   text-align: center;
 }
@@ -875,6 +885,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   display: inline-flex;
   gap: 0.5rem;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .apollo-return-link:hover,
@@ -950,6 +961,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   font-size: 1.35rem;
   font-weight: 750;
   line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .launch-page-title .launch-mission {
