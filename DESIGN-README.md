@@ -60,6 +60,8 @@ Dashboard pages should lead with the APOD feature, then group operational data i
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
 
+Use inline disclosure details for richer APOD and launch context before introducing separate pages. Details should add source links, credits, mission metadata, or explanatory context without increasing the top-level card weight.
+
 ### Desktop
 
 - 12-column grid
@@ -147,6 +149,7 @@ Use `8px` or less for normal cards and repeated list items unless a larger conta
 - Remove buttons are destructive, clearly labeled, and use red styling.
 - Reorder handles should have generous tap targets and feel easy to grab.
 - Interactive elements should feel obvious without adding unnecessary instructional text.
+- Source links and inline details should use compact text links with clear focus states, not large secondary buttons.
 
 ## Accessibility And Responsiveness
 

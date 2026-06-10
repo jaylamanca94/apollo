@@ -35,10 +35,11 @@ Out of scope for the MVP:
 
 - Responsive Apollo dashboard shell with a dark-first Light/Dark theme toggle.
 - APOD-first feature panel.
+- APOD credit, full-media link, NASA source link, and inline full-description detail.
 - ISS latitude, longitude, altitude, velocity, and current-position map.
 - Crew count and crew list.
-- Upcoming SpaceX launch list through a server-side Launch Library proxy.
-- Near-Earth asteroid summary for the current day.
+- Upcoming SpaceX launch list through a server-side Launch Library proxy with inline mission details.
+- Near-Earth asteroid summary for the current day with lunar-distance, velocity, and hazard-context cues.
 - Refresh action.
 - Loading, empty, and error states.
 - Server-side NASA API key handling.
@@ -57,6 +58,7 @@ Out of scope for the MVP:
 - SpaceX launch listings use Launch Library through `/api/launches`, with a normalized response shape before data reaches the dashboard.
 - Frontend rendering escapes API-provided text before inserting it into the page.
 - Frontend data loaders normalize third-party payloads before rendering visible values.
+- Detail experiences start as inline disclosure panels and source links instead of separate pages.
 - Other public APIs remain browser-side for MVP simplicity.
 - Visual direction now follows the quieter Odyssey-style product shell: Bootstrap-first top navigation, neutral surfaces, simple cards, and low-maintenance spacing.
 - Dashboard content is grouped into Featured, Live Orbit, Upcoming Missions, and Near-Earth Objects sections.
@@ -75,6 +77,7 @@ Recommended next steps:
 3. Add basic monitoring/error visibility if Apollo gets shared more broadly.
 4. Add schema validation for API responses.
 5. Add accessibility QA and browser coverage before a broader public launch.
+6. Decide whether APOD or launch details deserve dedicated URLs after the inline detail pattern is tested.
 
 Future enhancements only if requested:
 

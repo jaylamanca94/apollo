@@ -1,6 +1,6 @@
 # Apollo
 
-Apollo is a small Bootstrap MVP dashboard that pulls public space data into an APOD-first, sectioned card layout. It includes NASA Astronomy Picture of the Day, ISS position, people currently in space, upcoming SpaceX launches, and a NASA Near-Earth Object summary.
+Apollo is a small Bootstrap MVP dashboard that pulls public space data into an APOD-first, sectioned card layout. It includes NASA Astronomy Picture of the Day, ISS position, people currently in space, upcoming SpaceX launches, and a NASA Near-Earth Object summary with calm detail paths for richer context.
 
 ## Recommended Architecture
 
@@ -35,7 +35,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `api/_nasa.js` - shared NASA proxy helper and in-memory cache
 - `api/apod.js` - serverless NASA APOD endpoint
 - `api/neo.js` - serverless NASA NeoWs endpoint
-- `api/launches.js` - serverless Launch Library endpoint for upcoming SpaceX launches
+- `api/launches.js` - serverless Launch Library endpoint for upcoming SpaceX launches and launch detail fields
 - `package.json` - local development/check scripts
 - `vercel.json` - Vercel deployment configuration
 
@@ -119,7 +119,7 @@ This reduces rate-limit pressure and keeps the dashboard usable during normal tr
 - Serverless in-memory cache is per warm function instance and may reset.
 - Public APIs can fail, timeout, or change response formats.
 - Launch listings depend on Launch Library availability and the current SpaceX search result format.
-- This MVP does not include maps, charts, filters, auth, saved settings, or persistence.
+- This MVP does not include charts, filters, auth, saved settings, or persistence.
 - Export, search, notifications, and observation-creation workflows are intentionally not included yet.
 
 ## Production Notes

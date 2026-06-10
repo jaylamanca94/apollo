@@ -41,6 +41,23 @@ function formatDate(value) {
   }).format(date);
 }
 
+function formatDateTime(value) {
+  const date = new Date(value);
+
+  if (!Number.isFinite(date.getTime())) {
+    return "Unavailable";
+  }
+
+  return new Intl.DateTimeFormat([], {
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    month: "short",
+    timeZoneName: "short",
+    year: "numeric"
+  }).format(date);
+}
+
 function formatNumber(value, options = {}) {
   if (value === null || value === undefined || value === "") {
     return "Unavailable";
@@ -90,6 +107,91 @@ function truncateText(value, maxLength = 360) {
 
   const clipped = text.slice(0, maxLength).replace(/\s+\S*$/, "");
   return `${clipped}...`;
+}
+
+function formatCountdown(value) {
+  const launchDate = new Date(value);
+
+  if (!Number.isFinite(launchDate.getTime())) {
+    return "Date unavailable";
+  }
+
+  const diffMs = launchDate.getTime() - Date.now();
+  const absMs = Math.abs(diffMs);
+  const days = Math.floor(absMs / 86400000);
+  const hours = Math.floor((absMs % 86400000) / 3600000);
+
+  if (diffMs < 0) {
+    return "Window has opened";
+  }
+
+  if (days > 0) {
+    return `T-${days}d ${hours}h`;
+  }
+
+  return `T-${Math.max(hours, 0)}h`;
+}
+
+function formatLaunchWindow(launch) {
+  if (!launch.windowStart && !launch.windowEnd) {
+    return "";
+  }
+
+  const start = launch.windowStart ? formatDateTime(launch.windowStart) : "";
+  const end = launch.windowEnd ? formatDateTime(launch.windowEnd) : "";
+
+  if (start && end && start !== end) {
+    return `${start} to ${end}`;
+  }
+
+  return start || end;
+}
+
+function formatDistanceKilometers(value) {
+  return Number.isFinite(value) ? `${Math.round(value).toLocaleString()} km` : "Unavailable";
+}
+
+function formatLunarDistance(value) {
+  if (!Number.isFinite(value)) {
+    return "Unavailable";
+  }
+
+  return `${value.toLocaleString([], {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: value < 10 ? 1 : 0
+  })} lunar distances`;
+}
+
+function formatVelocityKph(value) {
+  return Number.isFinite(value) ? `${Math.round(value).toLocaleString()} km/h` : "Unavailable";
+}
+
+function formatDiameterRange(minValue, maxValue) {
+  const min = Number.isFinite(minValue) ? Math.round(minValue).toLocaleString() : "";
+  const max = Number.isFinite(maxValue) ? Math.round(maxValue).toLocaleString() : "";
+
+  if (min && max && min !== max) {
+    return `${min} to ${max} m`;
+  }
+
+  if (max) {
+    return `Up to ${max} m`;
+  }
+
+  if (min) {
+    return `${min} m`;
+  }
+
+  return "Size unavailable";
+}
+
+function getApodSourceUrl(date) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return "https://apod.nasa.gov/apod/";
+  }
+
+  const [year, month, day] = date.split("-");
+  return `https://apod.nasa.gov/apod/ap${year.slice(2)}${month}${day}.html`;
 }
 
 function getStoredTheme() {
@@ -162,12 +264,17 @@ function getFiniteNumber(value) {
 }
 
 function normalizeApod(data) {
+  const date = getText(data?.date);
+
   return {
     title: getText(data?.title, "Astronomy Picture of the Day"),
-    date: getText(data?.date),
+    date,
     explanation: getText(data?.explanation, "No description available."),
     mediaType: getText(data?.media_type),
-    mediaUrl: safeHttpUrl(data?.url)
+    mediaUrl: safeHttpUrl(data?.url),
+    hdUrl: safeHttpUrl(data?.hdurl),
+    copyright: getText(data?.copyright),
+    sourceUrl: getApodSourceUrl(date)
   };
 }
 
@@ -201,7 +308,13 @@ function normalizeLaunches(data) {
       status: getText(launch?.status, "Upcoming"),
       details: getText(launch?.details, "No mission details available."),
       imageUrl: safeHttpUrl(launch?.imageUrl),
-      provider: getText(launch?.provider, "SpaceX")
+      vehicle: getText(launch?.vehicle),
+      pad: getText(launch?.pad),
+      location: getText(launch?.location),
+      windowStart: getText(launch?.windowStart),
+      windowEnd: getText(launch?.windowEnd),
+      provider: getText(launch?.provider, "SpaceX"),
+      sourceUrl: safeHttpUrl(launch?.sourceUrl)
     }))
     .filter((launch) => launch.name && launch.dateUtc);
 }
@@ -212,13 +325,21 @@ function normalizeNeo(data, date) {
     : [];
 
   return asteroids.map((item) => {
-    const closestKilometers = getFiniteNumber(item?.close_approach_data?.[0]?.miss_distance?.kilometers);
+    const approach = item?.close_approach_data?.[0] || {};
+    const closestKilometers = getFiniteNumber(approach?.miss_distance?.kilometers);
+    const lunarDistance = getFiniteNumber(approach?.miss_distance?.lunar);
+    const velocityKph = getFiniteNumber(approach?.relative_velocity?.kilometers_per_hour);
+    const minDiameterKilometers = getFiniteNumber(item?.estimated_diameter?.kilometers?.estimated_diameter_min);
     const maxDiameterKilometers = getFiniteNumber(item?.estimated_diameter?.kilometers?.estimated_diameter_max);
 
     return {
       name: getText(item?.name, "Unnamed object"),
       hazardous: Boolean(item?.is_potentially_hazardous_asteroid),
       closestKilometers,
+      lunarDistance,
+      velocityKph,
+      closeApproach: getText(approach?.close_approach_date_full || approach?.close_approach_date),
+      minDiameterMeters: minDiameterKilometers === null ? null : minDiameterKilometers * 1000,
       maxDiameterMeters: maxDiameterKilometers === null ? null : maxDiameterKilometers * 1000
     };
   });
@@ -360,14 +481,21 @@ async function loadApod() {
   try {
     const data = normalizeApod(await fetchJson(API.apod));
     const title = escapeHtml(data.title);
+    const mediaUrl = escapeHtml(data.mediaUrl);
+    const fullImageUrl = escapeHtml(data.hdUrl || data.mediaUrl);
+    const sourceUrl = escapeHtml(data.sourceUrl);
     const summaryText = truncateText(data.explanation);
     const explanation = escapeHtml(data.explanation);
     const summary = escapeHtml(summaryText);
     const hasLongExplanation = summaryText !== data.explanation;
     const media = data.mediaUrl && data.mediaType === "image"
-      ? `<img class="img-fluid rounded apod-media mb-4" src="${data.mediaUrl}" alt="${title}">`
+      ? `
+        <a class="apod-media-link d-block mb-4" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
+          <img class="img-fluid rounded apod-media" src="${mediaUrl}" alt="${title}">
+        </a>
+      `
       : data.mediaUrl
-        ? `<div class="ratio ratio-16x9 mb-4"><iframe class="rounded" src="${data.mediaUrl}" title="${title}" allowfullscreen></iframe></div>`
+        ? `<div class="ratio ratio-16x9 mb-4"><iframe class="rounded" src="${mediaUrl}" title="${title}" allowfullscreen></iframe></div>`
         : "";
 
     els.apodBody.innerHTML = `
@@ -375,6 +503,7 @@ async function loadApod() {
       <div class="apod-content">
         <p class="text-secondary small mb-2">${data.date ? formatDate(data.date) : "Today"}</p>
         <h3 class="h2 fw-semibold mb-3">${title}</h3>
+        ${data.copyright ? `<p class="text-secondary small mb-3">Credit: ${escapeHtml(data.copyright)}</p>` : ""}
         <p class="mb-0 apod-summary">${summary}</p>
         ${hasLongExplanation ? `
           <details class="apod-details mt-3">
@@ -382,6 +511,18 @@ async function loadApod() {
             <p class="mb-0 mt-2">${explanation}</p>
           </details>
         ` : ""}
+        <div class="detail-action-row mt-3">
+          ${data.mediaType === "image" && fullImageUrl ? `
+            <a class="source-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
+              <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+              Open full image
+            </a>
+          ` : ""}
+          <a class="source-link" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
+            <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+            NASA source
+          </a>
+        </div>
       </div>
     `;
   } catch (error) {
@@ -467,18 +608,50 @@ async function loadLaunches() {
       <p class="text-secondary small mb-3">${launches.length} upcoming SpaceX launches from Launch Library 2.</p>
       <div class="list-group list-group-flush">
         ${launches.map((launch) => {
-          const badge = `<span class="badge text-bg-primary">${escapeHtml(launch.status)}</span>`;
+          const badge = `<span class="badge rounded-pill text-bg-primary">${escapeHtml(launch.status)}</span>`;
+          const launchWindow = formatLaunchWindow(launch);
+          const summaryDetails = escapeHtml(truncateText(launch.details, 190));
+          const fullDetails = escapeHtml(launch.details);
+          const detailRows = [
+            ["Vehicle", launch.vehicle],
+            ["Provider", launch.provider],
+            ["Pad", launch.pad],
+            ["Location", launch.location],
+            ["Launch window", launchWindow]
+          ]
+            .filter(([, value]) => value)
+            .map(([label, value]) => `
+              <div>
+                <dt>${label}</dt>
+                <dd>${escapeHtml(value)}</dd>
+              </div>
+            `)
+            .join("");
+
           return `
             <article class="list-group-item px-0 py-3">
               <div class="d-flex gap-3">
-                ${launch.imageUrl ? `<img src="${launch.imageUrl}" alt="" width="44" height="44" class="d-none d-sm-block">` : ""}
+                ${launch.imageUrl ? `<img src="${escapeHtml(launch.imageUrl)}" alt="" width="48" height="48" class="launch-thumb d-none d-sm-block">` : ""}
                 <div class="flex-grow-1">
                   <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
                     <h3 class="h6 mb-0">${escapeHtml(launch.name)}</h3>
                     <div>${badge}</div>
                   </div>
-                  <p class="text-secondary small mb-2">${formatDate(launch.dateUtc)} · ${escapeHtml(launch.provider)}</p>
-                  <p class="mb-0 text-body-secondary">${escapeHtml(launch.details)}</p>
+                  <p class="text-secondary small mb-2">${formatDateTime(launch.dateUtc)} · ${formatCountdown(launch.dateUtc)}</p>
+                  <p class="mb-0 text-body-secondary">${summaryDetails}</p>
+                  <details class="data-details launch-details mt-3">
+                    <summary class="fw-semibold">Mission details</summary>
+                    <div class="data-detail-panel mt-3">
+                      <p class="mb-3">${fullDetails}</p>
+                      ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
+                      ${launch.sourceUrl ? `
+                        <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+                          <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                          Launch Library source
+                        </a>
+                      ` : ""}
+                    </div>
+                  </details>
                 </div>
               </div>
             </article>
@@ -495,11 +668,20 @@ async function loadNeo() {
   try {
     const date = todayIso();
     const asteroids = normalizeNeo(await fetchJson(`${API.neo}?date=${date}`), date);
+    const sortedAsteroids = [...asteroids].sort((a, b) => {
+      const left = Number.isFinite(a.closestKilometers) ? a.closestKilometers : Number.POSITIVE_INFINITY;
+      const right = Number.isFinite(b.closestKilometers) ? b.closestKilometers : Number.POSITIVE_INFINITY;
+      return left - right;
+    });
     const hazardous = asteroids.filter((item) => item.hazardous).length;
-    const closest = asteroids
-      .map((item) => item.closestKilometers)
+    const closestObject = sortedAsteroids.find((item) => Number.isFinite(item.closestKilometers));
+    const fastestVelocity = asteroids
+      .map((item) => item.velocityKph)
       .filter(Number.isFinite)
-      .sort((a, b) => a - b)[0];
+      .sort((a, b) => b - a)[0];
+    const hazardSummary = hazardous === 0
+      ? "No listed objects are flagged as potentially hazardous today."
+      : `${hazardous} listed ${hazardous === 1 ? "object is" : "objects are"} flagged for NASA tracking. That flag reflects size and orbit, not an expected impact.`;
 
     els.neoBody.innerHTML = `
       <div class="metadata-grid mb-3">
@@ -513,19 +695,30 @@ async function loadNeo() {
         </div>
         <div>
           <p class="text-secondary small mb-1">Closest approach</p>
-          <p class="fw-semibold mb-0">${Number.isFinite(closest) ? `${Math.round(closest).toLocaleString()} km` : "Unavailable"}</p>
+          <p class="fw-semibold mb-0">${formatLunarDistance(closestObject?.lunarDistance)}</p>
+          <p class="text-secondary small mb-0">${formatDistanceKilometers(closestObject?.closestKilometers)}</p>
         </div>
         <div>
-          <p class="text-secondary small mb-1">Report date</p>
-          <p class="fw-semibold mb-0">${formatDate(date)}</p>
+          <p class="text-secondary small mb-1">Fastest relative speed</p>
+          <p class="fw-semibold mb-0">${formatVelocityKph(fastestVelocity)}</p>
         </div>
+      </div>
+      <div class="neo-risk-note mb-3">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <p class="mb-0">${hazardSummary}</p>
       </div>
       ${asteroids.length ? `
         <ul class="list-group list-group-flush">
-          ${asteroids.slice(0, 4).map((item) => `
-            <li class="list-group-item px-0 py-3 d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3">
-              <span>${escapeHtml(item.name)}</span>
-              <span class="text-secondary text-sm-end">${item.maxDiameterMeters === null ? "Size unavailable" : `${Math.round(item.maxDiameterMeters).toLocaleString()} m max`}</span>
+          ${sortedAsteroids.slice(0, 5).map((item) => `
+            <li class="list-group-item px-0 py-3 asteroid-row">
+              <div>
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                  <span class="fw-semibold">${escapeHtml(item.name)}</span>
+                  ${item.hazardous ? `<span class="badge rounded-pill text-bg-warning">Potentially hazardous</span>` : ""}
+                </div>
+                <p class="text-secondary small mb-0">${formatLunarDistance(item.lunarDistance)} · ${formatVelocityKph(item.velocityKph)}</p>
+              </div>
+              <span class="text-secondary text-sm-end">${formatDiameterRange(item.minDiameterMeters, item.maxDiameterMeters)}</span>
             </li>
           `).join("")}
         </ul>

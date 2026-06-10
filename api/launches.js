@@ -55,6 +55,11 @@ function normalizeLaunch(launch) {
     status: getText(launch.status?.name) || "Upcoming",
     details: getText(launch.mission?.description) || getText(launch.status?.description),
     imageUrl: safeHttpUrl(launch.image?.thumbnail_url || launch.image?.image_url),
+    vehicle: getText(launch.rocket?.configuration?.name),
+    pad: getText(launch.pad?.name),
+    location: getText(launch.pad?.location?.name),
+    windowStart: getText(launch.window_start),
+    windowEnd: getText(launch.window_end),
     provider: getText(launch.launch_service_provider?.name) || "SpaceX",
     sourceUrl: safeHttpUrl(launch.url)
   };

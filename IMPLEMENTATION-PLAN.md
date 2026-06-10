@@ -164,6 +164,9 @@ Option C: Framework Routing Later
 Recommended Approach:
 Start with Option A for APOD and launch details. Move to Option B only after the product proves the detail views are useful enough to deserve dedicated URLs.
 
+Current Decision:
+Apollo now starts with inline detail paths for APOD, launches, and asteroid context. APOD exposes credit, full media, NASA source, and full description. Launches expose mission details, vehicle, pad, location, launch window, and source. Asteroids expose lunar-distance, velocity, and hazard-context cues. Dedicated URLs remain deferred.
+
 Acceptance Criteria:
 - Only 2-3 detail experiences are introduced.
 - Each detail page or panel adds information that is not already useful on the main dashboard.
