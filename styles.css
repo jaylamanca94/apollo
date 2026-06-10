@@ -177,10 +177,10 @@ body {
 
 .btn.apollo-refresh-button {
   align-items: center;
-  background: transparent;
-  border: 1px solid var(--apollo-accent);
+  background: transparent !important;
+  border: 1px solid var(--apollo-accent) !important;
   border-radius: 999px;
-  color: var(--apollo-accent);
+  color: var(--apollo-accent) !important;
   display: inline-flex;
   font-size: 1rem;
   font-weight: 750;
@@ -192,15 +192,15 @@ body {
 
 .btn.apollo-refresh-button:hover,
 .btn.apollo-refresh-button:focus-visible {
-  background: var(--apollo-accent);
-  border-color: var(--apollo-accent);
-  color: #ffffff;
+  background: var(--apollo-accent) !important;
+  border-color: var(--apollo-accent) !important;
+  color: #ffffff !important;
 }
 
 .btn.apollo-refresh-button:disabled {
-  background: transparent;
-  border-color: var(--apollo-border-strong);
-  color: var(--apollo-muted);
+  background: transparent !important;
+  border-color: var(--apollo-border-strong) !important;
+  color: var(--apollo-muted) !important;
   opacity: 1;
 }
 
