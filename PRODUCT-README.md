@@ -44,6 +44,7 @@ Out of scope for the MVP:
 - Loading, empty, and error states.
 - Server-side NASA API key handling.
 - Lightweight serverless caching for NASA and launch responses.
+- Automated fixture tests for normalized APOD, launch, and Near-Earth Object API contracts.
 
 ## Design Decisions
 
@@ -76,9 +77,8 @@ Recommended next steps:
 1. Rotate the NASA API key in Vercel after the early key exposure issue.
 2. Run final production QA after key rotation.
 3. Add basic monitoring/error visibility if Apollo gets shared more broadly.
-4. Add automated API contract fixture tests for the normalized APOD, launch, and NEO shapes.
-5. Add accessibility QA and browser coverage before a broader public launch.
-6. Decide whether APOD or launch details deserve dedicated URLs after the inline detail pattern is tested.
+4. Add accessibility QA and browser coverage before a broader public launch.
+5. Decide whether APOD or launch details deserve dedicated URLs after the inline detail pattern is tested.
 
 Future enhancements only if requested:
 

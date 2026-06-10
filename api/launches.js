@@ -115,7 +115,7 @@ async function requestLaunches() {
   return normalizedPayload;
 }
 
-module.exports = async function handler(request, response) {
+async function handler(request, response) {
   if (request.method !== "GET") {
     sendJson(response, 405, {
       error: {
@@ -137,4 +137,7 @@ module.exports = async function handler(request, response) {
       }
     });
   }
-};
+}
+
+module.exports = handler;
+module.exports.normalizeLaunchLibraryPayload = normalizeLaunchLibraryPayload;

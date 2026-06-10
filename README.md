@@ -37,6 +37,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `api/apod.js` - serverless NASA APOD endpoint with a normalized dashboard contract
 - `api/neo.js` - serverless NASA NeoWs endpoint with a normalized dashboard contract
 - `api/launches.js` - serverless Launch Library endpoint for upcoming SpaceX launches and launch detail fields
+- `tests/api-contracts.test.js` - fixture tests for normalized API response contracts
 - `package.json` - local development/check scripts
 - `vercel.json` - Vercel deployment configuration
 
@@ -114,6 +115,16 @@ The NASA proxy includes lightweight caching:
 
 This reduces rate-limit pressure and keeps the dashboard usable during normal traffic. It is intentionally simple and does not add persistence.
 
+## Checks
+
+Run the project checks with:
+
+```bash
+npm run check
+```
+
+This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, and launch contracts.
+
 ## Known Limitations
 
 - NASA data depends on the server-side `NASA_API_KEY` being configured.
@@ -128,7 +139,6 @@ This reduces rate-limit pressure and keeps the dashboard usable during normal tr
 For a larger public launch, consider:
 
 - External cache or edge cache strategy
-- Automated API contract fixture tests
 - Monitoring and error logging
 - Accessibility audit
 - CI checks
