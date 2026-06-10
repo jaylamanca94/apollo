@@ -26,14 +26,24 @@ async function requestApodWithFallback(date = new Date()) {
     getIsoDateInTimeZone(date, APOD_TIME_ZONE),
     getIsoDateInTimeZone(addDays(date, -1), APOD_TIME_ZONE)
   ].filter((value, index, values) => values.indexOf(value) === index);
+  const candidates = [
+    {
+      cacheKey: "apod:default",
+      params: {}
+    },
+    ...targetDates.map((targetDate) => ({
+      cacheKey: `apod:${targetDate}`,
+      params: { date: targetDate }
+    }))
+  ];
   let lastError = null;
 
-  for (const targetDate of targetDates) {
+  for (const candidate of candidates) {
     try {
       return await requestNasa(
         "/planetary/apod",
-        { date: targetDate },
-        `apod:${targetDate}`,
+        candidate.params,
+        candidate.cacheKey,
         APOD_CACHE_SECONDS
       );
     } catch (error) {

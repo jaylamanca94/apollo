@@ -52,7 +52,7 @@ Out of scope for the MVP:
 - Vercel for deployment and serverless API routes.
 - NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`.
 - NASA API keys stay server-side via `NASA_API_KEY`.
-- APOD is requested by the current Eastern date with a one-day fallback to avoid UTC publish-window failures.
+- APOD tries NASA's default response first, then Eastern-date fallbacks to avoid UTC publish-window failures.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
 - SpaceX launch listings use Launch Library through `/api/launches`, with a normalized response shape before data reaches the dashboard.
 - Frontend rendering escapes API-provided text before inserting it into the page.
