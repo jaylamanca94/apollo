@@ -19,6 +19,21 @@ The next version should present NASA's image of the day as the primary feature, 
 
 ## Fixes
 
+### Remove Internal Source Language
+
+Problem:
+Technical source names such as "Launch Library 2" are useful to developers but feel noisy and implementation-specific in the UI.
+
+Implementation:
+- Replace user-facing language like "Launch Library 2" with plain product language such as "Launch schedule," "Launch data," or "Upcoming launches."
+- Keep technical source names in code comments, README/API documentation, or a quiet source note only when needed for transparency.
+- If attribution is shown, use readable source language such as "Source: The Space Devs launch data" instead of versioned API naming.
+
+Acceptance Criteria:
+- No visible UI copy says "Launch Library 2."
+- Users can understand the data category without needing to know API vendor names.
+- Developer documentation can still identify the underlying API/version.
+
 ### Remove "Spacecraft unknown"
 
 Problem:
@@ -49,6 +64,42 @@ Acceptance Criteria:
 - No metric or timestamp is repeated without adding context.
 - Every remaining label helps the user understand the data.
 - The page feels lighter while preserving trust in the data sources.
+
+### Two-Column People In Space Grid
+
+Problem:
+The people-in-space list can become tall and visually heavier than its importance on the dashboard.
+
+Implementation:
+- Render crew members in a two-column grid on desktop and tablet.
+- Collapse to one column on mobile.
+- Keep each person row compact: name first, craft label only when available.
+- Avoid oversized icons or repeated person icons for every row.
+
+Naming Guidance:
+- Prefer "People in Space" or "Crew in Space" over "Astronauts" for the main UI.
+- Reason: "Astronauts" is familiar, but "people in space" is more accurate across astronauts, cosmonauts, taikonauts, and commercial/private crew.
+- If the product wants a warmer label, use "Crew in Space" as the best compromise.
+
+Acceptance Criteria:
+- Crew list uses two columns where space allows.
+- Mobile remains one column and readable.
+- The label does not incorrectly narrow the group to only astronauts.
+
+### Remove Redundant Section Icons
+
+Problem:
+Icons are useful in summary cards, but repeated section icons can make the page feel busy when the section titles already communicate the content.
+
+Implementation:
+- Keep icons only where they help scanning, such as compact stat chips or empty/error states.
+- Remove decorative icons from section headers if they repeat the same idea as the title.
+- Do not use an icon for every repeated list item unless it provides distinct meaning.
+
+Acceptance Criteria:
+- Section headers feel quieter.
+- Icons are used intentionally and sparingly.
+- No section relies on icons alone to communicate meaning.
 
 ## Enhancements
 
@@ -120,7 +171,106 @@ Acceptance Criteria:
 - No nav links jump to sections on the same page.
 - The header remains clean on mobile and desktop.
 
+### Use Positive Alert Styling For Safe Asteroid Status
+
+Problem:
+"No listed objects are flagged as potentially hazardous today" is good news, so warning or danger styling creates the wrong emotional signal.
+
+Implementation:
+- When the hazardous asteroid count is zero, show the message as a green/success alert.
+- Suggested copy: "No listed objects are flagged as potentially hazardous today."
+- Use warning/danger styling only when the data indicates a condition that needs attention or when the data failed to load.
+- Keep the tone factual and calm.
+
+Acceptance Criteria:
+- Zero hazardous objects renders with success/green styling.
+- Error states still use warning styling.
+- The color language matches the meaning of the message.
+
 ## New Features
+
+### Additional APIs For Dashboard Data
+
+Opportunity:
+Apollo can become more useful by adding a small number of adjacent space, weather, and technology signals. These should be selected for dashboard value, reliability, and low maintenance cost.
+
+Recommended API Candidates:
+
+1. NOAA Space Weather Prediction Center
+   - Use for current space weather conditions, aurora, geomagnetic activity, solar wind, and alerts.
+   - Good dashboard fit because it explains whether space weather is calm, elevated, or worth noticing.
+   - Primary source reference: `https://www.swpc.noaa.gov/products-and-data`
+
+2. Open-Meteo Forecast API
+   - Use for local viewing conditions if Apollo adds a user-selected location.
+   - Relevant variables include cloud cover, visibility, precipitation, and weather code.
+   - Good fit for "Can I see the sky tonight?" style features.
+   - Primary source reference: `https://open-meteo.com/en/docs`
+
+3. NASA CCMC DONKI
+   - Use for recent solar flares, coronal mass ejections, geomagnetic storms, and related space weather events.
+   - Better suited for a detail panel than a small summary tile because the data is technical.
+   - Keep language careful and non-alarmist.
+   - Primary source reference: `https://ccmc.gsfc.nasa.gov/tools/DONKI/`
+
+4. CelesTrak GP Data
+   - Use for satellite/orbital context if Apollo later adds an ISS map, orbital path, or satellite-detail view.
+   - Supports JSON output for general perturbation data.
+   - Better as infrastructure for a map/detail feature than a standalone dashboard card.
+   - Primary source reference: `https://celestrak.org/NORAD/documentation/gp-data-formats.php`
+
+Implementation Guidance:
+- Do not add all APIs at once.
+- Prioritize NOAA SWPC first because it expands Apollo beyond static facts into current conditions.
+- Add Open-Meteo only when Apollo has a location input or saved location.
+- Proxy new APIs through serverless routes when caching, rate limits, response normalization, or CORS reliability matter.
+- Normalize every external response before rendering it in the UI.
+
+Acceptance Criteria:
+- Any added API has a clear dashboard purpose.
+- New data is grouped into the existing information architecture instead of creating unrelated cards.
+- Each API has a loading, empty, error, and stale-data state.
+
+### Launches Detail Page
+
+Opportunity:
+Launches are one of the strongest candidates for a dedicated detail page because users may want more than the dashboard can comfortably show.
+
+Recommended Route:
+- Add a lightweight static page at `launches.html`.
+- If deployed on Vercel, it can be surfaced as `/launches` later with routing or rewrites if desired.
+
+Dashboard Behavior:
+- Keep the main dashboard launch section compact.
+- Show only the next 3-5 launches with date, mission name, provider, and status.
+- Add a clear "View all launches" action that opens the launches detail page.
+
+Detail Page Content:
+- Full upcoming launch list.
+- Mission name.
+- Launch provider.
+- Vehicle/rocket if available.
+- Launch date/time and countdown when available.
+- Launch status/window status.
+- Pad/location when available.
+- Mission description.
+- Watch link or official link only when available and validated as a safe URL.
+
+Filtering And Sorting:
+- Start simple with chronological sorting.
+- Consider filters later for provider, launch status, crewed/uncrewed, and date range.
+- Do not add filters until there is enough launch volume to justify them.
+
+Data Guidance:
+- Prefer normalized launch data from the chosen launch source.
+- If Apollo expands beyond SpaceX, avoid SpaceX-specific naming in UI and data models.
+- Use plain labels such as "Provider," "Vehicle," "Launch window," and "Status."
+
+Acceptance Criteria:
+- Dashboard remains compact after adding the detail page.
+- The launches page adds meaningful detail, not just a longer copy of the dashboard card.
+- The page works without a framework migration.
+- Empty and error states are specific to launch data.
 
 ### Detail Pages For The Most Valuable Data
 
@@ -183,12 +333,17 @@ Acceptance Criteria:
 1. Remove noisy fallback copy and redundant labels.
 2. Consolidate timestamps into one global updated state.
 3. Remove header section navigation.
-4. Rebalance the dashboard layout around APOD as the main feature.
-5. Group ISS and crew into Live Orbit.
-6. Group launches into Upcoming Missions.
-7. Group asteroid data into Near-Earth Objects.
-8. Decide whether APOD and launch detail should be expandable panels or separate static pages.
-9. Update `PRODUCT-README.md` and `DESIGN-README.md` after final UX decisions are implemented.
+4. Remove internal API/version language from user-facing copy.
+5. Reduce redundant section icon usage.
+6. Convert the crew list to a responsive two-column layout.
+7. Rebalance the dashboard layout around APOD as the main feature.
+8. Group ISS and crew into Live Orbit.
+9. Group launches into Upcoming Missions.
+10. Group asteroid data into Near-Earth Objects.
+11. Add success styling for safe asteroid status.
+12. Add the launches detail page.
+13. Decide which additional API, if any, should be added first.
+14. Update `PRODUCT-README.md` and `DESIGN-README.md` after final UX decisions are implemented.
 
 ## Out Of Scope For This Pass
 
@@ -200,6 +355,7 @@ Acceptance Criteria:
 - Database-backed workflows
 - A full framework migration
 - Detail pages for every data card
+- Adding multiple new external APIs in one pass
 
 ## Open Product Questions
 
@@ -207,3 +363,5 @@ Acceptance Criteria:
 - Should APOD explanation text be shown fully on the dashboard, or shortened with a detail path?
 - Should detail views be inline panels first, or should the product immediately introduce separate URLs?
 - Is the long-term brand "Apollo" or "Apollo Space" if the domain becomes `apollospace.app`?
+- Should the crew section use "People in Space" for precision or "Crew in Space" for tone?
+- Should the first new API be space-weather-focused, or should Apollo add local sky-viewing weather first?
