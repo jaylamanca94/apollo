@@ -127,6 +127,8 @@ npm run check
 
 This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, and launch contracts.
 
+GitHub Actions runs the same checks on pushes to `main` and on pull requests.
+
 ## Health Check
 
 Apollo exposes a small server health endpoint at:
@@ -153,5 +155,4 @@ For a larger public launch, consider:
 - External cache or edge cache strategy
 - External monitoring and error logging wired to `/api/health`
 - Accessibility audit
-- CI checks
 - CSP/security header review

@@ -46,6 +46,7 @@ Out of scope for the MVP:
 - Lightweight serverless caching for NASA and launch responses.
 - Automated fixture tests for normalized APOD, launch, and Near-Earth Object API contracts.
 - `/api/health` endpoint for uptime checks and server-side NASA key configuration status.
+- GitHub Actions check workflow for pushes to `main` and pull requests.
 
 ## Design Decisions
 
