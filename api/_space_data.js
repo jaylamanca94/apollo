@@ -137,6 +137,30 @@ function getKpCondition(kpIndex) {
   };
 }
 
+function getNoaaScale(kpIndex) {
+  if (!Number.isFinite(kpIndex) || kpIndex < 5) {
+    return "";
+  }
+
+  if (kpIndex >= 9) {
+    return "G5";
+  }
+
+  if (kpIndex >= 8) {
+    return "G4";
+  }
+
+  if (kpIndex >= 7) {
+    return "G3";
+  }
+
+  if (kpIndex >= 6) {
+    return "G2";
+  }
+
+  return "G1";
+}
+
 function getAlertHeadline(message) {
   const lines = getText(message)
     .split(/\r?\n/)
@@ -151,8 +175,51 @@ function getAlertHeadline(message) {
   return lines.find((line) => !/^space weather message code:/i.test(line) && !/^serial number:/i.test(line) && !/^issue time:/i.test(line)) || "";
 }
 
+function normalizeKpForecast(items) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  const dailyForecast = new Map();
+
+  items.forEach((item) => {
+    const observedType = getText(item?.observed).toLowerCase();
+
+    if (!["estimated", "predicted"].includes(observedType)) {
+      return;
+    }
+
+    const observedAt = parseNoaaDate(item?.time_tag);
+    const date = observedAt.slice(0, 10);
+    const kpIndex = getFiniteNumber(item?.kp);
+
+    if (!date || kpIndex === null) {
+      return;
+    }
+
+    const existing = dailyForecast.get(date);
+
+    if (!existing || kpIndex > existing.maxKp) {
+      const condition = getKpCondition(kpIndex);
+
+      dailyForecast.set(date, {
+        date,
+        maxKp: kpIndex,
+        noaaScale: getText(item?.noaa_scale) || getNoaaScale(kpIndex),
+        condition: condition.condition,
+        severity: condition.severity
+      });
+    }
+  });
+
+  return [...dailyForecast.values()]
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(0, 3);
+}
+
 function normalizeSpaceWeatherPayload(payload) {
   const kIndexItems = Array.isArray(payload?.kIndex) ? payload.kIndex : [];
+  const kpForecastItems = Array.isArray(payload?.kpForecast) ? payload.kpForecast : [];
   const alerts = Array.isArray(payload?.alerts) ? payload.alerts : [];
   const latestKp = kIndexItems
     .map((item) => ({
@@ -179,6 +246,7 @@ function normalizeSpaceWeatherPayload(payload) {
       kpIndex: latestKp.kpIndex ?? null,
       kpLabel: latestKp.kpLabel || "",
       ...condition,
+      forecast: normalizeKpForecast(kpForecastItems),
       alerts: normalizedAlerts,
       sourceUrl: "https://www.swpc.noaa.gov/products-and-data"
     },

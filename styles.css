@@ -768,6 +768,54 @@ html[data-bs-theme="light"] .data-detail-panel {
   white-space: nowrap;
 }
 
+.space-weather-forecast {
+  border-top: 1px solid var(--apollo-border);
+  padding-top: 1rem;
+}
+
+.space-weather-forecast-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.space-weather-forecast-day {
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 0.875rem;
+}
+
+.space-weather-forecast-day.space-weather-quiet {
+  background: var(--apollo-success-soft);
+  border-color: color-mix(in srgb, var(--apollo-success) 30%, transparent);
+}
+
+.space-weather-forecast-day.space-weather-active {
+  background: var(--apollo-warning-soft);
+  border-color: color-mix(in srgb, var(--apollo-warning) 34%, transparent);
+}
+
+.space-weather-forecast-day.space-weather-storm {
+  background: var(--apollo-accent-soft);
+  border-color: rgba(255, 64, 86, 0.28);
+}
+
+.space-weather-forecast-date,
+.space-weather-forecast-condition {
+  color: var(--apollo-muted-strong);
+  font-size: 0.8125rem;
+  line-height: 1.25;
+}
+
+.space-weather-forecast-kp {
+  color: var(--bs-body-color);
+  font-size: 1.125rem;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
 .space-weather-alerts {
   border-top: 1px solid var(--apollo-border);
   padding-top: 1rem;
@@ -1063,6 +1111,10 @@ html[data-bs-theme="light"] .data-detail-panel {
   .space-weather-status {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .space-weather-forecast-grid {
+    grid-template-columns: 1fr;
   }
 
   .launch-page-card {

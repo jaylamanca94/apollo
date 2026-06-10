@@ -30,7 +30,9 @@ function formatUpdated(date = new Date()) {
 }
 
 function formatDate(value) {
-  const date = new Date(value);
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T12:00:00Z`)
+    : new Date(value);
 
   if (!Number.isFinite(date.getTime())) {
     return "Unavailable";
@@ -39,7 +41,23 @@ function formatDate(value) {
   return new Intl.DateTimeFormat([], {
     month: "short",
     day: "numeric",
+    timeZone: "UTC",
     year: "numeric"
+  }).format(date);
+}
+
+function formatShortDate(value) {
+  const date = new Date(`${value}T12:00:00Z`);
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || !Number.isFinite(date.getTime())) {
+    return "Date unavailable";
+  }
+
+  return new Intl.DateTimeFormat([], {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+    weekday: "short"
   }).format(date);
 }
 
@@ -389,6 +407,7 @@ function normalizeNeo(data, date) {
 function normalizeSpaceWeather(data) {
   const weather = data?.spaceWeather && typeof data.spaceWeather === "object" ? data.spaceWeather : data;
   const alerts = Array.isArray(weather?.alerts) ? weather.alerts : [];
+  const forecast = Array.isArray(weather?.forecast) ? weather.forecast : [];
 
   return {
     observedAt: getText(weather?.observedAt),
@@ -398,6 +417,15 @@ function normalizeSpaceWeather(data) {
     severity: getText(weather?.severity, "quiet"),
     summary: getText(weather?.summary, "Space weather data is unavailable right now."),
     sourceUrl: safeHttpUrl(weather?.sourceUrl) || "https://www.swpc.noaa.gov/products-and-data",
+    forecast: forecast
+      .map((item) => ({
+        date: getText(item?.date),
+        maxKp: getFiniteNumber(item?.maxKp),
+        noaaScale: getText(item?.noaaScale),
+        condition: getText(item?.condition, "Unavailable"),
+        severity: getText(item?.severity, "quiet")
+      }))
+      .filter((item) => item.date && item.maxKp !== null),
     alerts: alerts
       .map((alert) => ({
         productId: getText(alert?.productId),
@@ -817,6 +845,7 @@ async function loadSpaceWeather() {
     const data = normalizeSpaceWeather(await fetchJson(API.spaceWeather));
     const severityClass = `space-weather-${data.severity}`;
     const recentAlerts = data.alerts.slice(0, 2);
+    const forecastRows = data.forecast.slice(0, 3);
 
     els.spaceWeatherBody.innerHTML = `
       <div class="summary-metric mb-3">
@@ -833,6 +862,22 @@ async function loadSpaceWeather() {
         </div>
         ${data.kpLabel ? `<span class="space-weather-kp">${escapeHtml(data.kpLabel)}</span>` : ""}
       </div>
+      ${forecastRows.length ? `
+        <div class="space-weather-forecast mb-3">
+          <p class="text-secondary small mb-2">3-day K-index outlook</p>
+          <div class="space-weather-forecast-grid">
+            ${forecastRows.map((item) => `
+              <article class="space-weather-forecast-day space-weather-${escapeHtml(item.severity)}">
+                <p class="space-weather-forecast-date mb-1">${formatShortDate(item.date)}</p>
+                <p class="space-weather-forecast-kp mb-1">Kp ${formatKpIndex(item.maxKp)}</p>
+                <p class="space-weather-forecast-condition mb-0">
+                  ${escapeHtml(item.noaaScale || item.condition)}
+                </p>
+              </article>
+            `).join("")}
+          </div>
+        </div>
+      ` : ""}
       ${recentAlerts.length ? `
         <div class="space-weather-alerts mb-3">
           <p class="text-secondary small mb-2">Recent SWPC notices</p>

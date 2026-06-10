@@ -4,7 +4,7 @@ This document translates the current product feedback into implementation-ready 
 
 ## Current Implementation Status
 
-The June 10 dashboard pass implements the first wave of this plan: user-facing launch source language has been simplified, People in Space uses a responsive two-column grid, decorative section-header icons have been removed, the zero-hazard asteroid message uses green success styling, NOAA SWPC space weather has been added as the first additional data source, and `launches.html` now provides a dedicated launch detail view.
+The June 10 dashboard pass implements the first wave of this plan: user-facing launch source language has been simplified, People in Space uses a responsive two-column grid, decorative section-header icons have been removed, the zero-hazard asteroid message uses green success styling, NOAA SWPC space weather now includes current conditions plus a 3-day K-index outlook, and `launches.html` provides a dedicated launch detail view.
 
 ## Objective
 

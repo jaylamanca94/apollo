@@ -56,7 +56,7 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 - ISS current position and people in space as paired operational cards.
 - Launches as a taller list card with three visible launch rows and a link to the launches detail page.
 - Asteroids as a summary card with risk context and nearby object rows.
-- Space weather as a compact status card under asteroid context.
+- Space weather as a compact status card under asteroid context, with current K-index first and a small 3-day outlook below it.
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
 

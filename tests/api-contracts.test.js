@@ -228,6 +228,44 @@ test("normalizeSpaceWeatherPayload returns a stable NOAA dashboard contract", ()
         kp: "4Z"
       }
     ],
+    kpForecast: [
+      {
+        time_tag: "2026-06-10T15:00:00",
+        observed: "observed",
+        noaa_scale: "",
+        kp: 2
+      },
+      {
+        time_tag: "2026-06-10T18:00:00",
+        observed: "estimated",
+        noaa_scale: "",
+        kp: 3
+      },
+      {
+        time_tag: "2026-06-11T00:00:00",
+        observed: "predicted",
+        noaa_scale: "G1",
+        kp: 5
+      },
+      {
+        time_tag: "2026-06-11T03:00:00",
+        observed: "predicted",
+        noaa_scale: "",
+        kp: 4
+      },
+      {
+        time_tag: "2026-06-12T00:00:00",
+        observed: "predicted",
+        noaa_scale: "",
+        kp: 7
+      },
+      {
+        time_tag: "2026-06-13T00:00:00",
+        observed: "predicted",
+        noaa_scale: "",
+        kp: 2
+      }
+    ],
     alerts: [
       {
         product_id: "TIIA",
@@ -245,6 +283,29 @@ test("normalizeSpaceWeatherPayload returns a stable NOAA dashboard contract", ()
       condition: "Active conditions",
       severity: "active",
       summary: "Geomagnetic activity is elevated but below storm level.",
+      forecast: [
+        {
+          date: "2026-06-10",
+          maxKp: 3,
+          noaaScale: "",
+          condition: "Quiet conditions",
+          severity: "quiet"
+        },
+        {
+          date: "2026-06-11",
+          maxKp: 5,
+          noaaScale: "G1",
+          condition: "Minor storm conditions",
+          severity: "storm"
+        },
+        {
+          date: "2026-06-12",
+          maxKp: 7,
+          noaaScale: "G3",
+          condition: "Storm conditions",
+          severity: "storm"
+        }
+      ],
       alerts: [
         {
           productId: "TIIA",
@@ -272,4 +333,5 @@ test("normalizeSpaceWeatherPayload classifies storm-level K-index values", () =>
 
   assert.equal(payload.spaceWeather.condition, "Minor storm conditions");
   assert.equal(payload.spaceWeather.severity, "storm");
+  assert.deepEqual(payload.spaceWeather.forecast, []);
 });

@@ -1,6 +1,6 @@
 # Apollo
 
-Apollo is a small Bootstrap MVP dashboard that pulls public space data into an APOD-first operational layout. It includes NASA Astronomy Picture of the Day, ISS position, people currently in space, upcoming SpaceX launches, NOAA space weather, and a NASA Near-Earth Object summary with calm detail paths for richer context.
+Apollo is a small Bootstrap MVP dashboard that pulls public space data into an APOD-first operational layout. It includes NASA Astronomy Picture of the Day, ISS position, people currently in space, upcoming SpaceX launches, NOAA space weather current conditions and outlook, and a NASA Near-Earth Object summary with calm detail paths for richer context.
 
 ## Recommended Architecture
 
@@ -20,7 +20,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - NASA Astronomy Picture of the Day, proxied and normalized through `/api/apod`
 - NASA NeoWs Near-Earth Object Feed, proxied and normalized through `/api/neo`
 - The Space Devs SpaceX launch data, proxied and normalized through `/api/launches`
-- NOAA Space Weather Prediction Center K-index and alert feeds, proxied and normalized through `/api/space-weather`
+- NOAA Space Weather Prediction Center K-index, forecast, and alert feeds, proxied and normalized through `/api/space-weather`
 - Apollo server health check through `/api/health`
 - Where the ISS At
 - OpenStreetMap tiles for the ISS map
