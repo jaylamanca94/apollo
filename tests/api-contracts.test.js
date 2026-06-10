@@ -6,6 +6,7 @@ const {
   normalizeApodPayload,
   normalizeNeoPayload
 } = require("../api/_space_data");
+const { buildHealthPayload } = require("../api/health");
 const { normalizeLaunchLibraryPayload } = require("../api/launches");
 
 test("isIsoDate accepts Apollo's API date format only", () => {
@@ -13,6 +14,26 @@ test("isIsoDate accepts Apollo's API date format only", () => {
   assert.equal(isIsoDate("2026-6-10"), false);
   assert.equal(isIsoDate("not-a-date"), false);
   assert.equal(isIsoDate(undefined), false);
+});
+
+test("buildHealthPayload reports ready server configuration without exposing secrets", () => {
+  const payload = buildHealthPayload(new Date("2026-06-10T12:00:00.000Z"), {
+    NASA_API_KEY: "secret-key"
+  });
+
+  assert.equal(payload.service, "apollo");
+  assert.equal(payload.status, "ok");
+  assert.equal(payload.timestamp, "2026-06-10T12:00:00.000Z");
+  assert.equal(payload.checks.runtime, "ok");
+  assert.equal(payload.checks.nasaApiKey, "configured");
+  assert.doesNotMatch(JSON.stringify(payload), /secret-key/);
+});
+
+test("buildHealthPayload reports degraded when NASA key is missing", () => {
+  const payload = buildHealthPayload(new Date("2026-06-10T12:00:00.000Z"), {});
+
+  assert.equal(payload.status, "degraded");
+  assert.equal(payload.checks.nasaApiKey, "missing");
 });
 
 test("normalizeApodPayload returns a stable dashboard contract", () => {

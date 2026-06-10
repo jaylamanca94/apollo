@@ -20,6 +20,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - NASA Astronomy Picture of the Day, proxied and normalized through `/api/apod`
 - NASA NeoWs Near-Earth Object Feed, proxied and normalized through `/api/neo`
 - Launch Library 2 SpaceX launch search, proxied and normalized through `/api/launches`
+- Apollo server health check through `/api/health`
 - Where the ISS At
 - OpenStreetMap tiles for the ISS map
 - People in Space JSON
@@ -37,6 +38,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `api/apod.js` - serverless NASA APOD endpoint with a normalized dashboard contract
 - `api/neo.js` - serverless NASA NeoWs endpoint with a normalized dashboard contract
 - `api/launches.js` - serverless Launch Library endpoint for upcoming SpaceX launches and launch detail fields
+- `api/health.js` - serverless health endpoint for uptime checks and server configuration status
 - `tests/api-contracts.test.js` - fixture tests for normalized API response contracts
 - `package.json` - local development/check scripts
 - `vercel.json` - Vercel deployment configuration
@@ -125,6 +127,16 @@ npm run check
 
 This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, and launch contracts.
 
+## Health Check
+
+Apollo exposes a small server health endpoint at:
+
+```text
+/api/health
+```
+
+It returns the app version, timestamp, runtime status, and whether the server-side NASA API key is configured. The key value is never returned.
+
 ## Known Limitations
 
 - NASA data depends on the server-side `NASA_API_KEY` being configured.
@@ -139,7 +151,7 @@ This validates JavaScript syntax and runs fixture tests for the normalized APOD,
 For a larger public launch, consider:
 
 - External cache or edge cache strategy
-- Monitoring and error logging
+- External monitoring and error logging wired to `/api/health`
 - Accessibility audit
 - CI checks
 - CSP/security header review
