@@ -175,8 +175,9 @@ body {
   white-space: nowrap;
 }
 
-.apollo-refresh-button {
+.btn.apollo-refresh-button {
   align-items: center;
+  background: transparent;
   border: 1px solid var(--apollo-accent);
   border-radius: 999px;
   color: var(--apollo-accent);
@@ -189,11 +190,18 @@ body {
   padding: 0.5rem 1.35rem;
 }
 
-.apollo-refresh-button:hover,
-.apollo-refresh-button:focus-visible {
+.btn.apollo-refresh-button:hover,
+.btn.apollo-refresh-button:focus-visible {
   background: var(--apollo-accent);
   border-color: var(--apollo-accent);
   color: #ffffff;
+}
+
+.btn.apollo-refresh-button:disabled {
+  background: transparent;
+  border-color: var(--apollo-border-strong);
+  color: var(--apollo-muted);
+  opacity: 1;
 }
 
 .apollo-card {
