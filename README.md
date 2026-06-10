@@ -7,8 +7,8 @@ Apollo is a small Bootstrap MVP dashboard that pulls public space data into a re
 Use a static frontend with serverless API routes.
 
 - Frontend: vanilla HTML, CSS, and JavaScript
-- UI: Bootstrap CDN
-- Theme: responsive System, Light, and Dark modes
+- UI: Bootstrap CDN, Leaflet, and OpenStreetMap tiles
+- Theme: dark-first Light/Dark mode toggle
 - API proxies: Vercel serverless functions in `/api`
 - Hosting: Vercel
 - Secrets: `NASA_API_KEY` stored as a server-side environment variable
@@ -21,6 +21,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - NASA NeoWs Near-Earth Object Feed, proxied through `/api/neo`
 - Launch Library 2 SpaceX launch search, proxied through `/api/launches`
 - Where the ISS At
+- OpenStreetMap tiles for the ISS map
 - People in Space JSON
 
 ## File Overview

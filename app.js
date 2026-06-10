@@ -8,11 +8,12 @@ const API = {
 
 const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily unavailable because NASA is limiting requests. Other dashboard sections are still live.";
 const THEME_STORAGE_KEY = "apollo-theme";
+let issMap = null;
 
 const els = {
   refreshButton: document.querySelector("#refreshButton"),
   refreshButtonMobile: document.querySelector("#refreshButtonMobile"),
-  themeMode: document.querySelector("#themeMode"),
+  themeToggle: document.querySelector("#themeToggle"),
   peopleCount: document.querySelector("#peopleCount"),
   peopleUpdated: document.querySelector("#peopleUpdated"),
   peopleDetailUpdated: document.querySelector("#peopleDetailUpdated"),
@@ -101,41 +102,50 @@ function getStoredTheme() {
     storedTheme = null;
   }
 
-  return ["light", "dark", "system"].includes(storedTheme) ? storedTheme : "system";
+  return ["light", "dark"].includes(storedTheme) ? storedTheme : "dark";
 }
 
-function getSystemTheme() {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-}
-
-function applyTheme(mode) {
-  const theme = mode === "system" ? getSystemTheme() : mode;
-  document.documentElement.setAttribute("data-bs-theme", theme);
-}
-
-function initThemeControl() {
-  if (!els.themeMode) {
+function updateThemeToggle(theme) {
+  if (!els.themeToggle) {
     return;
   }
 
+  const isDark = theme === "dark";
+  const nextTheme = isDark ? "light" : "dark";
+  const label = `Switch to ${nextTheme} mode`;
+  const icon = els.themeToggle.querySelector("i");
+
+  els.themeToggle.setAttribute("aria-label", label);
+  els.themeToggle.setAttribute("aria-pressed", String(isDark));
+  els.themeToggle.title = label;
+
+  if (icon) {
+    icon.className = `fa-solid ${isDark ? "fa-sun" : "fa-moon"}`;
+  }
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-bs-theme", theme);
+  updateThemeToggle(theme);
+}
+
+function initThemeControl() {
   const storedTheme = getStoredTheme();
-  els.themeMode.value = storedTheme;
   applyTheme(storedTheme);
 
-  els.themeMode.addEventListener("change", (event) => {
-    const mode = event.target.value;
+  if (!els.themeToggle) {
+    return;
+  }
+
+  els.themeToggle.addEventListener("click", () => {
+    const currentTheme = document.documentElement.getAttribute("data-bs-theme") === "light" ? "light" : "dark";
+    const nextTheme = currentTheme === "dark" ? "light" : "dark";
     try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, mode);
+      window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
     } catch (error) {
       // Theme still applies for the current page when storage is unavailable.
     }
-    applyTheme(mode);
-  });
-
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    if (getStoredTheme() === "system") {
-      applyTheme("system");
-    }
+    applyTheme(nextTheme);
   });
 }
 
@@ -239,6 +249,72 @@ function stateMessage(message) {
   return `<p class="state-message text-secondary mb-0">${message}</p>`;
 }
 
+function resetIssMap() {
+  if (issMap) {
+    issMap.remove();
+    issMap = null;
+  }
+}
+
+function renderIssMap(data) {
+  const mapElement = document.querySelector("#issMap");
+
+  if (!mapElement) {
+    return;
+  }
+
+  if (!window.L || data.latitude === null || data.longitude === null) {
+    mapElement.innerHTML = stateMessage("ISS map is unavailable right now.");
+    return;
+  }
+
+  const position = [data.latitude, data.longitude];
+  const icon = window.L.divIcon({
+    className: "iss-map-marker",
+    html: `<i class="fa-solid fa-satellite" aria-hidden="true"></i>`,
+    iconAnchor: [18, 18],
+    iconSize: [36, 36]
+  });
+
+  issMap = window.L.map(mapElement, {
+    attributionControl: true,
+    scrollWheelZoom: false,
+    worldCopyJump: true,
+    zoomControl: false
+  }).setView(position, 2);
+
+  window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
+    maxZoom: 6,
+    minZoom: 1
+  }).addTo(issMap);
+
+  window.L.control.zoom({
+    position: "bottomright"
+  }).addTo(issMap);
+
+  window.L.circle(position, {
+    color: "#198754",
+    fillColor: "#198754",
+    fillOpacity: 0.12,
+    radius: 900000,
+    weight: 1
+  }).addTo(issMap);
+
+  window.L.marker(position, {
+    icon,
+    keyboard: false,
+    title: "Current ISS position"
+  }).addTo(issMap);
+
+  const map = issMap;
+  window.setTimeout(() => {
+    if (issMap === map) {
+      map.invalidateSize();
+    }
+  }, 0);
+}
+
 function setTimestamp(elements, value = formatUpdated()) {
   elements.forEach((element) => {
     element.textContent = value;
@@ -306,6 +382,7 @@ async function loadApod() {
 
 async function loadIss() {
   try {
+    resetIssMap();
     const data = normalizeIss(await fetchJson(API.iss));
     const { latitude, longitude } = data;
     const updated = formatUpdated();
@@ -315,6 +392,7 @@ async function loadIss() {
       : "--";
     setTimestamp([els.issUpdated, els.issDetailUpdated], updated);
     els.issBody.innerHTML = `
+      <div class="iss-map mb-3" id="issMap" role="img" aria-label="Map showing the current ISS position above Earth"></div>
       <div class="metadata-grid">
         <div>
           <p class="text-secondary small mb-1">Current latitude</p>
@@ -335,7 +413,9 @@ async function loadIss() {
       </div>
       <p class="text-secondary small mb-0 mt-3">These coordinates show the station's current position above Earth.</p>
     `;
+    renderIssMap(data);
   } catch (error) {
+    resetIssMap();
     els.issLat.textContent = "--";
     els.issUpdated.textContent = "Error";
     els.issDetailUpdated.textContent = "Error";

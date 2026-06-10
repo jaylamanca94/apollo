@@ -31,7 +31,7 @@ Use this file as the visual source of truth for `Apollo`. Update it whenever spa
 - Page background: `#2B2F32`
 - Content surface: `#212529`
 
-Default to the user's system OS theme setting and provide a compact header selector for System, Light, and Dark.
+Default first-time visitors to Dark Mode and provide a compact header toggle for switching between Light and Dark.
 
 ### Data Accents
 
@@ -44,6 +44,10 @@ Use restrained Bootstrap-aligned accent colors to distinguish dashboard data fam
 - Crew: `#0d6efd`
 
 Apply accents to stat chips, card top borders, and related badges. Keep the main surfaces neutral.
+
+### Maps
+
+Use Leaflet for spatial dashboard views. Keep map frames inside the related data card, match the existing `8px` radius, and mute map tiles in Dark Mode so the panel does not overpower nearby operational data.
 
 ## Layout Grid
 

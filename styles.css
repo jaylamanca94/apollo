@@ -1,16 +1,8 @@
-:root {
-  --apollo-page-bg: #e2e3e5;
-  --apollo-surface-bg: #ffffff;
-  --apollo-accent: #0d6efd;
-  --apollo-accent-soft: rgba(13, 110, 253, 0.14);
-  --bs-body-bg: var(--apollo-page-bg);
-  --bs-body-color: #212529;
-  color-scheme: light;
-}
-
+:root,
 html[data-bs-theme="dark"] {
   --apollo-page-bg: #2b2f32;
   --apollo-surface-bg: #212529;
+  --apollo-accent: #0d6efd;
   --apollo-accent-soft: rgba(13, 110, 253, 0.2);
   --bs-body-bg: var(--apollo-page-bg);
   --bs-body-color: #f8f9fa;
@@ -20,18 +12,17 @@ html[data-bs-theme="dark"] {
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  html:not([data-bs-theme]) {
-    --apollo-page-bg: #2b2f32;
-    --apollo-surface-bg: #212529;
-    --apollo-accent-soft: rgba(13, 110, 253, 0.2);
-    --bs-body-bg: var(--apollo-page-bg);
-    --bs-body-color: #f8f9fa;
-    --bs-secondary-color: rgba(248, 249, 250, 0.68);
-    --bs-tertiary-bg: #2b3035;
-    --bs-border-color: rgba(255, 255, 255, 0.16);
-    color-scheme: dark;
-  }
+html[data-bs-theme="light"] {
+  --apollo-page-bg: #e2e3e5;
+  --apollo-surface-bg: #ffffff;
+  --apollo-accent: #0d6efd;
+  --apollo-accent-soft: rgba(13, 110, 253, 0.14);
+  --bs-body-bg: var(--apollo-page-bg);
+  --bs-body-color: #212529;
+  --bs-secondary-color: #6c757d;
+  --bs-tertiary-bg: #f8f9fa;
+  --bs-border-color: #dee2e6;
+  color-scheme: light;
 }
 
 body {
@@ -68,8 +59,14 @@ body {
   flex: 0 0 auto;
 }
 
-.apollo-theme-control .form-select {
-  min-width: 116px;
+.apollo-theme-toggle {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 2rem;
+  justify-content: center;
+  padding: 0;
+  width: 2rem;
 }
 
 .apollo-brand-icon {
@@ -246,6 +243,51 @@ html[data-bs-theme="dark"] .apollo-accent-crew {
   gap: 1rem;
 }
 
+.iss-map {
+  align-items: center;
+  background: var(--bs-tertiary-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  min-height: 220px;
+  overflow: hidden;
+}
+
+.iss-map .state-message {
+  margin: 1rem;
+}
+
+.iss-map.leaflet-container {
+  color: var(--bs-body-color);
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+html[data-bs-theme="dark"] .iss-map .leaflet-tile {
+  filter: saturate(0.8) brightness(0.74) contrast(1.1);
+}
+
+.iss-map .leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.82);
+  color: #212529;
+  font-size: 0.625rem;
+}
+
+.iss-map-marker {
+  align-items: center;
+  background: var(--apollo-accent);
+  border: 2px solid var(--apollo-surface-bg);
+  border-radius: 50%;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.35);
+  color: #ffffff;
+  display: inline-flex;
+  font-size: 0.9375rem;
+  height: 2.25rem;
+  justify-content: center;
+  width: 2.25rem;
+}
+
 .list-group,
 .list-group-item {
   background: transparent;
@@ -314,10 +356,6 @@ html[data-bs-theme="dark"] .apollo-accent-crew {
     grid-row: 1;
     justify-self: end;
     min-width: 0;
-  }
-
-  .apollo-theme-control {
-    display: none !important;
   }
 
   .apollo-shell {

@@ -23,19 +23,19 @@ In scope:
 
 Out of scope for the MVP:
 
-- Maps
+- Location-based ISS pass times
 - Charts
 - Filters
 - Auth
 - Persistence
-- Saved settings
+- Account-backed saved settings
 - Database-backed workflows
 
 ## Features
 
-- Responsive Apollo dashboard shell with System, Light, and Dark theme support.
+- Responsive Apollo dashboard shell with a dark-first Light/Dark theme toggle.
 - APOD feature panel.
-- ISS latitude, longitude, altitude, and velocity.
+- ISS latitude, longitude, altitude, velocity, and current-position map.
 - Crew count and crew list.
 - Upcoming SpaceX launch list through a server-side Launch Library proxy.
 - Near-Earth asteroid summary for the current day.
@@ -48,6 +48,7 @@ Out of scope for the MVP:
 
 - Vanilla HTML, CSS, and JavaScript instead of a framework.
 - Bootstrap and Font Awesome Free for UI conventions and icons.
+- Leaflet and OpenStreetMap tiles provide the ISS map without adding another API key.
 - Vercel for deployment and serverless API routes.
 - NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`.
 - NASA API keys stay server-side via `NASA_API_KEY`.
@@ -58,6 +59,7 @@ Out of scope for the MVP:
 - Other public APIs remain browser-side for MVP simplicity.
 - Visual direction now follows the quieter Odyssey-style product shell: Bootstrap-first top navigation, neutral surfaces, simple cards, and low-maintenance spacing.
 - Dashboard data families use subtle accent colors for APOD, ISS, asteroids, launches, and crew while keeping surfaces neutral.
+- Theme choice is stored locally in the browser; first-time visitors start in dark mode.
 - Unsupported controls such as export, search, notifications, settings, and new observations are omitted until those workflows are requested.
 
 ## Roadmap
@@ -72,11 +74,11 @@ Recommended next steps:
 
 Future enhancements only if requested:
 
-- ISS map
+- Location-based ISS pass times
 - Asteroid or launch charts
 - Data filters
 - Auth
-- Saved preferences
+- Account-backed saved preferences
 - Supabase-backed workflows
 
 ## Known Limitations
