@@ -14,29 +14,17 @@ const els = {
   refreshButton: document.querySelector("#refreshButton"),
   refreshButtonMobile: document.querySelector("#refreshButtonMobile"),
   themeToggle: document.querySelector("#themeToggle"),
-  peopleCount: document.querySelector("#peopleCount"),
-  peopleUpdated: document.querySelector("#peopleUpdated"),
-  peopleDetailUpdated: document.querySelector("#peopleDetailUpdated"),
+  dashboardUpdated: document.querySelector("#dashboardUpdated"),
   peopleBody: document.querySelector("#peopleBody"),
-  issLat: document.querySelector("#issLat"),
-  issUpdated: document.querySelector("#issUpdated"),
-  issDetailUpdated: document.querySelector("#issDetailUpdated"),
   issBody: document.querySelector("#issBody"),
-  neoCount: document.querySelector("#neoCount"),
-  neoUpdated: document.querySelector("#neoUpdated"),
-  neoDetailUpdated: document.querySelector("#neoDetailUpdated"),
   neoBody: document.querySelector("#neoBody"),
-  launchCount: document.querySelector("#launchCount"),
-  launchUpdated: document.querySelector("#launchUpdated"),
-  launchDetailUpdated: document.querySelector("#launchDetailUpdated"),
   launchBody: document.querySelector("#launchBody"),
-  apodUpdated: document.querySelector("#apodUpdated"),
   apodBody: document.querySelector("#apodBody"),
   dashboardStatus: document.querySelector("#dashboardStatus")
 };
 
 function formatUpdated(date = new Date()) {
-  return `Updated ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+  return `Last updated ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
 }
 
 function formatDate(value) {
@@ -91,6 +79,17 @@ function safeHttpUrl(value) {
   } catch (error) {
     return "";
   }
+}
+
+function truncateText(value, maxLength = 360) {
+  const text = String(value ?? "").trim();
+
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  const clipped = text.slice(0, maxLength).replace(/\s+\S*$/, "");
+  return `${clipped}...`;
 }
 
 function getStoredTheme() {
@@ -187,7 +186,7 @@ function normalizePeople(data) {
   return people
     .map((person) => ({
       name: getText(person?.name),
-      craft: getText(person?.craft, "Spacecraft unknown")
+      craft: getText(person?.craft)
     }))
     .filter((person) => person.name);
 }
@@ -315,10 +314,10 @@ function renderIssMap(data) {
   }, 0);
 }
 
-function setTimestamp(elements, value = formatUpdated()) {
-  elements.forEach((element) => {
-    element.textContent = value;
-  });
+function setDashboardUpdated(value = formatUpdated()) {
+  if (els.dashboardUpdated) {
+    els.dashboardUpdated.textContent = value;
+  }
 }
 
 function getApiErrorMessage(error, fallback) {
@@ -361,22 +360,32 @@ async function loadApod() {
   try {
     const data = normalizeApod(await fetchJson(API.apod));
     const title = escapeHtml(data.title);
+    const summaryText = truncateText(data.explanation);
+    const explanation = escapeHtml(data.explanation);
+    const summary = escapeHtml(summaryText);
+    const hasLongExplanation = summaryText !== data.explanation;
     const media = data.mediaUrl && data.mediaType === "image"
-      ? `<img class="img-fluid rounded apod-media mb-3" src="${data.mediaUrl}" alt="${title}">`
+      ? `<img class="img-fluid rounded apod-media mb-4" src="${data.mediaUrl}" alt="${title}">`
       : data.mediaUrl
-        ? `<div class="ratio ratio-16x9 mb-3"><iframe class="rounded" src="${data.mediaUrl}" title="${title}" allowfullscreen></iframe></div>`
+        ? `<div class="ratio ratio-16x9 mb-4"><iframe class="rounded" src="${data.mediaUrl}" title="${title}" allowfullscreen></iframe></div>`
         : "";
 
     els.apodBody.innerHTML = `
       ${media}
-      <h3 class="h5 fw-semibold mb-1">${title}</h3>
-      <p class="text-secondary small mb-2">${data.date ? formatDate(data.date) : "Today"}</p>
-      <p class="mb-0">${escapeHtml(data.explanation)}</p>
+      <div class="apod-content">
+        <p class="text-secondary small mb-2">${data.date ? formatDate(data.date) : "Today"}</p>
+        <h3 class="h2 fw-semibold mb-3">${title}</h3>
+        <p class="mb-0 apod-summary">${summary}</p>
+        ${hasLongExplanation ? `
+          <details class="apod-details mt-3">
+            <summary class="fw-semibold">Read full description</summary>
+            <p class="mb-0 mt-2">${explanation}</p>
+          </details>
+        ` : ""}
+      </div>
     `;
-    setTimestamp([els.apodUpdated]);
   } catch (error) {
     setError(els.apodBody, getApiErrorMessage(error, "NASA's astronomy picture is unavailable right now. This card will update when NASA responds."));
-    els.apodUpdated.textContent = "Error";
   }
 }
 
@@ -384,13 +393,7 @@ async function loadIss() {
   try {
     resetIssMap();
     const data = normalizeIss(await fetchJson(API.iss));
-    const { latitude, longitude } = data;
-    const updated = formatUpdated();
 
-    els.issLat.innerHTML = latitude !== null && longitude !== null
-      ? `<span>${formatNumber(latitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</span><span class="coordinate-divider"> / </span><span>${formatNumber(longitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</span>`
-      : "--";
-    setTimestamp([els.issUpdated, els.issDetailUpdated], updated);
     els.issBody.innerHTML = `
       <div class="iss-map mb-3" id="issMap" role="img" aria-label="Map showing the current ISS position above Earth"></div>
       <div class="metadata-grid">
@@ -416,9 +419,6 @@ async function loadIss() {
     renderIssMap(data);
   } catch (error) {
     resetIssMap();
-    els.issLat.textContent = "--";
-    els.issUpdated.textContent = "Error";
-    els.issDetailUpdated.textContent = "Error";
     setError(els.issBody, "Could not load the ISS location right now.");
   }
 }
@@ -426,10 +426,6 @@ async function loadIss() {
 async function loadPeople() {
   try {
     const people = normalizePeople(await fetchJson(API.people));
-    const updated = formatUpdated();
-
-    els.peopleCount.textContent = people.length || "--";
-    setTimestamp([els.peopleUpdated, els.peopleDetailUpdated], updated);
 
     if (!people.length) {
       els.peopleBody.innerHTML = stateMessage("No crew data available.");
@@ -437,19 +433,23 @@ async function loadPeople() {
     }
 
     els.peopleBody.innerHTML = `
+      <div class="summary-metric mb-3">
+        <span class="stat-chip"><i class="fa-solid fa-user-astronaut" aria-hidden="true"></i></span>
+        <div>
+          <p class="text-secondary small mb-1">Current crew</p>
+          <p class="h3 fw-semibold mb-0">${people.length}</p>
+        </div>
+      </div>
       <ul class="list-group list-group-flush">
         ${people.map((person) => `
           <li class="list-group-item px-0 py-3 d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3">
             <span class="fw-semibold">${escapeHtml(person.name)}</span>
-            <span class="text-secondary text-sm-end">${escapeHtml(person.craft || "Spacecraft unknown")}</span>
+            ${person.craft ? `<span class="text-secondary text-sm-end">${escapeHtml(person.craft)}</span>` : ""}
           </li>
         `).join("")}
       </ul>
     `;
   } catch (error) {
-    els.peopleCount.textContent = "--";
-    els.peopleUpdated.textContent = "Error";
-    els.peopleDetailUpdated.textContent = "Error";
     setError(els.peopleBody, "Could not load people-in-space data right now.");
   }
 }
@@ -457,10 +457,6 @@ async function loadPeople() {
 async function loadLaunches() {
   try {
     const launches = normalizeLaunches(await fetchJson(API.launches));
-    const updated = formatUpdated();
-
-    els.launchCount.textContent = launches.length || "--";
-    setTimestamp([els.launchUpdated, els.launchDetailUpdated], updated);
 
     if (!launches.length) {
       els.launchBody.innerHTML = stateMessage("No upcoming SpaceX launches are available from the current data source.");
@@ -468,6 +464,7 @@ async function loadLaunches() {
     }
 
     els.launchBody.innerHTML = `
+      <p class="text-secondary small mb-3">${launches.length} upcoming SpaceX launches from Launch Library 2.</p>
       <div class="list-group list-group-flush">
         ${launches.map((launch) => {
           const badge = `<span class="badge text-bg-primary">${escapeHtml(launch.status)}</span>`;
@@ -490,9 +487,6 @@ async function loadLaunches() {
       </div>
     `;
   } catch (error) {
-    els.launchCount.textContent = "--";
-    els.launchUpdated.textContent = "Error";
-    els.launchDetailUpdated.textContent = "Error";
     setError(els.launchBody, "Could not load upcoming SpaceX launches right now. Other dashboard sections remain available.");
   }
 }
@@ -506,10 +500,7 @@ async function loadNeo() {
       .map((item) => item.closestKilometers)
       .filter(Number.isFinite)
       .sort((a, b) => a - b)[0];
-    const updated = formatUpdated();
 
-    els.neoCount.textContent = asteroids.length || "0";
-    setTimestamp([els.neoUpdated, els.neoDetailUpdated], updated);
     els.neoBody.innerHTML = `
       <div class="metadata-grid mb-3">
         <div>
@@ -541,9 +532,6 @@ async function loadNeo() {
       ` : stateMessage("No near-Earth objects are listed for today.")}
     `;
   } catch (error) {
-    els.neoCount.textContent = "--";
-    els.neoUpdated.textContent = "Error";
-    els.neoDetailUpdated.textContent = "Error";
     setError(els.neoBody, getApiErrorMessage(error, "NASA asteroid data is unavailable right now. Other live sections remain available."));
   }
 }
@@ -576,6 +564,7 @@ async function loadDashboard() {
     els.neoBody
   ].forEach((element) => setBusy(element, false));
   setDashboardStatus("Apollo dashboard data refreshed.");
+  setDashboardUpdated();
   if (els.refreshButton) {
     els.refreshButton.disabled = false;
     els.refreshButton.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refresh`;

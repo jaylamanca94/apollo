@@ -51,6 +51,15 @@ Use Leaflet for spatial dashboard views. Keep map frames inside the related data
 
 ## Layout Grid
 
+Dashboard pages should lead with the APOD feature, then group operational data into clear section bands:
+
+- Featured: NASA Astronomy Picture of the Day
+- Live Orbit: ISS position and crew
+- Upcoming Missions: launch data
+- Near-Earth Objects: asteroid summary
+
+Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
+
 ### Desktop
 
 - 12-column grid
