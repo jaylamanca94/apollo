@@ -6,7 +6,7 @@ This file is intentionally separate because design standards and utilities will 
 
 ## Product Feel
 
-The interface should feel quiet, personal, practical, and easy to scan.
+The interface should feel quiet, personal, practical, and easy to scan. The current visual direction is a dark operational dashboard: broad content width, charcoal surfaces, thin borders, compact controls, and a single warm red accent.
 
 - Prefer Bootstrap conventions before custom UI patterns.
 - Keep visual decisions simple enough for a solo product builder to maintain.
@@ -23,27 +23,24 @@ Use this file as the visual source of truth for `Apollo`. Update it whenever spa
 
 ### Light Mode
 
-- Page background: `#E2E3E5`
-- Content surface: `#FCFCFD`
+- Page background: `#F3F5F7`
+- Content surface: `#FFFFFF`
+- Raised surface: `#EEF1F4`
+- Accent: `#E83149`
 
 ### Dark Mode
 
-- Page background: `#2B2F32`
-- Content surface: `#212529`
+- Page background: `#292E31`
+- Top navigation and content surface: `#1F2427`
+- Raised surface: `#292E31`
+- Border: `#434C52`
+- Accent: `#FF4056`
 
 Default first-time visitors to Dark Mode and provide a compact header toggle for switching between Light and Dark.
 
 ### Data Accents
 
-Use restrained Bootstrap-aligned accent colors to distinguish dashboard data families without making the page feel decorative.
-
-- APOD: `#6f42c1`
-- ISS: `#198754`
-- Asteroids/NEO: `#fd7e14`
-- Launches: `#dc3545`
-- Crew: `#0d6efd`
-
-Apply accents to stat chips, card top borders, and related badges. Keep the main surfaces neutral.
+Use one shared red accent for dashboard icons, outline actions, map overlays, and progressive disclosure affordances. Avoid giving every data family a separate hue while this design direction is active.
 
 ### Maps
 
@@ -51,12 +48,12 @@ Use Leaflet for spatial dashboard views. Keep map frames inside the related data
 
 ## Layout Grid
 
-Dashboard pages should lead with the APOD feature, then group operational data into clear section bands:
+Dashboard pages should lead with the APOD feature, then use a compact two-column operational grid:
 
-- Featured: NASA Astronomy Picture of the Day
-- Live Orbit: ISS position and crew
-- Upcoming Missions: launch data
-- Near-Earth Objects: asteroid summary
+- APOD split feature: image or media on the left, source/date/title/credit/summary links on the right.
+- ISS current position and people in space as paired operational cards.
+- Launches as a taller list card with three visible launch rows and a show-all control.
+- Asteroids as a summary card with risk context and nearby object rows.
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
 
@@ -66,6 +63,7 @@ Use inline disclosure details for richer APOD and launch context before introduc
 
 - 12-column grid
 - Page margin: `24px`
+- Max content width: about `1232px`
 - Column gap: `24px`
 - Content padding: `24px`
 - Form sections: `48px` padding
@@ -126,10 +124,17 @@ Use `8px` or less for normal cards and repeated list items unless a larger conta
 
 - Use Font Awesome Free for icons when needed.
 - Header navigation and account utility icons: `16px`
-- Card and list summary icons: `20px`
+- Card and list summary icons: `24px`
 - Media artwork icons and thumbnails should follow the media artwork treatment, not utility icon sizing.
 - Standard spacing between utility icons and text: `8px`
 - Caption-sized or very small UI may use tighter spacing when needed.
+
+Current icon mapping:
+
+- Brand, ISS, and Launches: rocket
+- APOD: image
+- Crew: astronaut
+- Asteroids: meteor
 
 ## Forms
 

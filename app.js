@@ -320,6 +320,18 @@ function normalizeLaunches(data) {
     .filter((launch) => launch.name && launch.dateUtc);
 }
 
+function splitLaunchName(name) {
+  const parts = String(name ?? "")
+    .split("|")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return {
+    vehicle: parts[0] || "Launch",
+    mission: parts.slice(1).join(" | ")
+  };
+}
+
 function normalizeNeo(data, date) {
   if (Array.isArray(data?.asteroids)) {
     return data.asteroids.map((item) => ({
@@ -429,9 +441,13 @@ function renderIssMap(data) {
     position: "bottomright"
   }).addTo(issMap);
 
+  const issAccentColor = getComputedStyle(document.documentElement)
+    .getPropertyValue("--apollo-accent")
+    .trim() || "#ff4056";
+
   window.L.circle(position, {
-    color: "#198754",
-    fillColor: "#198754",
+    color: issAccentColor,
+    fillColor: issAccentColor,
     fillOpacity: 0.12,
     radius: 900000,
     weight: 1
@@ -500,44 +516,50 @@ async function loadApod() {
     const mediaUrl = escapeHtml(data.mediaUrl);
     const fullImageUrl = escapeHtml(data.hdUrl || data.mediaUrl);
     const sourceUrl = escapeHtml(data.sourceUrl);
-    const summaryText = truncateText(data.explanation);
+    const summaryText = truncateText(data.explanation, 520);
     const explanation = escapeHtml(data.explanation);
     const summary = escapeHtml(summaryText);
     const hasLongExplanation = summaryText !== data.explanation;
     const media = data.mediaUrl && data.mediaType === "image"
       ? `
-        <a class="apod-media-link d-block mb-4" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
-          <img class="img-fluid rounded apod-media" src="${mediaUrl}" alt="${title}">
+        <a class="apod-media-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
+          <img class="apod-media" src="${mediaUrl}" alt="${title}">
         </a>
       `
       : data.mediaUrl
-        ? `<div class="ratio ratio-16x9 mb-4"><iframe class="rounded" src="${mediaUrl}" title="${title}" allowfullscreen></iframe></div>`
-        : "";
+        ? `<div class="ratio ratio-16x9 apod-embed"><iframe src="${mediaUrl}" title="${title}" allowfullscreen></iframe></div>`
+        : `<div class="state-message">NASA media is unavailable right now.</div>`;
 
     els.apodBody.innerHTML = `
-      ${media}
-      <div class="apod-content">
-        <p class="text-secondary small mb-2">${data.date ? formatDate(data.date) : "Today"}</p>
-        <h3 class="h2 fw-semibold mb-3">${title}</h3>
-        ${data.copyright ? `<p class="text-secondary small mb-3">Credit: ${escapeHtml(data.copyright)}</p>` : ""}
-        <p class="mb-0 apod-summary">${summary}</p>
-        ${hasLongExplanation ? `
-          <details class="apod-details mt-3">
-            <summary class="fw-semibold">Read full description</summary>
-            <p class="mb-0 mt-2">${explanation}</p>
-          </details>
-        ` : ""}
-        <div class="detail-action-row mt-3">
-          ${data.mediaType === "image" && fullImageUrl ? `
-            <a class="source-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
-              <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-              Open full image
-            </a>
+      <div class="apod-showcase">
+        ${media}
+        <div class="apollo-card apod-info-card">
+          <div class="apod-info-header">
+            <i class="fa-solid fa-image apod-info-icon" aria-hidden="true"></i>
+            <h2 class="apod-info-title mb-0">NASA Image of the Day</h2>
+          </div>
+          <p class="apod-date">${data.date ? formatDate(data.date) : "Today"}</p>
+          <h3 class="apod-title">${title}</h3>
+          ${data.copyright ? `<p class="apod-credit">Credit: ${escapeHtml(data.copyright)}</p>` : ""}
+          <p class="apod-summary">${summary}</p>
+          ${hasLongExplanation ? `
+            <details class="apod-details mt-3">
+              <summary class="fw-semibold">Read full description</summary>
+              <p class="mb-0 mt-2">${explanation}</p>
+            </details>
           ` : ""}
-          <a class="source-link" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
-            <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-            NASA source
-          </a>
+          <div class="detail-action-row">
+            ${data.mediaType === "image" && fullImageUrl ? `
+              <a class="source-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
+                <i class="fa-regular fa-image" aria-hidden="true"></i>
+                View Image
+              </a>
+            ` : ""}
+            <a class="source-link" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
+              <i class="fa-solid fa-earth-americas" aria-hidden="true"></i>
+              NASA Source
+            </a>
+          </div>
         </div>
       </div>
     `;
@@ -620,11 +642,14 @@ async function loadLaunches() {
       return;
     }
 
-    els.launchBody.innerHTML = `
-      <p class="text-secondary small mb-3">${launches.length} upcoming SpaceX launches from Launch Library 2.</p>
-      <div class="list-group list-group-flush">
-        ${launches.map((launch) => {
-          const badge = `<span class="badge rounded-pill text-bg-primary">${escapeHtml(launch.status)}</span>`;
+    const renderLaunchRows = (showAll = false) => {
+      const visibleLaunches = showAll ? launches : launches.slice(0, 3);
+
+      els.launchBody.innerHTML = `
+        <p class="launch-count">${launches.length} upcoming SpaceX launches</p>
+        <div class="launch-list">
+          ${visibleLaunches.map((launch) => {
+          const launchName = splitLaunchName(launch.name);
           const launchWindow = formatLaunchWindow(launch);
           const summaryDetails = escapeHtml(truncateText(launch.details, 190));
           const fullDetails = escapeHtml(launch.details);
@@ -645,36 +670,51 @@ async function loadLaunches() {
             .join("");
 
           return `
-            <article class="list-group-item px-0 py-3">
-              <div class="d-flex gap-3">
-                ${launch.imageUrl ? `<img src="${escapeHtml(launch.imageUrl)}" alt="" width="48" height="48" class="launch-thumb d-none d-sm-block">` : ""}
-                <div class="flex-grow-1">
-                  <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
-                    <h3 class="h6 mb-0">${escapeHtml(launch.name)}</h3>
-                    <div>${badge}</div>
-                  </div>
-                  <p class="text-secondary small mb-2">${formatDateTime(launch.dateUtc)} · ${formatCountdown(launch.dateUtc)}</p>
-                  <p class="mb-0 text-body-secondary">${summaryDetails}</p>
-                  <details class="data-details launch-details mt-3">
-                    <summary class="fw-semibold">Mission details</summary>
-                    <div class="data-detail-panel mt-3">
-                      <p class="mb-3">${fullDetails}</p>
+            <article class="launch-card">
+              ${launch.imageUrl ? `<img src="${escapeHtml(launch.imageUrl)}" alt="" class="launch-thumb">` : `<span class="stat-chip"><i class="fa-solid fa-rocket" aria-hidden="true"></i></span>`}
+              <div class="launch-main">
+                <p class="launch-meta">${formatDateTime(launch.dateUtc)} · ${formatCountdown(launch.dateUtc)}</p>
+                <div class="launch-title-row">
+                  <h3 class="launch-vehicle mb-0">${escapeHtml(launchName.vehicle)}</h3>
+                  ${launchName.mission ? `<span class="launch-mission">${escapeHtml(launchName.mission)}</span>` : ""}
+                </div>
+                <div class="launch-footer">
+                  <details class="data-details launch-details">
+                    <summary><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Mission Details</summary>
+                    <div class="data-detail-panel">
+                      <p class="mb-3">${summaryDetails}</p>
+                      ${fullDetails !== summaryDetails ? `<p class="mb-3">${fullDetails}</p>` : ""}
                       ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
                       ${launch.sourceUrl ? `
                         <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
                           <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                          Launch Library source
+                          Launch Library Source
                         </a>
                       ` : ""}
                     </div>
                   </details>
+                  <span class="launch-status-pill">${escapeHtml(launch.status)}</span>
                 </div>
               </div>
             </article>
           `;
         }).join("")}
-      </div>
-    `;
+        </div>
+        ${launches.length > 3 ? `
+          <button class="btn launch-show-all mt-4" type="button" id="launchToggleButton">
+            ${showAll ? "Show Fewer Launches" : "Show All Launches"}
+          </button>
+        ` : ""}
+      `;
+
+      const launchToggleButton = els.launchBody.querySelector("#launchToggleButton");
+
+      if (launchToggleButton) {
+        launchToggleButton.addEventListener("click", () => renderLaunchRows(!showAll));
+      }
+    };
+
+    renderLaunchRows();
   } catch (error) {
     setError(els.launchBody, "Could not load upcoming SpaceX launches right now. Other dashboard sections remain available.");
   }
@@ -756,7 +796,7 @@ async function loadDashboard() {
   ].forEach((element) => setBusy(element, true));
   [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
     button.disabled = true;
-    button.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refreshing`;
+    button.innerHTML = "Refreshing";
   });
   await Promise.allSettled([
     loadApod(),
@@ -776,11 +816,11 @@ async function loadDashboard() {
   setDashboardUpdated();
   if (els.refreshButton) {
     els.refreshButton.disabled = false;
-    els.refreshButton.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refresh`;
+    els.refreshButton.innerHTML = "Refresh Data";
   }
   if (els.refreshButtonMobile) {
     els.refreshButtonMobile.disabled = false;
-    els.refreshButtonMobile.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refresh`;
+    els.refreshButtonMobile.innerHTML = "Refresh Data";
   }
 }
 

@@ -64,8 +64,8 @@ Out of scope for the MVP:
 - Frontend data loaders retain compatibility fallbacks for older raw NASA payload shapes.
 - Detail experiences start as inline disclosure panels and source links instead of separate pages.
 - Other public APIs remain browser-side for MVP simplicity.
-- Visual direction now follows the quieter Odyssey-style product shell: Bootstrap-first top navigation, neutral surfaces, simple cards, and low-maintenance spacing.
-- Dashboard content is grouped into Featured, Live Orbit, Upcoming Missions, and Near-Earth Objects sections.
+- Visual direction now follows a darker operational dashboard shell: charcoal page background, compact top navigation, red accent actions, split APOD feature, simple bordered cards, and low-maintenance spacing.
+- Dashboard content uses a split APOD feature followed by a compact two-column grid for ISS, crew, launches, and asteroids.
 - The single-page header avoids section jump navigation until Apollo has meaningful detail pages.
 - Refresh state uses one global "Last updated" timestamp instead of repeated per-card timestamps.
 - Dashboard data families use subtle accent colors for APOD, ISS, asteroids, launches, and crew while keeping surfaces neutral.
