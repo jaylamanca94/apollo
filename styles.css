@@ -263,7 +263,6 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.apod-feature-body,
 .apod-showcase {
   display: grid;
   gap: 24px;
@@ -678,7 +677,6 @@ html[data-bs-theme="light"] .data-detail-panel {
     max-width: 960px;
   }
 
-  .apod-feature-body,
   .apod-showcase,
   .apod-loading-grid,
   .apollo-dashboard-grid {
