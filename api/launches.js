@@ -65,23 +65,41 @@ function normalizeLaunch(launch) {
   };
 }
 
-function normalizeLaunchLibraryPayload(payload) {
+function normalizeLaunchLibraryPayload(payload, options = {}) {
+  const limit = Number.isInteger(options.limit) ? options.limit : 5;
   const results = Array.isArray(payload?.results) ? payload.results : [];
   const launches = results
     .map(normalizeLaunch)
     .filter(Boolean)
     .sort((a, b) => new Date(a.dateUtc) - new Date(b.dateUtc))
-    .slice(0, 5);
+    .slice(0, limit);
 
   return {
     launches,
-    source: "Launch Library 2",
+    source: "The Space Devs launch data",
     scope: "SpaceX upcoming launches"
   };
 }
 
-async function requestLaunches() {
-  const cached = getCached("launches:spacex");
+function getLaunchLimit(request) {
+  const rawLimit = request.query?.limit || new URL(request.url, `https://${request.headers?.host || "apollo.local"}`).searchParams.get("limit");
+
+  if (rawLimit === null || rawLimit === undefined || rawLimit === "") {
+    return 5;
+  }
+
+  const limit = Number(rawLimit);
+
+  if (!Number.isFinite(limit)) {
+    return 5;
+  }
+
+  return Math.min(Math.max(Math.trunc(limit), 1), 25);
+}
+
+async function requestLaunches(limit = 5) {
+  const cacheKey = `launches:spacex:${limit}`;
+  const cached = getCached(cacheKey);
 
   if (cached) {
     return cached;
@@ -89,7 +107,7 @@ async function requestLaunches() {
 
   const url = new URL(LAUNCH_LIBRARY_URL);
   url.searchParams.set("search", "SpaceX");
-  url.searchParams.set("limit", "5");
+  url.searchParams.set("limit", String(limit));
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), LAUNCH_TIMEOUT_MS);
@@ -110,8 +128,10 @@ async function requestLaunches() {
     throw error;
   }
 
-  const normalizedPayload = normalizeLaunchLibraryPayload(payload);
-  setCached("launches:spacex", normalizedPayload, LAUNCH_CACHE_SECONDS);
+  const normalizedPayload = normalizeLaunchLibraryPayload(payload, {
+    limit
+  });
+  setCached(cacheKey, normalizedPayload, LAUNCH_CACHE_SECONDS);
   return normalizedPayload;
 }
 
@@ -127,7 +147,7 @@ async function handler(request, response) {
   }
 
   try {
-    const payload = await requestLaunches();
+    const payload = await requestLaunches(getLaunchLimit(request));
     sendJson(response, 200, payload, LAUNCH_CACHE_SECONDS);
   } catch (error) {
     sendJson(response, error.status || 502, error.payload || {
@@ -141,3 +161,4 @@ async function handler(request, response) {
 
 module.exports = handler;
 module.exports.normalizeLaunchLibraryPayload = normalizeLaunchLibraryPayload;
+module.exports.getLaunchLimit = getLaunchLimit;

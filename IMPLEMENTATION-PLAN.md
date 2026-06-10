@@ -2,6 +2,10 @@
 
 This document translates the current product feedback into implementation-ready work. It should guide the next Apollo UI pass before new scope is added.
 
+## Current Implementation Status
+
+The June 10 dashboard pass implements the first wave of this plan: user-facing launch source language has been simplified, People in Space uses a responsive two-column grid, decorative section-header icons have been removed, the zero-hazard asteroid message uses green success styling, NOAA SWPC space weather has been added as the first additional data source, and `launches.html` now provides a dedicated launch detail view.
+
 ## Objective
 
 Make Apollo feel more focused, less repetitive, and more useful at a glance.

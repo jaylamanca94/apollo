@@ -17,7 +17,9 @@ In scope:
 - ISS current position
 - People currently in space
 - Upcoming SpaceX launches
+- NOAA SWPC space weather
 - Near-Earth asteroid daily summary
+- Dedicated launches detail page
 - Responsive Bootstrap dashboard UI
 - Vercel deployment with serverless NASA proxy routes
 
@@ -37,9 +39,11 @@ Out of scope for the MVP:
 - APOD-first feature panel.
 - APOD credit, full-media link, NASA source link, and inline full-description detail.
 - ISS latitude, longitude, altitude, velocity, and current-position map.
-- Crew count and crew list.
-- Upcoming SpaceX launch list through a server-side Launch Library proxy with inline mission details.
+- Crew count and responsive People in Space grid.
+- Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details.
+- Dedicated launches page with a fuller upcoming list, status, vehicle, provider, window, pad, location, and source links.
 - Near-Earth asteroid summary for the current day with lunar-distance, velocity, and hazard-context cues.
+- NOAA SWPC space-weather status with current K-index and recent notices.
 - Refresh action.
 - Loading, empty, and error states.
 - Server-side NASA API key handling.
@@ -58,17 +62,18 @@ Out of scope for the MVP:
 - NASA API keys stay server-side via `NASA_API_KEY`.
 - APOD tries NASA's default response first, then Eastern-date fallbacks to avoid UTC publish-window failures.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
-- SpaceX launch listings use Launch Library through `/api/launches`, with a normalized response shape before data reaches the dashboard.
-- Server-side normalizers provide stable APOD, launch, and Near-Earth Object shapes so third-party response changes are less likely to break card rendering.
+- SpaceX launch listings use The Space Devs launch data through `/api/launches`, with a normalized response shape before data reaches the dashboard and launches page.
+- NOAA SWPC space weather uses `/api/space-weather`, with K-index and alert data normalized before rendering.
+- Server-side normalizers provide stable APOD, launch, Near-Earth Object, and space-weather shapes so third-party response changes are less likely to break card rendering.
 - Frontend rendering escapes API-provided text before inserting it into the page.
 - Frontend data loaders retain compatibility fallbacks for older raw NASA payload shapes.
-- Detail experiences start as inline disclosure panels and source links instead of separate pages.
+- Launch details can graduate to dedicated static pages when the dashboard card would become too dense.
 - Other public APIs remain browser-side for MVP simplicity.
 - Visual direction now follows a darker operational dashboard shell: charcoal page background, compact top navigation, red accent actions, split APOD feature, simple bordered cards, and low-maintenance spacing.
-- Dashboard content uses a split APOD feature followed by a compact two-column grid for ISS, crew, launches, and asteroids.
+- Dashboard content uses a split APOD feature followed by a compact two-column grid for ISS, people in space, launches, asteroids, and space weather.
 - The single-page header avoids section jump navigation until Apollo has meaningful detail pages.
 - Refresh state uses one global "Last updated" timestamp instead of repeated per-card timestamps.
-- Dashboard data families use subtle accent colors for APOD, ISS, asteroids, launches, and crew while keeping surfaces neutral.
+- Dashboard data families use neutral cards, sparse icons, red action accents, and positive green styling for safe/good status messages.
 - Theme choice is stored locally in the browser; first-time visitors start in dark mode.
 - Unsupported controls such as export, search, notifications, settings, and new observations are omitted until those workflows are requested.
 
@@ -80,7 +85,7 @@ Recommended next steps:
 2. Run final production QA after key rotation.
 3. Wire external monitoring/error logging to `/api/health` if Apollo gets shared more broadly.
 4. Add accessibility QA and browser coverage before a broader public launch.
-5. Decide whether APOD or launch details deserve dedicated URLs after the inline detail pattern is tested.
+5. Decide whether APOD or asteroid details deserve dedicated URLs after the launches page pattern is tested.
 
 Future enhancements only if requested:
 
@@ -96,5 +101,6 @@ Future enhancements only if requested:
 - NASA data depends on the configured Vercel `NASA_API_KEY`.
 - Vercel in-memory cache is per warm serverless function instance and may reset.
 - Third-party public APIs can fail or change response formats; Apollo now normalizes key server responses, but source outages can still affect sections.
-- Launch listings depend on Launch Library availability and its SpaceX search result format.
+- Launch listings depend on The Space Devs launch data availability and its SpaceX search result format.
+- Space weather depends on NOAA SWPC public feeds.
 - No automated end-to-end test suite yet.

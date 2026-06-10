@@ -4,10 +4,11 @@ const test = require("node:test");
 const {
   isIsoDate,
   normalizeApodPayload,
-  normalizeNeoPayload
+  normalizeNeoPayload,
+  normalizeSpaceWeatherPayload
 } = require("../api/_space_data");
 const { buildHealthPayload } = require("../api/health");
-const { normalizeLaunchLibraryPayload } = require("../api/launches");
+const { getLaunchLimit, normalizeLaunchLibraryPayload } = require("../api/launches");
 
 test("isIsoDate accepts Apollo's API date format only", () => {
   assert.equal(isIsoDate("2026-06-10"), true);
@@ -178,7 +179,7 @@ test("normalizeLaunchLibraryPayload sorts, limits, and sanitizes launches", () =
     ]
   });
 
-  assert.equal(payload.source, "Launch Library 2");
+  assert.equal(payload.source, "The Space Devs launch data");
   assert.equal(payload.scope, "SpaceX upcoming launches");
   assert.equal(payload.launches.length, 2);
   assert.equal(payload.launches[0].name, "Earlier mission");
@@ -187,4 +188,88 @@ test("normalizeLaunchLibraryPayload sorts, limits, and sanitizes launches", () =
   assert.equal(payload.launches[0].windowEnd, "2026-06-11T18:00:00Z");
   assert.equal(payload.launches[1].name, "Later mission");
   assert.equal(payload.launches[1].imageUrl, "");
+});
+
+test("normalizeLaunchLibraryPayload honors a safe display limit", () => {
+  const payload = normalizeLaunchLibraryPayload({
+    results: [
+      { name: "Mission 3", net: "2026-06-13T12:00:00Z" },
+      { name: "Mission 1", net: "2026-06-11T12:00:00Z" },
+      { name: "Mission 2", net: "2026-06-12T12:00:00Z" }
+    ]
+  }, {
+    limit: 2
+  });
+
+  assert.deepEqual(payload.launches.map((launch) => launch.name), ["Mission 1", "Mission 2"]);
+});
+
+test("getLaunchLimit clamps launch request limits", () => {
+  assert.equal(getLaunchLimit({ query: { limit: "20" }, url: "/api/launches", headers: {} }), 20);
+  assert.equal(getLaunchLimit({ query: { limit: "100" }, url: "/api/launches", headers: {} }), 25);
+  assert.equal(getLaunchLimit({ query: { limit: "-1" }, url: "/api/launches", headers: {} }), 1);
+  assert.equal(getLaunchLimit({ query: {}, url: "/api/launches?limit=8", headers: {} }), 8);
+  assert.equal(getLaunchLimit({ query: {}, url: "/api/launches", headers: {} }), 5);
+});
+
+test("normalizeSpaceWeatherPayload returns a stable NOAA dashboard contract", () => {
+  const payload = normalizeSpaceWeatherPayload({
+    kIndex: [
+      {
+        time_tag: "2026-06-10T15:30:00",
+        kp_index: 1,
+        estimated_kp: 0.67,
+        kp: "1M"
+      },
+      {
+        time_tag: "2026-06-10T15:31:00",
+        kp_index: 4,
+        estimated_kp: 4,
+        kp: "4Z"
+      }
+    ],
+    alerts: [
+      {
+        product_id: "TIIA",
+        issue_datetime: "2026-06-10 17:38:31.317",
+        message: "Space Weather Message Code: ALTTP2\nSerial Number: 1502\nIssue Time: 2026 Jun 10 1738 UTC\n\nALERT: Type II Radio Emission \nBegin Time: 2026 Jun 10 1715 UTC"
+      }
+    ]
+  });
+
+  assert.deepEqual(payload, {
+    spaceWeather: {
+      observedAt: "2026-06-10T15:31:00.000Z",
+      kpIndex: 4,
+      kpLabel: "4Z",
+      condition: "Active conditions",
+      severity: "active",
+      summary: "Geomagnetic activity is elevated but below storm level.",
+      alerts: [
+        {
+          productId: "TIIA",
+          issuedAt: "2026-06-10T17:38:31.317Z",
+          headline: "ALERT: Type II Radio Emission"
+        }
+      ],
+      sourceUrl: "https://www.swpc.noaa.gov/products-and-data"
+    },
+    source: "NOAA SWPC"
+  });
+});
+
+test("normalizeSpaceWeatherPayload classifies storm-level K-index values", () => {
+  const payload = normalizeSpaceWeatherPayload({
+    kIndex: [
+      {
+        time_tag: "2026-06-10T15:31:00",
+        estimated_kp: 6,
+        kp: "6Z"
+      }
+    ],
+    alerts: []
+  });
+
+  assert.equal(payload.spaceWeather.condition, "Minor storm conditions");
+  assert.equal(payload.spaceWeather.severity, "storm");
 });

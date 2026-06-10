@@ -9,6 +9,10 @@ html[data-bs-theme="dark"] {
   --apollo-accent: #ff4056;
   --apollo-accent-hover: #ff5d70;
   --apollo-accent-soft: rgba(255, 64, 86, 0.14);
+  --apollo-success: #4fd28a;
+  --apollo-success-soft: rgba(79, 210, 138, 0.14);
+  --apollo-warning: #ffc857;
+  --apollo-warning-soft: rgba(255, 200, 87, 0.15);
   --apollo-muted: #bfc5ca;
   --apollo-muted-strong: #d8dde1;
   --bs-body-bg: var(--apollo-page-bg);
@@ -29,6 +33,10 @@ html[data-bs-theme="light"] {
   --apollo-accent: #e83149;
   --apollo-accent-hover: #c91f36;
   --apollo-accent-soft: rgba(232, 49, 73, 0.12);
+  --apollo-success: #218a55;
+  --apollo-success-soft: rgba(33, 138, 85, 0.12);
+  --apollo-warning: #996b00;
+  --apollo-warning-soft: rgba(153, 107, 0, 0.12);
   --apollo-muted: #5f6870;
   --apollo-muted-strong: #30363b;
   --bs-body-bg: var(--apollo-page-bg);
@@ -236,17 +244,6 @@ body {
   gap: 14px;
 }
 
-.dashboard-card-icon {
-  align-items: center;
-  color: var(--apollo-accent);
-  display: inline-flex;
-  flex: 0 0 auto;
-  font-size: 1.5rem;
-  height: 28px;
-  justify-content: center;
-  width: 28px;
-}
-
 .section-title {
   color: var(--bs-body-color);
   font-size: 1.625rem;
@@ -268,7 +265,31 @@ body {
   align-items: start;
   display: grid;
   gap: 32px 24px;
+  grid-template-areas:
+    "iss crew"
+    "launches asteroids"
+    "launches weather";
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#iss-position {
+  grid-area: iss;
+}
+
+#crew {
+  grid-area: crew;
+}
+
+#launches {
+  grid-area: launches;
+}
+
+#asteroids {
+  grid-area: asteroids;
+}
+
+#space-weather {
+  grid-area: weather;
 }
 
 .apod-showcase {
@@ -409,6 +430,34 @@ body {
   height: 2.5rem;
   justify-content: center;
   width: 2.5rem;
+}
+
+.crew-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.crew-person {
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 14px;
+}
+
+.crew-name {
+  color: var(--bs-body-color);
+  font-size: 0.975rem;
+  font-weight: 750;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.crew-craft {
+  color: var(--apollo-muted);
+  font-size: 0.875rem;
+  margin-top: 6px;
 }
 
 .iss-map {
@@ -567,11 +616,15 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
 }
 
 .launch-show-all {
+  align-items: center;
   border: 1px solid var(--apollo-accent);
   border-radius: 999px;
   color: var(--apollo-accent);
+  display: inline-flex;
   font-weight: 750;
+  justify-content: center;
   min-height: 44px;
+  text-decoration: none;
   width: 100%;
 }
 
@@ -633,8 +686,8 @@ html[data-bs-theme="light"] .data-detail-panel {
 
 .neo-risk-note {
   align-items: flex-start;
-  background: var(--apollo-accent-soft);
-  border: 1px solid rgba(255, 64, 86, 0.28);
+  background: var(--apollo-warning-soft);
+  border: 1px solid color-mix(in srgb, var(--apollo-warning) 38%, transparent);
   border-radius: 8px;
   color: var(--bs-body-color);
   display: flex;
@@ -643,8 +696,96 @@ html[data-bs-theme="light"] .data-detail-panel {
 }
 
 .neo-risk-note i {
-  color: var(--apollo-accent);
+  color: var(--apollo-warning);
   margin-top: 0.2rem;
+}
+
+.neo-risk-note-success {
+  background: var(--apollo-success-soft);
+  border-color: color-mix(in srgb, var(--apollo-success) 38%, transparent);
+}
+
+.neo-risk-note-success i {
+  color: var(--apollo-success);
+}
+
+.neo-risk-note-warning {
+  background: var(--apollo-warning-soft);
+}
+
+.space-weather-status {
+  align-items: center;
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.space-weather-status.space-weather-quiet,
+.stat-chip.space-weather-quiet {
+  background: var(--apollo-success-soft);
+  border-color: color-mix(in srgb, var(--apollo-success) 35%, transparent);
+}
+
+.space-weather-status.space-weather-active,
+.stat-chip.space-weather-active {
+  background: var(--apollo-warning-soft);
+  border-color: color-mix(in srgb, var(--apollo-warning) 38%, transparent);
+}
+
+.space-weather-status.space-weather-storm,
+.stat-chip.space-weather-storm {
+  background: var(--apollo-accent-soft);
+  border-color: rgba(255, 64, 86, 0.28);
+}
+
+.stat-chip.space-weather-quiet {
+  color: var(--apollo-success);
+}
+
+.stat-chip.space-weather-active {
+  color: var(--apollo-warning);
+}
+
+.stat-chip.space-weather-storm {
+  color: var(--apollo-accent);
+}
+
+.space-weather-kp {
+  align-items: center;
+  background: var(--apollo-muted-strong);
+  border-radius: 999px;
+  color: var(--apollo-surface-bg);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.8125rem;
+  font-weight: 750;
+  min-height: 28px;
+  padding: 0.25rem 0.8rem;
+  white-space: nowrap;
+}
+
+.space-weather-alerts {
+  border-top: 1px solid var(--apollo-border);
+  padding-top: 1rem;
+}
+
+.space-weather-alerts li {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.625rem 0;
+}
+
+.space-weather-alerts li + li {
+  border-top: 1px solid var(--apollo-border);
+}
+
+.space-weather-alerts time {
+  color: var(--apollo-muted);
+  font-size: 0.8125rem;
 }
 
 .asteroid-row {
@@ -680,6 +821,100 @@ html[data-bs-theme="light"] .data-detail-panel {
   color: #212529 !important;
 }
 
+.apollo-return-link {
+  align-items: center;
+  color: var(--apollo-muted-strong);
+  display: inline-flex;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.apollo-return-link:hover,
+.apollo-return-link:focus-visible {
+  color: var(--apollo-accent);
+}
+
+.launch-page-shell {
+  max-width: 1120px;
+}
+
+.launch-detail-panel {
+  overflow: hidden;
+}
+
+.launch-detail-body {
+  padding: 24px;
+}
+
+.launch-page-list {
+  display: grid;
+  gap: 18px;
+}
+
+.launch-page-card {
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 180px minmax(0, 1fr);
+  padding: 18px;
+}
+
+.launch-page-media {
+  align-self: stretch;
+  background: var(--apollo-surface-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 6px;
+  min-height: 150px;
+  overflow: hidden;
+}
+
+.launch-page-media img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.launch-page-media-placeholder {
+  align-items: center;
+  color: var(--apollo-accent);
+  display: flex;
+  font-size: 2rem;
+  height: 100%;
+  justify-content: center;
+  min-height: 150px;
+}
+
+.launch-page-content {
+  min-width: 0;
+}
+
+.launch-page-title-row {
+  align-items: start;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.launch-page-title {
+  color: var(--bs-body-color);
+  font-size: 1.35rem;
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+.launch-page-title .launch-mission {
+  display: block;
+  font-size: 1.1rem;
+  margin-top: 0.25rem;
+}
+
+.launch-page-summary {
+  color: var(--apollo-muted-strong);
+  margin: 14px 0 18px;
+}
+
 @media (max-width: 1199.98px) {
   .apollo-shell {
     max-width: 960px;
@@ -689,6 +924,19 @@ html[data-bs-theme="light"] .data-detail-panel {
   .apod-loading-grid,
   .apollo-dashboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .apollo-dashboard-grid {
+    grid-template-areas:
+      "iss"
+      "crew"
+      "launches"
+      "asteroids"
+      "weather";
+  }
+
+  .launch-page-card {
+    grid-template-columns: 140px minmax(0, 1fr);
   }
 
   .apod-media-link,
@@ -769,7 +1017,8 @@ html[data-bs-theme="light"] .data-detail-panel {
   }
 
   .metadata-grid,
-  .detail-list {
+  .detail-list,
+  .crew-grid {
     grid-template-columns: 1fr;
   }
 
@@ -804,5 +1053,24 @@ html[data-bs-theme="light"] .data-detail-panel {
   .asteroid-row {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .launch-page-title-row {
+    align-items: start;
+    grid-template-columns: 1fr;
+  }
+
+  .space-weather-status {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .launch-page-card {
+    grid-template-columns: 1fr;
+  }
+
+  .launch-page-media,
+  .launch-page-media-placeholder {
+    min-height: 190px;
   }
 }

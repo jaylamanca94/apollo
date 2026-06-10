@@ -3,7 +3,8 @@ const API = {
   iss: "https://api.wheretheiss.at/v1/satellites/25544",
   people: "https://corquaid.github.io/international-space-station-APIs/JSON/people-in-space.json",
   launches: "/api/launches",
-  neo: "/api/neo"
+  neo: "/api/neo",
+  spaceWeather: "/api/space-weather"
 };
 
 const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily unavailable because NASA is limiting requests. Other dashboard sections are still live.";
@@ -18,6 +19,7 @@ const els = {
   peopleBody: document.querySelector("#peopleBody"),
   issBody: document.querySelector("#issBody"),
   neoBody: document.querySelector("#neoBody"),
+  spaceWeatherBody: document.querySelector("#spaceWeatherBody"),
   launchBody: document.querySelector("#launchBody"),
   apodBody: document.querySelector("#apodBody"),
   dashboardStatus: document.querySelector("#dashboardStatus")
@@ -164,6 +166,17 @@ function formatLunarDistance(value) {
 
 function formatVelocityKph(value) {
   return Number.isFinite(value) ? `${Math.round(value).toLocaleString()} km/h` : "Unavailable";
+}
+
+function formatKpIndex(value) {
+  if (!Number.isFinite(value)) {
+    return "Unavailable";
+  }
+
+  return value.toLocaleString([], {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: value % 1 === 0 ? 0 : 1
+  });
 }
 
 function formatDiameterRange(minValue, maxValue) {
@@ -371,6 +384,28 @@ function normalizeNeo(data, date) {
       sourceUrl: safeHttpUrl(item?.nasa_jpl_url)
     };
   });
+}
+
+function normalizeSpaceWeather(data) {
+  const weather = data?.spaceWeather && typeof data.spaceWeather === "object" ? data.spaceWeather : data;
+  const alerts = Array.isArray(weather?.alerts) ? weather.alerts : [];
+
+  return {
+    observedAt: getText(weather?.observedAt),
+    kpIndex: getFiniteNumber(weather?.kpIndex),
+    kpLabel: getText(weather?.kpLabel),
+    condition: getText(weather?.condition, "Unavailable"),
+    severity: getText(weather?.severity, "quiet"),
+    summary: getText(weather?.summary, "Space weather data is unavailable right now."),
+    sourceUrl: safeHttpUrl(weather?.sourceUrl) || "https://www.swpc.noaa.gov/products-and-data",
+    alerts: alerts
+      .map((alert) => ({
+        productId: getText(alert?.productId),
+        issuedAt: getText(alert?.issuedAt),
+        headline: getText(alert?.headline)
+      }))
+      .filter((alert) => alert.headline)
+  };
 }
 
 function setBusy(element, isBusy) {
@@ -619,14 +654,14 @@ async function loadPeople() {
           <p class="h3 fw-semibold mb-0">${people.length}</p>
         </div>
       </div>
-      <ul class="list-group list-group-flush">
+      <div class="crew-grid">
         ${people.map((person) => `
-          <li class="list-group-item px-0 py-3 d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3">
-            <span class="fw-semibold">${escapeHtml(person.name)}</span>
-            ${person.craft ? `<span class="text-secondary text-sm-end">${escapeHtml(person.craft)}</span>` : ""}
-          </li>
+          <article class="crew-person">
+            <h3 class="crew-name mb-0">${escapeHtml(person.name)}</h3>
+            ${person.craft ? `<p class="crew-craft mb-0">${escapeHtml(person.craft)}</p>` : ""}
+          </article>
         `).join("")}
-      </ul>
+      </div>
     `;
   } catch (error) {
     setError(els.peopleBody, "Could not load people-in-space data right now.");
@@ -642,8 +677,8 @@ async function loadLaunches() {
       return;
     }
 
-    const renderLaunchRows = (showAll = false) => {
-      const visibleLaunches = showAll ? launches : launches.slice(0, 3);
+    const renderLaunchRows = () => {
+      const visibleLaunches = launches.slice(0, 3);
 
       els.launchBody.innerHTML = `
         <p class="launch-count">${launches.length} upcoming SpaceX launches</p>
@@ -688,7 +723,7 @@ async function loadLaunches() {
                       ${launch.sourceUrl ? `
                         <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
                           <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                          Launch Library Source
+                          Launch data source
                         </a>
                       ` : ""}
                     </div>
@@ -700,18 +735,8 @@ async function loadLaunches() {
           `;
         }).join("")}
         </div>
-        ${launches.length > 3 ? `
-          <button class="btn launch-show-all mt-4" type="button" id="launchToggleButton">
-            ${showAll ? "Show Fewer Launches" : "Show All Launches"}
-          </button>
-        ` : ""}
+        <a class="btn launch-show-all mt-4" href="./launches.html">View All Launches</a>
       `;
-
-      const launchToggleButton = els.launchBody.querySelector("#launchToggleButton");
-
-      if (launchToggleButton) {
-        launchToggleButton.addEventListener("click", () => renderLaunchRows(!showAll));
-      }
     };
 
     renderLaunchRows();
@@ -738,6 +763,8 @@ async function loadNeo() {
     const hazardSummary = hazardous === 0
       ? "No listed objects are flagged as potentially hazardous today."
       : `${hazardous} listed ${hazardous === 1 ? "object is" : "objects are"} flagged for NASA tracking. That flag reflects size and orbit, not an expected impact.`;
+    const hazardNoteClass = hazardous === 0 ? "neo-risk-note-success" : "neo-risk-note-warning";
+    const hazardIcon = hazardous === 0 ? "fa-circle-check" : "fa-circle-info";
 
     els.neoBody.innerHTML = `
       <div class="metadata-grid mb-3">
@@ -759,8 +786,8 @@ async function loadNeo() {
           <p class="fw-semibold mb-0">${formatVelocityKph(fastestVelocity)}</p>
         </div>
       </div>
-      <div class="neo-risk-note mb-3">
-        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+      <div class="neo-risk-note ${hazardNoteClass} mb-3">
+        <i class="fa-solid ${hazardIcon}" aria-hidden="true"></i>
         <p class="mb-0">${hazardSummary}</p>
       </div>
       ${asteroids.length ? `
@@ -785,6 +812,50 @@ async function loadNeo() {
   }
 }
 
+async function loadSpaceWeather() {
+  try {
+    const data = normalizeSpaceWeather(await fetchJson(API.spaceWeather));
+    const severityClass = `space-weather-${data.severity}`;
+    const recentAlerts = data.alerts.slice(0, 2);
+
+    els.spaceWeatherBody.innerHTML = `
+      <div class="summary-metric mb-3">
+        <span class="stat-chip ${severityClass}"><i class="fa-solid fa-sun" aria-hidden="true"></i></span>
+        <div>
+          <p class="text-secondary small mb-1">Current K-index</p>
+          <p class="h3 fw-semibold mb-0">${formatKpIndex(data.kpIndex)}</p>
+        </div>
+      </div>
+      <div class="space-weather-status ${severityClass} mb-3">
+        <div>
+          <p class="section-kicker mb-1">${escapeHtml(data.condition)}</p>
+          <p class="mb-0">${escapeHtml(data.summary)}</p>
+        </div>
+        ${data.kpLabel ? `<span class="space-weather-kp">${escapeHtml(data.kpLabel)}</span>` : ""}
+      </div>
+      ${recentAlerts.length ? `
+        <div class="space-weather-alerts mb-3">
+          <p class="text-secondary small mb-2">Recent SWPC notices</p>
+          <ul class="list-unstyled mb-0">
+            ${recentAlerts.map((alert) => `
+              <li>
+                <span>${escapeHtml(alert.headline)}</span>
+                ${alert.issuedAt ? `<time datetime="${escapeHtml(alert.issuedAt)}">${formatDateTime(alert.issuedAt)}</time>` : ""}
+              </li>
+            `).join("")}
+          </ul>
+        </div>
+      ` : stateMessage("No recent SWPC alerts are listed.")}
+      <a class="source-link" href="${escapeHtml(data.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+        <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+        NOAA space weather source
+      </a>
+    `;
+  } catch (error) {
+    setError(els.spaceWeatherBody, "Could not load space weather right now.");
+  }
+}
+
 async function loadDashboard() {
   setDashboardStatus("Refreshing Apollo dashboard data.");
   [
@@ -792,7 +863,8 @@ async function loadDashboard() {
     els.issBody,
     els.peopleBody,
     els.launchBody,
-    els.neoBody
+    els.neoBody,
+    els.spaceWeatherBody
   ].forEach((element) => setBusy(element, true));
   [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
     button.disabled = true;
@@ -803,14 +875,16 @@ async function loadDashboard() {
     loadIss(),
     loadPeople(),
     loadLaunches(),
-    loadNeo()
+    loadNeo(),
+    loadSpaceWeather()
   ]);
   [
     els.apodBody,
     els.issBody,
     els.peopleBody,
     els.launchBody,
-    els.neoBody
+    els.neoBody,
+    els.spaceWeatherBody
   ].forEach((element) => setBusy(element, false));
   setDashboardStatus("Apollo dashboard data refreshed.");
   setDashboardUpdated();

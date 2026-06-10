@@ -42,6 +42,8 @@ Default first-time visitors to Dark Mode and provide a compact header toggle for
 
 Use one shared red accent for dashboard icons, outline actions, map overlays, and progressive disclosure affordances. Avoid giving every data family a separate hue while this design direction is active.
 
+Use green success styling for clearly positive safety/status messages. For example, the asteroid message `No listed objects are flagged as potentially hazardous today.` should read as a green success alert, not a red or warning state.
+
 ### Maps
 
 Use Leaflet for spatial dashboard views. Keep map frames inside the related data card, match the existing `8px` radius, and mute map tiles in Dark Mode so the panel does not overpower nearby operational data.
@@ -52,12 +54,13 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 
 - APOD split feature: image or media on the left, source/date/title/credit/summary links on the right.
 - ISS current position and people in space as paired operational cards.
-- Launches as a taller list card with three visible launch rows and a show-all control.
+- Launches as a taller list card with three visible launch rows and a link to the launches detail page.
 - Asteroids as a summary card with risk context and nearby object rows.
+- Space weather as a compact status card under asteroid context.
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
 
-Use inline disclosure details for richer APOD and launch context before introducing separate pages. Details should add source links, credits, mission metadata, or explanatory context without increasing the top-level card weight.
+Use inline disclosure details for richer dashboard context, then graduate to separate static pages only when a card needs materially more space. The launches detail page is the first example of this pattern.
 
 ### Desktop
 
@@ -128,13 +131,14 @@ Use `8px` or less for normal cards and repeated list items unless a larger conta
 - Media artwork icons and thumbnails should follow the media artwork treatment, not utility icon sizing.
 - Standard spacing between utility icons and text: `8px`
 - Caption-sized or very small UI may use tighter spacing when needed.
+- Avoid decorative section-header icons when the heading already communicates the section. Prefer icons in brand marks, compact metric chips, empty/error states, and links where they aid scanning.
 
 Current icon mapping:
 
-- Brand, ISS, and Launches: rocket
+- Brand and launch placeholders: rocket
 - APOD: image
-- Crew: astronaut
-- Asteroids: meteor
+- People in Space metric: astronaut
+- Space Weather metric: sun
 
 ## Forms
 

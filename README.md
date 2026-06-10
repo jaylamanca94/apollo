@@ -1,6 +1,6 @@
 # Apollo
 
-Apollo is a small Bootstrap MVP dashboard that pulls public space data into an APOD-first operational layout. It includes NASA Astronomy Picture of the Day, ISS position, people currently in space, upcoming SpaceX launches, and a NASA Near-Earth Object summary with calm detail paths for richer context.
+Apollo is a small Bootstrap MVP dashboard that pulls public space data into an APOD-first operational layout. It includes NASA Astronomy Picture of the Day, ISS position, people currently in space, upcoming SpaceX launches, NOAA space weather, and a NASA Near-Earth Object summary with calm detail paths for richer context.
 
 ## Recommended Architecture
 
@@ -19,7 +19,8 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 
 - NASA Astronomy Picture of the Day, proxied and normalized through `/api/apod`
 - NASA NeoWs Near-Earth Object Feed, proxied and normalized through `/api/neo`
-- Launch Library 2 SpaceX launch search, proxied and normalized through `/api/launches`
+- The Space Devs SpaceX launch data, proxied and normalized through `/api/launches`
+- NOAA Space Weather Prediction Center K-index and alert feeds, proxied and normalized through `/api/space-weather`
 - Apollo server health check through `/api/health`
 - Where the ISS At
 - OpenStreetMap tiles for the ISS map
@@ -31,13 +32,16 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `PRODUCT-README.md` - Apollo mission, goals, scope, decisions, roadmap, and known limitations
 - `DESIGN-README.md` - Apollo design standards, UI utilities, and interaction guidance
 - `index.html` - dashboard markup
+- `launches.html` - dedicated launches detail page markup
 - `styles.css` - minimal Bootstrap-aligned styling
 - `app.js` - frontend data loading and rendering
+- `launches.js` - launches detail page data loading and rendering
 - `api/_nasa.js` - shared NASA proxy helper and in-memory cache
-- `api/_space_data.js` - shared APOD and Near-Earth Object response normalizers
+- `api/_space_data.js` - shared APOD, Near-Earth Object, and NOAA space weather response normalizers
 - `api/apod.js` - serverless NASA APOD endpoint with a normalized dashboard contract
 - `api/neo.js` - serverless NASA NeoWs endpoint with a normalized dashboard contract
 - `api/launches.js` - serverless Launch Library endpoint for upcoming SpaceX launches and launch detail fields
+- `api/space-weather.js` - serverless NOAA SWPC endpoint for current space weather status
 - `api/health.js` - serverless health endpoint for uptime checks and server configuration status
 - `tests/api-contracts.test.js` - fixture tests for normalized API response contracts
 - `package.json` - local development/check scripts
@@ -113,7 +117,8 @@ The NASA proxy includes lightweight caching:
 
 - APOD: 6 hours
 - NeoWs daily feed: 30 minutes
-- Launch Library SpaceX launch search: 15 minutes
+- The Space Devs SpaceX launch data: 15 minutes
+- NOAA SWPC space weather: 5 minutes
 
 This reduces rate-limit pressure and keeps the dashboard usable during normal traffic. It is intentionally simple and does not add persistence.
 
@@ -125,7 +130,7 @@ Run the project checks with:
 npm run check
 ```
 
-This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, and launch contracts.
+This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, launch, and space-weather contracts.
 
 GitHub Actions runs the same checks on pushes to `main` and on pull requests.
 
@@ -144,7 +149,8 @@ It returns the app version, timestamp, runtime status, and whether the server-si
 - NASA data depends on the server-side `NASA_API_KEY` being configured.
 - Serverless in-memory cache is per warm function instance and may reset.
 - Public APIs can fail, timeout, or change response formats; Apollo normalizes key payloads before rendering, but source outages can still affect the dashboard.
-- Launch listings depend on Launch Library availability and the current SpaceX search result format.
+- Launch listings depend on The Space Devs launch data availability and the current SpaceX search result format.
+- Space weather depends on NOAA SWPC public feeds.
 - This MVP does not include charts, filters, auth, saved settings, or persistence.
 - Export, search, notifications, and observation-creation workflows are intentionally not included yet.
 
