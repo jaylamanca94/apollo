@@ -1,10 +1,7 @@
 const { requestNasa, sendJson } = require("./_nasa");
+const { isIsoDate, normalizeNeoPayload } = require("./_space_data");
 
 const NEO_CACHE_SECONDS = 60 * 30;
-
-function isIsoDate(value) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value);
-}
 
 module.exports = async function handler(request, response) {
   if (request.method !== "GET") {
@@ -30,7 +27,7 @@ module.exports = async function handler(request, response) {
   }
 
   try {
-    const payload = await requestNasa(
+    const nasaPayload = await requestNasa(
       "/neo/rest/v1/feed",
       {
         start_date: date,
@@ -39,6 +36,7 @@ module.exports = async function handler(request, response) {
       `neo:${date}`,
       NEO_CACHE_SECONDS
     );
+    const payload = normalizeNeoPayload(nasaPayload, date);
     sendJson(response, 200, payload, NEO_CACHE_SECONDS);
   } catch (error) {
     sendJson(response, error.status || 500, error.payload || {

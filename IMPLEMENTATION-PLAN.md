@@ -167,6 +167,9 @@ Start with Option A for APOD and launch details. Move to Option B only after the
 Current Decision:
 Apollo now starts with inline detail paths for APOD, launches, and asteroid context. APOD exposes credit, full media, NASA source, and full description. Launches expose mission details, vehicle, pad, location, launch window, and source. Asteroids expose lunar-distance, velocity, and hazard-context cues. Dedicated URLs remain deferred.
 
+Reliability Update:
+APOD and Near-Earth Object API responses are now normalized server-side before reaching the browser, matching the Launch Library proxy pattern. Frontend normalizers still accept older raw NASA shapes as a compatibility fallback. The remaining reliability follow-up is automated fixture coverage for the normalized API contracts.
+
 Acceptance Criteria:
 - Only 2-3 detail experiences are introduced.
 - Each detail page or panel adds information that is not already useful on the main dashboard.

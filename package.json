@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev",
-    "check": "node --check app.js && node --check api/_nasa.js && node --check api/apod.js && node --check api/neo.js && node --check api/launches.js"
+    "check": "node --check app.js && node --check api/_nasa.js && node --check api/_space_data.js && node --check api/apod.js && node --check api/neo.js && node --check api/launches.js"
   },
   "devDependencies": {
     "vercel": "^34.0.0"

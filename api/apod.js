@@ -1,4 +1,5 @@
 const { requestNasa, sendJson } = require("./_nasa");
+const { normalizeApodPayload } = require("./_space_data");
 
 const APOD_CACHE_SECONDS = 60 * 60 * 6;
 const APOD_TIME_ZONE = "America/New_York";
@@ -66,7 +67,7 @@ module.exports = async function handler(request, response) {
   }
 
   try {
-    const payload = await requestApodWithFallback();
+    const payload = normalizeApodPayload(await requestApodWithFallback());
     sendJson(response, 200, payload, APOD_CACHE_SECONDS);
   } catch (error) {
     sendJson(response, error.status || 500, error.payload || {

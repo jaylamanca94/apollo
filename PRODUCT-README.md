@@ -51,13 +51,14 @@ Out of scope for the MVP:
 - Bootstrap and Font Awesome Free for UI conventions and icons.
 - Leaflet and OpenStreetMap tiles provide the ISS map without adding another API key.
 - Vercel for deployment and serverless API routes.
-- NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`.
+- NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`, then normalized into dashboard-ready response contracts.
 - NASA API keys stay server-side via `NASA_API_KEY`.
 - APOD tries NASA's default response first, then Eastern-date fallbacks to avoid UTC publish-window failures.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
 - SpaceX launch listings use Launch Library through `/api/launches`, with a normalized response shape before data reaches the dashboard.
+- Server-side normalizers provide stable APOD, launch, and Near-Earth Object shapes so third-party response changes are less likely to break card rendering.
 - Frontend rendering escapes API-provided text before inserting it into the page.
-- Frontend data loaders normalize third-party payloads before rendering visible values.
+- Frontend data loaders retain compatibility fallbacks for older raw NASA payload shapes.
 - Detail experiences start as inline disclosure panels and source links instead of separate pages.
 - Other public APIs remain browser-side for MVP simplicity.
 - Visual direction now follows the quieter Odyssey-style product shell: Bootstrap-first top navigation, neutral surfaces, simple cards, and low-maintenance spacing.
@@ -75,7 +76,7 @@ Recommended next steps:
 1. Rotate the NASA API key in Vercel after the early key exposure issue.
 2. Run final production QA after key rotation.
 3. Add basic monitoring/error visibility if Apollo gets shared more broadly.
-4. Add schema validation for API responses.
+4. Add automated API contract fixture tests for the normalized APOD, launch, and NEO shapes.
 5. Add accessibility QA and browser coverage before a broader public launch.
 6. Decide whether APOD or launch details deserve dedicated URLs after the inline detail pattern is tested.
 
@@ -92,6 +93,6 @@ Future enhancements only if requested:
 
 - NASA data depends on the configured Vercel `NASA_API_KEY`.
 - Vercel in-memory cache is per warm serverless function instance and may reset.
-- Third-party public APIs can fail or change response formats.
+- Third-party public APIs can fail or change response formats; Apollo now normalizes key server responses, but source outages can still affect sections.
 - Launch listings depend on Launch Library availability and its SpaceX search result format.
 - No automated end-to-end test suite yet.

@@ -264,17 +264,18 @@ function getFiniteNumber(value) {
 }
 
 function normalizeApod(data) {
-  const date = getText(data?.date);
+  const apod = data?.apod && typeof data.apod === "object" ? data.apod : data;
+  const date = getText(apod?.date);
 
   return {
-    title: getText(data?.title, "Astronomy Picture of the Day"),
+    title: getText(apod?.title, "Astronomy Picture of the Day"),
     date,
-    explanation: getText(data?.explanation, "No description available."),
-    mediaType: getText(data?.media_type),
-    mediaUrl: safeHttpUrl(data?.url),
-    hdUrl: safeHttpUrl(data?.hdurl),
-    copyright: getText(data?.copyright),
-    sourceUrl: getApodSourceUrl(date)
+    explanation: getText(apod?.explanation, "No description available."),
+    mediaType: getText(apod?.mediaType || apod?.media_type),
+    mediaUrl: safeHttpUrl(apod?.mediaUrl || apod?.url),
+    hdUrl: safeHttpUrl(apod?.hdUrl || apod?.hdurl),
+    copyright: getText(apod?.copyright),
+    sourceUrl: safeHttpUrl(apod?.sourceUrl) || getApodSourceUrl(date)
   };
 }
 
@@ -320,11 +321,25 @@ function normalizeLaunches(data) {
 }
 
 function normalizeNeo(data, date) {
-  const asteroids = Array.isArray(data?.near_earth_objects?.[date])
+  if (Array.isArray(data?.asteroids)) {
+    return data.asteroids.map((item) => ({
+      name: getText(item?.name, "Unnamed object"),
+      hazardous: Boolean(item?.hazardous),
+      closestKilometers: getFiniteNumber(item?.closestKilometers),
+      lunarDistance: getFiniteNumber(item?.lunarDistance),
+      velocityKph: getFiniteNumber(item?.velocityKph),
+      closeApproach: getText(item?.closeApproach),
+      minDiameterMeters: getFiniteNumber(item?.minDiameterMeters),
+      maxDiameterMeters: getFiniteNumber(item?.maxDiameterMeters),
+      sourceUrl: safeHttpUrl(item?.sourceUrl)
+    }));
+  }
+
+  const rawAsteroids = Array.isArray(data?.near_earth_objects?.[date])
     ? data.near_earth_objects[date]
     : [];
 
-  return asteroids.map((item) => {
+  return rawAsteroids.map((item) => {
     const approach = item?.close_approach_data?.[0] || {};
     const closestKilometers = getFiniteNumber(approach?.miss_distance?.kilometers);
     const lunarDistance = getFiniteNumber(approach?.miss_distance?.lunar);
@@ -340,7 +355,8 @@ function normalizeNeo(data, date) {
       velocityKph,
       closeApproach: getText(approach?.close_approach_date_full || approach?.close_approach_date),
       minDiameterMeters: minDiameterKilometers === null ? null : minDiameterKilometers * 1000,
-      maxDiameterMeters: maxDiameterKilometers === null ? null : maxDiameterKilometers * 1000
+      maxDiameterMeters: maxDiameterKilometers === null ? null : maxDiameterKilometers * 1000,
+      sourceUrl: safeHttpUrl(item?.nasa_jpl_url)
     };
   });
 }

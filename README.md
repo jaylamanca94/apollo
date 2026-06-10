@@ -17,9 +17,9 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 
 ## APIs Used
 
-- NASA Astronomy Picture of the Day, proxied through `/api/apod`
-- NASA NeoWs Near-Earth Object Feed, proxied through `/api/neo`
-- Launch Library 2 SpaceX launch search, proxied through `/api/launches`
+- NASA Astronomy Picture of the Day, proxied and normalized through `/api/apod`
+- NASA NeoWs Near-Earth Object Feed, proxied and normalized through `/api/neo`
+- Launch Library 2 SpaceX launch search, proxied and normalized through `/api/launches`
 - Where the ISS At
 - OpenStreetMap tiles for the ISS map
 - People in Space JSON
@@ -33,8 +33,9 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `styles.css` - minimal Bootstrap-aligned styling
 - `app.js` - frontend data loading and rendering
 - `api/_nasa.js` - shared NASA proxy helper and in-memory cache
-- `api/apod.js` - serverless NASA APOD endpoint
-- `api/neo.js` - serverless NASA NeoWs endpoint
+- `api/_space_data.js` - shared APOD and Near-Earth Object response normalizers
+- `api/apod.js` - serverless NASA APOD endpoint with a normalized dashboard contract
+- `api/neo.js` - serverless NASA NeoWs endpoint with a normalized dashboard contract
 - `api/launches.js` - serverless Launch Library endpoint for upcoming SpaceX launches and launch detail fields
 - `package.json` - local development/check scripts
 - `vercel.json` - Vercel deployment configuration
@@ -117,7 +118,7 @@ This reduces rate-limit pressure and keeps the dashboard usable during normal tr
 
 - NASA data depends on the server-side `NASA_API_KEY` being configured.
 - Serverless in-memory cache is per warm function instance and may reset.
-- Public APIs can fail, timeout, or change response formats.
+- Public APIs can fail, timeout, or change response formats; Apollo normalizes key payloads before rendering, but source outages can still affect the dashboard.
 - Launch listings depend on Launch Library availability and the current SpaceX search result format.
 - This MVP does not include charts, filters, auth, saved settings, or persistence.
 - Export, search, notifications, and observation-creation workflows are intentionally not included yet.
@@ -127,7 +128,7 @@ This reduces rate-limit pressure and keeps the dashboard usable during normal tr
 For a larger public launch, consider:
 
 - External cache or edge cache strategy
-- API response schema validation
+- Automated API contract fixture tests
 - Monitoring and error logging
 - Accessibility audit
 - CI checks
