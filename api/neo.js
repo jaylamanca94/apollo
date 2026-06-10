@@ -3,6 +3,16 @@ const { isIsoDate, normalizeNeoPayload } = require("./_space_data");
 
 const NEO_CACHE_SECONDS = 60 * 30;
 
+function getQueryParam(request, name) {
+  try {
+    const host = request.headers?.host || "localhost";
+    const url = new URL(request.url || "", `https://${host}`);
+    return url.searchParams.get(name) || "";
+  } catch (error) {
+    return "";
+  }
+}
+
 module.exports = async function handler(request, response) {
   if (request.method !== "GET") {
     sendJson(response, 405, {
@@ -14,7 +24,7 @@ module.exports = async function handler(request, response) {
     return;
   }
 
-  const date = request.query?.date;
+  const date = getQueryParam(request, "date");
 
   if (!isIsoDate(date)) {
     sendJson(response, 400, {
