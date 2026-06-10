@@ -29,6 +29,7 @@ Use this mode when building, changing, debugging, testing, documenting, or deplo
 - Prefer managed cloud services over self-hosted infrastructure unless there is a clear requirement.
 - Test and verify changes before reporting completion.
 - Update documentation when setup, architecture, dependencies, environment variables, deployment, workflows, or material behavior changes.
+- Use available Supabase tools to inspect, create, update, migrate, seed, or repair Supabase resources when the founder has approved the recommended next step and the agent has access.
 - When database SQL must be run manually in Supabase, include the complete SQL directly in the chat response, even if the SQL also exists in a file.
 
 ### Content Mode
@@ -65,6 +66,8 @@ Use `DESIGN-README.md` as the product's design source of truth.
 
 - If the founder sends exactly `y`, treat it as confirmation that any current `Tasks for Founder` are complete and proceed with the recommended next step using available connected tools.
 - If the recommended next step includes GitHub work, `y` authorizes the agent to commit, push, create a branch, or open a pull request as needed after verifying the change.
+- After completing, reviewing, and verifying approved work, the agent is allowed to commit and push the completed changes using GitHub tools when repository access is available.
+- If the recommended next step includes Supabase work and the agent has access, `y` authorizes the agent to use available Supabase tools for the approved database, auth, storage, migration, seed, policy, or configuration work.
 - Do not deploy, delete data, rotate secrets, remove repositories, overwrite history, or make destructive repository changes unless that action was explicitly included in the recommended next step or separately confirmed.
 - If the founder sends `y+`, proceed with the recommended next step, then look for cleanup, documentation, or small quality improvements.
 
