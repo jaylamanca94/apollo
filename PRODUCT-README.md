@@ -37,12 +37,12 @@ Out of scope for the MVP:
 - APOD feature panel.
 - ISS latitude, longitude, altitude, and velocity.
 - Crew count and crew list.
-- Upcoming launch list with SpaceX API and Launch Library fallback.
+- Upcoming SpaceX launch list through a server-side Launch Library proxy.
 - Near-Earth asteroid summary for the current day.
 - Refresh action.
 - Loading, empty, and error states.
 - Server-side NASA API key handling.
-- Lightweight serverless caching for NASA responses.
+- Lightweight serverless caching for NASA and launch responses.
 
 ## Design Decisions
 
@@ -52,7 +52,9 @@ Out of scope for the MVP:
 - NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`.
 - NASA API keys stay server-side via `NASA_API_KEY`.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
+- SpaceX launch listings use Launch Library through `/api/launches`, with a normalized response shape before data reaches the dashboard.
 - Frontend rendering escapes API-provided text before inserting it into the page.
+- Frontend data loaders normalize third-party payloads before rendering visible values.
 - Other public APIs remain browser-side for MVP simplicity.
 - Visual direction now follows the quieter Odyssey-style product shell: Bootstrap-first top navigation, neutral surfaces, simple cards, and low-maintenance spacing.
 - Unsupported controls such as export, search, notifications, settings, and new observations are omitted until those workflows are requested.
@@ -81,5 +83,5 @@ Future enhancements only if requested:
 - NASA data depends on the configured Vercel `NASA_API_KEY`.
 - Vercel in-memory cache is per warm serverless function instance and may reset.
 - Third-party public APIs can fail or change response formats.
-- SpaceX official API can be unavailable; Launch Library is used as a fallback.
+- Launch listings depend on Launch Library availability and its SpaceX search result format.
 - No automated end-to-end test suite yet.

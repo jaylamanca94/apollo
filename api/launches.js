@@ -1,0 +1,135 @@
+const { sendJson } = require("./_nasa");
+
+const LAUNCH_LIBRARY_URL = "https://ll.thespacedevs.com/2.3.0/launches/upcoming/";
+const LAUNCH_CACHE_SECONDS = 60 * 15;
+const LAUNCH_TIMEOUT_MS = 10000;
+const cache = new Map();
+
+function getCached(cacheKey) {
+  const cached = cache.get(cacheKey);
+
+  if (!cached || cached.expiresAt <= Date.now()) {
+    cache.delete(cacheKey);
+    return null;
+  }
+
+  return cached.payload;
+}
+
+function setCached(cacheKey, payload, ttlSeconds) {
+  cache.set(cacheKey, {
+    payload,
+    expiresAt: Date.now() + ttlSeconds * 1000
+  });
+}
+
+function safeHttpUrl(value) {
+  try {
+    const url = new URL(value);
+    return ["http:", "https:"].includes(url.protocol) ? url.toString() : "";
+  } catch (error) {
+    return "";
+  }
+}
+
+function getText(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function normalizeLaunch(launch) {
+  if (!launch || typeof launch !== "object") {
+    return null;
+  }
+
+  const name = getText(launch.name);
+  const dateUtc = getText(launch.net);
+  const launchDate = new Date(dateUtc);
+
+  if (!name || !dateUtc || !Number.isFinite(launchDate.getTime())) {
+    return null;
+  }
+
+  return {
+    name,
+    dateUtc,
+    status: getText(launch.status?.name) || "Upcoming",
+    details: getText(launch.mission?.description) || getText(launch.status?.description),
+    imageUrl: safeHttpUrl(launch.image?.thumbnail_url || launch.image?.image_url),
+    provider: getText(launch.launch_service_provider?.name) || "SpaceX",
+    sourceUrl: safeHttpUrl(launch.url)
+  };
+}
+
+function normalizeLaunchLibraryPayload(payload) {
+  const results = Array.isArray(payload?.results) ? payload.results : [];
+  const launches = results
+    .map(normalizeLaunch)
+    .filter(Boolean)
+    .sort((a, b) => new Date(a.dateUtc) - new Date(b.dateUtc))
+    .slice(0, 5);
+
+  return {
+    launches,
+    source: "Launch Library 2",
+    scope: "SpaceX upcoming launches"
+  };
+}
+
+async function requestLaunches() {
+  const cached = getCached("launches:spacex");
+
+  if (cached) {
+    return cached;
+  }
+
+  const url = new URL(LAUNCH_LIBRARY_URL);
+  url.searchParams.set("search", "SpaceX");
+  url.searchParams.set("limit", "5");
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), LAUNCH_TIMEOUT_MS);
+  const response = await fetch(url, {
+    signal: controller.signal
+  }).finally(() => clearTimeout(timeoutId));
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const error = new Error(`Launch Library request failed with status ${response.status}`);
+    error.status = response.status;
+    error.payload = payload || {
+      error: {
+        code: "LAUNCH_LIBRARY_REQUEST_FAILED",
+        message: "Launch Library request failed."
+      }
+    };
+    throw error;
+  }
+
+  const normalizedPayload = normalizeLaunchLibraryPayload(payload);
+  setCached("launches:spacex", normalizedPayload, LAUNCH_CACHE_SECONDS);
+  return normalizedPayload;
+}
+
+module.exports = async function handler(request, response) {
+  if (request.method !== "GET") {
+    sendJson(response, 405, {
+      error: {
+        code: "METHOD_NOT_ALLOWED",
+        message: "Use GET for this endpoint."
+      }
+    });
+    return;
+  }
+
+  try {
+    const payload = await requestLaunches();
+    sendJson(response, 200, payload, LAUNCH_CACHE_SECONDS);
+  } catch (error) {
+    sendJson(response, error.status || 502, error.payload || {
+      error: {
+        code: "LAUNCH_PROXY_ERROR",
+        message: "Could not load launch data."
+      }
+    });
+  }
+};

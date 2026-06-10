@@ -2,8 +2,7 @@ const API = {
   apod: "/api/apod",
   iss: "https://api.wheretheiss.at/v1/satellites/25544",
   people: "https://corquaid.github.io/international-space-station-APIs/JSON/people-in-space.json",
-  launches: "https://api.spacexdata.com/v5/launches/upcoming",
-  launchLibrary: "https://ll.thespacedevs.com/2.3.0/launches/upcoming/?search=SpaceX&limit=5",
+  launches: "/api/launches",
   neo: "/api/neo"
 };
 
@@ -29,7 +28,8 @@ const els = {
   launchDetailUpdated: document.querySelector("#launchDetailUpdated"),
   launchBody: document.querySelector("#launchBody"),
   apodUpdated: document.querySelector("#apodUpdated"),
-  apodBody: document.querySelector("#apodBody")
+  apodBody: document.querySelector("#apodBody"),
+  dashboardStatus: document.querySelector("#dashboardStatus")
 };
 
 function formatUpdated(date = new Date()) {
@@ -37,14 +37,24 @@ function formatUpdated(date = new Date()) {
 }
 
 function formatDate(value) {
+  const date = new Date(value);
+
+  if (!Number.isFinite(date.getTime())) {
+    return "Unavailable";
+  }
+
   return new Intl.DateTimeFormat([], {
     month: "short",
     day: "numeric",
     year: "numeric"
-  }).format(new Date(value));
+  }).format(date);
 }
 
 function formatNumber(value, options = {}) {
+  if (value === null || value === undefined || value === "") {
+    return "Unavailable";
+  }
+
   const number = Number(value);
 
   if (!Number.isFinite(number)) {
@@ -77,6 +87,94 @@ function safeHttpUrl(value) {
     return ["http:", "https:"].includes(url.protocol) ? url.toString() : "";
   } catch (error) {
     return "";
+  }
+}
+
+function getText(value, fallback = "") {
+  return typeof value === "string" && value.trim() ? value.trim() : fallback;
+}
+
+function getFiniteNumber(value) {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function normalizeApod(data) {
+  return {
+    title: getText(data?.title, "Astronomy Picture of the Day"),
+    date: getText(data?.date),
+    explanation: getText(data?.explanation, "No description available."),
+    mediaType: getText(data?.media_type),
+    mediaUrl: safeHttpUrl(data?.url)
+  };
+}
+
+function normalizeIss(data) {
+  return {
+    latitude: getFiniteNumber(data?.latitude),
+    longitude: getFiniteNumber(data?.longitude),
+    altitude: getFiniteNumber(data?.altitude),
+    velocity: getFiniteNumber(data?.velocity)
+  };
+}
+
+function normalizePeople(data) {
+  const people = Array.isArray(data?.people) ? data.people : [];
+
+  return people
+    .map((person) => ({
+      name: getText(person?.name),
+      craft: getText(person?.craft, "Spacecraft unknown")
+    }))
+    .filter((person) => person.name);
+}
+
+function normalizeLaunches(data) {
+  const launches = Array.isArray(data?.launches) ? data.launches : [];
+
+  return launches
+    .map((launch) => ({
+      name: getText(launch?.name),
+      dateUtc: getText(launch?.dateUtc),
+      status: getText(launch?.status, "Upcoming"),
+      details: getText(launch?.details, "No mission details available."),
+      imageUrl: safeHttpUrl(launch?.imageUrl),
+      provider: getText(launch?.provider, "SpaceX")
+    }))
+    .filter((launch) => launch.name && launch.dateUtc);
+}
+
+function normalizeNeo(data, date) {
+  const asteroids = Array.isArray(data?.near_earth_objects?.[date])
+    ? data.near_earth_objects[date]
+    : [];
+
+  return asteroids.map((item) => {
+    const closestKilometers = getFiniteNumber(item?.close_approach_data?.[0]?.miss_distance?.kilometers);
+    const maxDiameterKilometers = getFiniteNumber(item?.estimated_diameter?.kilometers?.estimated_diameter_max);
+
+    return {
+      name: getText(item?.name, "Unnamed object"),
+      hazardous: Boolean(item?.is_potentially_hazardous_asteroid),
+      closestKilometers,
+      maxDiameterMeters: maxDiameterKilometers === null ? null : maxDiameterKilometers * 1000
+    };
+  });
+}
+
+function setBusy(element, isBusy) {
+  if (element) {
+    element.setAttribute("aria-busy", String(isBusy));
+  }
+}
+
+function setDashboardStatus(message) {
+  if (els.dashboardStatus) {
+    els.dashboardStatus.textContent = message;
   }
 }
 
@@ -136,20 +234,19 @@ async function fetchJson(url, options = {}) {
 
 async function loadApod() {
   try {
-    const data = await fetchJson(API.apod);
-    const title = escapeHtml(data.title || "Astronomy Picture of the Day");
-    const mediaUrl = safeHttpUrl(data.url);
-    const media = mediaUrl && data.media_type === "image"
-      ? `<img class="img-fluid rounded apod-media mb-3" src="${mediaUrl}" alt="${title}">`
-      : mediaUrl
-        ? `<div class="ratio ratio-16x9 mb-3"><iframe class="rounded" src="${mediaUrl}" title="${title}" allowfullscreen></iframe></div>`
+    const data = normalizeApod(await fetchJson(API.apod));
+    const title = escapeHtml(data.title);
+    const media = data.mediaUrl && data.mediaType === "image"
+      ? `<img class="img-fluid rounded apod-media mb-3" src="${data.mediaUrl}" alt="${title}">`
+      : data.mediaUrl
+        ? `<div class="ratio ratio-16x9 mb-3"><iframe class="rounded" src="${data.mediaUrl}" title="${title}" allowfullscreen></iframe></div>`
         : "";
 
     els.apodBody.innerHTML = `
       ${media}
       <h3 class="h5 fw-semibold mb-1">${title}</h3>
       <p class="text-secondary small mb-2">${data.date ? formatDate(data.date) : "Today"}</p>
-      <p class="mb-0">${escapeHtml(data.explanation || "No description available.")}</p>
+      <p class="mb-0">${escapeHtml(data.explanation)}</p>
     `;
     setTimestamp([els.apodUpdated]);
   } catch (error) {
@@ -160,12 +257,11 @@ async function loadApod() {
 
 async function loadIss() {
   try {
-    const data = await fetchJson(API.iss);
-    const latitude = Number(data.latitude);
-    const longitude = Number(data.longitude);
+    const data = normalizeIss(await fetchJson(API.iss));
+    const { latitude, longitude } = data;
     const updated = formatUpdated();
 
-    els.issLat.innerHTML = Number.isFinite(latitude) && Number.isFinite(longitude)
+    els.issLat.innerHTML = latitude !== null && longitude !== null
       ? `<span>${formatNumber(latitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</span><span class="coordinate-divider"> / </span><span>${formatNumber(longitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</span>`
       : "--";
     setTimestamp([els.issUpdated, els.issDetailUpdated], updated);
@@ -200,8 +296,7 @@ async function loadIss() {
 
 async function loadPeople() {
   try {
-    const data = await fetchJson(API.people);
-    const people = Array.isArray(data.people) ? data.people : [];
+    const people = normalizePeople(await fetchJson(API.people));
     const updated = formatUpdated();
 
     els.peopleCount.textContent = people.length || "--";
@@ -232,25 +327,7 @@ async function loadPeople() {
 
 async function loadLaunches() {
   try {
-    let launches = [];
-
-    try {
-      const data = await fetchJson(API.launches);
-      launches = Array.isArray(data)
-        ? data.sort((a, b) => new Date(a.date_utc) - new Date(b.date_utc)).slice(0, 5)
-        : [];
-    } catch (error) {
-      const fallbackData = await fetchJson(API.launchLibrary);
-      launches = Array.isArray(fallbackData.results)
-        ? fallbackData.results.map((launch) => ({
-            name: launch.name,
-            date_utc: launch.net,
-            upcoming: true,
-            details: launch.mission?.description || launch.status?.name,
-            links: { patch: { small: launch.image?.thumbnail_url || launch.image?.image_url } }
-          }))
-        : [];
-    }
+    const launches = normalizeLaunches(await fetchJson(API.launches));
     const updated = formatUpdated();
 
     els.launchCount.textContent = launches.length || "--";
@@ -264,21 +341,18 @@ async function loadLaunches() {
     els.launchBody.innerHTML = `
       <div class="list-group list-group-flush">
         ${launches.map((launch) => {
-          const patchUrl = safeHttpUrl(launch.links?.patch?.small);
-          const badge = launch.upcoming
-            ? `<span class="badge text-bg-primary">Upcoming</span>`
-            : `<span class="badge text-bg-secondary">${launch.success ? "Success" : "Completed"}</span>`;
+          const badge = `<span class="badge text-bg-primary">${escapeHtml(launch.status)}</span>`;
           return `
             <article class="list-group-item px-0 py-3">
               <div class="d-flex gap-3">
-                ${patchUrl ? `<img src="${patchUrl}" alt="" width="44" height="44" class="d-none d-sm-block">` : ""}
+                ${launch.imageUrl ? `<img src="${launch.imageUrl}" alt="" width="44" height="44" class="d-none d-sm-block">` : ""}
                 <div class="flex-grow-1">
                   <div class="d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
                     <h3 class="h6 mb-0">${escapeHtml(launch.name)}</h3>
                     <div>${badge}</div>
                   </div>
-                  <p class="text-secondary small mb-2">${formatDate(launch.date_utc)}</p>
-                  <p class="mb-0 text-body-secondary">${escapeHtml(launch.details || "No mission details available.")}</p>
+                  <p class="text-secondary small mb-2">${formatDate(launch.dateUtc)} · ${escapeHtml(launch.provider)}</p>
+                  <p class="mb-0 text-body-secondary">${escapeHtml(launch.details)}</p>
                 </div>
               </div>
             </article>
@@ -297,11 +371,10 @@ async function loadLaunches() {
 async function loadNeo() {
   try {
     const date = todayIso();
-    const data = await fetchJson(`${API.neo}?date=${date}`);
-    const asteroids = data.near_earth_objects?.[date] || [];
-    const hazardous = asteroids.filter((item) => item.is_potentially_hazardous_asteroid).length;
+    const asteroids = normalizeNeo(await fetchJson(`${API.neo}?date=${date}`), date);
+    const hazardous = asteroids.filter((item) => item.hazardous).length;
     const closest = asteroids
-      .map((item) => Number(item.close_approach_data?.[0]?.miss_distance?.kilometers))
+      .map((item) => item.closestKilometers)
       .filter(Number.isFinite)
       .sort((a, b) => a - b)[0];
     const updated = formatUpdated();
@@ -332,7 +405,7 @@ async function loadNeo() {
           ${asteroids.slice(0, 4).map((item) => `
             <li class="list-group-item px-0 py-3 d-flex flex-column flex-sm-row justify-content-sm-between gap-1 gap-sm-3">
               <span>${escapeHtml(item.name)}</span>
-              <span class="text-secondary text-sm-end">${Math.round(Number(item.estimated_diameter.kilometers.estimated_diameter_max) * 1000)} m max</span>
+              <span class="text-secondary text-sm-end">${item.maxDiameterMeters === null ? "Size unavailable" : `${Math.round(item.maxDiameterMeters).toLocaleString()} m max`}</span>
             </li>
           `).join("")}
         </ul>
@@ -347,6 +420,14 @@ async function loadNeo() {
 }
 
 async function loadDashboard() {
+  setDashboardStatus("Refreshing Apollo dashboard data.");
+  [
+    els.apodBody,
+    els.issBody,
+    els.peopleBody,
+    els.launchBody,
+    els.neoBody
+  ].forEach((element) => setBusy(element, true));
   [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
     button.disabled = true;
     button.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refreshing`;
@@ -358,6 +439,14 @@ async function loadDashboard() {
     loadLaunches(),
     loadNeo()
   ]);
+  [
+    els.apodBody,
+    els.issBody,
+    els.peopleBody,
+    els.launchBody,
+    els.neoBody
+  ].forEach((element) => setBusy(element, false));
+  setDashboardStatus("Apollo dashboard data refreshed.");
   if (els.refreshButton) {
     els.refreshButton.disabled = false;
     els.refreshButton.innerHTML = `<i class="fa-solid fa-rotate me-2"></i>Refresh`;

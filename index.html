@@ -26,7 +26,7 @@
           </div>
 
           <div class="apollo-navbar-actions">
-            <button class="btn btn-primary btn-sm" id="refreshButton" type="button">
+            <button class="btn btn-primary btn-sm" id="refreshButton" type="button" aria-describedby="dashboardStatus">
               <i class="fa-solid fa-rotate me-2"></i>Refresh
             </button>
           </div>
@@ -34,6 +34,7 @@
       </nav>
 
       <main class="apollo-shell" id="dashboard">
+        <div id="dashboardStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Loading Apollo dashboard data.</div>
         <div class="d-flex flex-column apollo-page-stack">
           <header class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-end">
             <div>
@@ -107,7 +108,7 @@
                 </div>
                 <span id="apodUpdated" class="timestamp text-secondary small">Loading...</span>
               </div>
-              <div class="card-body section-card-body" id="apodBody">
+              <div class="card-body section-card-body" id="apodBody" aria-live="polite" aria-busy="true">
                 <div class="placeholder-glow">
                   <span class="placeholder col-12 apod-placeholder mb-3"></span>
                   <span class="placeholder col-7"></span>
@@ -126,7 +127,7 @@
                   </div>
                   <span id="issDetailUpdated" class="timestamp text-secondary small">Loading...</span>
                 </div>
-                <div class="card-body section-card-body" id="issBody">
+                <div class="card-body section-card-body" id="issBody" aria-live="polite" aria-busy="true">
                   <p class="state-message text-secondary mb-0">Loading ISS location...</p>
                 </div>
               </section>
@@ -139,7 +140,7 @@
                   </div>
                   <span id="neoDetailUpdated" class="timestamp text-secondary small">Loading...</span>
                 </div>
-                <div class="card-body section-card-body" id="neoBody">
+                <div class="card-body section-card-body" id="neoBody" aria-live="polite" aria-busy="true">
                   <p class="state-message text-secondary mb-0">Loading asteroid summary...</p>
                 </div>
               </section>
@@ -149,11 +150,11 @@
               <div class="card-header section-card-header d-flex flex-column flex-sm-row justify-content-sm-between gap-2">
                 <div>
                   <h2 class="section-title mb-1">Upcoming SpaceX Launches</h2>
-                  <p class="source-label text-secondary small mb-0">Source: SpaceX and Launch Library</p>
+                  <p class="source-label text-secondary small mb-0">Source: Launch Library 2</p>
                 </div>
                 <span id="launchDetailUpdated" class="timestamp text-secondary small">Loading...</span>
               </div>
-              <div class="card-body section-card-body" id="launchBody">
+              <div class="card-body section-card-body" id="launchBody" aria-live="polite" aria-busy="true">
                 <p class="state-message text-secondary mb-0">Loading launch data...</p>
               </div>
             </section>
@@ -166,7 +167,7 @@
                 </div>
                 <span id="peopleDetailUpdated" class="timestamp text-secondary small">Loading...</span>
               </div>
-              <div class="card-body section-card-body" id="peopleBody">
+              <div class="card-body section-card-body" id="peopleBody" aria-live="polite" aria-busy="true">
                 <p class="state-message text-secondary mb-0">Loading crew data...</p>
               </div>
             </section>

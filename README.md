@@ -9,7 +9,7 @@ Use a static frontend with serverless API routes.
 - Frontend: vanilla HTML, CSS, and JavaScript
 - UI: Bootstrap CDN
 - Theme: responsive light/dark mode using the system OS preference
-- NASA proxy: Vercel serverless functions in `/api`
+- API proxies: Vercel serverless functions in `/api`
 - Hosting: Vercel
 - Secrets: `NASA_API_KEY` stored as a server-side environment variable
 
@@ -19,10 +19,9 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 
 - NASA Astronomy Picture of the Day, proxied through `/api/apod`
 - NASA NeoWs Near-Earth Object Feed, proxied through `/api/neo`
+- Launch Library 2 SpaceX launch search, proxied through `/api/launches`
 - Where the ISS At
 - People in Space JSON
-- SpaceX Launches API
-- Launch Library 2 fallback for SpaceX launch listings
 
 ## File Overview
 
@@ -35,6 +34,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `api/_nasa.js` - shared NASA proxy helper and in-memory cache
 - `api/apod.js` - serverless NASA APOD endpoint
 - `api/neo.js` - serverless NASA NeoWs endpoint
+- `api/launches.js` - serverless Launch Library endpoint for upcoming SpaceX launches
 - `package.json` - local development/check scripts
 - `vercel.json` - Vercel deployment configuration
 
@@ -108,6 +108,7 @@ The NASA proxy includes lightweight caching:
 
 - APOD: 6 hours
 - NeoWs daily feed: 30 minutes
+- Launch Library SpaceX launch search: 15 minutes
 
 This reduces rate-limit pressure and keeps the dashboard usable during normal traffic. It is intentionally simple and does not add persistence.
 
@@ -116,7 +117,7 @@ This reduces rate-limit pressure and keeps the dashboard usable during normal tr
 - NASA data depends on the server-side `NASA_API_KEY` being configured.
 - Serverless in-memory cache is per warm function instance and may reset.
 - Public APIs can fail, timeout, or change response formats.
-- SpaceX official API availability can vary; the dashboard falls back to Launch Library for launch listings.
+- Launch listings depend on Launch Library availability and the current SpaceX search result format.
 - This MVP does not include maps, charts, filters, auth, saved settings, or persistence.
 - Export, search, notifications, and observation-creation workflows are intentionally not included yet.
 
