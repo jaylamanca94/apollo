@@ -71,6 +71,14 @@ Use `DESIGN-README.md` as the product's design source of truth.
 - Do not deploy, delete data, rotate secrets, remove repositories, overwrite history, or make destructive repository changes unless that action was explicitly included in the recommended next step or separately confirmed.
 - If the founder sends `y+`, proceed with the recommended next step, then look for cleanup, documentation, or small quality improvements.
 
+## Failure And Blocker Handling
+
+- Diagnose and try to resolve tool, network, GitHub, Vercel, Supabase, dependency, test, build, lint, and environment failures before reporting a blocker.
+- If `git push` fails because the environment cannot resolve or reach `github.com`, retry using the available approved network or GitHub tooling when possible.
+- If a repo is clean but the local branch is ahead of the remote, treat the work as completed locally but not fully finished until the push succeeds or a true external blocker is reported.
+- If founder action is required, be very concise and specific: state what failed, current repo state, exactly what action is needed, and the command or UI step the founder should take.
+- Do not bury a required founder action in a long report.
+
 ## Review Severity
 
 - P0: Blocks a core task, breaks the page, creates serious risk, or critically misleads the user.
