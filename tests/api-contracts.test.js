@@ -1,6 +1,7 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
 
+const { getCached, setCached } = require("../api/_cache");
 const {
   isIsoDate,
   normalizeApodPayload,
@@ -9,6 +10,18 @@ const {
 } = require("../api/_space_data");
 const { buildHealthPayload } = require("../api/health");
 const { getLaunchLimit, normalizeLaunchLibraryPayload } = require("../api/launches");
+
+test("shared cache returns fresh payloads and drops expired entries", () => {
+  const cache = new Map();
+  const payload = { status: "fresh" };
+
+  setCached(cache, "fresh", payload, 30);
+  assert.equal(getCached(cache, "fresh"), payload);
+
+  setCached(cache, "expired", { status: "expired" }, 0);
+  assert.equal(getCached(cache, "expired"), null);
+  assert.equal(cache.has("expired"), false);
+});
 
 test("isIsoDate accepts Apollo's API date format only", () => {
   assert.equal(isIsoDate("2026-06-10"), true);

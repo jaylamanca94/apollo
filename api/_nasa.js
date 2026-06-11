@@ -1,3 +1,5 @@
+const { getCached, setCached } = require("./_cache");
+
 const cache = new Map();
 const NASA_BASE_URL = "https://api.nasa.gov";
 const NASA_TIMEOUT_MS = 10000;
@@ -13,24 +15,6 @@ function sendJson(response, statusCode, payload, maxAgeSeconds = 0) {
   }
 
   response.end(JSON.stringify(payload));
-}
-
-function getCached(cacheKey) {
-  const cached = cache.get(cacheKey);
-
-  if (!cached || cached.expiresAt <= Date.now()) {
-    cache.delete(cacheKey);
-    return null;
-  }
-
-  return cached.payload;
-}
-
-function setCached(cacheKey, payload, ttlSeconds) {
-  cache.set(cacheKey, {
-    payload,
-    expiresAt: Date.now() + ttlSeconds * 1000
-  });
 }
 
 function scrubNasaApiKey(value) {
@@ -58,7 +42,7 @@ function scrubNasaApiKey(value) {
 }
 
 async function requestNasa(path, params, cacheKey, ttlSeconds) {
-  const cached = getCached(cacheKey);
+  const cached = getCached(cache, cacheKey);
 
   if (cached) {
     return cached;
@@ -109,7 +93,7 @@ async function requestNasa(path, params, cacheKey, ttlSeconds) {
 
   const sanitizedPayload = scrubNasaApiKey(payload);
 
-  setCached(cacheKey, sanitizedPayload, ttlSeconds);
+  setCached(cache, cacheKey, sanitizedPayload, ttlSeconds);
   return sanitizedPayload;
 }
 

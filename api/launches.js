@@ -1,27 +1,10 @@
+const { getCached, setCached } = require("./_cache");
 const { sendJson } = require("./_nasa");
 
 const LAUNCH_LIBRARY_URL = "https://ll.thespacedevs.com/2.3.0/launches/upcoming/";
 const LAUNCH_CACHE_SECONDS = 60 * 15;
 const LAUNCH_TIMEOUT_MS = 10000;
 const cache = new Map();
-
-function getCached(cacheKey) {
-  const cached = cache.get(cacheKey);
-
-  if (!cached || cached.expiresAt <= Date.now()) {
-    cache.delete(cacheKey);
-    return null;
-  }
-
-  return cached.payload;
-}
-
-function setCached(cacheKey, payload, ttlSeconds) {
-  cache.set(cacheKey, {
-    payload,
-    expiresAt: Date.now() + ttlSeconds * 1000
-  });
-}
 
 function safeHttpUrl(value) {
   try {
@@ -99,7 +82,7 @@ function getLaunchLimit(request) {
 
 async function requestLaunches(limit = 5) {
   const cacheKey = `launches:spacex:${limit}`;
-  const cached = getCached(cacheKey);
+  const cached = getCached(cache, cacheKey);
 
   if (cached) {
     return cached;
@@ -131,7 +114,7 @@ async function requestLaunches(limit = 5) {
   const normalizedPayload = normalizeLaunchLibraryPayload(payload, {
     limit
   });
-  setCached(cacheKey, normalizedPayload, LAUNCH_CACHE_SECONDS);
+  setCached(cache, cacheKey, normalizedPayload, LAUNCH_CACHE_SECONDS);
   return normalizedPayload;
 }
 

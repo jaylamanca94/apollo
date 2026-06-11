@@ -1,3 +1,4 @@
+const { getCached, setCached } = require("./_cache");
 const { sendJson } = require("./_nasa");
 const { normalizeSpaceWeatherPayload } = require("./_space_data");
 
@@ -7,24 +8,6 @@ const NOAA_ALERTS_URL = "https://services.swpc.noaa.gov/products/alerts.json";
 const SPACE_WEATHER_CACHE_SECONDS = 60 * 5;
 const SPACE_WEATHER_TIMEOUT_MS = 10000;
 const cache = new Map();
-
-function getCached(cacheKey) {
-  const cached = cache.get(cacheKey);
-
-  if (!cached || cached.expiresAt <= Date.now()) {
-    cache.delete(cacheKey);
-    return null;
-  }
-
-  return cached.payload;
-}
-
-function setCached(cacheKey, payload, ttlSeconds) {
-  cache.set(cacheKey, {
-    payload,
-    expiresAt: Date.now() + ttlSeconds * 1000
-  });
-}
 
 async function fetchNoaaJson(url) {
   const controller = new AbortController();
@@ -44,7 +27,7 @@ async function fetchNoaaJson(url) {
 }
 
 async function requestSpaceWeather() {
-  const cached = getCached("space-weather:current");
+  const cached = getCached(cache, "space-weather:current");
 
   if (cached) {
     return cached;
@@ -61,7 +44,7 @@ async function requestSpaceWeather() {
     alerts
   });
 
-  setCached("space-weather:current", normalizedPayload, SPACE_WEATHER_CACHE_SECONDS);
+  setCached(cache, "space-weather:current", normalizedPayload, SPACE_WEATHER_CACHE_SECONDS);
   return normalizedPayload;
 }
 
