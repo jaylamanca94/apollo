@@ -7,6 +7,15 @@
 - Use managed services and environment variables for public deployment.
 - Preserve a tight MVP scope while making the app feel polished.
 
+## Product Discipline
+
+Apollo must stay focused on its core job: making live and near-live space data simple to understand and easy to demo.
+
+- Do not broaden Apollo into a general science, education, simulation, productivity, or account-based platform unless the founder explicitly changes the product direction.
+- Prefer focused dashboard clarity over feature volume.
+- Say no or defer when a feature is interesting but does not strengthen the current space-data dashboard mission.
+- Keep scope decisions grounded in user value, source quality, maintainability, and demo clarity.
+
 ## Scope
 
 Apollo is currently a public dashboard for live and near-live space data.
