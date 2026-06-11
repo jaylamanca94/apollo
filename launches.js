@@ -245,7 +245,63 @@ function renderLaunches(launches) {
     return;
   }
 
+  const nextLaunch = launches[0];
+  const nextLaunchName = splitLaunchName(nextLaunch.name);
+  const nextLaunchWindow = formatLaunchWindow(nextLaunch);
+  const nextLaunchDetails = [
+    ["Status", nextLaunch.status],
+    ["Vehicle", nextLaunch.vehicle || nextLaunchName.vehicle],
+    ["Launch window", nextLaunchWindow],
+    ["Pad", nextLaunch.pad],
+    ["Location", nextLaunch.location]
+  ]
+    .filter(([, value]) => value)
+    .map(([label, value]) => `
+      <div>
+        <dt>${label}</dt>
+        <dd>${escapeHtml(value)}</dd>
+      </div>
+    `)
+    .join("");
+
   els.launchPageBody.innerHTML = `
+    <section class="next-launch-spotlight" aria-labelledby="nextLaunchTitle">
+      <div class="next-launch-media">
+        ${nextLaunch.imageUrl
+          ? `<img src="${escapeHtml(nextLaunch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(nextLaunch, nextLaunchName))}">`
+          : `<div class="launch-page-media-placeholder"><i class="fa-solid fa-rocket" aria-hidden="true"></i></div>`}
+      </div>
+      <div class="next-launch-content">
+        <div class="next-launch-heading">
+          <div>
+            <p class="section-kicker mb-2">Next SpaceX Launch</p>
+            <h2 class="next-launch-title mb-0" id="nextLaunchTitle">
+              ${escapeHtml(nextLaunchName.vehicle)}
+              ${nextLaunchName.mission ? `<span>${escapeHtml(nextLaunchName.mission)}</span>` : ""}
+            </h2>
+          </div>
+          <span class="launch-status-pill">${escapeHtml(nextLaunch.status)}</span>
+        </div>
+        <div class="next-launch-countdown">
+          <div>
+            <p class="text-secondary small mb-1">Liftoff target</p>
+            <p class="mb-0">${formatDateTime(nextLaunch.dateUtc)}</p>
+          </div>
+          <div>
+            <p class="text-secondary small mb-1">Countdown</p>
+            <p class="mb-0">${formatCountdown(nextLaunch.dateUtc)}</p>
+          </div>
+        </div>
+        <p class="launch-page-summary">${escapeHtml(truncateText(nextLaunch.details, 300))}</p>
+        ${nextLaunchDetails ? `<dl class="detail-list next-launch-detail-list mb-3">${nextLaunchDetails}</dl>` : ""}
+        ${nextLaunch.sourceUrl ? `
+          <a class="source-link" href="${escapeHtml(nextLaunch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+            <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+            Launch source
+          </a>
+        ` : ""}
+      </div>
+    </section>
     <p class="launch-count">${launches.length} upcoming SpaceX launches</p>
     <div class="launch-page-list">
       ${launches.map((launch) => {

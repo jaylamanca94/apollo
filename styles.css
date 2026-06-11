@@ -910,6 +910,91 @@ html[data-bs-theme="light"] .data-detail-panel {
   gap: 18px;
 }
 
+.next-launch-spotlight {
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+  margin-bottom: 28px;
+  padding: 18px;
+}
+
+.next-launch-media {
+  background: var(--apollo-surface-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  min-height: 260px;
+  overflow: hidden;
+}
+
+.next-launch-media img,
+.next-launch-media .launch-page-media-placeholder {
+  height: 100%;
+  min-height: 260px;
+  width: 100%;
+}
+
+.next-launch-media img {
+  display: block;
+  object-fit: cover;
+}
+
+.next-launch-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.next-launch-heading {
+  align-items: flex-start;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.next-launch-title {
+  color: var(--bs-body-color);
+  font-size: 1.625rem;
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.next-launch-title span {
+  color: var(--apollo-muted-strong);
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 550;
+  margin-top: 0.4rem;
+}
+
+.next-launch-countdown {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.next-launch-countdown > div {
+  background: var(--apollo-surface-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 0.875rem 1rem;
+}
+
+.next-launch-countdown p {
+  overflow-wrap: anywhere;
+}
+
+.next-launch-detail-list {
+  border-top: 1px solid var(--apollo-border);
+  padding-top: 1rem;
+}
+
 .launch-page-card {
   background: var(--apollo-surface-raised);
   border: 1px solid var(--apollo-border);
@@ -997,6 +1082,10 @@ html[data-bs-theme="light"] .data-detail-panel {
 
   .launch-page-card {
     grid-template-columns: 140px minmax(0, 1fr);
+  }
+
+  .next-launch-spotlight {
+    grid-template-columns: 1fr;
   }
 
   .apod-media-link,
@@ -1117,6 +1206,11 @@ html[data-bs-theme="light"] .data-detail-panel {
 
   .launch-page-title-row {
     align-items: start;
+    grid-template-columns: 1fr;
+  }
+
+  .next-launch-heading,
+  .next-launch-countdown {
     grid-template-columns: 1fr;
   }
 

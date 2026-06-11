@@ -41,7 +41,7 @@ Out of scope for the MVP:
 - ISS latitude, longitude, altitude, velocity, and current-position map.
 - Crew count and responsive People in Space grid.
 - Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details.
-- Dedicated launches page with a fuller upcoming list, status, vehicle, provider, window, pad, location, and source links.
+- Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window, pad, location, and source links.
 - Near-Earth asteroid summary for the current day with lunar-distance, velocity, and hazard-context cues.
 - NOAA SWPC space-weather status with current K-index, 3-day K-index outlook, and recent notices.
 - Refresh action.
