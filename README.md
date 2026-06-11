@@ -34,6 +34,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `index.html` - dashboard markup
 - `launches.html` - dedicated launches detail page markup
 - `styles.css` - minimal Bootstrap-aligned styling
+- `assets/favicon.svg` - Apollo rocket favicon used by dashboard pages
 - `app.js` - frontend data loading and rendering
 - `launches.js` - launches detail page data loading and rendering
 - `api/_cache.js` - shared in-memory cache helpers for serverless API routes

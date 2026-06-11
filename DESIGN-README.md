@@ -142,6 +142,7 @@ Current icon mapping:
 
 ## Favicon And App Icon
 
+- Apollo uses a compact rocket favicon at `assets/favicon.svg`, matching the brand mark in the top navigation.
 - Every web or mobile product should eventually have a simple recognizable favicon/app icon.
 - Use a Font Awesome Free icon as the preferred starting point when it fits the product.
 - Pick an icon that represents the product mission, not a generic decoration.
