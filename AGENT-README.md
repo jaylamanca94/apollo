@@ -88,6 +88,7 @@ Use `DESIGN-README.md` as the product's design source of truth.
 - Treat committed-but-unpushed work as incomplete. Keep resolving the push path until the branch is on GitHub or a true external blocker remains.
 - If `git push` fails because the environment cannot resolve or reach `github.com`, retry with approved escalated network access or the GitHub connector when available.
 - Prefer a persistent approval rule for `git push` in this workspace so future completed commits do not get stuck locally because of sandbox DNS or network restrictions.
+- Do not ask the founder to run `git push` from a networked shell until approved network retry and available GitHub tooling have been attempted.
 - If push fails because of authentication, stale local state, non-fast-forward history, branch protection, missing upstream tracking, or remote configuration, diagnose and resolve it when safe by refreshing auth, fetching/rebasing or merging, setting upstream tracking, pushing an allowed branch, or opening a pull request.
 - If a repo is clean but the local branch is ahead of the remote, treat the work as completed locally but not fully finished until the push succeeds or a true external blocker is reported.
 - If founder action is required, be very concise and specific: state what failed, current repo state, exactly what action is needed, and the command or UI step the founder should take.
