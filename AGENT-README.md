@@ -66,7 +66,7 @@ Use `DESIGN-README.md` as the product's design source of truth.
 
 - If the founder sends exactly `y`, treat it as confirmation that any current `Tasks for Founder` are complete and proceed with the recommended next step using available connected tools.
 - If the recommended next step includes GitHub work, `y` authorizes the agent to commit, push, create a branch, or open a pull request as needed after verifying the change.
-- After completing, reviewing, and verifying approved work, the agent is allowed to commit and push the completed changes using GitHub tools when repository access is available.
+- After completing, reviewing, and verifying approved work, the agent must commit and push the completed changes using GitHub tools when repository access is available. Do not ask for separate commit or push approval unless the action is destructive, deploys production, rotates secrets, deletes data, removes repositories, or overwrites history.
 - If the recommended next step includes Supabase work and the agent has access, `y` authorizes the agent to use available Supabase tools for the approved database, auth, storage, migration, seed, policy, or configuration work.
 - Do not deploy, delete data, rotate secrets, remove repositories, overwrite history, or make destructive repository changes unless that action was explicitly included in the recommended next step or separately confirmed.
 - If the founder sends `y+`, proceed with the recommended next step, then look for cleanup, documentation, or small quality improvements.
@@ -74,7 +74,9 @@ Use `DESIGN-README.md` as the product's design source of truth.
 ## Failure And Blocker Handling
 
 - Diagnose and try to resolve tool, network, GitHub, Vercel, Supabase, dependency, test, build, lint, and environment failures before reporting a blocker.
+- Treat committed-but-unpushed work as incomplete. Keep resolving the push path until the branch is on GitHub or a true external blocker remains.
 - If `git push` fails because the environment cannot resolve or reach `github.com`, retry using the available approved network or GitHub tooling when possible.
+- If push fails because of authentication, stale local state, non-fast-forward history, branch protection, missing upstream tracking, or remote configuration, diagnose and resolve it when safe by refreshing auth, fetching/rebasing or merging, setting upstream tracking, pushing an allowed branch, or opening a pull request.
 - If a repo is clean but the local branch is ahead of the remote, treat the work as completed locally but not fully finished until the push succeeds or a true external blocker is reported.
 - If founder action is required, be very concise and specific: state what failed, current repo state, exactly what action is needed, and the command or UI step the founder should take.
 - Do not bury a required founder action in a long report.
