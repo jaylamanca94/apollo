@@ -778,6 +778,13 @@ html[data-bs-theme="light"] .data-detail-panel {
   white-space: nowrap;
 }
 
+.space-weather-observed {
+  color: var(--apollo-muted);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  margin-top: 0.25rem;
+}
+
 .space-weather-forecast {
   border-top: 1px solid var(--apollo-border);
   padding-top: 1rem;

@@ -853,6 +853,10 @@ async function loadSpaceWeather() {
     const severityClass = `space-weather-${data.severity}`;
     const recentAlerts = data.alerts.slice(0, 2);
     const forecastRows = data.forecast.slice(0, 3);
+    const observedAtLabel = data.observedAt ? formatDateTime(data.observedAt) : "";
+    const observedAtMarkup = observedAtLabel && observedAtLabel !== "Unavailable"
+      ? `<p class="space-weather-observed mb-0">Observed <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
+      : "";
 
     els.spaceWeatherBody.innerHTML = `
       <div class="summary-metric mb-3">
@@ -860,6 +864,7 @@ async function loadSpaceWeather() {
         <div>
           <p class="text-secondary small mb-1">Current K-index</p>
           <p class="h3 fw-semibold mb-0">${formatKpIndex(data.kpIndex)}</p>
+          ${observedAtMarkup}
         </div>
       </div>
       <div class="space-weather-status ${severityClass} mb-3">

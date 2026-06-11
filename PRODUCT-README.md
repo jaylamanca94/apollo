@@ -43,7 +43,7 @@ Out of scope for the MVP:
 - Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details.
 - Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window, pad, location, and source links.
 - Near-Earth asteroid summary for the current day with lunar-distance, velocity, and hazard-context cues.
-- NOAA SWPC space-weather status with current K-index, 3-day K-index outlook, and recent notices.
+- NOAA SWPC space-weather status with current K-index observation time, 3-day K-index outlook, and recent notices.
 - Refresh action.
 - Loading, empty, and error states.
 - Server-side NASA API key handling.
