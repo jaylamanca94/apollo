@@ -470,6 +470,7 @@ body {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   min-width: 0;
   padding: 0.875rem 1rem;
 }
@@ -483,6 +484,7 @@ body {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   display: flex;
   gap: 1rem;
   padding: 1rem;
@@ -511,6 +513,7 @@ body {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   padding: 1rem;
 }
 
@@ -544,6 +547,7 @@ body {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   min-width: 0;
   padding: 14px;
   transition: background-color 160ms ease, border-color 160ms ease;
@@ -623,6 +627,7 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   padding: 1rem;
 }
 
@@ -698,6 +703,7 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   display: grid;
   gap: 16px;
   grid-template-columns: 52px minmax(0, 1fr);
@@ -909,6 +915,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   display: flex;
   gap: 1rem;
   justify-content: space-between;
@@ -971,6 +978,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   display: grid;
   gap: 12px;
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
@@ -1008,6 +1016,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   min-width: 0;
   padding: 0.875rem;
 }
@@ -1100,12 +1109,15 @@ html[data-bs-theme="light"] .data-detail-panel {
 
 .source-status-summary {
   align-items: start;
-  border-bottom: 1px solid var(--apollo-border);
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   display: grid;
   gap: 16px;
   grid-template-columns: minmax(0, 1fr) auto;
   margin-bottom: 18px;
-  padding-bottom: 18px;
+  padding: 16px;
 }
 
 .source-status-headline {
@@ -1118,7 +1130,7 @@ html[data-bs-theme="light"] .data-detail-panel {
 
 .source-status-time {
   align-items: center;
-  background: var(--apollo-row-bg);
+  background: var(--apollo-surface-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 999px;
   color: var(--apollo-muted-strong);
@@ -1141,6 +1153,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   display: grid;
   gap: 14px;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -1283,6 +1296,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   margin-bottom: 10px;
   padding-inline: 14px !important;
   transition: background-color 160ms ease, border-color 160ms ease;
@@ -1348,6 +1362,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   display: grid;
   gap: 24px;
   grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
@@ -1433,6 +1448,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   display: grid;
   gap: 20px;
   grid-template-columns: 180px minmax(0, 1fr);

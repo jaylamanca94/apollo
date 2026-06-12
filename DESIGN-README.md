@@ -71,7 +71,7 @@ Use minute-level launch countdown labels inside the final hour so near-term laun
 
 Use inline disclosure details for richer dashboard context, then graduate to separate static pages only when a card needs materially more space. The launches detail page is the first example of this pattern.
 
-Use compact raised row surfaces inside dense operational cards for metadata cells, crew rows, launch rows, asteroid rows, source rows, and short status/context blocks. These inner rows should be visually quieter than the parent card, keep the same `8px` radius, use thin borders, and may use subtle hover or disclosure polish when an element already exposes interaction. Avoid making non-clickable rows look like primary buttons.
+Use compact raised row surfaces inside dense operational cards for metadata cells, crew rows, launch rows, asteroid rows, source rows, and short status/context blocks. These inner rows should be visually quieter than the parent card, keep the same `8px` radius, use thin borders, and use the shared low inset highlight so repeated data groups feel deliberately layered without looking decorative. They may use subtle hover or disclosure polish when an element already exposes interaction. Avoid making non-clickable rows look like primary buttons.
 
 ### Desktop
 
