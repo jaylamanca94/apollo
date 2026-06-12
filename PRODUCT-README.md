@@ -53,6 +53,7 @@ Out of scope for the MVP:
 - Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window, pad, location, and source links.
 - Near-Earth asteroid summary for the current day with lunar-distance, velocity, and hazard-context cues.
 - NOAA SWPC space-weather status with current K-index observation time, 3-day K-index outlook, and recent notices.
+- Dashboard-level data-source status summary for APOD, ISS position, crew, launches, asteroids, and space weather.
 - Refresh action.
 - Loading, empty, and error states.
 - Server-side NASA API key handling.
@@ -80,6 +81,7 @@ Out of scope for the MVP:
 - Other public APIs remain browser-side for MVP simplicity.
 - Visual direction now follows a darker operational dashboard shell: charcoal page background, compact top navigation, red accent actions, split APOD feature, simple bordered cards, and low-maintenance spacing.
 - Dashboard content uses a split APOD feature followed by a compact two-column grid for ISS, people in space, launches, asteroids, and space weather.
+- The dashboard ends with a compact data-source status card so public demos can distinguish a source outage from a broken product.
 - The single-page header avoids section jump navigation until Apollo has meaningful detail pages.
 - Refresh state uses one global "Last updated" timestamp instead of repeated per-card timestamps.
 - Dashboard data families use neutral cards, sparse icons, red action accents, and positive green styling for safe/good status messages.

@@ -7,6 +7,51 @@ const API = {
   spaceWeather: "/api/space-weather"
 };
 
+const SOURCE_FEEDS = [
+  {
+    id: "apod",
+    label: "NASA APOD",
+    description: "Image of the Day",
+    icon: "fa-solid fa-image"
+  },
+  {
+    id: "iss",
+    label: "Where the ISS At",
+    description: "ISS position",
+    icon: "fa-solid fa-satellite"
+  },
+  {
+    id: "people",
+    label: "People in Space",
+    description: "Crew roster",
+    icon: "fa-solid fa-user-astronaut"
+  },
+  {
+    id: "launches",
+    label: "The Space Devs",
+    description: "SpaceX launches",
+    icon: "fa-solid fa-rocket"
+  },
+  {
+    id: "neo",
+    label: "NASA NeoWs",
+    description: "Near-Earth objects",
+    icon: "fa-solid fa-meteor"
+  },
+  {
+    id: "spaceWeather",
+    label: "NOAA SWPC",
+    description: "Space weather",
+    icon: "fa-solid fa-sun"
+  }
+];
+
+const SOURCE_STATUS_LABELS = {
+  attention: "Attention",
+  error: "Unavailable",
+  ok: "Updated"
+};
+
 const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily unavailable because NASA is limiting requests. Other dashboard sections are still live.";
 const THEME_STORAGE_KEY = "apollo-theme";
 let issMap = null;
@@ -22,11 +67,16 @@ const els = {
   spaceWeatherBody: document.querySelector("#spaceWeatherBody"),
   launchBody: document.querySelector("#launchBody"),
   apodBody: document.querySelector("#apodBody"),
+  sourceStatusBody: document.querySelector("#sourceStatusBody"),
   dashboardStatus: document.querySelector("#dashboardStatus")
 };
 
 function formatUpdated(date = new Date()) {
   return `Last updated: ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+}
+
+function formatCheckedAt(date = new Date()) {
+  return `Checked ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
 }
 
 function formatDate(value) {
@@ -298,6 +348,16 @@ function getFiniteNumber(value) {
   return Number.isFinite(number) ? number : null;
 }
 
+function createSourceStatus(id, state, detail) {
+  const statusState = Object.prototype.hasOwnProperty.call(SOURCE_STATUS_LABELS, state) ? state : "error";
+
+  return {
+    id,
+    state: statusState,
+    detail: getText(detail, "No source status reported.")
+  };
+}
+
 function normalizeApod(data) {
   const apod = data?.apod && typeof data.apod === "object" ? data.apod : data;
   const date = getText(apod?.date);
@@ -545,6 +605,56 @@ function setDashboardUpdated(value = formatUpdated()) {
   }
 }
 
+function renderSourceStatus(statuses, checkedAt = new Date()) {
+  if (!els.sourceStatusBody) {
+    return;
+  }
+
+  const statusById = new Map(
+    statuses
+      .filter(Boolean)
+      .map((status) => [status.id, status])
+  );
+  const feedStatuses = SOURCE_FEEDS.map((feed) => ({
+    ...feed,
+    ...(statusById.get(feed.id) || createSourceStatus(feed.id, "error", "Source check did not finish."))
+  }));
+  const updatedCount = feedStatuses.filter((feed) => feed.state === "ok").length;
+  const attentionCount = feedStatuses.filter((feed) => feed.state !== "ok").length;
+  const summary = attentionCount === 0
+    ? `${updatedCount} of ${feedStatuses.length} sources updated`
+    : `${updatedCount} of ${feedStatuses.length} sources updated, ${attentionCount} need attention`;
+
+  els.sourceStatusBody.innerHTML = `
+    <div class="source-status-summary">
+      <div>
+        <p class="section-kicker mb-1">Source check</p>
+        <p class="source-status-headline mb-0">${escapeHtml(summary)}</p>
+      </div>
+      <span class="source-status-time">${escapeHtml(formatCheckedAt(checkedAt))}</span>
+    </div>
+    <div class="source-status-list">
+      ${feedStatuses.map((feed) => {
+        const stateLabel = SOURCE_STATUS_LABELS[feed.state] || SOURCE_STATUS_LABELS.error;
+
+        return `
+          <article class="source-status-row source-status-${escapeHtml(feed.state)}">
+            <span class="source-status-icon">
+              <i class="${escapeHtml(feed.icon)}" aria-hidden="true"></i>
+            </span>
+            <div class="source-status-copy">
+              <h3 class="source-status-title mb-0">${escapeHtml(feed.label)}</h3>
+              <p class="source-status-source mb-0">${escapeHtml(feed.description)}</p>
+              <p class="source-status-detail mb-0">${escapeHtml(feed.detail)}</p>
+            </div>
+            <span class="source-status-pill">${escapeHtml(stateLabel)}</span>
+          </article>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
 function getApiErrorMessage(error, fallback) {
   const errorCode = error.payload?.error?.code;
 
@@ -635,8 +745,10 @@ async function loadApod() {
         </div>
       </div>
     `;
+    return createSourceStatus("apod", "ok", data.date ? `Image for ${formatDate(data.date)}` : "Current image loaded.");
   } catch (error) {
     setError(els.apodBody, getApiErrorMessage(error, "NASA's astronomy picture is unavailable right now. This card will update when NASA responds."));
+    return createSourceStatus("apod", "error", "NASA image did not load.");
   }
 }
 
@@ -668,9 +780,17 @@ async function loadIss() {
       <p class="text-secondary small mb-0 mt-3">These coordinates show the station's current position above Earth.</p>
     `;
     renderIssMap(data);
+    return createSourceStatus(
+      "iss",
+      data.latitude !== null && data.longitude !== null ? "ok" : "attention",
+      data.latitude !== null && data.longitude !== null
+        ? "Current station coordinates loaded."
+        : "Position response was missing coordinates."
+    );
   } catch (error) {
     resetIssMap();
     setError(els.issBody, "Could not load the ISS location right now.");
+    return createSourceStatus("iss", "error", "ISS position did not load.");
   }
 }
 
@@ -680,7 +800,7 @@ async function loadPeople() {
 
     if (!people.length) {
       els.peopleBody.innerHTML = stateMessage("No crew data available.");
-      return;
+      return createSourceStatus("people", "attention", "Crew roster returned no people.");
     }
 
     els.peopleBody.innerHTML = `
@@ -700,8 +820,10 @@ async function loadPeople() {
         `).join("")}
       </div>
     `;
+    return createSourceStatus("people", "ok", `${people.length} people currently listed.`);
   } catch (error) {
     setError(els.peopleBody, "Could not load people-in-space data right now.");
+    return createSourceStatus("people", "error", "Crew roster did not load.");
   }
 }
 
@@ -711,7 +833,7 @@ async function loadLaunches() {
 
     if (!launches.length) {
       els.launchBody.innerHTML = stateMessage("No upcoming SpaceX launches are available from the current data source.");
-      return;
+      return createSourceStatus("launches", "attention", "Launch source returned no upcoming missions.");
     }
 
     const renderLaunchRows = () => {
@@ -775,8 +897,10 @@ async function loadLaunches() {
     };
 
     renderLaunchRows();
+    return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded.`);
   } catch (error) {
     setError(els.launchBody, "Could not load upcoming SpaceX launches right now. Other dashboard sections remain available.");
+    return createSourceStatus("launches", "error", "Launch data did not load.");
   }
 }
 
@@ -842,8 +966,10 @@ async function loadNeo() {
         </ul>
       ` : stateMessage("No near-Earth objects are listed for today.")}
     `;
+    return createSourceStatus("neo", "ok", `${asteroids.length} listed today, ${hazardous} flagged for tracking.`);
   } catch (error) {
     setError(els.neoBody, getApiErrorMessage(error, "NASA asteroid data is unavailable right now. Other live sections remain available."));
+    return createSourceStatus("neo", "error", "Asteroid summary did not load.");
   }
 }
 
@@ -908,8 +1034,16 @@ async function loadSpaceWeather() {
         NOAA space weather source
       </a>
     `;
+    return createSourceStatus(
+      "spaceWeather",
+      data.kpIndex === null ? "attention" : "ok",
+      data.kpIndex === null
+        ? "NOAA response loaded without a current K-index."
+        : `Current K-index ${formatKpIndex(data.kpIndex)} loaded.`
+    );
   } catch (error) {
     setError(els.spaceWeatherBody, "Could not load space weather right now.");
+    return createSourceStatus("spaceWeather", "error", "NOAA space weather did not load.");
   }
 }
 
@@ -921,13 +1055,14 @@ async function loadDashboard() {
     els.peopleBody,
     els.launchBody,
     els.neoBody,
-    els.spaceWeatherBody
+    els.spaceWeatherBody,
+    els.sourceStatusBody
   ].forEach((element) => setBusy(element, true));
   [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
     button.disabled = true;
     button.innerHTML = "Refreshing";
   });
-  await Promise.allSettled([
+  const sourceResults = await Promise.allSettled([
     loadApod(),
     loadIss(),
     loadPeople(),
@@ -935,13 +1070,19 @@ async function loadDashboard() {
     loadNeo(),
     loadSpaceWeather()
   ]);
+  renderSourceStatus(sourceResults.map((result, index) => (
+    result.status === "fulfilled" && result.value
+      ? result.value
+      : createSourceStatus(SOURCE_FEEDS[index].id, "error", "Source check did not finish.")
+  )), new Date());
   [
     els.apodBody,
     els.issBody,
     els.peopleBody,
     els.launchBody,
     els.neoBody,
-    els.spaceWeatherBody
+    els.spaceWeatherBody,
+    els.sourceStatusBody
   ].forEach((element) => setBusy(element, false));
   setDashboardStatus("Apollo dashboard data refreshed.");
   setDashboardUpdated();

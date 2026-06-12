@@ -268,7 +268,8 @@ body {
   grid-template-areas:
     "iss crew"
     "launches asteroids"
-    "launches weather";
+    "launches weather"
+    "sources sources";
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -290,6 +291,10 @@ body {
 
 #space-weather {
   grid-area: weather;
+}
+
+#source-status {
+  grid-area: sources;
 }
 
 .apod-showcase {
@@ -853,6 +858,124 @@ html[data-bs-theme="light"] .data-detail-panel {
   font-size: 0.8125rem;
 }
 
+.source-status-summary {
+  align-items: start;
+  border-bottom: 1px solid var(--apollo-border);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+}
+
+.source-status-headline {
+  color: var(--bs-body-color);
+  font-size: 1.125rem;
+  font-weight: 750;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.source-status-time {
+  align-items: center;
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 999px;
+  color: var(--apollo-muted-strong);
+  display: inline-flex;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  min-height: 28px;
+  padding: 0.25rem 0.8rem;
+  white-space: nowrap;
+}
+
+.source-status-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.source-status-row {
+  align-items: center;
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-width: 0;
+  padding: 14px;
+}
+
+.source-status-icon {
+  align-items: center;
+  background: var(--apollo-accent-soft);
+  border: 1px solid rgba(255, 64, 86, 0.24);
+  border-radius: 50%;
+  color: var(--apollo-accent);
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 2.25rem;
+  justify-content: center;
+  width: 2.25rem;
+}
+
+.source-status-copy {
+  min-width: 0;
+}
+
+.source-status-title {
+  color: var(--bs-body-color);
+  font-size: 1rem;
+  font-weight: 750;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.source-status-source,
+.source-status-detail {
+  color: var(--apollo-muted);
+  font-size: 0.875rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.source-status-detail {
+  margin-top: 0.25rem;
+}
+
+.source-status-pill {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.75rem;
+  font-weight: 750;
+  justify-content: center;
+  min-height: 26px;
+  padding: 0.2rem 0.7rem;
+  white-space: nowrap;
+}
+
+.source-status-ok .source-status-pill {
+  background: var(--apollo-success-soft);
+  border-color: color-mix(in srgb, var(--apollo-success) 38%, transparent);
+  color: var(--apollo-success);
+}
+
+.source-status-attention .source-status-pill {
+  background: var(--apollo-warning-soft);
+  border-color: color-mix(in srgb, var(--apollo-warning) 38%, transparent);
+  color: var(--apollo-warning);
+}
+
+.source-status-error .source-status-pill {
+  background: var(--apollo-accent-soft);
+  border-color: rgba(255, 64, 86, 0.32);
+  color: var(--apollo-accent);
+}
+
 .asteroid-row {
   align-items: flex-start;
   display: flex;
@@ -1084,7 +1207,8 @@ html[data-bs-theme="light"] .data-detail-panel {
       "crew"
       "launches"
       "asteroids"
-      "weather";
+      "weather"
+      "sources";
   }
 
   .launch-page-card {
@@ -1228,6 +1352,21 @@ html[data-bs-theme="light"] .data-detail-panel {
 
   .space-weather-forecast-grid {
     grid-template-columns: 1fr;
+  }
+
+  .source-status-summary,
+  .source-status-list {
+    grid-template-columns: 1fr;
+  }
+
+  .source-status-row {
+    align-items: start;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .source-status-pill {
+    grid-column: 2;
+    justify-self: start;
   }
 
   .launch-page-card {

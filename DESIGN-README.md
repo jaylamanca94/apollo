@@ -57,8 +57,10 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 - Launches as a taller list card with three visible launch rows and a link to the launches detail page.
 - Asteroids as a summary card with risk context and nearby object rows.
 - Space weather as a compact status card under asteroid context, with current K-index first and a small 3-day outlook below it.
+- Data Sources as a full-width closing card that reports whether each upstream feed updated, needs attention, or is unavailable.
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
+Use the data-source status card for operational trust, not diagnostics. Keep labels short, tie each row to an existing dashboard feed, and avoid exposing implementation details that do not help a viewer understand dashboard freshness.
 
 Use inline disclosure details for richer dashboard context, then graduate to separate static pages only when a card needs materially more space. The launches detail page is the first example of this pattern.
 
