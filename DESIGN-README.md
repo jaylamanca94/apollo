@@ -66,6 +66,8 @@ Use compact uppercase pills for NOAA space-weather notice types. They should aid
 
 Use muted compact launch-window summaries near launch titles. They should help viewers distinguish target-only times from wider launch windows while leaving mission name, countdown, status, and source-window details as the primary content.
 
+Use minute-level launch countdown labels inside the final hour so near-term launches remain informative instead of collapsing to `T-0h`.
+
 Use inline disclosure details for richer dashboard context, then graduate to separate static pages only when a card needs materially more space. The launches detail page is the first example of this pattern.
 
 ### Desktop

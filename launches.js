@@ -72,7 +72,13 @@ function formatCountdown(value) {
     return `T-${days}d ${hours}h`;
   }
 
-  return `T-${Math.max(hours, 0)}h`;
+  if (hours > 0) {
+    return `T-${hours}h`;
+  }
+
+  const minutes = Math.floor((absMs % 3600000) / 60000);
+
+  return minutes > 0 ? `T-${minutes}m` : "T-<1m";
 }
 
 function formatLaunchWindow(launch) {
