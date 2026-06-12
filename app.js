@@ -389,6 +389,58 @@ function formatKpIndex(value) {
   });
 }
 
+function getNoaaScaleContext(scale, kpIndex) {
+  const scaleDetails = {
+    G1: {
+      label: "G1 Minor",
+      kpThreshold: 5,
+      summary: "Minor storm level; aurora can reach high latitudes and small satellite-drag effects are possible."
+    },
+    G2: {
+      label: "G2 Moderate",
+      kpThreshold: 6,
+      summary: "Moderate storm level; high-latitude aurora and satellite-drag effects become more likely."
+    },
+    G3: {
+      label: "G3 Strong",
+      kpThreshold: 7,
+      summary: "Strong storm level; satellite navigation, HF radio, and low-Earth-orbit drag can be affected."
+    },
+    G4: {
+      label: "G4 Severe",
+      kpThreshold: 8,
+      summary: "Severe storm level; navigation, HF radio, and satellite operations may see broader disruption."
+    },
+    G5: {
+      label: "G5 Extreme",
+      kpThreshold: 9,
+      summary: "Extreme storm level; broad satellite, navigation, HF radio, and power-grid impacts are possible."
+    }
+  };
+  const normalizedScale = getText(scale).toUpperCase();
+
+  if (scaleDetails[normalizedScale]) {
+    return {
+      ...scaleDetails[normalizedScale],
+      range: `NOAA ${normalizedScale} begins at Kp ${scaleDetails[normalizedScale].kpThreshold}`
+    };
+  }
+
+  if (Number.isFinite(kpIndex) && kpIndex < 5) {
+    return {
+      label: "Below G1",
+      range: "NOAA G-scale starts at Kp 5",
+      summary: "Current geomagnetic activity is below NOAA storm level."
+    };
+  }
+
+  return {
+    label: "NOAA scale unavailable",
+    range: "Scale not reported",
+    summary: "NOAA storm-scale context is unavailable for this observation."
+  };
+}
+
 function formatDiameterRange(minValue, maxValue) {
   const min = Number.isFinite(minValue) ? Math.round(minValue).toLocaleString() : "";
   const max = Number.isFinite(maxValue) ? Math.round(maxValue).toLocaleString() : "";
@@ -648,6 +700,7 @@ function normalizeSpaceWeather(data) {
     observedAt: getText(weather?.observedAt),
     kpIndex: getFiniteNumber(weather?.kpIndex),
     kpLabel: getText(weather?.kpLabel),
+    noaaScale: getText(weather?.noaaScale),
     condition: getText(weather?.condition, "Unavailable"),
     severity: getText(weather?.severity, "quiet"),
     summary: getText(weather?.summary, "Space weather data is unavailable right now."),
@@ -1235,6 +1288,7 @@ async function loadSpaceWeather() {
     const severityClass = `space-weather-${data.severity}`;
     const recentAlerts = data.alerts.slice(0, 2);
     const forecastRows = data.forecast.slice(0, 3);
+    const noaaScaleContext = getNoaaScaleContext(data.noaaScale, data.kpIndex);
     const observedAtLabel = data.observedAt ? formatDateTime(data.observedAt) : "";
     const observedAtMarkup = observedAtLabel && observedAtLabel !== "Unavailable"
       ? `<p class="space-weather-observed mb-0">Observed <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
@@ -1255,6 +1309,14 @@ async function loadSpaceWeather() {
           <p class="mb-0">${escapeHtml(data.summary)}</p>
         </div>
         ${data.kpLabel ? `<span class="space-weather-kp">${escapeHtml(data.kpLabel)}</span>` : ""}
+      </div>
+      <div class="space-weather-scale-context mb-3">
+        <div>
+          <p class="text-secondary small mb-1">NOAA geomagnetic scale</p>
+          <p class="space-weather-scale-label mb-0">${escapeHtml(noaaScaleContext.label)}</p>
+          <p class="space-weather-scale-range mb-0">${escapeHtml(noaaScaleContext.range)}</p>
+        </div>
+        <p class="space-weather-scale-summary mb-0">${escapeHtml(noaaScaleContext.summary)}</p>
       </div>
       ${forecastRows.length ? `
         <div class="space-weather-forecast mb-3">

@@ -52,7 +52,7 @@ Out of scope for the MVP:
 - Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details and launch-window length context.
 - Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window length, window times, pad, location, and source links.
 - Near-Earth asteroid summary for the current day with closest-approach time, lunar-distance, velocity, exact approach details, source links, and hazard-context cues.
-- NOAA SWPC space-weather status with current K-index observation time, 3-day K-index outlook, and typed recent notices.
+- NOAA SWPC space-weather status with current K-index observation time, NOAA geomagnetic scale context, 3-day K-index outlook, and typed recent notices.
 - Dashboard-level data-source status summary for APOD, ISS position, crew, launches, asteroids, and space weather, with compact upstream source links for demo verification.
 - Refresh action.
 - Loading, empty, and error states.
@@ -75,6 +75,7 @@ Out of scope for the MVP:
 - SpaceX launch listings use The Space Devs launch data through `/api/launches`, with a normalized response shape before data reaches the dashboard and launches page.
 - Launch listings should summarize the launch window length from the existing launch-data feed when start/end times are available, while preserving exact source window times in details.
 - NOAA SWPC space weather uses `/api/space-weather`, with current K-index, forecast, and alert/watch/warning notice data normalized before rendering.
+- Current space-weather cards should interpret NOAA geomagnetic storm scale context from the existing K-index feed before adding deeper space-weather charts or new NOAA products.
 - Space-weather notices should keep NOAA's alert/watch/warning distinction visible with compact labels instead of flattening every message into an undifferentiated headline.
 - Server-side normalizers provide stable APOD, launch, Near-Earth Object, and space-weather shapes so third-party response changes are less likely to break card rendering.
 - Frontend rendering escapes API-provided text before inserting it into the page.

@@ -295,6 +295,7 @@ test("normalizeSpaceWeatherPayload returns a stable NOAA dashboard contract", ()
       observedAt: "2026-06-10T15:31:00.000Z",
       kpIndex: 4,
       kpLabel: "4Z",
+      noaaScale: "",
       condition: "Active conditions",
       severity: "active",
       summary: "Geomagnetic activity is elevated but below storm level.",
@@ -349,6 +350,7 @@ test("normalizeSpaceWeatherPayload classifies storm-level K-index values", () =>
 
   assert.equal(payload.spaceWeather.condition, "Minor storm conditions");
   assert.equal(payload.spaceWeather.severity, "storm");
+  assert.equal(payload.spaceWeather.noaaScale, "G2");
   assert.deepEqual(payload.spaceWeather.forecast, []);
 });
 

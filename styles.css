@@ -867,6 +867,33 @@ html[data-bs-theme="light"] .data-detail-panel {
   margin-top: 0.25rem;
 }
 
+.space-weather-scale-context {
+  align-items: start;
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  padding: 1rem;
+}
+
+.space-weather-scale-label {
+  color: var(--bs-body-color);
+  font-size: 1rem;
+  font-weight: 750;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.space-weather-scale-range,
+.space-weather-scale-summary {
+  color: var(--apollo-muted);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
 .space-weather-forecast {
   border-top: 1px solid var(--apollo-border);
   padding-top: 1rem;
@@ -1492,6 +1519,10 @@ html[data-bs-theme="light"] .data-detail-panel {
   .space-weather-status {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .space-weather-scale-context {
+    grid-template-columns: 1fr;
   }
 
   .space-weather-forecast-grid {

@@ -268,6 +268,7 @@ function normalizeSpaceWeatherPayload(payload) {
       observedAt: latestKp.observedAt || "",
       kpIndex: latestKp.kpIndex ?? null,
       kpLabel: latestKp.kpLabel || "",
+      noaaScale: getNoaaScale(latestKp.kpIndex),
       ...condition,
       forecast: normalizeKpForecast(kpForecastItems),
       alerts: normalizedAlerts,
