@@ -89,11 +89,20 @@ Use `DESIGN-README.md` as the product's design source of truth.
 - Pull or fetch from `main` before starting new work when network access is available.
 - Use one short-lived branch per meaningful task, named by purpose such as `feature/watchlist-cards`, `visual/reflect-polish`, `fix/csv-export`, or `quality/apollo-2026-06-12`.
 - Do not mix unrelated product work or unrelated agent work into one branch.
+- Do not create a new branch just because a new automation run or chat task started. First look for an existing open branch or PR for the same product and same workstream, then continue that branch and update its PR when the scope matches.
+- Create a new branch only when no matching open branch/PR exists, the existing branch was merged or closed, the new work is meaningfully separate, the existing branch is unsafe to reuse, or the founder explicitly asks for separate work.
+- When creating or using a branch, tell the founder the branch name, why it exists, what it is based on, and whether it has a local commit, pushed branch, or open PR.
+- Before starting a new branch, check current branch state and open PR context when possible so work is not duplicated, hidden, or stranded.
+- Do not stack unrelated work onto an existing branch just because it is already checked out. Start a fresh branch or worktree from updated `main` when the task is separate.
+- When multiple branches exist, keep the handoff organized: list each branch or PR, its purpose, current status, and next action.
+- If uncommitted work blocks switching branches, preserve it with a safe worktree, stash, or explicit handoff. Do not overwrite, discard, or obscure existing work.
 - Open a PR before merging, even for solo work, so every change has a reviewable checkpoint.
+- PR creation and PR updates are always approved for requested work. Do not ask separately before opening a PR.
 - Merge only work that builds, passes relevant checks, and fits Apollo's product direction.
 - Delete merged branches to keep GitHub and local checkouts uncluttered.
-- Treat requested code or documentation work as incomplete until the final changes are committed and pushed to GitHub.
+- Treat requested code or documentation work as incomplete until the final changes are committed, pushed to GitHub, and represented by an open or updated PR when repository access is available.
 - Treat uncommitted work and committed-but-unpushed work as incomplete.
+- Treat pushed work without an open or updated PR as incomplete unless a true external blocker prevents PR creation.
 - If validation, lint, tests, build, or runtime verification fails, diagnose and fix the issue, rerun the relevant checks, then commit and push the resolved work.
 
 ## Failure And Blocker Handling
