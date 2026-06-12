@@ -866,7 +866,7 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
               <h3 class="source-status-title mb-0">${escapeHtml(feed.label)}</h3>
               <p class="source-status-source mb-0">${escapeHtml(feed.description)}</p>
               <p class="source-status-detail mb-0">${escapeHtml(feed.detail)}</p>
-              <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+              <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(feed.label)} source">
                 <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
                 Open source
               </a>
