@@ -63,6 +63,10 @@ const NEO_HAZARD_FLAG_CONTEXT = {
   label: "NASA potentially hazardous asteroid flag",
   summary: "NASA's flag reflects an orbit that can pass within about 7.48M km of Earth and an estimated size near 140 m or larger. It is not an impact prediction."
 };
+const NEO_SENTRY_CONTEXT = {
+  label: "NASA Sentry monitoring",
+  summary: "Sentry is NASA/JPL's automated monitoring system for possible future Earth impacts over the next 100 years."
+};
 const THEME_STORAGE_KEY = "apollo-theme";
 const EARTH_RADIUS_KM = 6371;
 const MINUTES_PER_HOUR = 60;
@@ -659,12 +663,17 @@ function normalizeNeo(data, date) {
     label: getText(data?.hazardFlagContext?.label, NEO_HAZARD_FLAG_CONTEXT.label),
     summary: getText(data?.hazardFlagContext?.summary, NEO_HAZARD_FLAG_CONTEXT.summary)
   };
+  const sentryContext = {
+    label: getText(data?.sentryContext?.label, NEO_SENTRY_CONTEXT.label),
+    summary: getText(data?.sentryContext?.summary, NEO_SENTRY_CONTEXT.summary)
+  };
 
   if (Array.isArray(data?.asteroids)) {
     return {
       asteroids: data.asteroids.map((item) => ({
         name: getText(item?.name, "Unnamed object"),
         hazardous: Boolean(item?.hazardous),
+        sentryObject: Boolean(item?.sentryObject),
         closestKilometers: getFiniteNumber(item?.closestKilometers),
         lunarDistance: getFiniteNumber(item?.lunarDistance),
         velocityKph: getFiniteNumber(item?.velocityKph),
@@ -673,7 +682,8 @@ function normalizeNeo(data, date) {
         maxDiameterMeters: getFiniteNumber(item?.maxDiameterMeters),
         sourceUrl: safeHttpUrl(item?.sourceUrl)
       })),
-      hazardFlagContext
+      hazardFlagContext,
+      sentryContext
     };
   }
 
@@ -693,6 +703,7 @@ function normalizeNeo(data, date) {
       return {
         name: getText(item?.name, "Unnamed object"),
         hazardous: Boolean(item?.is_potentially_hazardous_asteroid),
+        sentryObject: Boolean(item?.is_sentry_object),
         closestKilometers,
         lunarDistance,
         velocityKph,
@@ -702,7 +713,8 @@ function normalizeNeo(data, date) {
         sourceUrl: safeHttpUrl(item?.nasa_jpl_url)
       };
     }),
-    hazardFlagContext
+    hazardFlagContext,
+    sentryContext
   };
 }
 
@@ -1197,13 +1209,14 @@ async function loadNeo() {
   try {
     const date = todayIso();
     const neoSummary = normalizeNeo(await fetchJson(`${API.neo}?date=${date}`), date);
-    const { asteroids, hazardFlagContext } = neoSummary;
+    const { asteroids, hazardFlagContext, sentryContext } = neoSummary;
     const sortedAsteroids = [...asteroids].sort((a, b) => {
       const left = Number.isFinite(a.closestKilometers) ? a.closestKilometers : Number.POSITIVE_INFINITY;
       const right = Number.isFinite(b.closestKilometers) ? b.closestKilometers : Number.POSITIVE_INFINITY;
       return left - right;
     });
     const hazardous = asteroids.filter((item) => item.hazardous).length;
+    const sentryObjects = asteroids.filter((item) => item.sentryObject).length;
     const closestObject = sortedAsteroids.find((item) => Number.isFinite(item.closestKilometers));
     const closestApproachDate = closestObject?.closeApproach ? getNeoApproachDate(closestObject.closeApproach) : null;
     const closestApproachIso = Number.isFinite(closestApproachDate?.getTime()) ? closestApproachDate.toISOString() : "";
@@ -1215,6 +1228,9 @@ async function loadNeo() {
     const hazardSummary = hazardous === 0
       ? "No listed objects are flagged as potentially hazardous today."
       : `${hazardous} listed ${hazardous === 1 ? "object is" : "objects are"} flagged for NASA tracking. That flag reflects size and orbit, not an expected impact.`;
+    const sentrySummary = sentryObjects === 0
+      ? "None of today's listed objects are on NASA's Sentry monitoring list."
+      : `${sentryObjects} listed ${sentryObjects === 1 ? "object is" : "objects are"} on NASA's Sentry monitoring list.`;
     const hazardNoteClass = hazardous === 0 ? "neo-risk-note-success" : "neo-risk-note-warning";
     const hazardIcon = hazardous === 0 ? "fa-circle-check" : "fa-circle-info";
 
@@ -1227,6 +1243,10 @@ async function loadNeo() {
         <div>
           <p class="text-secondary small mb-1">Flagged as potentially hazardous</p>
           <p class="fw-semibold mb-0">${hazardous}</p>
+        </div>
+        <div>
+          <p class="text-secondary small mb-1">On Sentry monitoring list</p>
+          <p class="fw-semibold mb-0">${sentryObjects}</p>
         </div>
         <div>
           <p class="text-secondary small mb-1">Closest approach</p>
@@ -1249,6 +1269,7 @@ async function loadNeo() {
         <div>
           <p class="mb-1">${escapeHtml(hazardSummary)}</p>
           <p class="neo-risk-context mb-0">${escapeHtml(hazardFlagContext.summary)}</p>
+          <p class="neo-risk-context mb-0">${escapeHtml(sentrySummary)} ${escapeHtml(sentryContext.summary)}</p>
         </div>
       </div>
       ${asteroids.length ? `
@@ -1259,6 +1280,7 @@ async function loadNeo() {
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
                   <span class="fw-semibold">${escapeHtml(item.name)}</span>
                   ${item.hazardous ? `<span class="badge rounded-pill text-bg-warning">Potentially hazardous</span>` : ""}
+                  ${item.sentryObject ? `<span class="badge rounded-pill text-bg-info">Sentry monitored</span>` : ""}
                 </div>
                 <p class="text-secondary small mb-0">${formatLunarDistance(item.lunarDistance)} · ${formatVelocityKph(item.velocityKph)}</p>
                 <details class="data-details asteroid-details mt-2">
@@ -1285,6 +1307,10 @@ async function loadNeo() {
                         <dt>NASA tracking flag</dt>
                         <dd>${item.hazardous ? "Potentially hazardous asteroid" : "Not flagged as potentially hazardous"}</dd>
                       </div>
+                      <div>
+                        <dt>Sentry monitoring</dt>
+                        <dd>${item.sentryObject ? "On NASA's Sentry monitoring list" : "Not on NASA's Sentry monitoring list"}</dd>
+                      </div>
                     </dl>
                     ${item.sourceUrl ? `
                       <a class="source-link" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener noreferrer">
@@ -1301,7 +1327,7 @@ async function loadNeo() {
         </ul>
       ` : stateMessage("No near-Earth objects are listed for today.")}
     `;
-    return createSourceStatus("neo", "ok", `${asteroids.length} listed today, ${hazardous} flagged for tracking.`);
+    return createSourceStatus("neo", "ok", `${asteroids.length} listed today, ${hazardous} flagged for tracking, ${sentryObjects} on Sentry monitoring.`);
   } catch (error) {
     setError(els.neoBody, getApiErrorMessage(error, "NASA asteroid data is unavailable right now. Other live sections remain available."));
     return createSourceStatus("neo", "error", "Asteroid summary did not load.");

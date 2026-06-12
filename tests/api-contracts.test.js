@@ -128,6 +128,10 @@ test("normalizeNeoPayload returns asteroid context and filters malformed records
     label: "NASA potentially hazardous asteroid flag",
     summary: "NASA's flag reflects an orbit that can pass within about 7.48M km of Earth and an estimated size near 140 m or larger. It is not an impact prediction."
   });
+  assert.deepEqual(payload.sentryContext, {
+    label: "NASA Sentry monitoring",
+    summary: "Sentry is NASA/JPL's automated monitoring system for possible future Earth impacts over the next 100 years."
+  });
   assert.deepEqual(payload.asteroids[0], {
     id: "3655761",
     name: "(2014 AE29)",
@@ -155,6 +159,10 @@ test("normalizeNeoPayload returns an empty list for missing date buckets", () =>
     hazardFlagContext: {
       label: "NASA potentially hazardous asteroid flag",
       summary: "NASA's flag reflects an orbit that can pass within about 7.48M km of Earth and an estimated size near 140 m or larger. It is not an impact prediction."
+    },
+    sentryContext: {
+      label: "NASA Sentry monitoring",
+      summary: "Sentry is NASA/JPL's automated monitoring system for possible future Earth impacts over the next 100 years."
     },
     source: "NASA NeoWs"
   });

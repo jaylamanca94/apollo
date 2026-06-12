@@ -38,6 +38,11 @@ const NEO_HAZARD_FLAG_CONTEXT = {
   summary: "NASA's flag reflects an orbit that can pass within about 7.48M km of Earth and an estimated size near 140 m or larger. It is not an impact prediction."
 };
 
+const NEO_SENTRY_CONTEXT = {
+  label: "NASA Sentry monitoring",
+  summary: "Sentry is NASA/JPL's automated monitoring system for possible future Earth impacts over the next 100 years."
+};
+
 function normalizeApodPayload(payload) {
   const date = getText(payload?.date);
 
@@ -93,6 +98,7 @@ function normalizeNeoPayload(payload, date) {
     elementCount: asteroids.length,
     asteroids,
     hazardFlagContext: NEO_HAZARD_FLAG_CONTEXT,
+    sentryContext: NEO_SENTRY_CONTEXT,
     source: "NASA NeoWs"
   };
 }

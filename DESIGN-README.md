@@ -42,7 +42,7 @@ Default first-time visitors to Dark Mode and provide a compact header toggle for
 
 Use one shared red accent for dashboard icons, outline actions, map overlays, and progressive disclosure affordances. Avoid giving every data family a separate hue while this design direction is active.
 
-Use green success styling for clearly positive safety/status messages. For example, the asteroid message `No listed objects are flagged as potentially hazardous today.` should read as a green success alert, not a red or warning state. Keep the NASA potentially hazardous asteroid criteria as subdued secondary text inside that same context block so it improves trust without turning the card into an education panel.
+Use green success styling for clearly positive safety/status messages. For example, the asteroid message `No listed objects are flagged as potentially hazardous today.` should read as a green success alert, not a red or warning state. Keep the NASA potentially hazardous asteroid criteria and Sentry monitoring context as subdued secondary text inside that same context block so they improve trust without turning the card into an education panel.
 
 ### Maps
 
@@ -55,7 +55,7 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 - APOD split feature: image or media on the left, source/date/title/credit/summary links on the right.
 - ISS current position and people in space as paired operational cards. Keep ISS orbital context compact and calculated from the same live position response when possible. Show the ISS feed's source observation time as a subdued "Position fix" line near the map so users can judge freshness without adding repeated card timestamps. Keep People in Space scannable with a compact craft/location occupancy summary before the individual crew list.
 - Launches as a taller list card with three visible launch rows, compact launch-window length context, and a link to the launches detail page.
-- Asteroids as a summary card with closest approach time/distance, risk context, and nearby object rows. Keep per-object approach details behind compact inline disclosure controls so the card remains scannable.
+- Asteroids as a summary card with closest approach time/distance, hazard and Sentry monitoring context, and nearby object rows. Keep per-object approach details behind compact inline disclosure controls so the card remains scannable.
 - Space weather as a compact status card under asteroid context, with current K-index first, a compact NOAA geomagnetic scale context row, a small 3-day outlook below it, and compact labels plus scale cues for recent NOAA alert/watch/warning notices.
 - Data Sources as a full-width closing card that reports whether each upstream feed updated, needs attention, or is unavailable.
 
