@@ -12,37 +12,43 @@ const SOURCE_FEEDS = [
     id: "apod",
     label: "NASA APOD",
     description: "Image of the Day",
-    icon: "fa-solid fa-image"
+    icon: "fa-solid fa-image",
+    sourceUrl: "https://apod.nasa.gov/apod/"
   },
   {
     id: "iss",
     label: "Where the ISS At",
     description: "ISS position",
-    icon: "fa-solid fa-satellite"
+    icon: "fa-solid fa-satellite",
+    sourceUrl: "https://wheretheiss.at/"
   },
   {
     id: "people",
     label: "People in Space",
     description: "Crew roster",
-    icon: "fa-solid fa-user-astronaut"
+    icon: "fa-solid fa-user-astronaut",
+    sourceUrl: "https://github.com/corquaid/international-space-station-APIs"
   },
   {
     id: "launches",
     label: "The Space Devs",
     description: "SpaceX launches",
-    icon: "fa-solid fa-rocket"
+    icon: "fa-solid fa-rocket",
+    sourceUrl: "https://thespacedevs.com/llapi"
   },
   {
     id: "neo",
     label: "NASA NeoWs",
     description: "Near-Earth objects",
-    icon: "fa-solid fa-meteor"
+    icon: "fa-solid fa-meteor",
+    sourceUrl: "https://api.nasa.gov/"
   },
   {
     id: "spaceWeather",
     label: "NOAA SWPC",
     description: "Space weather",
-    icon: "fa-solid fa-sun"
+    icon: "fa-solid fa-sun",
+    sourceUrl: "https://www.swpc.noaa.gov/products-and-data"
   }
 ];
 
@@ -807,6 +813,10 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
               <h3 class="source-status-title mb-0">${escapeHtml(feed.label)}</h3>
               <p class="source-status-source mb-0">${escapeHtml(feed.description)}</p>
               <p class="source-status-detail mb-0">${escapeHtml(feed.detail)}</p>
+              <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+                <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                Open source
+              </a>
             </div>
             <span class="source-status-pill">${escapeHtml(stateLabel)}</span>
           </article>

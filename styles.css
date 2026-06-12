@@ -1044,6 +1044,34 @@ html[data-bs-theme="light"] .data-detail-panel {
   margin-top: 0.25rem;
 }
 
+.source-status-link {
+  align-items: center;
+  color: var(--apollo-muted-strong);
+  display: inline-flex;
+  font-size: 0.875rem;
+  gap: 0.4rem;
+  line-height: 1.35;
+  margin-top: 0.45rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.source-status-link i {
+  color: var(--apollo-muted);
+  font-size: 0.75rem;
+}
+
+.source-status-link:hover,
+.source-status-link:focus-visible {
+  color: var(--apollo-accent);
+}
+
+.source-status-link:focus-visible {
+  border-radius: 0.25rem;
+  outline: 3px solid rgba(255, 64, 86, 0.45);
+  outline-offset: 3px;
+}
+
 .source-status-pill {
   align-items: center;
   border: 1px solid transparent;

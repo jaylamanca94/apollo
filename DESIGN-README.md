@@ -60,7 +60,7 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 - Data Sources as a full-width closing card that reports whether each upstream feed updated, needs attention, or is unavailable.
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
-Use the data-source status card for operational trust, not diagnostics. Keep labels short, tie each row to an existing dashboard feed, and avoid exposing implementation details that do not help a viewer understand dashboard freshness.
+Use the data-source status card for operational trust, not diagnostics. Keep labels short, tie each row to an existing dashboard feed, include a compact upstream source link, and avoid exposing implementation details that do not help a viewer understand dashboard freshness.
 
 Use compact uppercase pills for NOAA space-weather notice types. They should aid scanning while leaving the headline and issued time as the primary content.
 
