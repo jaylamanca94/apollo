@@ -19,6 +19,17 @@ function getText(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function getWindowDurationMinutes(windowStart, windowEnd) {
+  const start = new Date(windowStart);
+  const end = new Date(windowEnd);
+
+  if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end < start) {
+    return null;
+  }
+
+  return Math.round((end.getTime() - start.getTime()) / 60000);
+}
+
 function normalizeLaunch(launch) {
   if (!launch || typeof launch !== "object") {
     return null;
@@ -27,6 +38,8 @@ function normalizeLaunch(launch) {
   const name = getText(launch.name);
   const dateUtc = getText(launch.net);
   const launchDate = new Date(dateUtc);
+  const windowStart = getText(launch.window_start);
+  const windowEnd = getText(launch.window_end);
 
   if (!name || !dateUtc || !Number.isFinite(launchDate.getTime())) {
     return null;
@@ -41,8 +54,9 @@ function normalizeLaunch(launch) {
     vehicle: getText(launch.rocket?.configuration?.name),
     pad: getText(launch.pad?.name),
     location: getText(launch.pad?.location?.name),
-    windowStart: getText(launch.window_start),
-    windowEnd: getText(launch.window_end),
+    windowStart,
+    windowEnd,
+    windowDurationMinutes: getWindowDurationMinutes(windowStart, windowEnd),
     provider: getText(launch.launch_service_provider?.name) || "SpaceX",
     sourceUrl: safeHttpUrl(launch.url)
   };

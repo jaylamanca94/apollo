@@ -54,7 +54,7 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 
 - APOD split feature: image or media on the left, source/date/title/credit/summary links on the right.
 - ISS current position and people in space as paired operational cards. Keep ISS orbital context compact and calculated from the same live position response when possible. Keep People in Space scannable with a compact craft/location occupancy summary before the individual crew list.
-- Launches as a taller list card with three visible launch rows and a link to the launches detail page.
+- Launches as a taller list card with three visible launch rows, compact launch-window length context, and a link to the launches detail page.
 - Asteroids as a summary card with risk context and nearby object rows. Keep per-object approach details behind compact inline disclosure controls so the card remains scannable.
 - Space weather as a compact status card under asteroid context, with current K-index first, a small 3-day outlook below it, and compact labels for recent NOAA alert/watch/warning notices.
 - Data Sources as a full-width closing card that reports whether each upstream feed updated, needs attention, or is unavailable.
@@ -63,6 +63,8 @@ Use one global refresh timestamp near the page title. Avoid repeated per-card ti
 Use the data-source status card for operational trust, not diagnostics. Keep labels short, tie each row to an existing dashboard feed, and avoid exposing implementation details that do not help a viewer understand dashboard freshness.
 
 Use compact uppercase pills for NOAA space-weather notice types. They should aid scanning while leaving the headline and issued time as the primary content.
+
+Use muted compact launch-window summaries near launch titles. They should help viewers distinguish target-only times from wider launch windows while leaving mission name, countdown, status, and source-window details as the primary content.
 
 Use inline disclosure details for richer dashboard context, then graduate to separate static pages only when a card needs materially more space. The launches detail page is the first example of this pattern.
 

@@ -49,8 +49,8 @@ Out of scope for the MVP:
 - APOD credit, full-media link, NASA source link, and inline full-description detail.
 - ISS latitude, longitude, altitude, velocity, current-position map, live orbital context, and source link.
 - Crew count, current craft/location summary, and responsive People in Space grid.
-- Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details.
-- Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window, pad, location, and source links.
+- Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details and launch-window length context.
+- Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window length, window times, pad, location, and source links.
 - Near-Earth asteroid summary for the current day with lunar-distance, velocity, exact approach details, source links, and hazard-context cues.
 - NOAA SWPC space-weather status with current K-index observation time, 3-day K-index outlook, and typed recent notices.
 - Dashboard-level data-source status summary for APOD, ISS position, crew, launches, asteroids, and space weather.
@@ -73,6 +73,7 @@ Out of scope for the MVP:
 - APOD tries NASA's default response first, then Eastern-date fallbacks to avoid UTC publish-window failures.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
 - SpaceX launch listings use The Space Devs launch data through `/api/launches`, with a normalized response shape before data reaches the dashboard and launches page.
+- Launch listings should summarize the launch window length from the existing launch-data feed when start/end times are available, while preserving exact source window times in details.
 - NOAA SWPC space weather uses `/api/space-weather`, with current K-index, forecast, and alert/watch/warning notice data normalized before rendering.
 - Space-weather notices should keep NOAA's alert/watch/warning distinction visible with compact labels instead of flattening every message into an undifferentiated headline.
 - Server-side normalizers provide stable APOD, launch, Near-Earth Object, and space-weather shapes so third-party response changes are less likely to break card rendering.

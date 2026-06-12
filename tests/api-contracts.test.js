@@ -199,8 +199,10 @@ test("normalizeLaunchLibraryPayload sorts, limits, and sanitizes launches", () =
   assert.equal(payload.launches[0].imageUrl, "https://example.com/launch.jpg");
   assert.equal(payload.launches[0].windowStart, "2026-06-11T14:00:00Z");
   assert.equal(payload.launches[0].windowEnd, "2026-06-11T18:00:00Z");
+  assert.equal(payload.launches[0].windowDurationMinutes, 240);
   assert.equal(payload.launches[1].name, "Later mission");
   assert.equal(payload.launches[1].imageUrl, "");
+  assert.equal(payload.launches[1].windowDurationMinutes, null);
 });
 
 test("normalizeLaunchLibraryPayload honors a safe display limit", () => {

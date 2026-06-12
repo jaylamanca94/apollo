@@ -667,6 +667,15 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   overflow-wrap: anywhere;
 }
 
+.launch-window-summary {
+  color: var(--apollo-muted);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-top: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
 .launch-footer {
   align-items: start;
   display: grid;
@@ -1201,7 +1210,7 @@ html[data-bs-theme="light"] .data-detail-panel {
 .next-launch-countdown {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .next-launch-countdown > div {

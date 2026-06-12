@@ -224,6 +224,49 @@ function formatLaunchWindow(launch) {
   return start || end;
 }
 
+function getLaunchWindowDurationMinutes(launch) {
+  const apiDuration = getFiniteNumber(launch?.windowDurationMinutes);
+
+  if (apiDuration !== null && apiDuration >= 0) {
+    return apiDuration;
+  }
+
+  const start = new Date(launch?.windowStart);
+  const end = new Date(launch?.windowEnd);
+
+  if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end < start) {
+    return null;
+  }
+
+  return Math.round((end.getTime() - start.getTime()) / 60000);
+}
+
+function formatLaunchWindowSummary(launch) {
+  const durationMinutes = getLaunchWindowDurationMinutes(launch);
+
+  if (durationMinutes === null) {
+    return launch?.windowStart || launch?.dateUtc ? "Target time only" : "Window unavailable";
+  }
+
+  if (durationMinutes === 0) {
+    return "Instantaneous window";
+  }
+
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+  const parts = [];
+
+  if (hours > 0) {
+    parts.push(`${hours}h`);
+  }
+
+  if (minutes > 0) {
+    parts.push(`${minutes}m`);
+  }
+
+  return `${parts.join(" ")} launch window`;
+}
+
 function formatDistanceKilometers(value) {
   return Number.isFinite(value) ? `${Math.round(value).toLocaleString()} km` : "Unavailable";
 }
@@ -457,6 +500,7 @@ function normalizeLaunches(data) {
       location: getText(launch?.location),
       windowStart: getText(launch?.windowStart),
       windowEnd: getText(launch?.windowEnd),
+      windowDurationMinutes: getFiniteNumber(launch?.windowDurationMinutes),
       provider: getText(launch?.provider, "SpaceX"),
       sourceUrl: safeHttpUrl(launch?.sourceUrl)
     }))
@@ -927,10 +971,12 @@ async function loadLaunches() {
           ${visibleLaunches.map((launch) => {
           const launchName = splitLaunchName(launch.name);
           const launchWindow = formatLaunchWindow(launch);
+          const launchWindowSummary = formatLaunchWindowSummary(launch);
           const fullDetails = escapeHtml(launch.details);
           const detailRows = [
             ["Vehicle", launch.vehicle],
             ["Provider", launch.provider],
+            ["Window length", launchWindowSummary],
             ["Pad", launch.pad],
             ["Location", launch.location],
             ["Launch window", launchWindow]
@@ -953,6 +999,7 @@ async function loadLaunches() {
                   <h3 class="launch-vehicle mb-0">${escapeHtml(launchName.vehicle)}</h3>
                   ${launchName.mission ? `<span class="launch-mission">${escapeHtml(launchName.mission)}</span>` : ""}
                 </div>
+                <p class="launch-window-summary mb-0">${escapeHtml(launchWindowSummary)}</p>
                 <div class="launch-footer">
                   <details class="data-details launch-details">
                     <summary><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Mission details</summary>
@@ -979,7 +1026,7 @@ async function loadLaunches() {
     };
 
     renderLaunchRows();
-    return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded.`);
+    return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded; next window: ${formatLaunchWindowSummary(launches[0])}.`);
   } catch (error) {
     setError(els.launchBody, "Could not load upcoming SpaceX launches right now. Other dashboard sections remain available.");
     return createSourceStatus("launches", "error", "Launch data did not load.");

@@ -90,6 +90,58 @@ function formatLaunchWindow(launch) {
   return start || end;
 }
 
+function getFiniteNumber(value) {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function getLaunchWindowDurationMinutes(launch) {
+  const apiDuration = getFiniteNumber(launch?.windowDurationMinutes);
+
+  if (apiDuration !== null && apiDuration >= 0) {
+    return apiDuration;
+  }
+
+  const start = new Date(launch?.windowStart);
+  const end = new Date(launch?.windowEnd);
+
+  if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) || end < start) {
+    return null;
+  }
+
+  return Math.round((end.getTime() - start.getTime()) / 60000);
+}
+
+function formatLaunchWindowSummary(launch) {
+  const durationMinutes = getLaunchWindowDurationMinutes(launch);
+
+  if (durationMinutes === null) {
+    return launch?.windowStart || launch?.dateUtc ? "Target time only" : "Window unavailable";
+  }
+
+  if (durationMinutes === 0) {
+    return "Instantaneous window";
+  }
+
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+  const parts = [];
+
+  if (hours > 0) {
+    parts.push(`${hours}h`);
+  }
+
+  if (minutes > 0) {
+    parts.push(`${minutes}m`);
+  }
+
+  return `${parts.join(" ")} launch window`;
+}
+
 function truncateText(value, maxLength = 420) {
   const text = String(value ?? "").trim();
 
@@ -116,6 +168,7 @@ function normalizeLaunches(data) {
       location: getText(launch?.location),
       windowStart: getText(launch?.windowStart),
       windowEnd: getText(launch?.windowEnd),
+      windowDurationMinutes: getFiniteNumber(launch?.windowDurationMinutes),
       provider: getText(launch?.provider, "SpaceX"),
       sourceUrl: safeHttpUrl(launch?.sourceUrl)
     }))
@@ -248,9 +301,11 @@ function renderLaunches(launches) {
   const nextLaunch = launches[0];
   const nextLaunchName = splitLaunchName(nextLaunch.name);
   const nextLaunchWindow = formatLaunchWindow(nextLaunch);
+  const nextLaunchWindowSummary = formatLaunchWindowSummary(nextLaunch);
   const nextLaunchDetails = [
     ["Status", nextLaunch.status],
     ["Vehicle", nextLaunch.vehicle || nextLaunchName.vehicle],
+    ["Window length", nextLaunchWindowSummary],
     ["Launch window", nextLaunchWindow],
     ["Pad", nextLaunch.pad],
     ["Location", nextLaunch.location]
@@ -291,6 +346,10 @@ function renderLaunches(launches) {
             <p class="text-secondary small mb-1">Countdown</p>
             <p class="mb-0">${formatCountdown(nextLaunch.dateUtc)}</p>
           </div>
+          <div>
+            <p class="text-secondary small mb-1">Window length</p>
+            <p class="mb-0">${escapeHtml(nextLaunchWindowSummary)}</p>
+          </div>
         </div>
         <p class="launch-page-summary">${escapeHtml(truncateText(nextLaunch.details, 300))}</p>
         ${nextLaunchDetails ? `<dl class="detail-list next-launch-detail-list mb-3">${nextLaunchDetails}</dl>` : ""}
@@ -307,10 +366,12 @@ function renderLaunches(launches) {
       ${launches.map((launch) => {
         const launchName = splitLaunchName(launch.name);
         const launchWindow = formatLaunchWindow(launch);
+        const launchWindowSummary = formatLaunchWindowSummary(launch);
         const detailRows = [
           ["Provider", launch.provider],
           ["Vehicle", launch.vehicle || launchName.vehicle],
           ["Status", launch.status],
+          ["Window length", launchWindowSummary],
           ["Launch window", launchWindow],
           ["Pad", launch.pad],
           ["Location", launch.location]
@@ -339,6 +400,7 @@ function renderLaunches(launches) {
                     ${escapeHtml(launchName.vehicle)}
                     ${launchName.mission ? `<span class="launch-mission">${escapeHtml(launchName.mission)}</span>` : ""}
                   </h2>
+                  <p class="launch-window-summary mb-0">${escapeHtml(launchWindowSummary)}</p>
                 </div>
                 <span class="launch-status-pill">${escapeHtml(launch.status)}</span>
               </div>
