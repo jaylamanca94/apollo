@@ -939,6 +939,7 @@ async function loadNeo() {
           <p class="text-secondary small mb-1">Closest approach</p>
           <p class="fw-semibold mb-0">${formatLunarDistance(closestObject?.lunarDistance)}</p>
           <p class="text-secondary small mb-0">${formatDistanceKilometers(closestObject?.closestKilometers)}</p>
+          ${closestObject?.name ? `<p class="text-secondary small mb-0">${escapeHtml(closestObject.name)}</p>` : ""}
         </div>
         <div>
           <p class="text-secondary small mb-1">Fastest relative speed</p>
@@ -953,14 +954,47 @@ async function loadNeo() {
         <ul class="list-group list-group-flush">
           ${sortedAsteroids.slice(0, 5).map((item) => `
             <li class="list-group-item px-0 py-3 asteroid-row">
-              <div>
+              <div class="asteroid-main">
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
                   <span class="fw-semibold">${escapeHtml(item.name)}</span>
                   ${item.hazardous ? `<span class="badge rounded-pill text-bg-warning">Potentially hazardous</span>` : ""}
                 </div>
                 <p class="text-secondary small mb-0">${formatLunarDistance(item.lunarDistance)} · ${formatVelocityKph(item.velocityKph)}</p>
+                <details class="data-details asteroid-details mt-2">
+                  <summary><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Approach details</summary>
+                  <div class="data-detail-panel">
+                    <dl class="detail-list mb-3">
+                      <div>
+                        <dt>Close approach</dt>
+                        <dd>${escapeHtml(item.closeApproach || "Time unavailable")}</dd>
+                      </div>
+                      <div>
+                        <dt>Miss distance</dt>
+                        <dd>${formatDistanceKilometers(item.closestKilometers)}</dd>
+                      </div>
+                      <div>
+                        <dt>Relative speed</dt>
+                        <dd>${formatVelocityKph(item.velocityKph)}</dd>
+                      </div>
+                      <div>
+                        <dt>Estimated diameter</dt>
+                        <dd>${formatDiameterRange(item.minDiameterMeters, item.maxDiameterMeters)}</dd>
+                      </div>
+                      <div>
+                        <dt>NASA tracking flag</dt>
+                        <dd>${item.hazardous ? "Potentially hazardous asteroid" : "Not flagged as potentially hazardous"}</dd>
+                      </div>
+                    </dl>
+                    ${item.sourceUrl ? `
+                      <a class="source-link" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+                        <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                        NASA object source
+                      </a>
+                    ` : ""}
+                  </div>
+                </details>
               </div>
-              <span class="text-secondary text-sm-end">${formatDiameterRange(item.minDiameterMeters, item.maxDiameterMeters)}</span>
+              <span class="asteroid-size text-secondary text-sm-end">${formatDiameterRange(item.minDiameterMeters, item.maxDiameterMeters)}</span>
             </li>
           `).join("")}
         </ul>

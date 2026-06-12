@@ -55,7 +55,7 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 - APOD split feature: image or media on the left, source/date/title/credit/summary links on the right.
 - ISS current position and people in space as paired operational cards.
 - Launches as a taller list card with three visible launch rows and a link to the launches detail page.
-- Asteroids as a summary card with risk context and nearby object rows.
+- Asteroids as a summary card with risk context and nearby object rows. Keep per-object approach details behind compact inline disclosure controls so the card remains scannable.
 - Space weather as a compact status card under asteroid context, with current K-index first and a small 3-day outlook below it.
 - Data Sources as a full-width closing card that reports whether each upstream feed updated, needs attention, or is unavailable.
 

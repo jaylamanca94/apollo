@@ -983,6 +983,18 @@ html[data-bs-theme="light"] .data-detail-panel {
   justify-content: space-between;
 }
 
+.asteroid-main {
+  min-width: 0;
+}
+
+.asteroid-details .data-detail-panel {
+  width: min(100%, 28rem);
+}
+
+.asteroid-size {
+  flex: 0 0 9rem;
+}
+
 .list-group,
 .list-group-item {
   background: transparent;
@@ -1333,6 +1345,10 @@ html[data-bs-theme="light"] .data-detail-panel {
   .asteroid-row {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .asteroid-size {
+    flex-basis: auto;
   }
 
   .launch-page-title-row {
