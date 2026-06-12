@@ -275,7 +275,7 @@ function setLaunchesUpdated(value = formatUpdated()) {
 function setError(message) {
   els.launchPageBody.innerHTML = `
     <div class="alert alert-warning mb-0 py-3" role="alert">
-      ${message}
+      ${escapeHtml(message)}
     </div>
   `;
 }

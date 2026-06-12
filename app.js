@@ -798,13 +798,13 @@ function setDashboardStatus(message) {
 function setError(container, message) {
   container.innerHTML = `
     <div class="alert alert-warning mb-0 py-3" role="alert">
-      ${message}
+      ${escapeHtml(message)}
     </div>
   `;
 }
 
 function stateMessage(message) {
-  return `<p class="state-message text-secondary mb-0">${message}</p>`;
+  return `<p class="state-message text-secondary mb-0">${escapeHtml(message)}</p>`;
 }
 
 function resetIssMap() {
