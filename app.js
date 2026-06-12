@@ -719,7 +719,14 @@ function normalizeSpaceWeather(data) {
         productId: getText(alert?.productId),
         issuedAt: getText(alert?.issuedAt),
         headline: getText(alert?.headline),
-        type: getText(alert?.type, "Notice")
+        type: getText(alert?.type, "Notice"),
+        impactScale: alert?.impactScale && typeof alert.impactScale === "object"
+          ? {
+              scale: getText(alert.impactScale.scale),
+              label: getText(alert.impactScale.label),
+              summary: getText(alert.impactScale.summary)
+            }
+          : null
       }))
       .filter((alert) => alert.headline)
   };
@@ -1344,6 +1351,12 @@ async function loadSpaceWeather() {
                   <span class="space-weather-alert-pill">${escapeHtml(alert.type)}</span>
                   <span>${escapeHtml(alert.headline)}</span>
                 </div>
+                ${alert.impactScale?.label ? `
+                  <p class="space-weather-alert-impact mb-0">
+                    <span>${escapeHtml(alert.impactScale.label)}</span>
+                    ${alert.impactScale.summary ? `<span>${escapeHtml(alert.impactScale.summary)}</span>` : ""}
+                  </p>
+                ` : ""}
                 ${alert.issuedAt ? `<time datetime="${escapeHtml(alert.issuedAt)}">${formatDateTime(alert.issuedAt)}</time>` : ""}
               </li>
             `).join("")}

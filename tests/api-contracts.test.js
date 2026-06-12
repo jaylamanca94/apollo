@@ -327,7 +327,8 @@ test("normalizeSpaceWeatherPayload returns a stable NOAA dashboard contract", ()
           productId: "TIIA",
           issuedAt: "2026-06-10T17:38:31.317Z",
           headline: "ALERT: Type II Radio Emission",
-          type: "Alert"
+          type: "Alert",
+          impactScale: null
         }
       ],
       sourceUrl: "https://www.swpc.noaa.gov/products-and-data"
@@ -383,4 +384,42 @@ test("normalizeSpaceWeatherPayload labels SWPC notice types", () => {
   });
 
   assert.deepEqual(payload.spaceWeather.alerts.map((alert) => alert.type), ["Warning", "Watch", "Notice"]);
+  assert.deepEqual(payload.spaceWeather.alerts.map((alert) => alert.impactScale), [
+    {
+      scale: "G2",
+      label: "G2 Geomagnetic storm",
+      summary: "Moderate NOAA geomagnetic storm level"
+    },
+    {
+      scale: "G1",
+      label: "G1 Geomagnetic storm",
+      summary: "Minor NOAA geomagnetic storm level"
+    },
+    null
+  ]);
+});
+
+test("normalizeSpaceWeatherPayload extracts radio blackout scale ranges from notices", () => {
+  const payload = normalizeSpaceWeatherPayload({
+    kIndex: [
+      {
+        time_tag: "2026-06-10T15:31:00",
+        estimated_kp: 2,
+        kp: "2"
+      }
+    ],
+    alerts: [
+      {
+        product_id: "RANGE",
+        issue_datetime: "2026-06-10 17:38:31.317",
+        message: "ALERT: R1-R2 Radio Blackouts Observed"
+      }
+    ]
+  });
+
+  assert.deepEqual(payload.spaceWeather.alerts[0].impactScale, {
+    scale: "R1-R2",
+    label: "R1-R2 Radio blackout",
+    summary: "Moderate NOAA radio blackout level"
+  });
 });

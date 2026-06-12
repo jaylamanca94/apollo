@@ -56,13 +56,13 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 - ISS current position and people in space as paired operational cards. Keep ISS orbital context compact and calculated from the same live position response when possible. Show the ISS feed's source observation time as a subdued "Position fix" line near the map so users can judge freshness without adding repeated card timestamps. Keep People in Space scannable with a compact craft/location occupancy summary before the individual crew list.
 - Launches as a taller list card with three visible launch rows, compact launch-window length context, and a link to the launches detail page.
 - Asteroids as a summary card with closest approach time/distance, risk context, and nearby object rows. Keep per-object approach details behind compact inline disclosure controls so the card remains scannable.
-- Space weather as a compact status card under asteroid context, with current K-index first, a compact NOAA geomagnetic scale context row, a small 3-day outlook below it, and compact labels for recent NOAA alert/watch/warning notices.
+- Space weather as a compact status card under asteroid context, with current K-index first, a compact NOAA geomagnetic scale context row, a small 3-day outlook below it, and compact labels plus scale cues for recent NOAA alert/watch/warning notices.
 - Data Sources as a full-width closing card that reports whether each upstream feed updated, needs attention, or is unavailable.
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
 Use the data-source status card for operational trust, not diagnostics. Keep labels short, tie each row to an existing dashboard feed, include a compact upstream source link, and avoid exposing implementation details that do not help a viewer understand dashboard freshness.
 
-Use compact uppercase pills for NOAA space-weather notice types. They should aid scanning while leaving the headline and issued time as the primary content.
+Use compact uppercase pills for NOAA space-weather notice types. They should aid scanning while leaving the headline and issued time as the primary content. If a notice includes a NOAA R/S/G scale or clear storm-level K-index text, show the scale as a subdued secondary cue under the headline rather than adding a long explainer.
 Use a compact NOAA geomagnetic scale row when K-index data is available. It should translate the current Kp value into a G-scale severity label without adding a long educational explainer or new chart.
 
 Use muted compact launch-window summaries near launch titles. They should help viewers distinguish target-only times from wider launch windows while leaving mission name, countdown, status, and source-window details as the primary content.

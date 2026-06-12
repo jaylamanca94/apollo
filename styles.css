@@ -984,6 +984,21 @@ html[data-bs-theme="light"] .data-detail-panel {
   text-transform: uppercase;
 }
 
+.space-weather-alert-impact {
+  align-items: center;
+  color: var(--apollo-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+  gap: 0.35rem 0.5rem;
+  line-height: 1.35;
+}
+
+.space-weather-alert-impact span:first-child {
+  color: var(--apollo-muted-strong);
+  font-weight: 750;
+}
+
 .source-status-summary {
   align-items: start;
   border-bottom: 1px solid var(--apollo-border);

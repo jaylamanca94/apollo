@@ -137,6 +137,20 @@ function getKpCondition(kpIndex) {
   };
 }
 
+const NOAA_SCALE_TYPES = {
+  G: "Geomagnetic storm",
+  R: "Radio blackout",
+  S: "Solar radiation storm"
+};
+
+const NOAA_SCALE_LEVELS = {
+  1: "Minor",
+  2: "Moderate",
+  3: "Strong",
+  4: "Severe",
+  5: "Extreme"
+};
+
 function getNoaaScale(kpIndex) {
   if (!Number.isFinite(kpIndex) || kpIndex < 5) {
     return "";
@@ -159,6 +173,43 @@ function getNoaaScale(kpIndex) {
   }
 
   return "G1";
+}
+
+function getNoaaImpactScaleContext(value) {
+  const text = getText(value);
+  const scaleMatch = text.match(/\b([GRS])\s*([1-5])(?:\s*(?:-|to|through)\s*\1?\s*([1-5]))?\b/i);
+
+  if (scaleMatch) {
+    const typeCode = scaleMatch[1].toUpperCase();
+    const startLevel = Number(scaleMatch[2]);
+    const endLevel = Number(scaleMatch[3]);
+    const highestLevel = Number.isFinite(endLevel) ? Math.max(startLevel, endLevel) : startLevel;
+    const scale = Number.isFinite(endLevel)
+      ? `${typeCode}${startLevel}-${typeCode}${endLevel}`
+      : `${typeCode}${startLevel}`;
+
+    return {
+      scale,
+      label: `${scale} ${NOAA_SCALE_TYPES[typeCode]}`,
+      summary: `${NOAA_SCALE_LEVELS[highestLevel]} NOAA ${NOAA_SCALE_TYPES[typeCode].toLowerCase()} level`
+    };
+  }
+
+  const kIndexMatch = text.match(/\b(?:geomagnetic\s+)?(?:k-index|kp)\s*(?:of|=|:)?\s*([5-9](?:\.\d+)?)\b/i);
+  const kpIndex = kIndexMatch ? getFiniteNumber(kIndexMatch[1]) : null;
+  const geomagneticScale = kpIndex === null ? "" : getNoaaScale(kpIndex);
+
+  if (geomagneticScale) {
+    const level = Number(geomagneticScale.slice(1));
+
+    return {
+      scale: geomagneticScale,
+      label: `${geomagneticScale} ${NOAA_SCALE_TYPES.G}`,
+      summary: `${NOAA_SCALE_LEVELS[level]} NOAA geomagnetic storm level`
+    };
+  }
+
+  return null;
 }
 
 function getAlertHeadline(message) {
@@ -251,12 +302,14 @@ function normalizeSpaceWeatherPayload(payload) {
   const normalizedAlerts = alerts
     .map((alert) => {
       const headline = getAlertHeadline(alert?.message);
+      const impactScale = getNoaaImpactScaleContext(`${headline}\n${getText(alert?.message)}`);
 
       return {
         productId: getText(alert?.product_id),
         issuedAt: parseNoaaDate(alert?.issue_datetime),
         headline,
-        type: getAlertType(headline)
+        type: getAlertType(headline),
+        impactScale
       };
     })
     .filter((alert) => alert.issuedAt && alert.headline)
