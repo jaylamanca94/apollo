@@ -47,11 +47,11 @@ Out of scope for the MVP:
 - Responsive Apollo dashboard shell with a dark-first Light/Dark theme toggle.
 - APOD-first feature panel.
 - APOD credit, full-media link, NASA source link, and inline full-description detail.
-- ISS latitude, longitude, altitude, velocity, current-position map, live orbital context, and source link.
+- ISS latitude, longitude, altitude, velocity, current-position map, source observation time, live orbital context, and source link.
 - Crew count, current craft/location summary, and responsive People in Space grid.
 - Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details and launch-window length context.
 - Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window length, window times, pad, location, and source links.
-- Near-Earth asteroid summary for the current day with lunar-distance, velocity, exact approach details, source links, and hazard-context cues.
+- Near-Earth asteroid summary for the current day with closest-approach time, lunar-distance, velocity, exact approach details, source links, and hazard-context cues.
 - NOAA SWPC space-weather status with current K-index observation time, 3-day K-index outlook, and typed recent notices.
 - Dashboard-level data-source status summary for APOD, ISS position, crew, launches, asteroids, and space weather.
 - Refresh action.
@@ -83,9 +83,9 @@ Out of scope for the MVP:
 - Other public APIs remain browser-side for MVP simplicity.
 - Visual direction now follows a darker operational dashboard shell: charcoal page background, compact top navigation, red accent actions, split APOD feature, simple bordered cards, and low-maintenance spacing.
 - Dashboard content uses a split APOD feature followed by a compact two-column grid for ISS, people in space, launches, asteroids, and space weather.
-- ISS context should interpret the already-loaded position feed before adding any new ISS source. Current orbital context is calculated from live altitude and velocity rather than stored as separate static data.
+- ISS context should interpret the already-loaded position feed before adding any new ISS source. Current orbital context is calculated from live altitude and velocity rather than stored as separate static data. The position feed's own timestamp should remain visible as compact freshness context for the current map fix.
 - People in Space should summarize current craft or station occupancy from the existing roster feed before adding richer astronaut sources.
-- Asteroid rows use compact disclosure details for approach time, miss distance, speed, estimated diameter, NASA tracking flag, and object source links rather than expanding the dashboard card by default.
+- The asteroid summary should surface the closest object's approach time and distance before the object list, then use compact disclosure details for approach time, miss distance, speed, estimated diameter, NASA tracking flag, and object source links rather than expanding the dashboard card by default.
 - The dashboard ends with a compact data-source status card so public demos can distinguish a source outage from a broken product.
 - The single-page header avoids section jump navigation until Apollo has meaningful detail pages.
 - Refresh state uses one global "Last updated" timestamp instead of repeated per-card timestamps.

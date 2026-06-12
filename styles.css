@@ -519,6 +519,12 @@ body {
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
 }
 
+.iss-position-fix {
+  color: var(--apollo-muted);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
 html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   filter: saturate(0.75) brightness(0.68) contrast(1.12);
 }

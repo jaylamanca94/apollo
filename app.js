@@ -57,6 +57,20 @@ const THEME_STORAGE_KEY = "apollo-theme";
 const EARTH_RADIUS_KM = 6371;
 const MINUTES_PER_HOUR = 60;
 const HOURS_PER_DAY = 24;
+const NASA_MONTH_INDEX = {
+  jan: 0,
+  feb: 1,
+  mar: 2,
+  apr: 3,
+  may: 4,
+  jun: 5,
+  jul: 6,
+  aug: 7,
+  sep: 8,
+  oct: 9,
+  nov: 10,
+  dec: 11
+};
 let issMap = null;
 
 const els = {
@@ -129,6 +143,53 @@ function formatDateTime(value) {
     timeZoneName: "short",
     year: "numeric"
   }).format(date);
+}
+
+function getNeoApproachDate(value) {
+  const text = getText(value);
+  const nasaDate = text.match(/^(\d{4})-([A-Za-z]{3})-(\d{2})\s+(\d{2}):(\d{2})$/);
+
+  if (nasaDate) {
+    const [, year, month, day, hour, minute] = nasaDate;
+    const monthIndex = NASA_MONTH_INDEX[month.toLowerCase()];
+
+    if (monthIndex !== undefined) {
+      return new Date(Date.UTC(Number(year), monthIndex, Number(day), Number(hour), Number(minute)));
+    }
+  }
+
+  return new Date(text);
+}
+
+function formatNeoApproachTime(value) {
+  const date = getNeoApproachDate(value);
+
+  if (!Number.isFinite(date.getTime())) {
+    return "Time unavailable";
+  }
+
+  return new Intl.DateTimeFormat([], {
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    month: "short",
+    timeZone: "UTC",
+    timeZoneName: "short",
+    year: "numeric"
+  }).format(date);
+}
+
+function normalizeUnixTimestamp(value) {
+  const timestamp = getFiniteNumber(value);
+
+  if (timestamp === null) {
+    return "";
+  }
+
+  const milliseconds = timestamp > 9999999999 ? timestamp : timestamp * 1000;
+  const date = new Date(milliseconds);
+
+  return Number.isFinite(date.getTime()) ? date.toISOString() : "";
 }
 
 function formatNumber(value, options = {}) {
@@ -463,6 +524,7 @@ function normalizeIss(data) {
     longitude,
     altitude,
     velocity,
+    observedAt: normalizeUnixTimestamp(data?.timestamp),
     orbitPeriodMinutes,
     orbitsPerDay
   };
@@ -855,9 +917,14 @@ async function loadIss() {
   try {
     resetIssMap();
     const data = normalizeIss(await fetchJson(API.iss));
+    const observedAtLabel = data.observedAt ? formatDateTime(data.observedAt) : "";
+    const observedAtMarkup = observedAtLabel && observedAtLabel !== "Unavailable"
+      ? `<p class="iss-position-fix mb-3">Position fix <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
+      : "";
 
     els.issBody.innerHTML = `
       <div class="iss-map mb-3" id="issMap" role="img" aria-label="Map showing the current ISS position above Earth"></div>
+      ${observedAtMarkup}
       <div class="metadata-grid">
         <div>
           <p class="text-secondary small mb-1">Current latitude</p>
@@ -902,7 +969,9 @@ async function loadIss() {
       "iss",
       data.latitude !== null && data.longitude !== null ? "ok" : "attention",
       data.latitude !== null && data.longitude !== null
-        ? "Current station coordinates loaded."
+        ? data.observedAt
+          ? `Station coordinates loaded for ${formatDateTime(data.observedAt)}.`
+          : "Current station coordinates loaded."
         : "Position response was missing coordinates."
     );
   } catch (error) {
@@ -1050,6 +1119,9 @@ async function loadNeo() {
     });
     const hazardous = asteroids.filter((item) => item.hazardous).length;
     const closestObject = sortedAsteroids.find((item) => Number.isFinite(item.closestKilometers));
+    const closestApproachDate = closestObject?.closeApproach ? getNeoApproachDate(closestObject.closeApproach) : null;
+    const closestApproachIso = Number.isFinite(closestApproachDate?.getTime()) ? closestApproachDate.toISOString() : "";
+    const closestApproachLabel = closestObject?.closeApproach ? formatNeoApproachTime(closestObject.closeApproach) : "Time unavailable";
     const fastestVelocity = asteroids
       .map((item) => item.velocityKph)
       .filter(Number.isFinite)
@@ -1074,6 +1146,11 @@ async function loadNeo() {
           <p class="text-secondary small mb-1">Closest approach</p>
           <p class="fw-semibold mb-0">${formatLunarDistance(closestObject?.lunarDistance)}</p>
           <p class="text-secondary small mb-0">${formatDistanceKilometers(closestObject?.closestKilometers)}</p>
+          <p class="text-secondary small mb-0">
+            ${closestApproachIso
+              ? `<time datetime="${escapeHtml(closestApproachIso)}">${escapeHtml(closestApproachLabel)}</time>`
+              : escapeHtml(closestApproachLabel)}
+          </p>
           ${closestObject?.name ? `<p class="text-secondary small mb-0">${escapeHtml(closestObject.name)}</p>` : ""}
         </div>
         <div>

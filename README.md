@@ -1,6 +1,6 @@
 # Apollo
 
-Apollo is a small Bootstrap MVP dashboard that pulls public space data into an APOD-first operational layout. It includes NASA Astronomy Picture of the Day, ISS position with live orbital context, people currently in space with craft/location grouping, upcoming SpaceX launches with a next-launch spotlight and launch-window length context, NOAA space weather current conditions, observation freshness, outlook, and typed recent notices, a NASA Near-Earth Object summary with per-object approach details, and a compact data-source status summary for demo trust.
+Apollo is a small Bootstrap MVP dashboard that pulls public space data into an APOD-first operational layout. It includes NASA Astronomy Picture of the Day, ISS position with source observation time and live orbital context, people currently in space with craft/location grouping, upcoming SpaceX launches with a next-launch spotlight and launch-window length context, NOAA space weather current conditions, observation freshness, outlook, and typed recent notices, a NASA Near-Earth Object summary with visible closest-approach timing plus per-object approach details, and a compact data-source status summary for demo trust.
 
 ## Recommended Architecture
 
