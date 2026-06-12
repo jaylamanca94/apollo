@@ -82,6 +82,20 @@ Use `DESIGN-README.md` as the product's design source of truth.
 - Do not deploy, delete data, rotate secrets, remove repositories, overwrite history, or make destructive repository changes unless that action was explicitly included in the recommended next step or separately confirmed.
 - If the founder sends `y+`, proceed with the recommended next step, then look for cleanup, documentation, or small quality improvements.
 
+## Branch And Completion Rules
+
+- Keep durable Apollo agent rules in this file or other Apollo documentation, not only in workspace-level files outside the product repo.
+- Keep `main` stable, working, and worth keeping.
+- Pull or fetch from `main` before starting new work when network access is available.
+- Use one short-lived branch per meaningful task, named by purpose such as `feature/watchlist-cards`, `visual/reflect-polish`, `fix/csv-export`, or `quality/apollo-2026-06-12`.
+- Do not mix unrelated product work or unrelated agent work into one branch.
+- Open a PR before merging, even for solo work, so every change has a reviewable checkpoint.
+- Merge only work that builds, passes relevant checks, and fits Apollo's product direction.
+- Delete merged branches to keep GitHub and local checkouts uncluttered.
+- Treat requested code or documentation work as incomplete until the final changes are committed and pushed to GitHub.
+- Treat uncommitted work and committed-but-unpushed work as incomplete.
+- If validation, lint, tests, build, or runtime verification fails, diagnose and fix the issue, rerun the relevant checks, then commit and push the resolved work.
+
 ## Failure And Blocker Handling
 
 - Diagnose and try to resolve tool, network, GitHub, Vercel, Supabase, dependency, test, build, lint, and environment failures before reporting a blocker.
