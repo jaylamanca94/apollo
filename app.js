@@ -375,6 +375,14 @@ function formatOrbitMinutes(value) {
   return `${Math.round(value).toLocaleString()} min`;
 }
 
+function formatFootprintKilometers(value) {
+  if (!Number.isFinite(value)) {
+    return "Unavailable";
+  }
+
+  return `${Math.round(value).toLocaleString()} km`;
+}
+
 function formatOrbitsPerDay(value) {
   if (!Number.isFinite(value)) {
     return "Unavailable";
@@ -395,6 +403,20 @@ function formatKpIndex(value) {
     maximumFractionDigits: 1,
     minimumFractionDigits: value % 1 === 0 ? 0 : 1
   });
+}
+
+function formatIssVisibility(value) {
+  const visibility = getText(value).toLowerCase();
+
+  if (visibility === "daylight") {
+    return "Sunlit";
+  }
+
+  if (visibility === "eclipsed") {
+    return "In Earth's shadow";
+  }
+
+  return "Unavailable";
 }
 
 function getNoaaScaleContext(scale, kpIndex) {
@@ -590,6 +612,8 @@ function normalizeIss(data) {
     longitude,
     altitude,
     velocity,
+    visibility: getText(data?.visibility),
+    footprint: getFiniteNumber(data?.footprint),
     observedAt: normalizeUnixTimestamp(data?.timestamp),
     orbitPeriodMinutes,
     orbitsPerDay
@@ -1051,8 +1075,16 @@ async function loadIss() {
             <p class="text-secondary small mb-1">Estimated orbits per day</p>
             <p class="fw-semibold mb-0">${formatOrbitsPerDay(data.orbitsPerDay)}</p>
           </div>
+          <div>
+            <p class="text-secondary small mb-1">Sunlight state</p>
+            <p class="fw-semibold mb-0">${escapeHtml(formatIssVisibility(data.visibility))}</p>
+          </div>
+          <div>
+            <p class="text-secondary small mb-1">Signal footprint</p>
+            <p class="fw-semibold mb-0">${formatFootprintKilometers(data.footprint)}</p>
+          </div>
         </div>
-        <p class="orbit-context-note mb-0">Calculated from the current altitude and velocity reported by the ISS position feed.</p>
+        <p class="orbit-context-note mb-0">Orbit timing is calculated from the current altitude and velocity; sunlight and footprint come from the ISS position feed.</p>
       </div>
       <div class="detail-action-row iss-source-row">
         <a class="source-link" href="https://wheretheiss.at/" target="_blank" rel="noopener noreferrer">
@@ -1067,7 +1099,7 @@ async function loadIss() {
       data.latitude !== null && data.longitude !== null ? "ok" : "attention",
       data.latitude !== null && data.longitude !== null
         ? data.observedAt
-          ? `Station coordinates loaded for ${formatDateTime(data.observedAt)}.`
+          ? `Station coordinates loaded for ${formatDateTime(data.observedAt)}; ${formatIssVisibility(data.visibility).toLowerCase()}.`
           : "Current station coordinates loaded."
         : "Position response was missing coordinates."
     );
