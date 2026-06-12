@@ -805,6 +805,12 @@ html[data-bs-theme="light"] .data-detail-panel {
   background: var(--apollo-warning-soft);
 }
 
+.neo-risk-context {
+  color: var(--apollo-muted-strong);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
 .space-weather-status {
   align-items: center;
   background: var(--apollo-surface-raised);

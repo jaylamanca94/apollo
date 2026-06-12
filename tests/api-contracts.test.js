@@ -124,6 +124,10 @@ test("normalizeNeoPayload returns asteroid context and filters malformed records
   assert.equal(payload.date, "2026-06-10");
   assert.equal(payload.elementCount, 1);
   assert.equal(payload.source, "NASA NeoWs");
+  assert.deepEqual(payload.hazardFlagContext, {
+    label: "NASA potentially hazardous asteroid flag",
+    summary: "NASA's flag reflects an orbit that can pass within about 7.48M km of Earth and an estimated size near 140 m or larger. It is not an impact prediction."
+  });
   assert.deepEqual(payload.asteroids[0], {
     id: "3655761",
     name: "(2014 AE29)",
@@ -148,6 +152,10 @@ test("normalizeNeoPayload returns an empty list for missing date buckets", () =>
     date: "2026-06-10",
     elementCount: 0,
     asteroids: [],
+    hazardFlagContext: {
+      label: "NASA potentially hazardous asteroid flag",
+      summary: "NASA's flag reflects an orbit that can pass within about 7.48M km of Earth and an estimated size near 140 m or larger. It is not an impact prediction."
+    },
     source: "NASA NeoWs"
   });
 });

@@ -59,6 +59,10 @@ const SOURCE_STATUS_LABELS = {
 };
 
 const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily unavailable because NASA is limiting requests. Other dashboard sections are still live.";
+const NEO_HAZARD_FLAG_CONTEXT = {
+  label: "NASA potentially hazardous asteroid flag",
+  summary: "NASA's flag reflects an orbit that can pass within about 7.48M km of Earth and an estimated size near 140 m or larger. It is not an impact prediction."
+};
 const THEME_STORAGE_KEY = "apollo-theme";
 const EARTH_RADIUS_KM = 6371;
 const MINUTES_PER_HOUR = 60;
@@ -651,44 +655,55 @@ function formatLaunchImageAlt(launch, launchName = splitLaunchName(launch?.name)
 }
 
 function normalizeNeo(data, date) {
+  const hazardFlagContext = {
+    label: getText(data?.hazardFlagContext?.label, NEO_HAZARD_FLAG_CONTEXT.label),
+    summary: getText(data?.hazardFlagContext?.summary, NEO_HAZARD_FLAG_CONTEXT.summary)
+  };
+
   if (Array.isArray(data?.asteroids)) {
-    return data.asteroids.map((item) => ({
-      name: getText(item?.name, "Unnamed object"),
-      hazardous: Boolean(item?.hazardous),
-      closestKilometers: getFiniteNumber(item?.closestKilometers),
-      lunarDistance: getFiniteNumber(item?.lunarDistance),
-      velocityKph: getFiniteNumber(item?.velocityKph),
-      closeApproach: getText(item?.closeApproach),
-      minDiameterMeters: getFiniteNumber(item?.minDiameterMeters),
-      maxDiameterMeters: getFiniteNumber(item?.maxDiameterMeters),
-      sourceUrl: safeHttpUrl(item?.sourceUrl)
-    }));
+    return {
+      asteroids: data.asteroids.map((item) => ({
+        name: getText(item?.name, "Unnamed object"),
+        hazardous: Boolean(item?.hazardous),
+        closestKilometers: getFiniteNumber(item?.closestKilometers),
+        lunarDistance: getFiniteNumber(item?.lunarDistance),
+        velocityKph: getFiniteNumber(item?.velocityKph),
+        closeApproach: getText(item?.closeApproach),
+        minDiameterMeters: getFiniteNumber(item?.minDiameterMeters),
+        maxDiameterMeters: getFiniteNumber(item?.maxDiameterMeters),
+        sourceUrl: safeHttpUrl(item?.sourceUrl)
+      })),
+      hazardFlagContext
+    };
   }
 
   const rawAsteroids = Array.isArray(data?.near_earth_objects?.[date])
     ? data.near_earth_objects[date]
     : [];
 
-  return rawAsteroids.map((item) => {
-    const approach = item?.close_approach_data?.[0] || {};
-    const closestKilometers = getFiniteNumber(approach?.miss_distance?.kilometers);
-    const lunarDistance = getFiniteNumber(approach?.miss_distance?.lunar);
-    const velocityKph = getFiniteNumber(approach?.relative_velocity?.kilometers_per_hour);
-    const minDiameterKilometers = getFiniteNumber(item?.estimated_diameter?.kilometers?.estimated_diameter_min);
-    const maxDiameterKilometers = getFiniteNumber(item?.estimated_diameter?.kilometers?.estimated_diameter_max);
+  return {
+    asteroids: rawAsteroids.map((item) => {
+      const approach = item?.close_approach_data?.[0] || {};
+      const closestKilometers = getFiniteNumber(approach?.miss_distance?.kilometers);
+      const lunarDistance = getFiniteNumber(approach?.miss_distance?.lunar);
+      const velocityKph = getFiniteNumber(approach?.relative_velocity?.kilometers_per_hour);
+      const minDiameterKilometers = getFiniteNumber(item?.estimated_diameter?.kilometers?.estimated_diameter_min);
+      const maxDiameterKilometers = getFiniteNumber(item?.estimated_diameter?.kilometers?.estimated_diameter_max);
 
-    return {
-      name: getText(item?.name, "Unnamed object"),
-      hazardous: Boolean(item?.is_potentially_hazardous_asteroid),
-      closestKilometers,
-      lunarDistance,
-      velocityKph,
-      closeApproach: getText(approach?.close_approach_date_full || approach?.close_approach_date),
-      minDiameterMeters: minDiameterKilometers === null ? null : minDiameterKilometers * 1000,
-      maxDiameterMeters: maxDiameterKilometers === null ? null : maxDiameterKilometers * 1000,
-      sourceUrl: safeHttpUrl(item?.nasa_jpl_url)
-    };
-  });
+      return {
+        name: getText(item?.name, "Unnamed object"),
+        hazardous: Boolean(item?.is_potentially_hazardous_asteroid),
+        closestKilometers,
+        lunarDistance,
+        velocityKph,
+        closeApproach: getText(approach?.close_approach_date_full || approach?.close_approach_date),
+        minDiameterMeters: minDiameterKilometers === null ? null : minDiameterKilometers * 1000,
+        maxDiameterMeters: maxDiameterKilometers === null ? null : maxDiameterKilometers * 1000,
+        sourceUrl: safeHttpUrl(item?.nasa_jpl_url)
+      };
+    }),
+    hazardFlagContext
+  };
 }
 
 function normalizeSpaceWeather(data) {
@@ -1181,7 +1196,8 @@ async function loadLaunches() {
 async function loadNeo() {
   try {
     const date = todayIso();
-    const asteroids = normalizeNeo(await fetchJson(`${API.neo}?date=${date}`), date);
+    const neoSummary = normalizeNeo(await fetchJson(`${API.neo}?date=${date}`), date);
+    const { asteroids, hazardFlagContext } = neoSummary;
     const sortedAsteroids = [...asteroids].sort((a, b) => {
       const left = Number.isFinite(a.closestKilometers) ? a.closestKilometers : Number.POSITIVE_INFINITY;
       const right = Number.isFinite(b.closestKilometers) ? b.closestKilometers : Number.POSITIVE_INFINITY;
@@ -1230,7 +1246,10 @@ async function loadNeo() {
       </div>
       <div class="neo-risk-note ${hazardNoteClass} mb-3">
         <i class="fa-solid ${hazardIcon}" aria-hidden="true"></i>
-        <p class="mb-0">${hazardSummary}</p>
+        <div>
+          <p class="mb-1">${escapeHtml(hazardSummary)}</p>
+          <p class="neo-risk-context mb-0">${escapeHtml(hazardFlagContext.summary)}</p>
+        </div>
       </div>
       ${asteroids.length ? `
         <ul class="list-group list-group-flush">

@@ -33,6 +33,11 @@ function getApodSourceUrl(date) {
   return `https://apod.nasa.gov/apod/ap${year.slice(2)}${month}${day}.html`;
 }
 
+const NEO_HAZARD_FLAG_CONTEXT = {
+  label: "NASA potentially hazardous asteroid flag",
+  summary: "NASA's flag reflects an orbit that can pass within about 7.48M km of Earth and an estimated size near 140 m or larger. It is not an impact prediction."
+};
+
 function normalizeApodPayload(payload) {
   const date = getText(payload?.date);
 
@@ -87,6 +92,7 @@ function normalizeNeoPayload(payload, date) {
     date,
     elementCount: asteroids.length,
     asteroids,
+    hazardFlagContext: NEO_HAZARD_FLAG_CONTEXT,
     source: "NASA NeoWs"
   };
 }

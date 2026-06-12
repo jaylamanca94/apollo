@@ -51,7 +51,7 @@ Out of scope for the MVP:
 - Crew count, current craft/location summary, and responsive People in Space grid.
 - Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details and launch-window length context.
 - Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window length, window times, pad, location, and source links.
-- Near-Earth asteroid summary for the current day with closest-approach time, lunar-distance, velocity, exact approach details, source links, and hazard-context cues.
+- Near-Earth asteroid summary for the current day with closest-approach time, lunar-distance, velocity, exact approach details, source links, and NASA hazard-flag context cues.
 - NOAA SWPC space-weather status with current K-index observation time, NOAA geomagnetic scale context, 3-day K-index outlook, and typed recent notices with compact NOAA R/S/G scale cues when the source text provides them.
 - Dashboard-level data-source status summary for APOD, ISS position, crew, launches, asteroids, and space weather, with compact upstream source links for demo verification.
 - Refresh action.
@@ -86,7 +86,7 @@ Out of scope for the MVP:
 - Dashboard content uses a split APOD feature followed by a compact two-column grid for ISS, people in space, launches, asteroids, and space weather.
 - ISS context should interpret the already-loaded position feed before adding any new ISS source. Current orbital context is calculated from live altitude and velocity rather than stored as separate static data. The position feed's own timestamp should remain visible as compact freshness context for the current map fix.
 - People in Space should summarize current craft or station occupancy from the existing roster feed before adding richer astronaut sources.
-- The asteroid summary should surface the closest object's approach time and distance before the object list, then use compact disclosure details for approach time, miss distance, speed, estimated diameter, NASA tracking flag, and object source links rather than expanding the dashboard card by default.
+- The asteroid summary should surface the closest object's approach time and distance before the object list, then use compact NASA CNEOS hazard-flag context plus disclosure details for approach time, miss distance, speed, estimated diameter, NASA tracking flag, and object source links rather than expanding the dashboard card by default. Potentially hazardous asteroid copy should make clear that the flag reflects size and orbital-distance criteria, not an impact prediction.
 - The dashboard ends with a compact data-source status card so public demos can distinguish a source outage from a broken product and quickly open each upstream source.
 - The single-page header avoids section jump navigation until Apollo has meaningful detail pages.
 - Refresh state uses one global "Last updated" timestamp instead of repeated per-card timestamps.

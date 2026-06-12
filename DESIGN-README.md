@@ -42,7 +42,7 @@ Default first-time visitors to Dark Mode and provide a compact header toggle for
 
 Use one shared red accent for dashboard icons, outline actions, map overlays, and progressive disclosure affordances. Avoid giving every data family a separate hue while this design direction is active.
 
-Use green success styling for clearly positive safety/status messages. For example, the asteroid message `No listed objects are flagged as potentially hazardous today.` should read as a green success alert, not a red or warning state.
+Use green success styling for clearly positive safety/status messages. For example, the asteroid message `No listed objects are flagged as potentially hazardous today.` should read as a green success alert, not a red or warning state. Keep the NASA potentially hazardous asteroid criteria as subdued secondary text inside that same context block so it improves trust without turning the card into an education panel.
 
 ### Maps
 
