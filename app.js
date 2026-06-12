@@ -535,7 +535,8 @@ function normalizeSpaceWeather(data) {
       .map((alert) => ({
         productId: getText(alert?.productId),
         issuedAt: getText(alert?.issuedAt),
-        headline: getText(alert?.headline)
+        headline: getText(alert?.headline),
+        type: getText(alert?.type, "Notice")
       }))
       .filter((alert) => alert.headline)
   };
@@ -1111,7 +1112,10 @@ async function loadSpaceWeather() {
           <ul class="list-unstyled mb-0">
             ${recentAlerts.map((alert) => `
               <li>
-                <span>${escapeHtml(alert.headline)}</span>
+                <div class="space-weather-alert-heading">
+                  <span class="space-weather-alert-pill">${escapeHtml(alert.type)}</span>
+                  <span>${escapeHtml(alert.headline)}</span>
+                </div>
                 ${alert.issuedAt ? `<time datetime="${escapeHtml(alert.issuedAt)}">${formatDateTime(alert.issuedAt)}</time>` : ""}
               </li>
             `).join("")}

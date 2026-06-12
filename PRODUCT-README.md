@@ -52,7 +52,7 @@ Out of scope for the MVP:
 - Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details.
 - Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window, pad, location, and source links.
 - Near-Earth asteroid summary for the current day with lunar-distance, velocity, exact approach details, source links, and hazard-context cues.
-- NOAA SWPC space-weather status with current K-index observation time, 3-day K-index outlook, and recent notices.
+- NOAA SWPC space-weather status with current K-index observation time, 3-day K-index outlook, and typed recent notices.
 - Dashboard-level data-source status summary for APOD, ISS position, crew, launches, asteroids, and space weather.
 - Refresh action.
 - Loading, empty, and error states.
@@ -73,7 +73,8 @@ Out of scope for the MVP:
 - APOD tries NASA's default response first, then Eastern-date fallbacks to avoid UTC publish-window failures.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
 - SpaceX launch listings use The Space Devs launch data through `/api/launches`, with a normalized response shape before data reaches the dashboard and launches page.
-- NOAA SWPC space weather uses `/api/space-weather`, with current K-index, forecast, and alert data normalized before rendering.
+- NOAA SWPC space weather uses `/api/space-weather`, with current K-index, forecast, and alert/watch/warning notice data normalized before rendering.
+- Space-weather notices should keep NOAA's alert/watch/warning distinction visible with compact labels instead of flattening every message into an undifferentiated headline.
 - Server-side normalizers provide stable APOD, launch, Near-Earth Object, and space-weather shapes so third-party response changes are less likely to break card rendering.
 - Frontend rendering escapes API-provided text before inserting it into the page.
 - Frontend data loaders retain compatibility fallbacks for older raw NASA payload shapes.

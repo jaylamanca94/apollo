@@ -175,6 +175,24 @@ function getAlertHeadline(message) {
   return lines.find((line) => !/^space weather message code:/i.test(line) && !/^serial number:/i.test(line) && !/^issue time:/i.test(line)) || "";
 }
 
+function getAlertType(headline) {
+  const text = getText(headline).toLowerCase();
+
+  if (/^warning:/.test(text)) {
+    return "Warning";
+  }
+
+  if (/^watch:/.test(text)) {
+    return "Watch";
+  }
+
+  if (/^alert:/.test(text)) {
+    return "Alert";
+  }
+
+  return "Notice";
+}
+
 function normalizeKpForecast(items) {
   if (!Array.isArray(items)) {
     return [];
@@ -231,11 +249,16 @@ function normalizeSpaceWeatherPayload(payload) {
     .sort((a, b) => new Date(b.observedAt) - new Date(a.observedAt))[0] || {};
   const condition = getKpCondition(latestKp.kpIndex);
   const normalizedAlerts = alerts
-    .map((alert) => ({
-      productId: getText(alert?.product_id),
-      issuedAt: parseNoaaDate(alert?.issue_datetime),
-      headline: getAlertHeadline(alert?.message)
-    }))
+    .map((alert) => {
+      const headline = getAlertHeadline(alert?.message);
+
+      return {
+        productId: getText(alert?.product_id),
+        issuedAt: parseNoaaDate(alert?.issue_datetime),
+        headline,
+        type: getAlertType(headline)
+      };
+    })
     .filter((alert) => alert.issuedAt && alert.headline)
     .sort((a, b) => new Date(b.issuedAt) - new Date(a.issuedAt))
     .slice(0, 5);

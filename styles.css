@@ -887,6 +887,28 @@ html[data-bs-theme="light"] .data-detail-panel {
   font-size: 0.8125rem;
 }
 
+.space-weather-alert-heading {
+  align-items: baseline;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.space-weather-alert-pill {
+  align-items: center;
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 999px;
+  color: var(--apollo-muted-strong);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.6875rem;
+  font-weight: 750;
+  line-height: 1;
+  min-height: 22px;
+  padding: 0.25rem 0.5rem;
+  text-transform: uppercase;
+}
+
 .source-status-summary {
   align-items: start;
   border-bottom: 1px solid var(--apollo-border);

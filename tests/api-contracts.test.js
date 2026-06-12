@@ -323,7 +323,8 @@ test("normalizeSpaceWeatherPayload returns a stable NOAA dashboard contract", ()
         {
           productId: "TIIA",
           issuedAt: "2026-06-10T17:38:31.317Z",
-          headline: "ALERT: Type II Radio Emission"
+          headline: "ALERT: Type II Radio Emission",
+          type: "Alert"
         }
       ],
       sourceUrl: "https://www.swpc.noaa.gov/products-and-data"
@@ -347,4 +348,35 @@ test("normalizeSpaceWeatherPayload classifies storm-level K-index values", () =>
   assert.equal(payload.spaceWeather.condition, "Minor storm conditions");
   assert.equal(payload.spaceWeather.severity, "storm");
   assert.deepEqual(payload.spaceWeather.forecast, []);
+});
+
+test("normalizeSpaceWeatherPayload labels SWPC notice types", () => {
+  const payload = normalizeSpaceWeatherPayload({
+    kIndex: [
+      {
+        time_tag: "2026-06-10T15:31:00",
+        estimated_kp: 2,
+        kp: "2"
+      }
+    ],
+    alerts: [
+      {
+        product_id: "WARN",
+        issue_datetime: "2026-06-10 17:38:31.317",
+        message: "WARNING: Geomagnetic K-index of 6 expected"
+      },
+      {
+        product_id: "WATCH",
+        issue_datetime: "2026-06-10 16:38:31.317",
+        message: "WATCH: Geomagnetic Storm Category G1 Predicted"
+      },
+      {
+        product_id: "SUMMARY",
+        issue_datetime: "2026-06-10 15:38:31.317",
+        message: "SUMMARY: Geomagnetic activity was quiet"
+      }
+    ]
+  });
+
+  assert.deepEqual(payload.spaceWeather.alerts.map((alert) => alert.type), ["Warning", "Watch", "Notice"]);
 });
