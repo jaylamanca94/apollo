@@ -443,6 +443,39 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.crew-location-summary {
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.crew-location-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.crew-location {
+  border-left: 3px solid var(--apollo-accent);
+  min-width: 0;
+  padding-left: 0.75rem;
+}
+
+.crew-location-count {
+  color: var(--bs-body-color);
+  font-size: 1.25rem;
+  font-weight: 750;
+  line-height: 1.15;
+}
+
+.crew-location-name {
+  color: var(--apollo-muted-strong);
+  font-size: 0.875rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
 .crew-person {
   background: var(--apollo-surface-raised);
   border: 1px solid var(--apollo-border);

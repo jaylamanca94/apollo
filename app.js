@@ -430,6 +430,18 @@ function normalizePeople(data) {
     .filter((person) => person.name);
 }
 
+function summarizeCraftOccupancy(people) {
+  const occupancy = people.reduce((groups, person) => {
+    const craft = getText(person.craft, "Location unavailable");
+    groups.set(craft, (groups.get(craft) || 0) + 1);
+    return groups;
+  }, new Map());
+
+  return [...occupancy.entries()]
+    .map(([craft, count]) => ({ craft, count }))
+    .sort((a, b) => b.count - a.count || a.craft.localeCompare(b.craft));
+}
+
 function normalizeLaunches(data) {
   const launches = Array.isArray(data?.launches) ? data.launches : [];
 
@@ -859,12 +871,26 @@ async function loadPeople() {
       return createSourceStatus("people", "attention", "Crew roster returned no people.");
     }
 
+    const craftGroups = summarizeCraftOccupancy(people);
+    const crewLocationLabel = craftGroups.length === 1 ? "crew location" : "crew locations";
+
     els.peopleBody.innerHTML = `
       <div class="summary-metric mb-3">
         <span class="stat-chip"><i class="fa-solid fa-user-astronaut" aria-hidden="true"></i></span>
         <div>
           <p class="text-secondary small mb-1">Current crew</p>
           <p class="h3 fw-semibold mb-0">${people.length}</p>
+        </div>
+      </div>
+      <div class="crew-location-summary mb-3" aria-label="Crew locations">
+        <p class="text-secondary small mb-2">${craftGroups.length} ${crewLocationLabel}</p>
+        <div class="crew-location-grid">
+          ${craftGroups.map((group) => `
+            <article class="crew-location">
+              <p class="crew-location-count mb-1">${group.count}</p>
+              <p class="crew-location-name mb-0">${escapeHtml(group.craft)}</p>
+            </article>
+          `).join("")}
         </div>
       </div>
       <div class="crew-grid">
@@ -876,7 +902,7 @@ async function loadPeople() {
         `).join("")}
       </div>
     `;
-    return createSourceStatus("people", "ok", `${people.length} people currently listed.`);
+    return createSourceStatus("people", "ok", `${people.length} people across ${craftGroups.length} ${crewLocationLabel} listed.`);
   } catch (error) {
     setError(els.peopleBody, "Could not load people-in-space data right now.");
     return createSourceStatus("people", "error", "Crew roster did not load.");
