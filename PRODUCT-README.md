@@ -47,7 +47,7 @@ Out of scope for the MVP:
 - Responsive Apollo dashboard shell with a dark-first Light/Dark theme toggle.
 - APOD-first feature panel.
 - APOD credit, full-media link, NASA source link, and inline full-description detail.
-- ISS latitude, longitude, altitude, velocity, and current-position map.
+- ISS latitude, longitude, altitude, velocity, current-position map, live orbital context, and source link.
 - Crew count and responsive People in Space grid.
 - Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details.
 - Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window, pad, location, and source links.
@@ -81,6 +81,7 @@ Out of scope for the MVP:
 - Other public APIs remain browser-side for MVP simplicity.
 - Visual direction now follows a darker operational dashboard shell: charcoal page background, compact top navigation, red accent actions, split APOD feature, simple bordered cards, and low-maintenance spacing.
 - Dashboard content uses a split APOD feature followed by a compact two-column grid for ISS, people in space, launches, asteroids, and space weather.
+- ISS context should interpret the already-loaded position feed before adding any new ISS source. Current orbital context is calculated from live altitude and velocity rather than stored as separate static data.
 - Asteroid rows use compact disclosure details for approach time, miss distance, speed, estimated diameter, NASA tracking flag, and object source links rather than expanding the dashboard card by default.
 - The dashboard ends with a compact data-source status card so public demos can distinguish a source outage from a broken product.
 - The single-page header avoids section jump navigation until Apollo has meaningful detail pages.

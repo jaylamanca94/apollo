@@ -54,6 +54,9 @@ const SOURCE_STATUS_LABELS = {
 
 const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily unavailable because NASA is limiting requests. Other dashboard sections are still live.";
 const THEME_STORAGE_KEY = "apollo-theme";
+const EARTH_RADIUS_KM = 6371;
+const MINUTES_PER_HOUR = 60;
+const HOURS_PER_DAY = 24;
 let issMap = null;
 
 const els = {
@@ -240,6 +243,25 @@ function formatVelocityKph(value) {
   return Number.isFinite(value) ? `${Math.round(value).toLocaleString()} km/h` : "Unavailable";
 }
 
+function formatOrbitMinutes(value) {
+  if (!Number.isFinite(value)) {
+    return "Unavailable";
+  }
+
+  return `${Math.round(value).toLocaleString()} min`;
+}
+
+function formatOrbitsPerDay(value) {
+  if (!Number.isFinite(value)) {
+    return "Unavailable";
+  }
+
+  return value.toLocaleString([], {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 1
+  });
+}
+
 function formatKpIndex(value) {
   if (!Number.isFinite(value)) {
     return "Unavailable";
@@ -375,11 +397,25 @@ function normalizeApod(data) {
 }
 
 function normalizeIss(data) {
+  const latitude = getFiniteNumber(data?.latitude);
+  const longitude = getFiniteNumber(data?.longitude);
+  const altitude = getFiniteNumber(data?.altitude);
+  const velocity = getFiniteNumber(data?.velocity);
+  const orbitalCircumference = altitude !== null ? 2 * Math.PI * (EARTH_RADIUS_KM + altitude) : null;
+  const orbitPeriodMinutes = orbitalCircumference !== null && velocity !== null && velocity > 0
+    ? (orbitalCircumference / velocity) * MINUTES_PER_HOUR
+    : null;
+  const orbitsPerDay = orbitPeriodMinutes !== null && orbitPeriodMinutes > 0
+    ? (HOURS_PER_DAY * MINUTES_PER_HOUR) / orbitPeriodMinutes
+    : null;
+
   return {
-    latitude: getFiniteNumber(data?.latitude),
-    longitude: getFiniteNumber(data?.longitude),
-    altitude: getFiniteNumber(data?.altitude),
-    velocity: getFiniteNumber(data?.velocity)
+    latitude,
+    longitude,
+    altitude,
+    velocity,
+    orbitPeriodMinutes,
+    orbitsPerDay
   };
 }
 
@@ -777,7 +813,26 @@ async function loadIss() {
           <p class="fw-semibold mb-0">${formatNumber(data.velocity, { suffix: " km/h" })}</p>
         </div>
       </div>
-      <p class="text-secondary small mb-0 mt-3">These coordinates show the station's current position above Earth.</p>
+      <div class="iss-orbit-context mt-3">
+        <p class="section-kicker mb-2">Orbital context</p>
+        <div class="orbit-context-grid">
+          <div>
+            <p class="text-secondary small mb-1">Estimated orbit time</p>
+            <p class="fw-semibold mb-0">${formatOrbitMinutes(data.orbitPeriodMinutes)}</p>
+          </div>
+          <div>
+            <p class="text-secondary small mb-1">Estimated orbits per day</p>
+            <p class="fw-semibold mb-0">${formatOrbitsPerDay(data.orbitsPerDay)}</p>
+          </div>
+        </div>
+        <p class="orbit-context-note mb-0">Calculated from the current altitude and velocity reported by the ISS position feed.</p>
+      </div>
+      <div class="detail-action-row iss-source-row">
+        <a class="source-link" href="https://wheretheiss.at/" target="_blank" rel="noopener noreferrer">
+          <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+          ISS position source
+        </a>
+      </div>
     `;
     renderIssMap(data);
     return createSourceStatus(

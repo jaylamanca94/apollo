@@ -510,6 +510,35 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   width: 2.25rem;
 }
 
+.iss-orbit-context {
+  background: var(--apollo-surface-raised);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.orbit-context-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.orbit-context-grid p,
+.orbit-context-note {
+  overflow-wrap: anywhere;
+}
+
+.orbit-context-note {
+  color: var(--apollo-muted);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  margin-top: 0.875rem;
+}
+
+.iss-source-row {
+  margin-top: 16px;
+}
+
 .detail-action-row {
   align-items: center;
   display: flex;
@@ -1310,7 +1339,8 @@ html[data-bs-theme="light"] .data-detail-panel {
 
   .metadata-grid,
   .detail-list,
-  .crew-grid {
+  .crew-grid,
+  .orbit-context-grid {
     grid-template-columns: 1fr;
   }
 
