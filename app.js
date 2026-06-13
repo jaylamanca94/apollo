@@ -924,7 +924,7 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
               <h3 class="source-status-title mb-0">${escapeHtml(feed.label)}</h3>
               <p class="source-status-source mb-0">${escapeHtml(feed.description)}</p>
               <p class="source-status-detail mb-0">${escapeHtml(feed.detail)}</p>
-              <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(feed.label)} source">
+              <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(feed.label)} feed">
                 <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
                 Open feed
               </a>
@@ -1211,7 +1211,7 @@ async function loadLaunches() {
                       <p class="mb-3">${fullDetails}</p>
                       ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
                       ${launch.sourceUrl ? `
-                        <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+                        <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch feed for ${escapeHtml(launch.name)}">
                           <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
                           Launch feed
                         </a>
@@ -1345,7 +1345,7 @@ async function loadNeo() {
                       </div>
                     </dl>
                     ${item.sourceUrl ? `
-                      <a class="source-link" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+                      <a class="source-link" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open NASA object source for ${escapeHtml(item.name)}">
                         <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
                         NASA object source
                       </a>

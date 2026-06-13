@@ -183,14 +183,15 @@ Current icon mapping:
 - Remove buttons are destructive, clearly labeled, and use red styling.
 - Reorder handles should have generous tap targets and feel easy to grab.
 - Interactive elements should feel obvious without adding unnecessary instructional text.
-- Source links and inline details should use compact text links with clear focus states, not large secondary buttons.
+- Source links and inline details should use compact text links with clear focus states, not large secondary buttons. When repeated rows share visible link text such as `Launch feed` or `NASA object source`, each link needs an accessible label that names the specific mission, feed, or object.
 
 ## Accessibility And Responsiveness
 
 - Support keyboard navigation for interactive controls.
+- Provide a hidden skip link on every page so keyboard users can move directly to the main content.
 - Preserve visible focus states.
 - Use semantic HTML whenever practical.
-- Dynamic dashboard panels should expose loading and refresh changes with `aria-live` and `aria-busy`; refresh controls should point to a concise live status message.
+- Dynamic dashboard panels should expose loading and refresh changes with `aria-live` and `aria-busy`; refresh controls should point to a concise live status message and list the regions they refresh with `aria-controls`.
 - Keep text readable in both light and dark mode.
 - Ensure layouts work across desktop, tablet, and mobile.
 - Avoid text overflow, cramped controls, and overlapping UI.

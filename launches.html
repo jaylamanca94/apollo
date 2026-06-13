@@ -21,11 +21,12 @@
     </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link href="./styles.css?v=dashboard-direction-9" rel="stylesheet">
+    <link href="./styles.css?v=dashboard-direction-10" rel="stylesheet">
   </head>
   <body>
     <div class="apollo-app text-body">
-      <nav class="navbar navbar-expand apollo-topbar">
+      <a class="apollo-skip-link" href="#launch-content">Skip to launch content</a>
+      <nav class="navbar navbar-expand apollo-topbar" aria-label="Primary">
         <div class="container-fluid apollo-navbar-inner px-3 px-sm-4">
           <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="./index.html">
             <i class="fa-solid fa-rocket apollo-brand-icon" aria-hidden="true"></i>
@@ -43,18 +44,18 @@
         </div>
       </nav>
 
-      <main class="apollo-shell launch-page-shell">
+      <main class="apollo-shell launch-page-shell" id="launch-content" aria-labelledby="launchesTitle">
         <div id="launchPageStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Loading launch data.</div>
         <div class="d-flex flex-column apollo-page-stack">
           <header class="apollo-page-header">
             <div class="apollo-title-block">
               <p class="section-kicker mb-0">SpaceX Launches</p>
-              <h1 class="apollo-page-title mb-0">Upcoming Launches</h1>
+              <h1 class="apollo-page-title mb-0" id="launchesTitle">Upcoming Launches</h1>
               <p class="apollo-page-subtitle mb-0">Launch windows, vehicles, pads, locations, and mission status from the launch feed.</p>
             </div>
             <div class="apollo-dashboard-actions">
               <p class="apollo-update-pill mb-0" id="launchesUpdated">Last updated: Loading</p>
-              <button class="btn apollo-refresh-button" id="launchesRefreshButton" type="button" aria-describedby="launchPageStatus">
+              <button class="btn apollo-refresh-button" id="launchesRefreshButton" type="button" aria-describedby="launchPageStatus" aria-controls="launchPageBody">
                 Refresh data
               </button>
             </div>
@@ -70,6 +71,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="./launches.js?v=dashboard-direction-7"></script>
+    <script src="./launches.js?v=dashboard-direction-8"></script>
   </body>
 </html>

@@ -54,6 +54,7 @@ Out of scope for the MVP:
 - Near-Earth asteroid summary for the current day with closest-approach time, lunar-distance, velocity, exact approach details, source links, NASA hazard-flag context cues, and NASA Sentry monitoring context.
 - NOAA SWPC space-weather status with current K-index observation time, NOAA geomagnetic scale context, 3-day K-index outlook, and typed recent notices with compact NOAA R/S/G scale cues when the source text provides them.
 - Dashboard-level data-source status summary for APOD, ISS position, crew, launches, asteroids, and space weather, with compact upstream source links and feed timing context for demo verification.
+- Keyboard skip links, named landmarks, and refresh-control relationships backed by automated accessibility structure checks.
 - Refresh action.
 - Loading, empty, and error states.
 - Server-side NASA API key handling.
@@ -101,7 +102,7 @@ Recommended next steps:
 1. Rotate the NASA API key in Vercel after the early key exposure issue.
 2. Run final production QA after key rotation.
 3. Wire external monitoring/error logging to `/api/health` if Apollo gets shared more broadly.
-4. Add accessibility QA and browser coverage before a broader public launch.
+4. Expand browser-level interaction coverage before a broader public launch.
 5. Decide whether APOD or asteroid details deserve dedicated URLs after the launches page pattern is tested.
 
 Future enhancements only if requested:
@@ -120,4 +121,4 @@ Future enhancements only if requested:
 - Third-party public APIs can fail or change response formats; Apollo now normalizes key server responses, but source outages can still affect sections.
 - Launch listings depend on The Space Devs launch data availability and its SpaceX search result format.
 - Space weather depends on NOAA SWPC public feeds.
-- No automated end-to-end test suite yet.
+- Static accessibility structure checks are automated; no automated end-to-end browser suite yet.
