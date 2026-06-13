@@ -89,6 +89,7 @@ Use `DESIGN-README.md` as the product's design source of truth.
 
 - Keep durable Apollo agent rules in this file or other Apollo documentation, not only in workspace-level files outside the product repo.
 - Keep `main` stable, working, and worth keeping.
+- Main-only steady state: branches are temporary PR staging areas, not durable resting places for completed work.
 - Pull or fetch from `main` before starting new work when network access is available.
 - Use one short-lived branch per meaningful task, named by purpose such as `feature/watchlist-cards`, `visual/reflect-polish`, `fix/csv-export`, or `quality/apollo-2026-06-12`.
 - Short-lived branches are expected when they protect `main`, isolate a reviewable task, keep unrelated local work untouched, or let multiple product efforts move in parallel.
@@ -104,9 +105,11 @@ Use `DESIGN-README.md` as the product's design source of truth.
 - PR creation and PR updates are always approved for requested work. Do not ask separately before opening a PR.
 - Merge only work that builds, passes relevant checks, and fits Apollo's product direction.
 - Delete merged branches to keep GitHub and local checkouts uncluttered.
-- Treat requested code or documentation work as incomplete until the final changes are committed, pushed to GitHub, and represented by an open or updated PR when repository access is available.
+- After merging a PR, delete the remote branch, prune stale refs, return the local product checkout to `main`, pull or fast-forward `main`, and verify the working tree is clean.
+- Treat requested code or documentation work as incomplete until the final changes are committed, pushed to GitHub, represented by an open or updated PR, merged to `main`, and cleaned back to a main-only steady state when repository access is available.
 - Treat uncommitted work and committed-but-unpushed work as incomplete.
 - Treat pushed work without an open or updated PR as incomplete unless a true external blocker prevents PR creation.
+- Treat an unmerged branch as incomplete unless a true blocker prevents merging; report the branch name, PR, blocker, and next action.
 - If validation, lint, tests, build, or runtime verification fails, diagnose and fix the issue, rerun the relevant checks, then commit and push the resolved work.
 
 ## Failure And Blocker Handling
