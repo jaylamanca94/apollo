@@ -49,6 +49,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `api/space-weather.js` - serverless NOAA SWPC endpoint for current space weather status
 - `api/health.js` - serverless health endpoint for uptime checks and server configuration status
 - `tests/api-contracts.test.js` - fixture tests for normalized API response contracts
+- `tests/accessibility-structure.test.js` - static accessibility contract checks for page landmarks, live regions, skip links, and refresh controls
 - `package.json` - local development/check scripts
 - `vercel.json` - Vercel deployment configuration
 
@@ -137,7 +138,7 @@ Run the project checks with:
 npm run check
 ```
 
-This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, launch, and space-weather contracts.
+This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, launch, and space-weather contracts plus static accessibility structure checks.
 
 GitHub Actions runs the same checks on pushes to `main` and on pull requests.
 
@@ -158,6 +159,7 @@ It returns the app version, timestamp, runtime status, and whether the server-si
 - Public APIs can fail, timeout, or change response formats; Apollo normalizes key payloads before rendering, but source outages can still affect the dashboard.
 - Launch listings depend on The Space Devs launch data availability and the current SpaceX search result format.
 - Space weather depends on NOAA SWPC public feeds.
+- Static accessibility structure is covered by tests, but full browser-level accessibility and interaction coverage is not automated yet.
 - This MVP does not include charts, filters, auth, saved settings, or persistence.
 - Export, search, notifications, and observation-creation workflows are intentionally not included yet.
 

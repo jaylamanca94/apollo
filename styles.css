@@ -70,6 +70,29 @@ body {
   background: var(--apollo-page-bg);
 }
 
+.apollo-skip-link {
+  background: var(--apollo-accent);
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 750;
+  left: 16px;
+  padding: 0.625rem 0.875rem;
+  position: absolute;
+  text-decoration: none;
+  top: 12px;
+  transform: translateY(-160%);
+  transition: transform 160ms ease;
+  z-index: 1080;
+}
+
+.apollo-skip-link:focus,
+.apollo-skip-link:focus-visible {
+  color: #ffffff;
+  outline: 3px solid rgba(255, 255, 255, 0.72);
+  outline-offset: 2px;
+  transform: translateY(0);
+}
+
 .apollo-topbar {
   min-height: 74px;
   background: var(--apollo-nav-bg) !important;

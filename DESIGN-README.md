@@ -188,9 +188,10 @@ Current icon mapping:
 ## Accessibility And Responsiveness
 
 - Support keyboard navigation for interactive controls.
+- Provide a hidden skip link on every page so keyboard users can move directly to the main content.
 - Preserve visible focus states.
 - Use semantic HTML whenever practical.
-- Dynamic dashboard panels should expose loading and refresh changes with `aria-live` and `aria-busy`; refresh controls should point to a concise live status message.
+- Dynamic dashboard panels should expose loading and refresh changes with `aria-live` and `aria-busy`; refresh controls should point to a concise live status message and list the regions they refresh with `aria-controls`.
 - Keep text readable in both light and dark mode.
 - Ensure layouts work across desktop, tablet, and mobile.
 - Avoid text overflow, cramped controls, and overlapping UI.
