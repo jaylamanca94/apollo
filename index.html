@@ -35,8 +35,8 @@
             <button class="btn btn-outline-secondary btn-sm apollo-theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" aria-pressed="true" title="Switch to light mode">
               <i class="fa-solid fa-sun" aria-hidden="true"></i>
             </button>
-            <div class="apollo-user-chip" aria-label="Apollo workspace">
-              <span>Mission Control</span>
+            <div class="apollo-user-chip" aria-label="Apollo public dashboard">
+              <span>Public dashboard</span>
               <i class="fa-solid fa-circle-user" aria-hidden="true"></i>
             </div>
           </div>
@@ -44,12 +44,12 @@
       </nav>
 
       <main class="apollo-shell" id="dashboard">
-        <div id="dashboardStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Loading Apollo dashboard data.</div>
+        <div id="dashboardStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Loading live space data.</div>
         <div class="d-flex flex-column apollo-page-stack">
           <header class="apollo-page-header">
             <div class="apollo-title-block">
-              <h1 class="apollo-page-title mb-0">Apollo Dashboard</h1>
-              <p class="apollo-page-subtitle mb-0">Live orbital activity, launches, astronomy, and nearby asteroid data.</p>
+              <h1 class="apollo-page-title mb-0">Live Space Dashboard</h1>
+              <p class="apollo-page-subtitle mb-0">Current ISS position, crew, SpaceX launches, space weather, asteroid approaches, and NASA's image of the day.</p>
             </div>
             <div class="apollo-dashboard-actions">
               <p class="apollo-update-pill mb-0" id="dashboardUpdated">Last updated: Loading</p>
@@ -72,7 +72,7 @@
             <section class="card apollo-card apollo-dashboard-card apollo-accent-iss" id="iss-position">
               <div class="card-header section-card-header">
                 <div class="dashboard-card-heading">
-                  <h2 class="section-title mb-0">ISS Current Position</h2>
+                  <h2 class="section-title mb-0">ISS Position</h2>
                 </div>
               </div>
               <div class="card-body section-card-body" id="issBody" aria-live="polite" aria-busy="true">
@@ -83,7 +83,7 @@
             <section class="card apollo-card apollo-dashboard-card apollo-accent-crew" id="crew">
               <div class="card-header section-card-header">
                 <div class="dashboard-card-heading">
-                  <h2 class="section-title mb-0">People In Space</h2>
+                  <h2 class="section-title mb-0">Crew in Space</h2>
                 </div>
               </div>
               <div class="card-body section-card-body" id="peopleBody" aria-live="polite" aria-busy="true">
@@ -94,7 +94,7 @@
             <section class="card apollo-card apollo-dashboard-card apollo-dashboard-card-tall apollo-accent-launch" id="launches">
               <div class="card-header section-card-header">
                 <div class="dashboard-card-heading">
-                  <h2 class="section-title mb-0">Launches</h2>
+                  <h2 class="section-title mb-0">SpaceX Launches</h2>
                 </div>
               </div>
               <div class="card-body section-card-body" id="launchBody" aria-live="polite" aria-busy="true">
@@ -105,7 +105,7 @@
             <section class="card apollo-card apollo-dashboard-card apollo-accent-neo" id="asteroids">
               <div class="card-header section-card-header">
                 <div class="dashboard-card-heading">
-                  <h2 class="section-title mb-0">Asteroids</h2>
+                  <h2 class="section-title mb-0">Near-Earth Asteroids</h2>
                 </div>
               </div>
               <div class="card-body section-card-body" id="neoBody" aria-live="polite" aria-busy="true">
@@ -127,11 +127,11 @@
             <section class="card apollo-card apollo-dashboard-card" id="source-status">
               <div class="card-header section-card-header">
                 <div class="dashboard-card-heading">
-                  <h2 class="section-title mb-0">Data Sources</h2>
+                  <h2 class="section-title mb-0">Source Status</h2>
                 </div>
               </div>
               <div class="card-body section-card-body" id="sourceStatusBody" aria-live="polite" aria-busy="true">
-                <p class="state-message text-secondary mb-0">Checking data sources...</p>
+                <p class="state-message text-secondary mb-0">Checking source feeds...</p>
               </div>
             </section>
           </div>
