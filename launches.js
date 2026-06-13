@@ -442,6 +442,7 @@ async function loadLaunches() {
   } catch (error) {
     setError("Could not load upcoming SpaceX launches right now.");
     setLaunchPageStatus("Launch data could not be loaded.");
+    setLaunchesUpdated("Last updated: Unavailable");
   } finally {
     setBusy(els.launchPageBody, false);
 
