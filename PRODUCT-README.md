@@ -89,7 +89,7 @@ Out of scope for the MVP:
 - People in Space should summarize current craft or station occupancy from the existing roster feed before adding richer astronaut sources.
 - The asteroid summary should surface the closest object's approach time and distance before the object list, then use compact NASA CNEOS hazard-flag and Sentry monitoring context plus disclosure details for approach time, miss distance, speed, estimated diameter, NASA tracking flags, and object source links rather than expanding the dashboard card by default. Potentially hazardous asteroid copy should make clear that the flag reflects size and orbital-distance criteria, not an impact prediction. Sentry copy should make clear that it is NASA/JPL impact monitoring context, not a certainty of future impact.
 - The dashboard ends with a compact data-source status card so public demos can distinguish a source outage from a broken product, see the timing or date behind key feeds, and quickly open each upstream source.
-- The single-page header avoids section jump navigation until Apollo has meaningful detail pages.
+- The header avoids section jump navigation and uses compact primary page links only for meaningful detail pages such as Launches.
 - Refresh state uses one global "Last updated" timestamp instead of repeated per-card timestamps.
 - Dashboard data families use neutral cards, sparse icons, red action accents, and positive green styling for safe/good status messages.
 - Theme choice is stored locally in the browser; first-time visitors start in dark mode.

@@ -13,6 +13,11 @@ const pages = [
     headingId: "dashboardTitle",
     statusId: "dashboardStatus",
     refreshButtonId: "refreshButton",
+    activeNavLabel: "Dashboard",
+    expectedNavLinks: [
+      { href: "#dashboard", label: "Dashboard" },
+      { href: "./launches.html", label: "Launches" }
+    ],
     controlledIds: [
       "apodBody",
       "issBody",
@@ -30,6 +35,11 @@ const pages = [
     headingId: "launchesTitle",
     statusId: "launchPageStatus",
     refreshButtonId: "launchesRefreshButton",
+    activeNavLabel: "Launches",
+    expectedNavLinks: [
+      { href: "./index.html", label: "Dashboard" },
+      { href: "./launches.html", label: "Launches" }
+    ],
     controlledIds: ["launchPageBody"]
   }
 ];
@@ -49,6 +59,11 @@ function getTagByAttribute(html, tagName, attrName, attrValue) {
   return match ? match[0] : "";
 }
 
+function getTags(html, tagName) {
+  const pattern = new RegExp(`<${tagName}\\b[^>]*>`, "gi");
+  return html.match(pattern) || [];
+}
+
 function getAttribute(tag, attrName) {
   const match = tag.match(new RegExp(`\\b${escapeRegExp(attrName)}=["']([^"']*)["']`, "i"));
   return match ? match[1] : "";
@@ -66,6 +81,23 @@ for (const page of pages) {
     assert.equal(getAttribute(nav, "aria-label"), "Primary");
     assert.equal(getAttribute(main, "aria-labelledby"), page.headingId);
     assert.ok(heading, `${page.file} should expose a heading for its main landmark`);
+  });
+
+  test(`${page.name} exposes primary page navigation`, () => {
+    const html = readProjectFile(page.file);
+
+    for (const link of page.expectedNavLinks) {
+      const navLink = getTags(html, "a").find((tag) => {
+        const className = getAttribute(tag, "class");
+        return getAttribute(tag, "href") === link.href && /\bapollo-nav-link\b/.test(className);
+      });
+
+      assert.ok(navLink, `${page.file} should include ${link.label} in primary navigation`);
+
+      if (link.label === page.activeNavLabel) {
+        assert.equal(getAttribute(navLink, "aria-current"), "page");
+      }
+    }
   });
 
   test(`${page.name} refresh control describes and controls dynamic regions`, () => {

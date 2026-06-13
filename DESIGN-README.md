@@ -60,6 +60,7 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 - Data Sources as a full-width closing card that reports whether each upstream feed updated, needs attention, or is unavailable.
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
+Use compact primary header links once Apollo has multiple meaningful pages. Keep page links next to the brand, use pill-shaped active state with `aria-current="page"`, and preserve the theme toggle as a utility control instead of mixing it into page navigation.
 Use the data-source status card for operational trust, not diagnostics. Keep labels short, tie each row to an existing dashboard feed, include a compact upstream source link, and show concise timing context when a feed has a meaningful observation, launch, or query date. Avoid exposing implementation details that do not help a viewer understand dashboard freshness.
 
 Use compact uppercase pills for NOAA space-weather notice types. They should aid scanning while leaving the headline and issued time as the primary content. If a notice includes a NOAA R/S/G scale or clear storm-level K-index text, show the scale as a subdued secondary cue under the headline rather than adding a long explainer.
