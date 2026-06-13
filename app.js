@@ -1230,7 +1230,7 @@ async function loadLaunches() {
     };
 
     renderLaunchRows();
-    return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded; next window: ${formatLaunchWindowSummary(launches[0])}.`);
+    return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded; next launch ${formatDateTime(launches[0].dateUtc)} (${formatLaunchWindowSummary(launches[0])}).`);
   } catch (error) {
     setError(els.launchBody, "Could not load upcoming SpaceX launches right now. Other dashboard sections remain available.");
     return createSourceStatus("launches", "error", "Launch data did not load.");
@@ -1359,7 +1359,7 @@ async function loadNeo() {
         </ul>
       ` : stateMessage("No near-Earth objects are listed for today.")}
     `;
-    return createSourceStatus("neo", "ok", `${asteroids.length} listed today, ${hazardous} flagged for tracking, ${sentryObjects} on Sentry monitoring.`);
+    return createSourceStatus("neo", "ok", `${formatDate(date)} NASA NeoWs list loaded: ${asteroids.length} objects, ${hazardous} flagged for tracking, ${sentryObjects} on Sentry monitoring.`);
   } catch (error) {
     setError(els.neoBody, getApiErrorMessage(error, "NASA asteroid data is unavailable right now. Other live sections remain available."));
     return createSourceStatus("neo", "error", "Asteroid summary did not load.");
@@ -1450,7 +1450,9 @@ async function loadSpaceWeather() {
       data.kpIndex === null ? "attention" : "ok",
       data.kpIndex === null
         ? "NOAA response loaded without a current K-index."
-        : `Current K-index ${formatKpIndex(data.kpIndex)} loaded.`
+        : data.observedAt
+          ? `Current K-index ${formatKpIndex(data.kpIndex)} observed ${formatDateTime(data.observedAt)}.`
+          : `Current K-index ${formatKpIndex(data.kpIndex)} loaded.`
     );
   } catch (error) {
     setError(els.spaceWeatherBody, "Could not load space weather right now.");
