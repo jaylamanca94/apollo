@@ -1,0 +1,17 @@
+{
+  "name": "Apollo",
+  "short_name": "Apollo",
+  "description": "A public space-data dashboard.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#030405",
+  "theme_color": "#2b2f32",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
