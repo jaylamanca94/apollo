@@ -360,7 +360,7 @@ function renderLaunches(launches) {
         <p class="launch-page-summary">${escapeHtml(truncateText(nextLaunch.details, 300))}</p>
         ${nextLaunchDetails ? `<dl class="detail-list next-launch-detail-list mb-3">${nextLaunchDetails}</dl>` : ""}
         ${nextLaunch.sourceUrl ? `
-          <a class="source-link" href="${escapeHtml(nextLaunch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+          <a class="source-link" href="${escapeHtml(nextLaunch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch feed for ${escapeHtml(nextLaunch.name)}">
             <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
             Launch feed
           </a>
@@ -413,7 +413,7 @@ function renderLaunches(launches) {
               <p class="launch-page-summary">${escapeHtml(truncateText(launch.details))}</p>
               ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
               ${launch.sourceUrl ? `
-                <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+                <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch feed for ${escapeHtml(launch.name)}">
                   <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
                   Launch feed
                 </a>

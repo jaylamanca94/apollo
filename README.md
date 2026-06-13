@@ -116,6 +116,8 @@ Recommended target: Vercel.
 
 The static dashboard and `/api` serverless routes deploy together.
 
+When `app.js`, `launches.js`, or `styles.css` changes, bump the matching query-string version in the HTML that loads it so deployed browsers do not keep stale static assets.
+
 ## Caching
 
 The NASA proxy includes lightweight caching:

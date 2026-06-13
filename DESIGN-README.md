@@ -183,7 +183,7 @@ Current icon mapping:
 - Remove buttons are destructive, clearly labeled, and use red styling.
 - Reorder handles should have generous tap targets and feel easy to grab.
 - Interactive elements should feel obvious without adding unnecessary instructional text.
-- Source links and inline details should use compact text links with clear focus states, not large secondary buttons.
+- Source links and inline details should use compact text links with clear focus states, not large secondary buttons. When repeated rows share visible link text such as `Launch feed` or `NASA object source`, each link needs an accessible label that names the specific mission, feed, or object.
 
 ## Accessibility And Responsiveness
 
