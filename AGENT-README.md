@@ -78,7 +78,8 @@ Use `DESIGN-README.md` as the product's design source of truth.
 - If the founder sends exactly `y`, treat it as confirmation that any current `Tasks for Founder` are complete and proceed with the recommended next step using available connected tools.
 - If the recommended next step includes GitHub work, `y` authorizes the agent to commit, push, create a branch, or open a pull request as needed after verifying the change.
 - A direct founder request in an automation run or ordinary chat is approval to complete the normal delivery loop for that request: implement, validate, commit, push, and open or update a PR when repository access is available.
-- Do not stop after changing files locally. If the agent made a code or documentation change, completion requires a commit and push unless a true external blocker remains.
+- PR creation and PR updates are always approved for requested work. Do not ask separately before opening a PR.
+- Do not stop after changing files locally. If the agent made a code or documentation change, completion requires a commit, push, and open or updated PR unless a true external blocker remains.
 - After completing, reviewing, and verifying approved work, the agent must commit and push the completed changes using GitHub tools when repository access is available. Do not ask for separate commit or push approval unless the action is destructive, deploys production, rotates secrets, deletes data, removes repositories, or overwrites history.
 - If the recommended next step includes Supabase work and the agent has access, `y` authorizes the agent to use available Supabase tools for the approved database, auth, storage, migration, seed, policy, or configuration work.
 - Do not deploy, delete data, rotate secrets, remove repositories, overwrite history, or make destructive repository changes unless that action was explicitly included in the recommended next step or separately confirmed.
@@ -112,6 +113,7 @@ Use `DESIGN-README.md` as the product's design source of truth.
 - Diagnose and try to resolve tool, network, GitHub, Vercel, Supabase, dependency, test, build, lint, and environment failures before reporting a blocker.
 - Treat uncommitted work as incomplete.
 - Treat committed-but-unpushed work as incomplete. Keep resolving the push path until the branch is on GitHub or a true external blocker remains.
+- Treat pushed work without an open or updated PR as incomplete unless a true external blocker prevents PR creation.
 - If `git push` fails because the environment cannot resolve or reach `github.com`, retry with approved escalated network access or the GitHub connector when available.
 - Prefer a persistent approval rule for `git push` in this workspace so future completed commits do not get stuck locally because of sandbox DNS or network restrictions.
 - Do not ask the founder to run `git push` from a networked shell until approved network retry and available GitHub tooling have been attempted.
