@@ -91,6 +91,7 @@ Use `DESIGN-README.md` as the product's design source of truth.
 - Keep `main` stable, working, and worth keeping.
 - Pull or fetch from `main` before starting new work when network access is available.
 - Use one short-lived branch per meaningful task, named by purpose such as `feature/watchlist-cards`, `visual/reflect-polish`, `fix/csv-export`, or `quality/apollo-2026-06-12`.
+- Short-lived branches are expected when they protect `main`, isolate a reviewable task, keep unrelated local work untouched, or let multiple product efforts move in parallel.
 - Do not mix unrelated product work or unrelated agent work into one branch.
 - Do not create a new branch just because a new automation run or chat task started. First look for an existing open branch or PR for the same product and same workstream, then continue that branch and update its PR when the scope matches.
 - Create a new branch only when no matching open branch/PR exists, the existing branch was merged or closed, the new work is meaningfully separate, the existing branch is unsafe to reuse, or the founder explicitly asks for separate work.
