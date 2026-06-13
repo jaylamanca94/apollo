@@ -76,53 +76,42 @@ Use `DESIGN-README.md` as the product's design source of truth.
 ## Approval Rules
 
 - If the founder sends exactly `y`, treat it as confirmation that any current `Tasks for Founder` are complete and proceed with the recommended next step using available connected tools.
-- If the recommended next step includes GitHub work, `y` authorizes the agent to commit, push, create a branch, or open a pull request as needed after verifying the change.
-- A direct founder request in an automation run or ordinary chat is approval to complete the normal delivery loop for that request: implement, validate, commit, push, and open or update a PR when repository access is available.
-- PR creation and PR updates are always approved for requested work. Do not ask separately before opening a PR.
-- Do not stop after changing files locally. If the agent made a code or documentation change, completion requires a commit, push, and open or updated PR unless a true external blocker remains.
+- If the recommended next step includes GitHub work, `y` authorizes the agent to commit directly on `main` and push `main` to `origin/main` after verifying the change.
+- A direct founder request in an automation run or ordinary chat is approval to complete the normal delivery loop for that request: implement, validate, commit on `main`, push `main` to `origin/main`, and verify clean main state when repository access is available.
+- Temporary PR creation and updates are approved only when direct-to-main is technically blocked; do not report completion until the PR is merged to `main`.
+- Do not stop after changing files locally. If the agent made a code or documentation change, completion requires a commit on `main`, a push to `origin/main`, and a clean main checkout unless a true external blocker remains.
 - After completing, reviewing, and verifying approved work, the agent must commit and push the completed changes using GitHub tools when repository access is available. Do not ask for separate commit or push approval unless the action is destructive, deploys production, rotates secrets, deletes data, removes repositories, or overwrites history.
 - If the recommended next step includes Supabase work and the agent has access, `y` authorizes the agent to use available Supabase tools for the approved database, auth, storage, migration, seed, policy, or configuration work.
 - Do not deploy, delete data, rotate secrets, remove repositories, overwrite history, or make destructive repository changes unless that action was explicitly included in the recommended next step or separately confirmed.
 - If the founder sends `y+`, proceed with the recommended next step, then look for cleanup, documentation, or small quality improvements.
 
-## Branch And Completion Rules
+## Direct-To-Main Completion Rules
 
 - Keep durable Apollo agent rules in this file or other Apollo documentation, not only in workspace-level files outside the product repo.
 - Keep `main` stable, working, and worth keeping.
-- Main-only steady state: branches are temporary PR staging areas, not durable resting places for completed work.
-- Pull or fetch from `main` before starting new work when network access is available.
-- Use one short-lived branch per meaningful task, named by purpose such as `feature/watchlist-cards`, `visual/reflect-polish`, `fix/csv-export`, or `quality/apollo-2026-06-12`.
-- Short-lived branches are expected when they protect `main`, isolate a reviewable task, keep unrelated local work untouched, or let multiple product efforts move in parallel.
-- Do not mix unrelated product work or unrelated agent work into one branch.
-- Do not create a new branch just because a new automation run or chat task started. First look for an existing open branch or PR for the same product and same workstream, then continue that branch and update its PR when the scope matches.
-- Create a new branch only when no matching open branch/PR exists, the existing branch was merged or closed, the new work is meaningfully separate, the existing branch is unsafe to reuse, or the founder explicitly asks for separate work.
-- When creating or using a branch, tell the founder the branch name, why it exists, what it is based on, and whether it has a local commit, pushed branch, or open PR.
-- Before starting a new branch, check current branch state and open PR context when possible so work is not duplicated, hidden, or stranded.
-- Do not stack unrelated work onto an existing branch just because it is already checked out. Start a fresh branch or worktree from updated `main` when the task is separate.
-- When multiple branches exist, keep the handoff organized: list each branch or PR, its purpose, current status, and next action.
-- If uncommitted work blocks switching branches, preserve it with a safe worktree, stash, or explicit handoff. Do not overwrite, discard, or obscure existing work.
-- Open a PR before merging, even for solo work, so every change has a reviewable checkpoint.
-- PR creation and PR updates are always approved for requested work. Do not ask separately before opening a PR.
-- Merge only work that builds, passes relevant checks, and fits Apollo's product direction.
-- Delete merged branches to keep GitHub and local checkouts uncluttered.
-- After merging a PR, delete the remote branch, prune stale refs, return the local product checkout to `main`, pull or fast-forward `main`, and verify the working tree is clean.
-- Treat requested code or documentation work as incomplete until the final changes are committed, pushed to GitHub, represented by an open or updated PR, merged to `main`, and cleaned back to a main-only steady state when repository access is available.
+- Start requested work from `main` unless a true blocker prevents it.
+- Fetch and fast-forward `main` before changing files when network access is available.
+- Do not create a task branch for normal requested or automation-authorized work.
+- Commit completed work directly on `main` and push `main` to `origin/main`.
+- Completion means the local checkout is on `main`, the working tree is clean, and `origin/main` contains the final commit.
+- Use a temporary branch or PR only when direct work on `main` is technically blocked by repository protections, provider tooling, conflicting in-flight work, or a true external blocker.
+- If a temporary branch or PR is required, explain why direct-to-main was blocked, keep it narrowly scoped, merge it into `main` as soon as checks pass, delete the branch, return the local checkout to `main`, pull or fast-forward, and verify clean state.
+- Treat requested code or documentation work as incomplete until the final changes are validated, committed on `main`, pushed to `origin/main`, and verified clean on `main` when repository access is available.
 - Treat uncommitted work and committed-but-unpushed work as incomplete.
-- Treat pushed work without an open or updated PR as incomplete unless a true external blocker prevents PR creation.
-- Treat an unmerged branch as incomplete unless a true blocker prevents merging; report the branch name, PR, blocker, and next action.
-- If validation, lint, tests, build, or runtime verification fails, diagnose and fix the issue, rerun the relevant checks, then commit and push the resolved work.
+- Treat work pushed only to a non-main branch as incomplete unless a true external blocker prevents merging or pushing to `main`.
+- If validation, lint, tests, build, or runtime verification fails, diagnose and fix the issue, rerun the relevant checks, then commit and push the resolved work to `origin/main`.
 
 ## Failure And Blocker Handling
 
 - Diagnose and try to resolve tool, network, GitHub, Vercel, Supabase, dependency, test, build, lint, and environment failures before reporting a blocker.
 - Treat uncommitted work as incomplete.
-- Treat committed-but-unpushed work as incomplete. Keep resolving the push path until the branch is on GitHub or a true external blocker remains.
-- Treat pushed work without an open or updated PR as incomplete unless a true external blocker prevents PR creation.
+- Treat committed-but-unpushed work as incomplete. Keep resolving the push path until `origin/main` contains the final commit or a true external blocker remains.
+- Treat work pushed only to a non-main branch as incomplete unless a true external blocker prevents merging or pushing to `main`.
 - If `git push` fails because the environment cannot resolve or reach `github.com`, retry with approved escalated network access or the GitHub connector when available.
 - Prefer a persistent approval rule for `git push` in this workspace so future completed commits do not get stuck locally because of sandbox DNS or network restrictions.
 - Do not ask the founder to run `git push` from a networked shell until approved network retry and available GitHub tooling have been attempted.
-- If push fails because of authentication, stale local state, non-fast-forward history, branch protection, missing upstream tracking, or remote configuration, diagnose and resolve it when safe by refreshing auth, fetching/rebasing or merging, setting upstream tracking, pushing an allowed branch, or opening a pull request.
-- If a repo is clean but the local branch is ahead of the remote, treat the work as completed locally but not fully finished until the push succeeds or a true external blocker is reported.
+- If push fails because of authentication, stale local state, non-fast-forward history, branch protection, missing upstream tracking, remote configuration, or main-branch protection, diagnose and resolve it when safe by refreshing auth, fetching/rebasing or merging, setting upstream tracking, pushing `main`, or using a temporary PR fallback that is merged to `main`.
+- If a repo is clean but local `main` is ahead of the remote, treat the work as completed locally but not fully finished until `origin/main` includes the commit or a true external blocker is reported.
 - If founder action is required, be very concise and specific: state what failed, current repo state, exactly what action is needed, and the command or UI step the founder should take.
 - Do not bury a required founder action in a long report.
 
