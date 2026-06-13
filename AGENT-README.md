@@ -77,6 +77,9 @@ Use `DESIGN-README.md` as the product's design source of truth.
 
 - If the founder sends exactly `y`, treat it as confirmation that any current `Tasks for Founder` are complete and proceed with the recommended next step using available connected tools.
 - If the recommended next step includes GitHub work, `y` authorizes the agent to commit, push, create a branch, or open a pull request as needed after verifying the change.
+- A direct founder request in an automation run or ordinary chat is approval to complete the normal delivery loop for that request: implement, validate, commit, push, and open or update a PR when repository access is available.
+- PR creation and PR updates are always approved for requested work. Do not ask separately before opening a PR.
+- Do not stop after changing files locally. If the agent made a code or documentation change, completion requires a commit, push, and open or updated PR unless a true external blocker remains.
 - After completing, reviewing, and verifying approved work, the agent must commit and push the completed changes using GitHub tools when repository access is available. Do not ask for separate commit or push approval unless the action is destructive, deploys production, rotates secrets, deletes data, removes repositories, or overwrites history.
 - If the recommended next step includes Supabase work and the agent has access, `y` authorizes the agent to use available Supabase tools for the approved database, auth, storage, migration, seed, policy, or configuration work.
 - Do not deploy, delete data, rotate secrets, remove repositories, overwrite history, or make destructive repository changes unless that action was explicitly included in the recommended next step or separately confirmed.
@@ -88,18 +91,30 @@ Use `DESIGN-README.md` as the product's design source of truth.
 - Keep `main` stable, working, and worth keeping.
 - Pull or fetch from `main` before starting new work when network access is available.
 - Use one short-lived branch per meaningful task, named by purpose such as `feature/watchlist-cards`, `visual/reflect-polish`, `fix/csv-export`, or `quality/apollo-2026-06-12`.
+- Short-lived branches are expected when they protect `main`, isolate a reviewable task, keep unrelated local work untouched, or let multiple product efforts move in parallel.
 - Do not mix unrelated product work or unrelated agent work into one branch.
+- Do not create a new branch just because a new automation run or chat task started. First look for an existing open branch or PR for the same product and same workstream, then continue that branch and update its PR when the scope matches.
+- Create a new branch only when no matching open branch/PR exists, the existing branch was merged or closed, the new work is meaningfully separate, the existing branch is unsafe to reuse, or the founder explicitly asks for separate work.
+- When creating or using a branch, tell the founder the branch name, why it exists, what it is based on, and whether it has a local commit, pushed branch, or open PR.
+- Before starting a new branch, check current branch state and open PR context when possible so work is not duplicated, hidden, or stranded.
+- Do not stack unrelated work onto an existing branch just because it is already checked out. Start a fresh branch or worktree from updated `main` when the task is separate.
+- When multiple branches exist, keep the handoff organized: list each branch or PR, its purpose, current status, and next action.
+- If uncommitted work blocks switching branches, preserve it with a safe worktree, stash, or explicit handoff. Do not overwrite, discard, or obscure existing work.
 - Open a PR before merging, even for solo work, so every change has a reviewable checkpoint.
+- PR creation and PR updates are always approved for requested work. Do not ask separately before opening a PR.
 - Merge only work that builds, passes relevant checks, and fits Apollo's product direction.
 - Delete merged branches to keep GitHub and local checkouts uncluttered.
-- Treat requested code or documentation work as incomplete until the final changes are committed and pushed to GitHub.
+- Treat requested code or documentation work as incomplete until the final changes are committed, pushed to GitHub, and represented by an open or updated PR when repository access is available.
 - Treat uncommitted work and committed-but-unpushed work as incomplete.
+- Treat pushed work without an open or updated PR as incomplete unless a true external blocker prevents PR creation.
 - If validation, lint, tests, build, or runtime verification fails, diagnose and fix the issue, rerun the relevant checks, then commit and push the resolved work.
 
 ## Failure And Blocker Handling
 
 - Diagnose and try to resolve tool, network, GitHub, Vercel, Supabase, dependency, test, build, lint, and environment failures before reporting a blocker.
+- Treat uncommitted work as incomplete.
 - Treat committed-but-unpushed work as incomplete. Keep resolving the push path until the branch is on GitHub or a true external blocker remains.
+- Treat pushed work without an open or updated PR as incomplete unless a true external blocker prevents PR creation.
 - If `git push` fails because the environment cannot resolve or reach `github.com`, retry with approved escalated network access or the GitHub connector when available.
 - Prefer a persistent approval rule for `git push` in this workspace so future completed commits do not get stuck locally because of sandbox DNS or network restrictions.
 - Do not ask the founder to run `git push` from a networked shell until approved network retry and available GitHub tooling have been attempted.
