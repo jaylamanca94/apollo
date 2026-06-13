@@ -4,13 +4,19 @@
   "description": "A public space-data dashboard.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#030405",
-  "theme_color": "#2b2f32",
+  "background_color": "#8A1021",
+  "theme_color": "#1F2427",
   "icons": [
     {
-      "src": "assets/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "assets/apollo-app-icon-light.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/apollo-app-icon-dark.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]

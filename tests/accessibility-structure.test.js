@@ -117,6 +117,22 @@ for (const page of pages) {
       assert.equal(getAttribute(region, "aria-busy"), "true", `${id} should start busy while data loads`);
     }
   });
+
+  test(`${page.name} exposes current app icons`, () => {
+    const html = readProjectFile(page.file);
+    const iconLinks = getTags(html, "link").filter((tag) => getAttribute(tag, "rel") === "icon");
+    const touchIcon = getTags(html, "link").find((tag) => getAttribute(tag, "rel") === "apple-touch-icon");
+
+    assert.ok(
+      iconLinks.some((tag) => getAttribute(tag, "href") === "./assets/apollo-app-icon-dark.png" && getAttribute(tag, "media") === "(prefers-color-scheme: dark)"),
+      `${page.file} should expose the dark-mode app icon`
+    );
+    assert.ok(
+      iconLinks.some((tag) => getAttribute(tag, "href") === "./assets/apollo-app-icon-light.png" && getAttribute(tag, "media") === "(prefers-color-scheme: light)"),
+      `${page.file} should expose the light-mode app icon`
+    );
+    assert.equal(getAttribute(touchIcon || "", "href"), "./assets/apollo-app-icon-light.png");
+  });
 }
 
 test("skip link has a visible focus treatment", () => {
@@ -125,4 +141,16 @@ test("skip link has a visible focus treatment", () => {
   assert.match(css, /\.apollo-skip-link\s*\{/);
   assert.match(css, /\.apollo-skip-link:focus/);
   assert.match(css, /transform:\s*translateY\(0\);/);
+});
+
+test("web manifest points to current PNG app icons", () => {
+  const manifest = JSON.parse(readProjectFile("site.webmanifest"));
+  const iconSources = manifest.icons.map((icon) => icon.src);
+
+  assert.deepEqual(iconSources, [
+    "assets/apollo-app-icon-light.png",
+    "assets/apollo-app-icon-dark.png"
+  ]);
+  assert.equal(manifest.icons[0].type, "image/png");
+  assert.equal(manifest.icons[0].sizes, "512x512");
 });

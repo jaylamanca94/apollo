@@ -156,10 +156,10 @@ Current icon mapping:
 
 ## Favicon And App Icon
 
-- Apollo uses a compact Font Awesome rocket mark at `assets/favicon.svg`, matching the brand mark in the top navigation.
-- App icons and favicons must be vector-first, not screenshots.
-- The icon background uses a theme-aware vertical gradient: Dark Mode moves from slightly lighter gray on top to very dark black on bottom; Light Mode moves from very light gray on top to slightly darker light gray on bottom.
-- The centered rocket mark uses Apollo red in Light Mode and white in Dark Mode for contrast.
+- Apollo uses supplied 512px PNG app icons at `assets/apollo-app-icon-dark.png` and `assets/apollo-app-icon-light.png`.
+- The Dark Mode icon uses a red rocket mark on a charcoal gradient background.
+- The Light Mode icon uses a white rocket mark on a red gradient background.
+- HTML should expose both icons with media-specific favicon links, while the web manifest and Apple touch icon should use the light icon as the default install/touch artwork.
 - Every web or mobile product should eventually have a simple recognizable favicon/app icon.
 - Use a Font Awesome Free icon as the preferred starting point when it fits the product.
 - Pick an icon that represents the product mission, not a generic decoration.

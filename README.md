@@ -36,8 +36,8 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `index.html` - dashboard markup
 - `launches.html` - dedicated launches detail page markup
 - `styles.css` - minimal Bootstrap-aligned styling
-- `assets/favicon.svg` - Apollo vector rocket favicon/app icon with theme-aware gradient background
-- `site.webmanifest` - browser app manifest pointing to the SVG icon
+- `assets/apollo-app-icon-light.png` and `assets/apollo-app-icon-dark.png` - Apollo 512px app icons for light and dark browser schemes
+- `site.webmanifest` - browser app manifest pointing to the PNG app icons
 - `app.js` - frontend data loading and rendering
 - `launches.js` - launches detail page data loading and rendering
 - `api/_cache.js` - shared in-memory cache helpers for serverless API routes
