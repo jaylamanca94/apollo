@@ -73,6 +73,8 @@ Use inline disclosure details for richer dashboard context, then graduate to sep
 
 Use compact raised row surfaces inside dense operational cards for metadata cells, crew rows, launch rows, asteroid rows, source rows, and short status/context blocks. These inner rows should be visually quieter than the parent card, keep the same `8px` radius, use thin borders, and use the shared low inset highlight so repeated data groups feel deliberately layered without looking decorative. They may use subtle hover or disclosure polish when an element already exposes interaction. Avoid making non-clickable rows look like primary buttons.
 
+Use compact fact cells for dense detail lists inside launch and disclosure panels. Each cell should use the same `8px` radius, thin border, low inset highlight, and quiet raised surface as operational rows, while preserving the label/value hierarchy. This keeps technical details scannable without making them compete with primary mission titles, countdowns, source links, or card summaries.
+
 ### Desktop
 
 - 12-column grid
