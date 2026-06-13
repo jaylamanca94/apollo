@@ -11,21 +11,21 @@ const SOURCE_FEEDS = [
   {
     id: "apod",
     label: "NASA APOD",
-    description: "Image of the Day",
+    description: "Astronomy image",
     icon: "fa-solid fa-image",
     sourceUrl: "https://apod.nasa.gov/apod/"
   },
   {
     id: "iss",
     label: "Where the ISS At",
-    description: "ISS position",
+    description: "Station coordinates",
     icon: "fa-solid fa-satellite",
     sourceUrl: "https://wheretheiss.at/"
   },
   {
     id: "people",
     label: "People in Space",
-    description: "Crew roster",
+    description: "Current crew",
     icon: "fa-solid fa-user-astronaut",
     sourceUrl: "https://github.com/corquaid/international-space-station-APIs"
   },
@@ -39,23 +39,23 @@ const SOURCE_FEEDS = [
   {
     id: "neo",
     label: "NASA NeoWs",
-    description: "Near-Earth objects",
+    description: "Asteroid approaches",
     icon: "fa-solid fa-meteor",
     sourceUrl: "https://api.nasa.gov/"
   },
   {
     id: "spaceWeather",
     label: "NOAA SWPC",
-    description: "Space weather",
+    description: "K-index and alerts",
     icon: "fa-solid fa-sun",
     sourceUrl: "https://www.swpc.noaa.gov/products-and-data"
   }
 ];
 
 const SOURCE_STATUS_LABELS = {
-  attention: "Attention",
+  attention: "Needs review",
   error: "Unavailable",
-  ok: "Updated"
+  ok: "Loaded"
 };
 
 const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily unavailable because NASA is limiting requests. Other dashboard sections are still live.";
@@ -574,7 +574,7 @@ function createSourceStatus(id, state, detail) {
   return {
     id,
     state: statusState,
-    detail: getText(detail, "No source status reported.")
+    detail: getText(detail, "No feed status reported.")
   };
 }
 
@@ -895,18 +895,18 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
   );
   const feedStatuses = SOURCE_FEEDS.map((feed) => ({
     ...feed,
-    ...(statusById.get(feed.id) || createSourceStatus(feed.id, "error", "Source check did not finish."))
+    ...(statusById.get(feed.id) || createSourceStatus(feed.id, "error", "Feed check did not finish."))
   }));
   const updatedCount = feedStatuses.filter((feed) => feed.state === "ok").length;
   const attentionCount = feedStatuses.filter((feed) => feed.state !== "ok").length;
   const summary = attentionCount === 0
-    ? `${updatedCount} of ${feedStatuses.length} sources updated`
-    : `${updatedCount} of ${feedStatuses.length} sources updated, ${attentionCount} need attention`;
+    ? `${updatedCount} of ${feedStatuses.length} feeds loaded`
+    : `${updatedCount} of ${feedStatuses.length} feeds loaded, ${attentionCount} need review`;
 
   els.sourceStatusBody.innerHTML = `
     <div class="source-status-summary">
       <div>
-        <p class="section-kicker mb-1">Source check</p>
+        <p class="section-kicker mb-1">Feed status</p>
         <p class="source-status-headline mb-0">${escapeHtml(summary)}</p>
       </div>
       <span class="source-status-time">${escapeHtml(formatCheckedAt(checkedAt))}</span>
@@ -926,7 +926,7 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
               <p class="source-status-detail mb-0">${escapeHtml(feed.detail)}</p>
               <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(feed.label)} source">
                 <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                Open source
+                Open feed
               </a>
             </div>
             <span class="source-status-pill">${escapeHtml(stateLabel)}</span>
@@ -1000,7 +1000,7 @@ async function loadApod() {
         <div class="apollo-card apod-info-card">
           <div class="apod-info-header">
             <i class="fa-solid fa-image apod-info-icon" aria-hidden="true"></i>
-            <h2 class="apod-info-title mb-0">NASA Image of the Day</h2>
+            <h2 class="apod-info-title mb-0">NASA Astronomy Picture of the Day</h2>
           </div>
           <p class="apod-date">${data.date ? formatDate(data.date) : "Today"}</p>
           <h3 class="apod-title">${title}</h3>
@@ -1084,7 +1084,7 @@ async function loadIss() {
             <p class="fw-semibold mb-0">${formatFootprintKilometers(data.footprint)}</p>
           </div>
         </div>
-        <p class="orbit-context-note mb-0">Orbit timing is calculated from the current altitude and velocity; sunlight and footprint come from the ISS position feed.</p>
+        <p class="orbit-context-note mb-0">Orbit estimates use current altitude and velocity; sunlight and footprint come from the ISS position feed.</p>
       </div>
       <div class="detail-action-row iss-source-row">
         <a class="source-link" href="https://wheretheiss.at/" target="_blank" rel="noopener noreferrer">
@@ -1115,7 +1115,7 @@ async function loadPeople() {
     const people = normalizePeople(await fetchJson(API.people));
 
     if (!people.length) {
-      els.peopleBody.innerHTML = stateMessage("No crew data available.");
+      els.peopleBody.innerHTML = stateMessage("No current crew roster is available.");
       return createSourceStatus("people", "attention", "Crew roster returned no people.");
     }
 
@@ -1152,7 +1152,7 @@ async function loadPeople() {
     `;
     return createSourceStatus("people", "ok", `${people.length} people across ${craftGroups.length} ${crewLocationLabel} listed.`);
   } catch (error) {
-    setError(els.peopleBody, "Could not load people-in-space data right now.");
+    setError(els.peopleBody, "Could not load the current crew roster right now.");
     return createSourceStatus("people", "error", "Crew roster did not load.");
   }
 }
@@ -1163,7 +1163,7 @@ async function loadLaunches() {
 
     if (!launches.length) {
       els.launchBody.innerHTML = stateMessage("No upcoming SpaceX launches are available from the current data source.");
-      return createSourceStatus("launches", "attention", "Launch source returned no upcoming missions.");
+      return createSourceStatus("launches", "attention", "Launch feed returned no upcoming missions.");
     }
 
     const renderLaunchRows = () => {
@@ -1213,7 +1213,7 @@ async function loadLaunches() {
                       ${launch.sourceUrl ? `
                         <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
                           <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                          Launch source
+                          Launch feed
                         </a>
                       ` : ""}
                     </div>
@@ -1225,12 +1225,12 @@ async function loadLaunches() {
           `;
         }).join("")}
         </div>
-        <a class="btn launch-show-all mt-4" href="./launches.html">View all launches</a>
+        <a class="btn launch-show-all mt-4" href="./launches.html">View all SpaceX launches</a>
       `;
     };
 
     renderLaunchRows();
-    return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded; next window: ${formatLaunchWindowSummary(launches[0])}.`);
+    return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded; next launch ${formatDateTime(launches[0].dateUtc)} (${formatLaunchWindowSummary(launches[0])}).`);
   } catch (error) {
     setError(els.launchBody, "Could not load upcoming SpaceX launches right now. Other dashboard sections remain available.");
     return createSourceStatus("launches", "error", "Launch data did not load.");
@@ -1269,7 +1269,7 @@ async function loadNeo() {
     els.neoBody.innerHTML = `
       <div class="metadata-grid mb-3">
         <div>
-          <p class="text-secondary small mb-1">Asteroids listed today</p>
+          <p class="text-secondary small mb-1">Near-Earth objects today</p>
           <p class="fw-semibold mb-0">${asteroids.length}</p>
         </div>
         <div>
@@ -1359,7 +1359,7 @@ async function loadNeo() {
         </ul>
       ` : stateMessage("No near-Earth objects are listed for today.")}
     `;
-    return createSourceStatus("neo", "ok", `${asteroids.length} listed today, ${hazardous} flagged for tracking, ${sentryObjects} on Sentry monitoring.`);
+    return createSourceStatus("neo", "ok", `${formatDate(date)} NASA NeoWs list loaded: ${asteroids.length} objects, ${hazardous} flagged for tracking, ${sentryObjects} on Sentry monitoring.`);
   } catch (error) {
     setError(els.neoBody, getApiErrorMessage(error, "NASA asteroid data is unavailable right now. Other live sections remain available."));
     return createSourceStatus("neo", "error", "Asteroid summary did not load.");
@@ -1420,7 +1420,7 @@ async function loadSpaceWeather() {
       ` : ""}
       ${recentAlerts.length ? `
         <div class="space-weather-alerts mb-3">
-          <p class="text-secondary small mb-2">Recent SWPC notices</p>
+          <p class="text-secondary small mb-2">Recent NOAA notices</p>
           <ul class="list-unstyled mb-0">
             ${recentAlerts.map((alert) => `
               <li>
@@ -1439,7 +1439,7 @@ async function loadSpaceWeather() {
             `).join("")}
           </ul>
         </div>
-      ` : stateMessage("No recent SWPC alerts are listed.")}
+      ` : stateMessage("No recent NOAA alerts are listed.")}
       <a class="source-link" href="${escapeHtml(data.sourceUrl)}" target="_blank" rel="noopener noreferrer">
         <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
         NOAA space weather source
@@ -1450,7 +1450,9 @@ async function loadSpaceWeather() {
       data.kpIndex === null ? "attention" : "ok",
       data.kpIndex === null
         ? "NOAA response loaded without a current K-index."
-        : `Current K-index ${formatKpIndex(data.kpIndex)} loaded.`
+        : data.observedAt
+          ? `Current K-index ${formatKpIndex(data.kpIndex)} observed ${formatDateTime(data.observedAt)}.`
+          : `Current K-index ${formatKpIndex(data.kpIndex)} loaded.`
     );
   } catch (error) {
     setError(els.spaceWeatherBody, "Could not load space weather right now.");
@@ -1459,7 +1461,7 @@ async function loadSpaceWeather() {
 }
 
 async function loadDashboard() {
-  setDashboardStatus("Refreshing Apollo dashboard data.");
+  setDashboardStatus("Refreshing live space data.");
   [
     els.apodBody,
     els.issBody,
@@ -1484,7 +1486,7 @@ async function loadDashboard() {
   renderSourceStatus(sourceResults.map((result, index) => (
     result.status === "fulfilled" && result.value
       ? result.value
-      : createSourceStatus(SOURCE_FEEDS[index].id, "error", "Source check did not finish.")
+      : createSourceStatus(SOURCE_FEEDS[index].id, "error", "Feed check did not finish.")
   )), new Date());
   [
     els.apodBody,
@@ -1495,7 +1497,7 @@ async function loadDashboard() {
     els.spaceWeatherBody,
     els.sourceStatusBody
   ].forEach((element) => setBusy(element, false));
-  setDashboardStatus("Apollo dashboard data refreshed.");
+  setDashboardStatus("Live space data refreshed.");
   setDashboardUpdated();
   if (els.refreshButton) {
     els.refreshButton.disabled = false;

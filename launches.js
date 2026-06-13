@@ -335,7 +335,7 @@ function renderLaunches(launches) {
       <div class="next-launch-content">
         <div class="next-launch-heading">
           <div>
-            <p class="section-kicker mb-2">Next SpaceX Launch</p>
+            <p class="section-kicker mb-2">Next SpaceX launch</p>
             <h2 class="next-launch-title mb-0" id="nextLaunchTitle">
               ${escapeHtml(nextLaunchName.vehicle)}
               ${nextLaunchName.mission ? `<span>${escapeHtml(nextLaunchName.mission)}</span>` : ""}
@@ -362,7 +362,7 @@ function renderLaunches(launches) {
         ${nextLaunch.sourceUrl ? `
           <a class="source-link" href="${escapeHtml(nextLaunch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
             <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-            Launch source
+            Launch feed
           </a>
         ` : ""}
       </div>
@@ -415,7 +415,7 @@ function renderLaunches(launches) {
               ${launch.sourceUrl ? `
                 <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer">
                   <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                  Launch source
+                  Launch feed
                 </a>
               ` : ""}
             </div>
@@ -442,6 +442,7 @@ async function loadLaunches() {
   } catch (error) {
     setError("Could not load upcoming SpaceX launches right now.");
     setLaunchPageStatus("Launch data could not be loaded.");
+    setLaunchesUpdated("Last updated: Unavailable");
   } finally {
     setBusy(els.launchPageBody, false);
 
