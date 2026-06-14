@@ -57,11 +57,11 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 - Launches as a taller list card with three visible launch rows, compact launch-window length context, and a link to the launches detail page.
 - Asteroids as a summary card with closest approach time/distance, hazard and Sentry monitoring context, and nearby object rows. Keep per-object approach details behind compact inline disclosure controls so the card remains scannable.
 - Space weather as a compact status card under asteroid context, with current K-index first, a compact NOAA geomagnetic scale context row, a small 3-day outlook below it, and compact labels plus scale cues for recent NOAA alert/watch/warning notices.
-- Data Sources as a full-width closing card that reports whether each upstream feed updated, needs attention, or is unavailable.
+- Data Sources as a full-width closing card that reports whether each upstream source loaded, needs attention, or is unavailable.
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
 Use compact primary header links once Apollo has multiple meaningful pages. Keep page links next to the brand, use pill-shaped active state with `aria-current="page"`, and preserve the theme toggle as a utility control instead of mixing it into page navigation.
-Use the data-source status card for operational trust, not diagnostics. Keep labels short, tie each row to an existing dashboard feed, include a compact upstream source link, and show concise timing context when a feed has a meaningful observation, launch, or query date. Avoid exposing implementation details that do not help a viewer understand dashboard freshness.
+Use the data-source status card for operational trust, not diagnostics. Keep labels short, tie each row to an existing dashboard source, include a compact upstream source link, and show concise timing context when a source has a meaningful observation, launch, or query date. Avoid exposing implementation details that do not help a viewer understand dashboard freshness.
 
 Use compact uppercase pills for NOAA space-weather notice types. They should aid scanning while leaving the headline and issued time as the primary content. If a notice includes a NOAA R/S/G scale or clear storm-level K-index text, show the scale as a subdued secondary cue under the headline rather than adding a long explainer.
 Use a compact NOAA geomagnetic scale row when K-index data is available. It should translate the current Kp value into a G-scale severity label without adding a long educational explainer or new chart.
@@ -186,7 +186,7 @@ Current icon mapping:
 - Remove buttons are destructive, clearly labeled, and use red styling.
 - Reorder handles should have generous tap targets and feel easy to grab.
 - Interactive elements should feel obvious without adding unnecessary instructional text.
-- Source links and inline details should use compact text links with clear focus states, not large secondary buttons. When repeated rows share visible link text such as `Launch feed` or `NASA object source`, each link needs an accessible label that names the specific mission, feed, or object.
+- Source links and inline details should use compact text links with clear focus states, not large secondary buttons. Use `source` in public-facing labels and reserve `feed` for implementation or API documentation. When repeated rows share visible link text such as `Launch source` or `NASA object source`, each link needs an accessible label that names the specific mission, source, or object.
 
 ## Accessibility And Responsiveness
 

@@ -53,7 +53,7 @@ const SOURCE_FEEDS = [
 ];
 
 const SOURCE_STATUS_LABELS = {
-  attention: "Needs review",
+  attention: "Needs attention",
   error: "Unavailable",
   ok: "Loaded"
 };
@@ -574,7 +574,7 @@ function createSourceStatus(id, state, detail) {
   return {
     id,
     state: statusState,
-    detail: getText(detail, "No feed status reported.")
+    detail: getText(detail, "No source status reported.")
   };
 }
 
@@ -895,18 +895,18 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
   );
   const feedStatuses = SOURCE_FEEDS.map((feed) => ({
     ...feed,
-    ...(statusById.get(feed.id) || createSourceStatus(feed.id, "error", "Feed check did not finish."))
+    ...(statusById.get(feed.id) || createSourceStatus(feed.id, "error", "Source check did not finish."))
   }));
   const updatedCount = feedStatuses.filter((feed) => feed.state === "ok").length;
   const attentionCount = feedStatuses.filter((feed) => feed.state !== "ok").length;
   const summary = attentionCount === 0
-    ? `${updatedCount} of ${feedStatuses.length} feeds loaded`
-    : `${updatedCount} of ${feedStatuses.length} feeds loaded, ${attentionCount} need review`;
+    ? `${updatedCount} of ${feedStatuses.length} sources loaded`
+    : `${updatedCount} of ${feedStatuses.length} sources loaded, ${attentionCount} need attention`;
 
   els.sourceStatusBody.innerHTML = `
     <div class="source-status-summary">
       <div>
-        <p class="section-kicker mb-1">Feed status</p>
+        <p class="section-kicker mb-1">Source check</p>
         <p class="source-status-headline mb-0">${escapeHtml(summary)}</p>
       </div>
       <span class="source-status-time">${escapeHtml(formatCheckedAt(checkedAt))}</span>
@@ -924,9 +924,9 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
               <h3 class="source-status-title mb-0">${escapeHtml(feed.label)}</h3>
               <p class="source-status-source mb-0">${escapeHtml(feed.description)}</p>
               <p class="source-status-detail mb-0">${escapeHtml(feed.detail)}</p>
-              <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(feed.label)} feed">
+              <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(feed.label)} source">
                 <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                Open feed
+                Open source
               </a>
             </div>
             <span class="source-status-pill">${escapeHtml(stateLabel)}</span>
@@ -1084,7 +1084,7 @@ async function loadIss() {
             <p class="fw-semibold mb-0">${formatFootprintKilometers(data.footprint)}</p>
           </div>
         </div>
-        <p class="orbit-context-note mb-0">Orbit estimates use current altitude and velocity; sunlight and footprint come from the ISS position feed.</p>
+        <p class="orbit-context-note mb-0">Orbit estimates use current altitude and velocity; sunlight and footprint come from the ISS position source.</p>
       </div>
       <div class="detail-action-row iss-source-row">
         <a class="source-link" href="https://wheretheiss.at/" target="_blank" rel="noopener noreferrer">
@@ -1162,8 +1162,8 @@ async function loadLaunches() {
     const launches = normalizeLaunches(await fetchJson(API.launches));
 
     if (!launches.length) {
-      els.launchBody.innerHTML = stateMessage("No upcoming SpaceX launches are available from the current data source.");
-      return createSourceStatus("launches", "attention", "Launch feed returned no upcoming missions.");
+      els.launchBody.innerHTML = stateMessage("No upcoming SpaceX launches are available from the current launch source.");
+      return createSourceStatus("launches", "attention", "Launch source returned no upcoming missions.");
     }
 
     const renderLaunchRows = () => {
@@ -1211,9 +1211,9 @@ async function loadLaunches() {
                       <p class="mb-3">${fullDetails}</p>
                       ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
                       ${launch.sourceUrl ? `
-                        <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch feed for ${escapeHtml(launch.name)}">
+                        <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">
                           <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                          Launch feed
+                          Launch source
                         </a>
                       ` : ""}
                     </div>
@@ -1486,7 +1486,7 @@ async function loadDashboard() {
   renderSourceStatus(sourceResults.map((result, index) => (
     result.status === "fulfilled" && result.value
       ? result.value
-      : createSourceStatus(SOURCE_FEEDS[index].id, "error", "Feed check did not finish.")
+      : createSourceStatus(SOURCE_FEEDS[index].id, "error", "Source check did not finish.")
   )), new Date());
   [
     els.apodBody,
