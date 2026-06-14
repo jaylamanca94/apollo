@@ -143,6 +143,30 @@ test("skip link has a visible focus treatment", () => {
   assert.match(css, /transform:\s*translateY\(0\);/);
 });
 
+test("ISS map is exposed as a named interactive region", () => {
+  const js = readProjectFile("app.js");
+
+  assert.match(js, /id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"/);
+  assert.doesNotMatch(js, /id="issMap" role="img"/);
+});
+
+test("repeated disclosure controls receive item-specific accessible names", () => {
+  const js = readProjectFile("app.js");
+
+  assert.match(js, /aria-label="Read full description for \$\{title\}"/);
+  assert.match(js, /aria-label="Show mission details for \$\{escapeHtml\(launch\.name\)\}"/);
+  assert.match(js, /aria-label="Show approach details for \$\{escapeHtml\(item\.name\)\}"/);
+});
+
+test("nonessential interface motion respects reduced motion preferences", () => {
+  const css = readProjectFile("styles.css");
+
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(css, /transition-duration:\s*0\.01ms !important;/);
+  assert.match(css, /\.launch-card:hover,\s*\n\s*\.launch-show-all:hover/);
+  assert.match(css, /transform:\s*none !important;/);
+});
+
 test("web manifest points to current PNG app icons", () => {
   const manifest = JSON.parse(readProjectFile("site.webmanifest"));
   const iconSources = manifest.icons.map((icon) => icon.src);

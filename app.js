@@ -986,7 +986,7 @@ async function loadApod() {
     const hasLongExplanation = summaryText !== data.explanation;
     const media = data.mediaUrl && data.mediaType === "image"
       ? `
-        <a class="apod-media-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
+        <a class="apod-media-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open full-size APOD image: ${title}">
           <img class="apod-media" src="${mediaUrl}" alt="${title}">
         </a>
       `
@@ -1008,7 +1008,7 @@ async function loadApod() {
           <p class="apod-summary">${summary}</p>
           ${hasLongExplanation ? `
             <details class="apod-details mt-3">
-              <summary class="fw-semibold">Read full description</summary>
+              <summary class="fw-semibold" aria-label="Read full description for ${title}">Read full description</summary>
               <p class="mb-0 mt-2">${explanation}</p>
             </details>
           ` : ""}
@@ -1044,7 +1044,7 @@ async function loadIss() {
       : "";
 
     els.issBody.innerHTML = `
-      <div class="iss-map mb-3" id="issMap" role="img" aria-label="Map showing the current ISS position above Earth"></div>
+      <div class="iss-map mb-3" id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"></div>
       ${observedAtMarkup}
       <div class="metadata-grid">
         <div>
@@ -1206,7 +1206,7 @@ async function loadLaunches() {
                 <p class="launch-window-summary mb-0">${escapeHtml(launchWindowSummary)}</p>
                 <div class="launch-footer">
                   <details class="data-details launch-details">
-                    <summary><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Mission details</summary>
+                    <summary aria-label="Show mission details for ${escapeHtml(launch.name)}"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Mission details</summary>
                     <div class="data-detail-panel">
                       <p class="mb-3">${fullDetails}</p>
                       ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
@@ -1316,7 +1316,7 @@ async function loadNeo() {
                 </div>
                 <p class="text-secondary small mb-0">${formatLunarDistance(item.lunarDistance)} · ${formatVelocityKph(item.velocityKph)}</p>
                 <details class="data-details asteroid-details mt-2">
-                  <summary><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Approach details</summary>
+                  <summary aria-label="Show approach details for ${escapeHtml(item.name)}"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Approach details</summary>
                   <div class="data-detail-panel">
                     <dl class="detail-list mb-3">
                       <div>

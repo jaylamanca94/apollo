@@ -1310,6 +1310,31 @@ html[data-bs-theme="light"] .data-detail-panel {
   outline-offset: 3px;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .apollo-skip-link,
+  .btn.apollo-refresh-button:hover,
+  .btn.apollo-refresh-button:focus-visible,
+  .apod-media-link:hover,
+  .apod-media-link:hover .apod-media,
+  .launch-card:hover,
+  .launch-show-all:hover,
+  .launch-show-all:focus-visible,
+  .data-details[open] summary i,
+  .launch-page-card:hover {
+    transform: none !important;
+  }
+}
+
 .source-status-pill {
   align-items: center;
   border: 1px solid transparent;

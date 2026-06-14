@@ -195,6 +195,8 @@ Current icon mapping:
 - Preserve visible focus states.
 - Use semantic HTML whenever practical.
 - Dynamic dashboard panels should expose loading and refresh changes with `aria-live` and `aria-busy`; refresh controls should point to a concise live status message and list the regions they refresh with `aria-controls`.
+- Interactive embedded maps should be exposed as named regions, not static images, so map controls remain reachable to assistive technology.
+- Nonessential hover, focus, and disclosure motion should respect `prefers-reduced-motion`.
 - Keep text readable in both light and dark mode.
 - Ensure layouts work across desktop, tablet, and mobile.
 - Avoid text overflow, cramped controls, and overlapping UI.
