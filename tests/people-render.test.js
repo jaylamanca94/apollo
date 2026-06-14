@@ -47,7 +47,8 @@ test("normalizePeople accepts spacecraft field from the live crew feed", () => {
       },
       {
         name: "Sophie Adenot",
-        craft: "Crew-12 Dragon"
+        craft: "ISS",
+        spacecraft: "Crew-12 Dragon"
       }
     ]
   });

@@ -626,7 +626,7 @@ function normalizePeople(data) {
   return people
     .map((person) => ({
       name: getText(person?.name),
-      craft: getText(person?.craft || person?.spacecraft)
+      craft: getText(person?.spacecraft || person?.craft)
     }))
     .filter((person) => person.name);
 }
