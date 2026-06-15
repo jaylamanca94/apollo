@@ -119,3 +119,34 @@ test("loadApod renders embeddable videos with direct media links", async () => {
   assert.equal(status.state, "ok");
   assert.match(status.detail, /^Video for/);
 });
+
+test("loadApod avoids iframe embeds for unknown media types", async () => {
+  const apodBody = {
+    innerHTML: ""
+  };
+  const { loadApod } = loadDashboardHelpers({
+    elements: {
+      "#apodBody": apodBody
+    },
+    fetchPayload: {
+      apod: {
+        date: "2026-06-11",
+        explanation: "An interactive NASA media item.",
+        mediaType: "other",
+        mediaUrl: "https://example.com/apod-interactive",
+        sourceUrl: "https://apod.nasa.gov/apod/ap260611.html",
+        title: "Interactive sky view"
+      }
+    }
+  });
+
+  const status = await loadApod();
+
+  assert.doesNotMatch(apodBody.innerHTML, /<iframe/);
+  assert.match(apodBody.innerHTML, /NASA media preview is unavailable here/);
+  assert.match(apodBody.innerHTML, /href="https:\/\/example\.com\/apod-interactive"/);
+  assert.match(apodBody.innerHTML, /Open media/);
+  assert.equal(status.id, "apod");
+  assert.equal(status.state, "ok");
+  assert.match(status.detail, /^Media for/);
+});

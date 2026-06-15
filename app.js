@@ -1036,7 +1036,7 @@ async function loadApod() {
     } else if (data.mediaType === "video" && data.mediaUrl) {
       media = `<div class="state-message apod-media-fallback">NASA video preview is unavailable here. Use the video link for the source media.</div>`;
     } else if (data.mediaUrl) {
-      media = `<div class="ratio ratio-16x9 apod-embed"><iframe src="${mediaUrl}" title="${title}" allowfullscreen></iframe></div>`;
+      media = `<div class="state-message apod-media-fallback">NASA media preview is unavailable here. Open the media link or NASA source for the original.</div>`;
     }
 
     els.apodBody.innerHTML = `
@@ -1070,6 +1070,12 @@ async function loadApod() {
                 View video
               </a>
             ` : ""}
+            ${data.mediaType !== "image" && data.mediaType !== "video" && mediaUrl ? `
+              <a class="source-link" href="${mediaUrl}" target="_blank" rel="noopener noreferrer">
+                <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                Open media
+              </a>
+            ` : ""}
             <a class="source-link" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
               <i class="fa-solid fa-earth-americas" aria-hidden="true"></i>
               NASA source
@@ -1078,11 +1084,11 @@ async function loadApod() {
         </div>
       </div>
     `;
-    const mediaLabel = data.mediaType === "video" ? "Video" : "Image";
+    const mediaLabel = data.mediaType === "video" ? "Video" : data.mediaType === "image" ? "Image" : "Media";
     return createSourceStatus("apod", "ok", data.date ? `${mediaLabel} for ${formatDate(data.date)}` : `Current ${mediaLabel.toLowerCase()} loaded.`);
   } catch (error) {
     setError(els.apodBody, getApiErrorMessage(error, "NASA's astronomy picture is unavailable right now. This card will update when NASA responds."));
-    return createSourceStatus("apod", "error", "NASA image did not load.");
+    return createSourceStatus("apod", "error", "NASA APOD did not load.");
   }
 }
 
