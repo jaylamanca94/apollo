@@ -76,6 +76,8 @@ Use compact raised row surfaces inside dense operational cards for metadata cell
 
 Use compact fact cells for dense detail lists inside launch and disclosure panels. Each cell should use the same `8px` radius, thin border, low inset highlight, and quiet raised surface as operational rows, while preserving the label/value hierarchy. This keeps technical details scannable without making them compete with primary mission titles, countdowns, source links, or card summaries.
 
+Use compact raised notice rows for source and space-weather status details. Status icons may shift between success, warning, and accent tones when the row state already communicates loaded, attention, or unavailable, but keep the row surface neutral so the dashboard does not feel alarmist. Count summaries can use small pill-like raised surfaces when they introduce a dense list.
+
 ### Desktop
 
 - 12-column grid

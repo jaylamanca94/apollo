@@ -526,6 +526,7 @@ body {
   background: var(--apollo-surface-raised);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   color: var(--bs-secondary-color);
   padding: 1rem;
 }
@@ -758,9 +759,19 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
 }
 
 .launch-count {
+  align-items: center;
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 999px;
+  box-shadow: var(--apollo-shadow-low);
   color: var(--apollo-muted-strong);
+  display: inline-flex;
   font-size: 1rem;
-  margin-bottom: 26px;
+  font-weight: 700;
+  justify-self: start;
+  margin-bottom: 22px;
+  min-height: 34px;
+  padding: 0.35rem 0.9rem;
 }
 
 .launch-list {
@@ -1139,14 +1150,23 @@ html[data-bs-theme="light"] .data-detail-panel {
   padding-top: 1rem;
 }
 
+.space-weather-alerts ul {
+  display: grid;
+  gap: 10px;
+}
+
 .space-weather-alerts li {
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  box-shadow: var(--apollo-shadow-low);
   display: grid;
   gap: 0.25rem;
-  padding: 0.625rem 0;
+  padding: 0.75rem 0.875rem;
 }
 
 .space-weather-alerts li + li {
-  border-top: 1px solid var(--apollo-border);
+  border-top: 0;
 }
 
 .space-weather-alerts time {
@@ -1155,9 +1175,17 @@ html[data-bs-theme="light"] .data-detail-panel {
 }
 
 .space-weather-alert-heading {
-  align-items: baseline;
+  align-items: flex-start;
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
+  line-height: 1.35;
+}
+
+.space-weather-alert-heading > span:last-child {
+  flex: 1 1 12rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .space-weather-alert-pill {
@@ -1233,7 +1261,7 @@ html[data-bs-theme="light"] .data-detail-panel {
 }
 
 .source-status-row {
-  align-items: center;
+  align-items: start;
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: 8px;
@@ -1262,6 +1290,24 @@ html[data-bs-theme="light"] .data-detail-panel {
   height: 2.25rem;
   justify-content: center;
   width: 2.25rem;
+}
+
+.source-status-ok .source-status-icon {
+  background: var(--apollo-success-soft);
+  border-color: color-mix(in srgb, var(--apollo-success) 34%, transparent);
+  color: var(--apollo-success);
+}
+
+.source-status-attention .source-status-icon {
+  background: var(--apollo-warning-soft);
+  border-color: color-mix(in srgb, var(--apollo-warning) 36%, transparent);
+  color: var(--apollo-warning);
+}
+
+.source-status-error .source-status-icon {
+  background: var(--apollo-accent-soft);
+  border-color: rgba(255, 64, 86, 0.32);
+  color: var(--apollo-accent);
 }
 
 .source-status-copy {
