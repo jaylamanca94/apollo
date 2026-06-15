@@ -20,6 +20,42 @@ function safeHttpUrl(value) {
   }
 }
 
+function getApodEmbedUrl(value) {
+  const safeUrl = safeHttpUrl(value);
+
+  if (!safeUrl) {
+    return "";
+  }
+
+  const url = new URL(safeUrl);
+  const hostname = url.hostname.replace(/^www\./, "").toLowerCase();
+
+  if (hostname === "youtube.com" || hostname === "youtube-nocookie.com") {
+    const embedMatch = url.pathname.match(/^\/embed\/([^/?#]+)/);
+    const videoId = embedMatch?.[1] || url.searchParams.get("v");
+
+    return videoId ? `https://www.youtube.com/embed/${encodeURIComponent(videoId)}` : "";
+  }
+
+  if (hostname === "youtu.be") {
+    const videoId = url.pathname.split("/").filter(Boolean)[0];
+
+    return videoId ? `https://www.youtube.com/embed/${encodeURIComponent(videoId)}` : "";
+  }
+
+  if (hostname === "player.vimeo.com" && /^\/video\/[^/?#]+/.test(url.pathname)) {
+    return safeUrl;
+  }
+
+  if (hostname === "vimeo.com") {
+    const videoId = url.pathname.split("/").filter(Boolean)[0];
+
+    return videoId ? `https://player.vimeo.com/video/${encodeURIComponent(videoId)}` : "";
+  }
+
+  return "";
+}
+
 function isIsoDate(value) {
   return /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
@@ -45,6 +81,7 @@ const NEO_SENTRY_CONTEXT = {
 
 function normalizeApodPayload(payload) {
   const date = getText(payload?.date);
+  const mediaUrl = safeHttpUrl(payload?.url);
 
   return {
     apod: {
@@ -52,7 +89,8 @@ function normalizeApodPayload(payload) {
       date,
       explanation: getText(payload?.explanation, "No description available."),
       mediaType: getText(payload?.media_type),
-      mediaUrl: safeHttpUrl(payload?.url),
+      mediaUrl,
+      mediaEmbedUrl: getApodEmbedUrl(mediaUrl),
       hdUrl: safeHttpUrl(payload?.hdurl),
       copyright: getText(payload?.copyright),
       sourceUrl: getApodSourceUrl(date)
@@ -344,6 +382,7 @@ function normalizeSpaceWeatherPayload(payload) {
 }
 
 module.exports = {
+  getApodEmbedUrl,
   isIsoDate,
   normalizeApodPayload,
   normalizeNeoPayload,

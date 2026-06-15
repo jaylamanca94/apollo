@@ -4,25 +4,35 @@ const path = require("node:path");
 const test = require("node:test");
 const vm = require("node:vm");
 
-function loadDashboardHelpers() {
+function loadDashboardHelpers({ elements = {}, fetchPayload = null } = {}) {
   const source = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
   const helperSource = source.slice(0, source.indexOf("async function loadPeople"));
   const context = {
+    AbortController,
     document: {
       documentElement: {
         setAttribute() {}
       },
-      querySelector() {
-        return null;
+      querySelector(selector) {
+        return elements[selector] || null;
       }
     },
+    fetch: async () => ({
+      ok: true,
+      status: 200,
+      async json() {
+        return fetchPayload;
+      }
+    }),
     window: {
       localStorage: {
         getItem() {
           return null;
         },
         setItem() {}
-      }
+      },
+      clearTimeout,
+      setTimeout
     },
     URL
   };
@@ -77,4 +87,35 @@ test("normalizePeople accepts spacecraft field from the live crew feed", () => {
       count: 1
     }
   ]);
+});
+
+test("loadApod renders embeddable videos with direct media links", async () => {
+  const apodBody = {
+    innerHTML: ""
+  };
+  const { loadApod } = loadDashboardHelpers({
+    elements: {
+      "#apodBody": apodBody
+    },
+    fetchPayload: {
+      apod: {
+        date: "2026-06-10",
+        explanation: "A solar eruption video.",
+        mediaType: "video",
+        mediaUrl: "https://www.youtube.com/watch?v=abc123XYZ_8",
+        mediaEmbedUrl: "https://www.youtube.com/embed/abc123XYZ_8",
+        sourceUrl: "https://apod.nasa.gov/apod/ap260610.html",
+        title: "Solar eruption"
+      }
+    }
+  });
+
+  const status = await loadApod();
+
+  assert.match(apodBody.innerHTML, /<iframe src="https:\/\/www\.youtube\.com\/embed\/abc123XYZ_8"/);
+  assert.match(apodBody.innerHTML, /href="https:\/\/www\.youtube\.com\/watch\?v=abc123XYZ_8"/);
+  assert.match(apodBody.innerHTML, /View video/);
+  assert.equal(status.id, "apod");
+  assert.equal(status.state, "ok");
+  assert.match(status.detail, /^Video for/);
 });

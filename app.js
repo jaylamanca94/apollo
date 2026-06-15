@@ -250,6 +250,42 @@ function safeHttpUrl(value) {
   }
 }
 
+function getApodEmbedUrl(value) {
+  const safeUrl = safeHttpUrl(value);
+
+  if (!safeUrl) {
+    return "";
+  }
+
+  const url = new URL(safeUrl);
+  const hostname = url.hostname.replace(/^www\./, "").toLowerCase();
+
+  if (hostname === "youtube.com" || hostname === "youtube-nocookie.com") {
+    const embedMatch = url.pathname.match(/^\/embed\/([^/?#]+)/);
+    const videoId = embedMatch?.[1] || url.searchParams.get("v");
+
+    return videoId ? `https://www.youtube.com/embed/${encodeURIComponent(videoId)}` : "";
+  }
+
+  if (hostname === "youtu.be") {
+    const videoId = url.pathname.split("/").filter(Boolean)[0];
+
+    return videoId ? `https://www.youtube.com/embed/${encodeURIComponent(videoId)}` : "";
+  }
+
+  if (hostname === "player.vimeo.com" && /^\/video\/[^/?#]+/.test(url.pathname)) {
+    return safeUrl;
+  }
+
+  if (hostname === "vimeo.com") {
+    const videoId = url.pathname.split("/").filter(Boolean)[0];
+
+    return videoId ? `https://player.vimeo.com/video/${encodeURIComponent(videoId)}` : "";
+  }
+
+  return "";
+}
+
 function truncateText(value, maxLength = 360) {
   const text = String(value ?? "").trim();
 
@@ -581,13 +617,15 @@ function createSourceStatus(id, state, detail) {
 function normalizeApod(data) {
   const apod = data?.apod && typeof data.apod === "object" ? data.apod : data;
   const date = getText(apod?.date);
+  const mediaUrl = safeHttpUrl(apod?.mediaUrl || apod?.url);
 
   return {
     title: getText(apod?.title, "Astronomy Picture of the Day"),
     date,
     explanation: getText(apod?.explanation, "No description available."),
     mediaType: getText(apod?.mediaType || apod?.media_type),
-    mediaUrl: safeHttpUrl(apod?.mediaUrl || apod?.url),
+    mediaUrl,
+    mediaEmbedUrl: safeHttpUrl(apod?.mediaEmbedUrl) || getApodEmbedUrl(mediaUrl),
     hdUrl: safeHttpUrl(apod?.hdUrl || apod?.hdurl),
     copyright: getText(apod?.copyright),
     sourceUrl: safeHttpUrl(apod?.sourceUrl) || getApodSourceUrl(date)
@@ -978,21 +1016,28 @@ async function loadApod() {
     const data = normalizeApod(await fetchJson(API.apod));
     const title = escapeHtml(data.title);
     const mediaUrl = escapeHtml(data.mediaUrl);
+    const mediaEmbedUrl = escapeHtml(data.mediaEmbedUrl);
     const fullImageUrl = escapeHtml(data.hdUrl || data.mediaUrl);
     const sourceUrl = escapeHtml(data.sourceUrl);
     const summaryText = truncateText(data.explanation, 520);
     const explanation = escapeHtml(data.explanation);
     const summary = escapeHtml(summaryText);
     const hasLongExplanation = summaryText !== data.explanation;
-    const media = data.mediaUrl && data.mediaType === "image"
-      ? `
+    let media = `<div class="state-message">NASA media is unavailable right now.</div>`;
+
+    if (data.mediaUrl && data.mediaType === "image") {
+      media = `
         <a class="apod-media-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open full-size APOD image: ${title}">
           <img class="apod-media" src="${mediaUrl}" alt="${title}">
         </a>
-      `
-      : data.mediaUrl
-        ? `<div class="ratio ratio-16x9 apod-embed"><iframe src="${mediaUrl}" title="${title}" allowfullscreen></iframe></div>`
-        : `<div class="state-message">NASA media is unavailable right now.</div>`;
+      `;
+    } else if (data.mediaType === "video" && data.mediaEmbedUrl) {
+      media = `<div class="ratio ratio-16x9 apod-embed"><iframe src="${mediaEmbedUrl}" title="${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;
+    } else if (data.mediaType === "video" && data.mediaUrl) {
+      media = `<div class="state-message apod-media-fallback">NASA video preview is unavailable here. Use the video link for the source media.</div>`;
+    } else if (data.mediaUrl) {
+      media = `<div class="ratio ratio-16x9 apod-embed"><iframe src="${mediaUrl}" title="${title}" allowfullscreen></iframe></div>`;
+    }
 
     els.apodBody.innerHTML = `
       <div class="apod-showcase">
@@ -1019,6 +1064,12 @@ async function loadApod() {
                 View image
               </a>
             ` : ""}
+            ${data.mediaType === "video" && mediaUrl ? `
+              <a class="source-link" href="${mediaUrl}" target="_blank" rel="noopener noreferrer">
+                <i class="fa-regular fa-circle-play" aria-hidden="true"></i>
+                View video
+              </a>
+            ` : ""}
             <a class="source-link" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
               <i class="fa-solid fa-earth-americas" aria-hidden="true"></i>
               NASA source
@@ -1027,7 +1078,8 @@ async function loadApod() {
         </div>
       </div>
     `;
-    return createSourceStatus("apod", "ok", data.date ? `Image for ${formatDate(data.date)}` : "Current image loaded.");
+    const mediaLabel = data.mediaType === "video" ? "Video" : "Image";
+    return createSourceStatus("apod", "ok", data.date ? `${mediaLabel} for ${formatDate(data.date)}` : `Current ${mediaLabel.toLowerCase()} loaded.`);
   } catch (error) {
     setError(els.apodBody, getApiErrorMessage(error, "NASA's astronomy picture is unavailable right now. This card will update when NASA responds."));
     return createSourceStatus("apod", "error", "NASA image did not load.");

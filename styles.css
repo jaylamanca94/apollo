@@ -449,6 +449,12 @@ body {
   overflow: hidden;
 }
 
+.apod-media-fallback {
+  align-items: center;
+  display: flex;
+  min-height: 426px;
+}
+
 .apod-info-card {
   min-height: 426px;
   padding: 28px 26px;

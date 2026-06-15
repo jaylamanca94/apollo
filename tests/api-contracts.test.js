@@ -4,6 +4,7 @@ const test = require("node:test");
 const { getCached, setCached } = require("../api/_cache");
 const { fetchJson } = require("../api/_http");
 const {
+  getApodEmbedUrl,
   isIsoDate,
   normalizeApodPayload,
   normalizeNeoPayload,
@@ -122,6 +123,7 @@ test("normalizeApodPayload returns a stable dashboard contract", () => {
       explanation: "A nebula in detail.",
       mediaType: "image",
       mediaUrl: "https://apod.nasa.gov/image_1024.jpg",
+      mediaEmbedUrl: "",
       hdUrl: "https://apod.nasa.gov/image.jpg",
       copyright: "NASA",
       sourceUrl: "https://apod.nasa.gov/apod/ap260610.html"
@@ -138,7 +140,26 @@ test("normalizeApodPayload uses safe fallbacks for sparse payloads", () => {
   assert.equal(payload.apod.title, "Astronomy Picture of the Day");
   assert.equal(payload.apod.explanation, "No description available.");
   assert.equal(payload.apod.mediaUrl, "");
+  assert.equal(payload.apod.mediaEmbedUrl, "");
   assert.equal(payload.apod.sourceUrl, "https://apod.nasa.gov/apod/");
+});
+
+test("normalizeApodPayload exposes embeddable APOD video URLs", () => {
+  const payload = normalizeApodPayload({
+    date: "2026-06-10",
+    media_type: "video",
+    title: "Solar eruption",
+    url: "https://www.youtube.com/watch?v=abc123XYZ_8"
+  });
+
+  assert.equal(payload.apod.mediaUrl, "https://www.youtube.com/watch?v=abc123XYZ_8");
+  assert.equal(payload.apod.mediaEmbedUrl, "https://www.youtube.com/embed/abc123XYZ_8");
+});
+
+test("getApodEmbedUrl supports known APOD video hosts only", () => {
+  assert.equal(getApodEmbedUrl("https://youtu.be/abc123XYZ_8?t=30"), "https://www.youtube.com/embed/abc123XYZ_8");
+  assert.equal(getApodEmbedUrl("https://vimeo.com/123456789"), "https://player.vimeo.com/video/123456789");
+  assert.equal(getApodEmbedUrl("https://example.com/watch/123456789"), "");
 });
 
 test("normalizeNeoPayload returns asteroid context and filters malformed records", () => {

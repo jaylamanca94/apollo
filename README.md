@@ -2,7 +2,7 @@
 
 Apollo is a small Bootstrap MVP dashboard for live and near-live public space data. It leads with NASA's Astronomy Picture of the Day, then summarizes the ISS position, crew in space, SpaceX launches, NOAA space weather, near-Earth asteroid approaches, and upstream source status.
 
-The app is designed to be easy to demo: each card favors source-backed context, plain labels, source timing, and quick links to the original sources.
+The app is designed to be easy to demo: each card favors source-backed context, plain labels, source timing, APOD image/video media actions, and quick links to the original sources.
 
 ## Recommended Architecture
 
@@ -19,7 +19,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 
 ## APIs Used
 
-- NASA Astronomy Picture of the Day, proxied and normalized through `/api/apod`
+- NASA Astronomy Picture of the Day, proxied and normalized through `/api/apod` with safe image/video media URLs
 - NASA NeoWs Near-Earth Object Feed, proxied and normalized through `/api/neo`
 - The Space Devs SpaceX launch data, proxied and normalized through `/api/launches`
 - NOAA Space Weather Prediction Center K-index, forecast, and alert feeds, proxied and normalized through `/api/space-weather`
@@ -51,7 +51,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `api/health.js` - serverless health endpoint for uptime checks and server configuration status
 - `tests/api-contracts.test.js` - fixture tests for normalized API response contracts
 - `tests/accessibility-structure.test.js` - static accessibility contract checks for page landmarks, live regions, skip links, and refresh controls
-- `tests/people-render.test.js` - focused frontend helper coverage for crew roster spacecraft parsing
+- `tests/people-render.test.js` - focused frontend helper coverage for crew roster spacecraft parsing and APOD media rendering
 - `package.json` - local development/check scripts
 - `vercel.json` - Vercel deployment configuration
 
@@ -140,7 +140,7 @@ Run the project checks with:
 npm run check
 ```
 
-This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, launch, and space-weather contracts, static accessibility structure checks, and focused crew roster rendering helpers.
+This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, launch, and space-weather contracts, static accessibility structure checks, and focused crew roster/APOD media rendering helpers.
 
 GitHub Actions runs the same checks on pushes to `main` and on pull requests.
 

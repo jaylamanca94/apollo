@@ -46,7 +46,7 @@ Out of scope for the MVP:
 
 - Responsive Apollo dashboard shell with a dark-first Light/Dark theme toggle.
 - APOD-first feature panel.
-- APOD credit, full-media link, NASA source link, and inline full-description detail.
+- APOD credit, safe image/video media handling, full-media link, NASA source link, and inline full-description detail.
 - ISS latitude, longitude, altitude, velocity, current-position map, source observation time, live orbital context, sunlight state, signal footprint, and source link.
 - Crew count, current craft/location summary, and responsive People in Space grid.
 - Upcoming SpaceX launch summary through a server-side launch-data proxy with inline mission details and launch-window length context.
@@ -69,7 +69,7 @@ Out of scope for the MVP:
 - Bootstrap and Font Awesome Free for UI conventions and icons.
 - Leaflet and OpenStreetMap tiles provide the ISS map without adding another API key.
 - Vercel for deployment and serverless API routes.
-- NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`, then normalized into dashboard-ready response contracts.
+- NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`, then normalized into dashboard-ready response contracts. APOD video links should keep the original source media URL while exposing an embeddable preview URL only for known video hosts.
 - NASA API keys stay server-side via `NASA_API_KEY`.
 - APOD tries NASA's default response first, then Eastern-date fallbacks to avoid UTC publish-window failures.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
