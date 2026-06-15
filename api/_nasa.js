@@ -1,4 +1,5 @@
 const { getCached, setCached } = require("./_cache");
+const { fetchJson } = require("./_http");
 
 const cache = new Map();
 const NASA_BASE_URL = "https://api.nasa.gov";
@@ -72,12 +73,9 @@ async function requestNasa(path, params, cacheKey, ttlSeconds) {
     }
   });
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), NASA_TIMEOUT_MS);
-  const response = await fetch(url, {
-    signal: controller.signal
-  }).finally(() => clearTimeout(timeoutId));
-  const payload = await response.json().catch(() => null);
+  const { response, payload } = await fetchJson(url, {
+    timeoutMs: NASA_TIMEOUT_MS
+  });
 
   if (!response.ok) {
     const error = new Error(`NASA request failed with status ${response.status}`);

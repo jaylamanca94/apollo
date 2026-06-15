@@ -1,4 +1,5 @@
 const { getCached, setCached } = require("./_cache");
+const { fetchJson } = require("./_http");
 const { sendJson } = require("./_nasa");
 const { normalizeSpaceWeatherPayload } = require("./_space_data");
 
@@ -10,12 +11,9 @@ const SPACE_WEATHER_TIMEOUT_MS = 10000;
 const cache = new Map();
 
 async function fetchNoaaJson(url) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), SPACE_WEATHER_TIMEOUT_MS);
-  const response = await fetch(url, {
-    signal: controller.signal
-  }).finally(() => clearTimeout(timeoutId));
-  const payload = await response.json().catch(() => null);
+  const { response, payload } = await fetchJson(url, {
+    timeoutMs: SPACE_WEATHER_TIMEOUT_MS
+  });
 
   if (!response.ok || !payload) {
     const error = new Error(`NOAA SWPC request failed with status ${response.status}`);

@@ -1,4 +1,5 @@
 const { getCached, setCached } = require("./_cache");
+const { fetchJson } = require("./_http");
 const { sendJson } = require("./_nasa");
 
 const LAUNCH_LIBRARY_URL = "https://ll.thespacedevs.com/2.3.0/launches/upcoming/";
@@ -106,12 +107,9 @@ async function requestLaunches(limit = 5) {
   url.searchParams.set("search", "SpaceX");
   url.searchParams.set("limit", String(limit));
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), LAUNCH_TIMEOUT_MS);
-  const response = await fetch(url, {
-    signal: controller.signal
-  }).finally(() => clearTimeout(timeoutId));
-  const payload = await response.json().catch(() => null);
+  const { response, payload } = await fetchJson(url, {
+    timeoutMs: LAUNCH_TIMEOUT_MS
+  });
 
   if (!response.ok) {
     const error = new Error(`Launch Library request failed with status ${response.status}`);

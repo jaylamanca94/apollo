@@ -2,6 +2,7 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 
 const { getCached, setCached } = require("../api/_cache");
+const { fetchJson } = require("../api/_http");
 const {
   isIsoDate,
   normalizeApodPayload,
@@ -21,6 +22,59 @@ test("shared cache returns fresh payloads and drops expired entries", () => {
   setCached(cache, "expired", { status: "expired" }, 0);
   assert.equal(getCached(cache, "expired"), null);
   assert.equal(cache.has("expired"), false);
+});
+
+test("fetchJson returns parsed payloads and applies an abort signal", async (t) => {
+  const originalFetch = global.fetch;
+
+  t.after(() => {
+    global.fetch = originalFetch;
+  });
+
+  global.fetch = async (url, options) => {
+    assert.equal(String(url), "https://example.test/data.json");
+    assert.ok(options.signal instanceof AbortSignal);
+
+    return {
+      ok: true,
+      status: 200,
+      async json() {
+        return {
+          status: "ok"
+        };
+      }
+    };
+  };
+
+  const { response, payload } = await fetchJson("https://example.test/data.json", {
+    timeoutMs: 500
+  });
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(payload, {
+    status: "ok"
+  });
+});
+
+test("fetchJson preserves responses when JSON parsing fails", async (t) => {
+  const originalFetch = global.fetch;
+
+  t.after(() => {
+    global.fetch = originalFetch;
+  });
+
+  global.fetch = async () => ({
+    ok: false,
+    status: 503,
+    async json() {
+      throw new Error("invalid json");
+    }
+  });
+
+  const { response, payload } = await fetchJson("https://example.test/unavailable");
+
+  assert.equal(response.status, 503);
+  assert.equal(payload, null);
 });
 
 test("isIsoDate accepts Apollo's API date format only", () => {
