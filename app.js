@@ -71,6 +71,8 @@ const THEME_STORAGE_KEY = "apollo-theme";
 const EARTH_RADIUS_KM = 6371;
 const MINUTES_PER_HOUR = 60;
 const HOURS_PER_DAY = 24;
+const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right" aria-hidden="true"></i><span>Refresh data</span>`;
+const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing</span>`;
 const NASA_MONTH_INDEX = {
   jan: 0,
   feb: 1,
@@ -834,15 +836,20 @@ function setDashboardStatus(message) {
 }
 
 function setError(container, message) {
-  container.innerHTML = `
-    <div class="alert alert-warning mb-0 py-3" role="alert">
-      ${escapeHtml(message)}
-    </div>
-  `;
+  container.innerHTML = stateMessage(message, { role: "alert", tone: "warning" });
 }
 
-function stateMessage(message) {
-  return `<p class="state-message text-secondary mb-0">${escapeHtml(message)}</p>`;
+function stateMessage(message, options = {}) {
+  const tone = options.tone === "warning" ? " state-message-warning" : "";
+  const icon = options.tone === "warning" ? "fa-circle-exclamation" : "fa-circle-info";
+  const role = options.role ? ` role="${escapeHtml(options.role)}"` : "";
+
+  return `
+    <div class="state-message${tone} mb-0"${role}>
+      <i class="fa-solid ${icon}" aria-hidden="true"></i>
+      <span>${escapeHtml(message)}</span>
+    </div>
+  `;
 }
 
 function resetIssMap() {
@@ -1023,7 +1030,12 @@ async function loadApod() {
     const explanation = escapeHtml(data.explanation);
     const summary = escapeHtml(summaryText);
     const hasLongExplanation = summaryText !== data.explanation;
-    let media = `<div class="state-message">NASA media is unavailable right now.</div>`;
+    let media = `
+      <div class="state-message apod-media-fallback">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <span>NASA media is unavailable right now.</span>
+      </div>
+    `;
 
     if (data.mediaUrl && data.mediaType === "image") {
       media = `
@@ -1034,9 +1046,19 @@ async function loadApod() {
     } else if (data.mediaType === "video" && data.mediaEmbedUrl) {
       media = `<div class="ratio ratio-16x9 apod-embed"><iframe src="${mediaEmbedUrl}" title="${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;
     } else if (data.mediaType === "video" && data.mediaUrl) {
-      media = `<div class="state-message apod-media-fallback">NASA video preview is unavailable here. Use the video link for the source media.</div>`;
+      media = `
+        <div class="state-message apod-media-fallback">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <span>NASA video preview is unavailable here. Use the video link for the source media.</span>
+        </div>
+      `;
     } else if (data.mediaUrl) {
-      media = `<div class="state-message apod-media-fallback">NASA media preview is unavailable here. Open the media link or NASA source for the original.</div>`;
+      media = `
+        <div class="state-message apod-media-fallback">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <span>NASA media preview is unavailable here. Open the media link or NASA source for the original.</span>
+        </div>
+      `;
     }
 
     els.apodBody.innerHTML = `
@@ -1531,7 +1553,7 @@ async function loadDashboard() {
   ].forEach((element) => setBusy(element, true));
   [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
     button.disabled = true;
-    button.innerHTML = "Refreshing";
+    button.innerHTML = REFRESHING_BUTTON_HTML;
   });
   const sourceResults = await Promise.allSettled([
     loadApod(),
@@ -1559,11 +1581,11 @@ async function loadDashboard() {
   setDashboardUpdated();
   if (els.refreshButton) {
     els.refreshButton.disabled = false;
-    els.refreshButton.innerHTML = "Refresh data";
+    els.refreshButton.innerHTML = REFRESH_BUTTON_HTML;
   }
   if (els.refreshButtonMobile) {
     els.refreshButtonMobile.disabled = false;
-    els.refreshButtonMobile.innerHTML = "Refresh data";
+    els.refreshButtonMobile.innerHTML = REFRESH_BUTTON_HTML;
   }
 }
 

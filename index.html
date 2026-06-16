@@ -24,7 +24,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-    <link href="./styles.css?v=dashboard-direction-25" rel="stylesheet">
+    <link href="./styles.css?v=dashboard-direction-26" rel="stylesheet">
   </head>
   <body>
     <div class="apollo-app text-body">
@@ -43,9 +43,9 @@
             <button class="btn btn-outline-secondary btn-sm apollo-theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" aria-pressed="true" title="Switch to light mode">
               <i class="fa-solid fa-sun" aria-hidden="true"></i>
             </button>
-            <div class="apollo-user-chip" aria-label="Apollo public dashboard">
-              <span>Public dashboard</span>
-              <i class="fa-solid fa-circle-user" aria-hidden="true"></i>
+            <div class="apollo-live-chip" aria-label="Live public space data">
+              <span class="apollo-live-dot" aria-hidden="true"></span>
+              <span>Live data</span>
             </div>
           </div>
         </div>
@@ -56,13 +56,15 @@
         <div class="d-flex flex-column apollo-page-stack">
           <header class="apollo-page-header">
             <div class="apollo-title-block">
-              <h1 class="apollo-page-title mb-0" id="dashboardTitle">Live Space Dashboard</h1>
-              <p class="apollo-page-subtitle mb-0">Current ISS position, crew, SpaceX launches, space weather, asteroid approaches, and NASA's image of the day.</p>
+              <p class="section-kicker apollo-hero-kicker mb-0">Live space intelligence</p>
+              <h1 class="apollo-page-title mb-0" id="dashboardTitle">Apollo</h1>
+              <p class="apollo-page-subtitle mb-0">A calm, current view of the ISS, crew in orbit, SpaceX launches, space weather, near-Earth asteroids, and NASA's image of the day.</p>
             </div>
             <div class="apollo-dashboard-actions">
               <p class="apollo-update-pill mb-0" id="dashboardUpdated">Last updated: Loading</p>
               <button class="btn apollo-refresh-button" id="refreshButton" type="button" aria-describedby="dashboardStatus" aria-controls="apodBody issBody peopleBody launchBody neoBody spaceWeatherBody sourceStatusBody">
-                Refresh data
+                <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                <span>Refresh data</span>
               </button>
             </div>
           </header>
@@ -84,7 +86,10 @@
                 </div>
               </div>
               <div class="card-body section-card-body" id="issBody" aria-live="polite" aria-busy="true">
-                <p class="state-message text-secondary mb-0">Loading ISS location...</p>
+                <div class="state-message mb-0">
+                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                  <span>Loading ISS location...</span>
+                </div>
               </div>
             </section>
 
@@ -95,7 +100,10 @@
                 </div>
               </div>
               <div class="card-body section-card-body" id="peopleBody" aria-live="polite" aria-busy="true">
-                <p class="state-message text-secondary mb-0">Loading crew data...</p>
+                <div class="state-message mb-0">
+                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                  <span>Loading crew data...</span>
+                </div>
               </div>
             </section>
 
@@ -106,7 +114,10 @@
                 </div>
               </div>
               <div class="card-body section-card-body" id="launchBody" aria-live="polite" aria-busy="true">
-                <p class="state-message text-secondary mb-0">Loading launch data...</p>
+                <div class="state-message mb-0">
+                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                  <span>Loading launch data...</span>
+                </div>
               </div>
             </section>
 
@@ -117,7 +128,10 @@
                 </div>
               </div>
               <div class="card-body section-card-body" id="neoBody" aria-live="polite" aria-busy="true">
-                <p class="state-message text-secondary mb-0">Loading asteroid summary...</p>
+                <div class="state-message mb-0">
+                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                  <span>Loading asteroid summary...</span>
+                </div>
               </div>
             </section>
 
@@ -128,7 +142,10 @@
                 </div>
               </div>
               <div class="card-body section-card-body" id="spaceWeatherBody" aria-live="polite" aria-busy="true">
-                <p class="state-message text-secondary mb-0">Loading space weather...</p>
+                <div class="state-message mb-0">
+                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                  <span>Loading space weather...</span>
+                </div>
               </div>
             </section>
 
@@ -139,7 +156,10 @@
                 </div>
               </div>
               <div class="card-body section-card-body" id="sourceStatusBody" aria-live="polite" aria-busy="true">
-                <p class="state-message text-secondary mb-0">Checking data sources...</p>
+                <div class="state-message mb-0">
+                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                  <span>Checking data sources...</span>
+                </div>
               </div>
             </section>
           </div>
@@ -149,6 +169,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="./app.js?v=dashboard-direction-27"></script>
+    <script src="./app.js?v=dashboard-direction-28"></script>
   </body>
 </html>

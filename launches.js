@@ -1,5 +1,7 @@
 const LAUNCHES_API = "/api/launches?limit=20";
 const THEME_STORAGE_KEY = "apollo-theme";
+const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right" aria-hidden="true"></i><span>Refresh data</span>`;
+const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing</span>`;
 
 const els = {
   refreshButton: document.querySelector("#launchesRefreshButton"),
@@ -273,9 +275,18 @@ function setLaunchesUpdated(value = formatUpdated()) {
 }
 
 function setError(message) {
-  els.launchPageBody.innerHTML = `
-    <div class="alert alert-warning mb-0 py-3" role="alert">
-      ${escapeHtml(message)}
+  els.launchPageBody.innerHTML = stateMessage(message, { role: "alert", tone: "warning" });
+}
+
+function stateMessage(message, options = {}) {
+  const tone = options.tone === "warning" ? " state-message-warning" : "";
+  const icon = options.tone === "warning" ? "fa-circle-exclamation" : "fa-circle-info";
+  const role = options.role ? ` role="${escapeHtml(options.role)}"` : "";
+
+  return `
+    <div class="state-message${tone} mb-0"${role}>
+      <i class="fa-solid ${icon}" aria-hidden="true"></i>
+      <span>${escapeHtml(message)}</span>
     </div>
   `;
 }
@@ -300,7 +311,7 @@ async function fetchJson(url, options = {}) {
 
 function renderLaunches(launches) {
   if (!launches.length) {
-    els.launchPageBody.innerHTML = `<p class="state-message text-secondary mb-0">No upcoming SpaceX launches are available from the current launch source.</p>`;
+    els.launchPageBody.innerHTML = stateMessage("No upcoming SpaceX launches are available from the current launch source.");
     return;
   }
 
@@ -432,7 +443,7 @@ async function loadLaunches() {
 
   if (els.refreshButton) {
     els.refreshButton.disabled = true;
-    els.refreshButton.innerHTML = "Refreshing";
+    els.refreshButton.innerHTML = REFRESHING_BUTTON_HTML;
   }
 
   try {
@@ -448,7 +459,7 @@ async function loadLaunches() {
 
     if (els.refreshButton) {
       els.refreshButton.disabled = false;
-      els.refreshButton.innerHTML = "Refresh data";
+      els.refreshButton.innerHTML = REFRESH_BUTTON_HTML;
     }
   }
 }

@@ -6,7 +6,7 @@ This file is intentionally separate because design standards and utilities will 
 
 ## Product Feel
 
-The interface should feel quiet, personal, practical, and easy to scan. The current visual direction is a dark operational dashboard: broad content width, charcoal surfaces, thin borders, compact controls, and a single warm red accent.
+The interface should feel quiet, personal, practical, and easy to scan. The current visual direction is an Apple-like operational dashboard: Apollo identity leads the first viewport, the content uses broad charcoal material surfaces, source-backed data stays compact, and a single warm red accent marks primary action and live context.
 
 - Prefer Bootstrap conventions before custom UI patterns.
 - Keep visual decisions simple enough for a solo product builder to maintain.
@@ -14,6 +14,7 @@ The interface should feel quiet, personal, practical, and easy to scan. The curr
 - Use familiar, predictable interface patterns.
 - Prioritize clarity, speed, and maintainability over visual novelty.
 - Avoid adding decorative complexity unless it directly improves the product experience.
+- Keep the product name visible as the first-screen anchor. Avoid internal labels like "public dashboard" when a user-facing live-data signal is clearer.
 
 ## UI Foundation
 
@@ -26,21 +27,22 @@ Use this file as the visual source of truth for `Apollo`. Update it whenever spa
 - Page background: `#F3F5F7`
 - Content surface: `#FFFFFF`
 - Raised surface: `#EEF1F4`
-- Accent: `#E83149`
+- Accent: `#D9233B`
 
 ### Dark Mode
 
-- Page background: `#292E31`
-- Top navigation and content surface: `#1F2427`
-- Raised surface: `#292E31`
-- Border: `#434C52`
+- Page background: `#252A2D`
+- Top navigation: translucent `#1F2427` material
+- Content surface: `#202528`
+- Raised surface: `#2A3034`
+- Border: `#3A4248`
 - Accent: `#FF4056`
 
 Default first-time visitors to Dark Mode and provide a compact header toggle for switching between Light and Dark.
 
 ### Data Accents
 
-Use one shared red accent for dashboard icons, outline actions, map overlays, and progressive disclosure affordances. Avoid giving every data family a separate hue while this design direction is active.
+Use one shared red accent for dashboard icons, the primary refresh action, map overlays, and progressive disclosure affordances. Avoid giving every data family a separate hue while this design direction is active.
 
 Use green success styling for clearly positive safety/status messages. For example, the asteroid message `No listed objects are flagged as potentially hazardous today.` should read as a green success alert, not a red or warning state. Keep the NASA potentially hazardous asteroid criteria and Sentry monitoring context as subdued secondary text inside that same context block so they improve trust without turning the card into an education panel.
 
@@ -50,9 +52,9 @@ Use Leaflet for spatial dashboard views. Keep map frames inside the related data
 
 ## Layout Grid
 
-Dashboard pages should lead with the APOD feature, then use a compact two-column operational grid:
+Dashboard pages should lead with Apollo as the product identity, then the APOD feature, then a compact two-column operational grid:
 
-- APOD split feature: image or media on the left, source/date/title/credit/summary links on the right. For video APOD entries, use a safe embedded preview only when the normalized source provides a known embeddable host; otherwise keep the media panel stable with a concise fallback and a direct video link. Unknown APOD media types should not be embedded in arbitrary iframes; provide a direct media link and NASA source instead.
+- APOD split feature: a larger cinematic image or media panel on the left, source/date/title/credit/summary links on the right. For video APOD entries, use a safe embedded preview only when the normalized source provides a known embeddable host; otherwise keep the media panel stable with a concise fallback and a direct video link. Unknown APOD media types should not be embedded in arbitrary iframes; provide a direct media link and NASA source instead.
 - ISS current position and people in space as paired operational cards. Keep ISS orbital context compact and calculated from the same live position response when possible. Show the ISS feed's source observation time as a subdued "Position fix" line near the map so users can judge freshness without adding repeated card timestamps. Source-provided ISS visibility and footprint fields may sit in the same orbital context block as compact operational facts, not as a separate education panel. Keep People in Space scannable with a compact spacecraft/location occupancy summary from the roster feed before the individual crew list.
 - Launches as a taller list card with three visible launch rows, compact launch-window length context, and a link to the launches detail page.
 - Asteroids as a summary card with closest approach time/distance, hazard and Sentry monitoring context, and nearby object rows. Keep per-object approach details behind compact inline disclosure controls so the card remains scannable.
@@ -60,7 +62,7 @@ Dashboard pages should lead with the APOD feature, then use a compact two-column
 - Data Sources as a full-width closing card that reports whether each upstream source loaded, needs attention, or is unavailable.
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.
-Use compact primary header links once Apollo has multiple meaningful pages. Keep page links next to the brand, use pill-shaped active state with `aria-current="page"`, and preserve the theme toggle as a utility control instead of mixing it into page navigation.
+Use compact primary header links once Apollo has multiple meaningful pages. Keep page links next to the brand, use pill-shaped active state with `aria-current="page"`, use a simple live-data chip for the public data state, and preserve the theme toggle as a utility control instead of mixing it into page navigation.
 Use the data-source status card for operational trust, not diagnostics. Keep labels short, tie each row to an existing dashboard source, include a compact upstream source link, and show concise timing context when a source has a meaningful observation, launch, or query date. Avoid exposing implementation details that do not help a viewer understand dashboard freshness.
 
 Use compact uppercase pills for NOAA space-weather notice types. They should aid scanning while leaving the headline and issued time as the primary content. If a notice includes a NOAA R/S/G scale or clear storm-level K-index text, show the scale as a subdued secondary cue under the headline rather than adding a long explainer.
@@ -72,7 +74,7 @@ Use minute-level launch countdown labels inside the final hour so near-term laun
 
 Use inline disclosure details for richer dashboard context, then graduate to separate static pages only when a card needs materially more space. The launches detail page is the first example of this pattern.
 
-Use compact raised row surfaces inside dense operational cards for metadata cells, crew rows, launch rows, asteroid rows, source rows, and short status/context blocks. These inner rows should be visually quieter than the parent card, keep the same `8px` radius, use thin borders, and use the shared low inset highlight so repeated data groups feel deliberately layered without looking decorative. They may use subtle hover or disclosure polish when an element already exposes interaction. Avoid making non-clickable rows look like primary buttons.
+Use compact raised row surfaces inside dense operational cards for metadata cells, crew rows, launch rows, asteroid rows, source rows, and short status/context blocks. These inner rows should be visually quieter than the parent card, keep the same `8px` radius, use thin borders, and use the shared low inset highlight plus soft row shadow so repeated data groups feel deliberately layered without looking decorative. They may use subtle hover or disclosure polish when an element already exposes interaction. Avoid making non-clickable rows look like primary buttons.
 
 Use compact fact cells for dense detail lists inside launch and disclosure panels. Each cell should use the same `8px` radius, thin border, low inset highlight, and quiet raised surface as operational rows, while preserving the label/value hierarchy. This keeps technical details scannable without making them compete with primary mission titles, countdowns, source links, or card summaries.
 
@@ -120,7 +122,7 @@ Typography values are defined as font size and line height.
 
 | Style | Font Size | Line Height |
 | --- | ---: | ---: |
-| Display | `48px` | `56px` |
+| Display | `76px` | `73px` |
 | Page Title | `40px` | `48px` |
 | Large Heading | `32px` | `40px` |
 | Heading | `24px` | `32px` |
@@ -137,7 +139,7 @@ Typography values are defined as font size and line height.
 - LG: `16px`
 - XL: `24px`
 
-Use `8px` or less for normal cards and repeated list items unless a larger container treatment is explicitly requested.
+Use `8px` or less for repeated list items. Main dashboard and feature cards may use `10px` radius when they are acting as broad material surfaces.
 
 ## Icons
 
@@ -183,6 +185,8 @@ Current icon mapping:
 ## Interaction Feel
 
 - Clickable cards and list rows should have clear pointer, hover, and keyboard focus states.
+- The global refresh action should read as the primary action, use the red accent fill, and show a compact spinner while data is refreshing.
+- Loading, unavailable, and error states should use the shared state-message surface with a small icon so the page feels composed before live data arrives.
 - User navigation should use a compact icon/name control when account actions are needed.
 - Add buttons should add a new row below the current section or item type.
 - Remove buttons are destructive, clearly labeled, and use red styling.
