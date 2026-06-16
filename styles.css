@@ -20,6 +20,27 @@ html[data-bs-theme="dark"] {
   --apollo-warning-soft: rgba(255, 200, 87, 0.15);
   --apollo-muted: #bfc5ca;
   --apollo-muted-strong: #d8dde1;
+  --acadia-color-page: var(--apollo-page-bg);
+  --acadia-color-surface: var(--apollo-surface-bg);
+  --acadia-color-surface-muted: var(--apollo-row-bg);
+  --acadia-color-text: var(--bs-body-color);
+  --acadia-color-text-muted: var(--apollo-muted);
+  --acadia-color-border: var(--apollo-border);
+  --acadia-color-border-strong: var(--apollo-border-strong);
+  --acadia-color-primary: var(--apollo-accent);
+  --acadia-color-primary-hover: var(--apollo-accent-hover);
+  --acadia-color-control: #262c30;
+  --acadia-color-control-hover: #2f363b;
+  --acadia-color-control-border: #3c454b;
+  --acadia-color-control-placeholder: #9ca5ad;
+  --acadia-control-select-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23bfc5ca' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  --acadia-control-height: 2.75rem;
+  --acadia-control-padding-x: .875rem;
+  --acadia-focus-ring: 0 0 0 0.2rem rgba(255, 64, 86, 0.26);
+  --acadia-shadow-control: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 8px 20px rgba(0, 0, 0, 0.1);
+  --acadia-shadow-row: var(--apollo-shadow-row);
+  --acadia-radius-md: 8px;
+  --acadia-motion-fast: 160ms ease;
   --bs-body-bg: var(--apollo-page-bg);
   --bs-body-color: #dfe3e7;
   --bs-secondary-color: #bfc5ca;
@@ -49,6 +70,23 @@ html[data-bs-theme="light"] {
   --apollo-warning-soft: rgba(153, 107, 0, 0.12);
   --apollo-muted: #5f6870;
   --apollo-muted-strong: #30363b;
+  --acadia-color-page: var(--apollo-page-bg);
+  --acadia-color-surface: var(--apollo-surface-bg);
+  --acadia-color-surface-muted: var(--apollo-row-bg);
+  --acadia-color-text: var(--bs-body-color);
+  --acadia-color-text-muted: var(--apollo-muted);
+  --acadia-color-border: var(--apollo-border);
+  --acadia-color-border-strong: var(--apollo-border-strong);
+  --acadia-color-primary: var(--apollo-accent);
+  --acadia-color-primary-hover: var(--apollo-accent-hover);
+  --acadia-color-control: #f8fafb;
+  --acadia-color-control-hover: #ffffff;
+  --acadia-color-control-border: #d4dbe1;
+  --acadia-color-control-placeholder: #7b858d;
+  --acadia-control-select-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%235f6870' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  --acadia-focus-ring: 0 0 0 0.2rem rgba(217, 35, 59, 0.18);
+  --acadia-shadow-control: 0 1px 0 rgba(255, 255, 255, 0.82) inset, 0 8px 20px rgba(31, 36, 39, 0.05);
+  --acadia-shadow-row: var(--apollo-shadow-row);
   --bs-body-bg: var(--apollo-page-bg);
   --bs-body-color: #23292d;
   --bs-secondary-color: #5f6870;
@@ -95,6 +133,66 @@ body {
   outline: 3px solid rgba(255, 255, 255, 0.72);
   outline-offset: 2px;
   transform: translateY(0);
+}
+
+.apollo-app .btn:not(.apollo-refresh-button) {
+  border-radius: var(--acadia-radius-md);
+  transition: background-color var(--acadia-motion-fast), border-color var(--acadia-motion-fast), box-shadow var(--acadia-motion-fast), color var(--acadia-motion-fast), transform var(--acadia-motion-fast);
+}
+
+.apollo-app .btn:not(.apollo-refresh-button):hover {
+  transform: translateY(-1px);
+}
+
+.apollo-app .btn:not(.apollo-refresh-button):active {
+  transform: translateY(0);
+}
+
+.apollo-app .btn:not(.apollo-refresh-button):focus-visible {
+  box-shadow: var(--acadia-focus-ring);
+  outline: 0;
+}
+
+.apollo-app .form-control,
+.apollo-app .form-select {
+  appearance: none;
+  background-color: var(--acadia-color-control);
+  border: 1px solid var(--acadia-color-control-border);
+  border-radius: var(--acadia-radius-md);
+  box-shadow: var(--acadia-shadow-control);
+  color: var(--bs-body-color);
+  font-size: 0.9375rem;
+  min-height: var(--acadia-control-height);
+  padding-left: var(--acadia-control-padding-x);
+  padding-right: var(--acadia-control-padding-x);
+  transition: background-color var(--acadia-motion-fast), border-color var(--acadia-motion-fast), box-shadow var(--acadia-motion-fast), color var(--acadia-motion-fast);
+}
+
+.apollo-app .form-control::placeholder {
+  color: var(--acadia-color-control-placeholder);
+  opacity: 1;
+}
+
+.apollo-app .form-control:hover:not(:disabled),
+.apollo-app .form-select:hover:not(:disabled) {
+  background-color: var(--acadia-color-control-hover);
+  border-color: var(--acadia-color-border-strong);
+}
+
+.apollo-app .form-control:focus,
+.apollo-app .form-select:focus {
+  background-color: var(--acadia-color-control-hover);
+  border-color: var(--acadia-color-primary);
+  box-shadow: var(--acadia-focus-ring), var(--acadia-shadow-control);
+  color: var(--bs-body-color);
+}
+
+.apollo-app .form-select {
+  background-image: var(--acadia-control-select-icon);
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 16px 12px;
+  padding-right: 2.25rem;
 }
 
 .apollo-topbar {
@@ -1448,6 +1546,8 @@ html[data-bs-theme="light"] .data-detail-panel {
   }
 
   .apollo-skip-link,
+  .apollo-app .btn:not(.apollo-refresh-button):hover,
+  .apollo-app .btn:not(.apollo-refresh-button):focus-visible,
   .btn.apollo-refresh-button:hover,
   .btn.apollo-refresh-button:focus-visible,
   .apod-media-link:hover,

@@ -20,6 +20,16 @@ The interface should feel quiet, personal, practical, and easy to scan. The curr
 
 Use this file as the visual source of truth for `Apollo`. Update it whenever spacing, color, typography, icon sizing, form layout, interaction feel, accessibility, or reusable utilities change.
 
+### Acadia Adapter
+
+Apollo now treats `../Acadia` as the shared design-system baseline. Before adding a local UI style, check Acadia's live docs, foundations, and CSS primitives for the needed layout, control, surface, state, icon, or responsive behavior.
+
+- Use Acadia primitives for shared product language: controls, card padding, raised rows, focus rings, state surfaces, motion, table/form patterns, and Font Awesome Free icon sizing.
+- Keep Apollo-specific choices local when they express space-data semantics, dark-first identity, live-source context, map behavior, or the red product accent.
+- Map Apollo variables onto Acadia-style adapter variables in `styles.css` before creating a new one-off component rule.
+- Keep adapter-owned hover and focus motion covered by Apollo's `prefers-reduced-motion` override.
+- If an Apollo pattern becomes useful for another product, graduate the neutral part into Acadia and keep Apollo's wording/data treatment here.
+
 ## Color
 
 ### Light Mode

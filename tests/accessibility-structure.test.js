@@ -163,6 +163,7 @@ test("nonessential interface motion respects reduced motion preferences", () => 
 
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(css, /transition-duration:\s*0\.01ms !important;/);
+  assert.match(css, /\.apollo-app \.btn:not\(\.apollo-refresh-button\):hover,\s*\n\s*\.apollo-app \.btn:not\(\.apollo-refresh-button\):focus-visible/);
   assert.match(css, /\.launch-card:hover,\s*\n\s*\.launch-show-all:hover/);
   assert.match(css, /transform:\s*none !important;/);
 });
