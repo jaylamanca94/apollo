@@ -1,6 +1,6 @@
 # Apollo
 
-Apollo is a small Bootstrap MVP dashboard for live and near-live public space data. It leads with NASA's Astronomy Picture of the Day, then summarizes the ISS position, crew in space, SpaceX launches, NOAA space weather, near-Earth asteroid approaches, and upstream source status.
+Apollo is a small Bootstrap MVP dashboard for live and near-live public space data. It leads with NASA's Astronomy Picture of the Day, then summarizes the ISS position, crew in space with source roster context, SpaceX launches, NOAA space weather, near-Earth asteroid approaches, and upstream source status.
 
 The app is designed to be easy to demo: each card favors source-backed context, plain labels, source timing, APOD image/video media actions, and quick links to the original sources.
 
@@ -26,7 +26,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - Apollo server health check through `/api/health`
 - Where the ISS At
 - OpenStreetMap tiles for the ISS map
-- People in Space JSON
+- People in Space JSON, including declared roster count and ISS expedition context when provided
 
 ## File Overview
 

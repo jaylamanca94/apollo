@@ -6,7 +6,7 @@ const vm = require("node:vm");
 
 function loadDashboardHelpers({ elements = {}, fetchPayload = null } = {}) {
   const source = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
-  const helperSource = source.slice(0, source.indexOf("async function loadPeople"));
+  const helperSource = source.slice(0, source.indexOf("async function loadLaunches"));
   const context = {
     AbortController,
     document: {
@@ -44,7 +44,26 @@ function loadDashboardHelpers({ elements = {}, fetchPayload = null } = {}) {
 }
 
 test("normalizePeople accepts spacecraft field from the live crew feed", () => {
-  const { normalizePeople, summarizeCraftOccupancy } = loadDashboardHelpers();
+  const { normalizeCrewRoster, normalizePeople, summarizeCraftOccupancy } = loadDashboardHelpers();
+  const roster = normalizeCrewRoster({
+    iss_expedition: 74,
+    number: 3,
+    people: [
+      {
+        name: "Jessica Meir",
+        spacecraft: "Crew-12 Dragon"
+      },
+      {
+        name: "Sergey Mikayev",
+        spacecraft: "Soyuz MS-28"
+      },
+      {
+        name: "Sophie Adenot",
+        craft: "ISS",
+        spacecraft: "Crew-12 Dragon"
+      }
+    ]
+  });
   const people = normalizePeople({
     people: [
       {
@@ -63,6 +82,9 @@ test("normalizePeople accepts spacecraft field from the live crew feed", () => {
     ]
   });
 
+  assert.equal(roster.sourceCount, 3);
+  assert.equal(roster.expedition, "74");
+  assert.deepEqual(JSON.parse(JSON.stringify(roster.people)), JSON.parse(JSON.stringify(people)));
   assert.deepEqual(JSON.parse(JSON.stringify(people)), [
     {
       name: "Jessica Meir",
@@ -87,6 +109,73 @@ test("normalizePeople accepts spacecraft field from the live crew feed", () => {
       count: 1
     }
   ]);
+});
+
+test("loadPeople renders source roster count and expedition context", async () => {
+  const peopleBody = {
+    innerHTML: ""
+  };
+  const { loadPeople } = loadDashboardHelpers({
+    elements: {
+      "#peopleBody": peopleBody
+    },
+    fetchPayload: {
+      iss_expedition: 74,
+      number: 2,
+      people: [
+        {
+          name: "Maya Chen",
+          spacecraft: "Crew Dragon"
+        },
+        {
+          name: "Rafael Ortiz",
+          spacecraft: "Soyuz MS-28"
+        }
+      ]
+    }
+  });
+
+  const status = await loadPeople();
+
+  assert.match(peopleBody.innerHTML, /Source roster count/);
+  assert.match(peopleBody.innerHTML, /2 declared/);
+  assert.match(peopleBody.innerHTML, /2 listed below/);
+  assert.match(peopleBody.innerHTML, /Expedition 74/);
+  assert.equal(status.id, "people");
+  assert.equal(status.state, "ok");
+  assert.match(status.detail, /2 people across 2 crew locations listed; Expedition 74\./);
+});
+
+test("loadPeople flags mismatched source roster counts", async () => {
+  const peopleBody = {
+    innerHTML: ""
+  };
+  const { loadPeople } = loadDashboardHelpers({
+    elements: {
+      "#peopleBody": peopleBody
+    },
+    fetchPayload: {
+      iss_expedition: 74,
+      number: 3,
+      people: [
+        {
+          name: "Maya Chen",
+          spacecraft: "Crew Dragon"
+        },
+        {
+          name: "Rafael Ortiz",
+          spacecraft: "Soyuz MS-28"
+        }
+      ]
+    }
+  });
+
+  const status = await loadPeople();
+
+  assert.match(peopleBody.innerHTML, /2 listed below; source reports 3/);
+  assert.equal(status.id, "people");
+  assert.equal(status.state, "attention");
+  assert.match(status.detail, /Source reports 3 people but 2 roster entries loaded/);
 });
 
 test("loadApod renders embeddable videos with direct media links", async () => {

@@ -671,6 +671,27 @@ function normalizePeople(data) {
     .filter((person) => person.name);
 }
 
+function normalizeCrewRoster(data) {
+  const sourceCount = getFiniteNumber(data?.number);
+  const expeditionNumber = getFiniteNumber(data?.iss_expedition);
+  const expeditionText = getText(data?.iss_expedition);
+
+  return {
+    people: normalizePeople(data),
+    sourceCount: sourceCount !== null && sourceCount >= 0 ? Math.round(sourceCount) : null,
+    expedition: expeditionNumber !== null ? String(Math.round(expeditionNumber)) : expeditionText
+  };
+}
+
+function formatCrewSourceCount(value) {
+  return value === null ? "Unavailable" : `${value.toLocaleString()} declared`;
+}
+
+function formatCrewExpedition(value) {
+  const expedition = getText(value);
+  return expedition ? `Expedition ${expedition}` : "Unavailable";
+}
+
 function summarizeCraftOccupancy(people) {
   const occupancy = people.reduce((groups, person) => {
     const craft = getText(person.craft, "Location unavailable");
@@ -1192,7 +1213,8 @@ async function loadIss() {
 
 async function loadPeople() {
   try {
-    const people = normalizePeople(await fetchJson(API.people));
+    const roster = normalizeCrewRoster(await fetchJson(API.people));
+    const { people } = roster;
 
     if (!people.length) {
       els.peopleBody.innerHTML = stateMessage("No current crew roster is available.");
@@ -1201,6 +1223,12 @@ async function loadPeople() {
 
     const craftGroups = summarizeCraftOccupancy(people);
     const crewLocationLabel = craftGroups.length === 1 ? "crew location" : "crew locations";
+    const countMatches = roster.sourceCount === null || roster.sourceCount === people.length;
+    const rosterCheck = countMatches
+      ? `${people.length.toLocaleString()} listed below`
+      : `${people.length.toLocaleString()} listed below; source reports ${roster.sourceCount.toLocaleString()}`;
+    const expeditionLabel = formatCrewExpedition(roster.expedition);
+    const sourceExpeditionDetail = expeditionLabel === "Unavailable" ? "" : `; ${expeditionLabel}`;
 
     els.peopleBody.innerHTML = `
       <div class="summary-metric mb-3">
@@ -1208,6 +1236,17 @@ async function loadPeople() {
         <div>
           <p class="text-secondary small mb-1">Current crew</p>
           <p class="h3 fw-semibold mb-0">${people.length}</p>
+        </div>
+      </div>
+      <div class="metadata-grid mb-3">
+        <div>
+          <p class="text-secondary small mb-1">Source roster count</p>
+          <p class="fw-semibold mb-0">${escapeHtml(formatCrewSourceCount(roster.sourceCount))}</p>
+          <p class="text-secondary small mb-0">${escapeHtml(rosterCheck)}</p>
+        </div>
+        <div>
+          <p class="text-secondary small mb-1">ISS expedition</p>
+          <p class="fw-semibold mb-0">${escapeHtml(expeditionLabel)}</p>
         </div>
       </div>
       <div class="crew-location-summary mb-3" aria-label="Crew locations">
@@ -1230,7 +1269,13 @@ async function loadPeople() {
         `).join("")}
       </div>
     `;
-    return createSourceStatus("people", "ok", `${people.length} people across ${craftGroups.length} ${crewLocationLabel} listed.`);
+    return createSourceStatus(
+      "people",
+      countMatches ? "ok" : "attention",
+      countMatches
+        ? `${people.length} people across ${craftGroups.length} ${crewLocationLabel} listed${sourceExpeditionDetail}.`
+        : `Source reports ${roster.sourceCount} people but ${people.length} roster entries loaded${sourceExpeditionDetail}.`
+    );
   } catch (error) {
     setError(els.peopleBody, "Could not load the current crew roster right now.");
     return createSourceStatus("people", "error", "Crew roster did not load.");
