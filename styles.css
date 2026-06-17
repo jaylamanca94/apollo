@@ -637,12 +637,6 @@ body {
   grid-area: sources;
 }
 
-.apod-showcase {
-  display: grid;
-  gap: 20px;
-  grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.9fr);
-}
-
 .apod-loading-grid {
   display: grid;
   gap: 20px;
@@ -656,31 +650,43 @@ body {
   border-radius: 10px;
 }
 
+.apod-showcase {
+  align-items: stretch;
+  display: grid;
+  gap: 0;
+  grid-template-columns: minmax(0, 1.45fr) minmax(340px, 0.72fr);
+  overflow: hidden;
+  padding: 0;
+}
+
+.apod-showcase::before {
+  display: none;
+}
+
 .apod-media-link {
   align-self: stretch;
-  border-radius: 10px;
   color: inherit;
   display: block;
-  min-height: 500px;
+  min-height: 560px;
   overflow: hidden;
-  box-shadow: var(--apollo-shadow-soft), var(--apollo-shadow-low);
+  position: relative;
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
 .apod-media-link:hover {
-  transform: translateY(-1px);
+  transform: none;
 }
 
 .apod-media-link:focus-visible {
   outline: 3px solid rgba(255, 64, 86, 0.45);
-  outline-offset: 3px;
+  outline-offset: -6px;
 }
 
 .apod-media {
-  border: 1px solid var(--apollo-border);
-  border-radius: 10px;
+  border: 0;
+  border-radius: 0;
   height: 100%;
-  min-height: 500px;
+  min-height: 560px;
   object-fit: cover;
   width: 100%;
   transition: transform 220ms ease;
@@ -691,21 +697,26 @@ body {
 }
 
 .apod-embed {
-  border: 1px solid var(--apollo-border);
-  border-radius: 10px;
-  min-height: 500px;
+  border: 0;
+  border-radius: 0;
+  min-height: 560px;
   overflow: hidden;
 }
 
 .apod-media-fallback {
   align-items: center;
   display: flex;
-  min-height: 500px;
+  min-height: 560px;
+  margin: 24px;
 }
 
 .apod-info-card {
-  min-height: 500px;
-  padding: 32px 30px;
+  align-self: stretch;
+  border-left: 1px solid var(--apollo-border);
+  display: flex;
+  flex-direction: column;
+  min-height: 560px;
+  padding: 42px 40px 36px;
   position: relative;
 }
 
@@ -714,34 +725,43 @@ body {
 }
 
 .apod-info-header {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
-  gap: 16px;
-  margin-bottom: 28px;
+  gap: 14px;
+  margin-bottom: 26px;
 }
 
 .apod-info-icon {
   color: var(--apollo-accent);
-  font-size: 1.375rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  margin-top: 0.18rem;
+}
+
+.apod-kicker {
+  color: var(--apollo-accent);
+  margin-bottom: 4px !important;
 }
 
 .apod-info-title {
-  font-size: 1.45rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 750;
   line-height: 1.2;
 }
 
 .apod-date {
+  align-self: start;
   color: var(--apollo-muted-strong);
-  font-size: 0.875rem;
-  margin-bottom: 16px;
+  font-size: 0.8125rem;
+  margin-bottom: 18px;
 }
 
 .apod-title {
   color: var(--bs-body-color);
-  font-size: 1.55rem;
-  font-weight: 500;
-  line-height: 1.35;
+  font-size: clamp(1.6rem, 2.15vw, 2.3rem);
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1.14;
   margin-bottom: 16px;
 }
 
@@ -749,8 +769,8 @@ body {
 .apod-summary,
 .apod-details {
   color: var(--apollo-muted-strong);
-  font-size: 1rem;
-  line-height: 1.55;
+  font-size: 0.98rem;
+  line-height: 1.52;
 }
 
 .apod-summary {
@@ -760,6 +780,14 @@ body {
 .apod-details summary {
   color: var(--bs-body-color);
   cursor: pointer;
+  font-weight: 750;
+}
+
+.apod-action-row {
+  border-top: 1px solid var(--apollo-border);
+  gap: 0.75rem 1.25rem;
+  margin-top: auto;
+  padding-top: 24px;
 }
 
 .state-message {
@@ -1739,19 +1767,11 @@ html[data-bs-theme="light"] .data-detail-panel {
   padding: 1rem;
 }
 
-.apod-media-link,
-.apod-media,
-.apod-embed,
 .apod-placeholder,
 .apod-copy-placeholder,
-.apod-info-card,
 .launch-thumb,
 .launch-page-media-placeholder {
   border-radius: var(--acadia-radius-md);
-}
-
-.apod-info-card {
-  padding: var(--acadia-section-padding-spacious);
 }
 
 .launch-detail-panel::before {
@@ -2080,6 +2100,13 @@ html[data-bs-theme="light"] .data-detail-panel {
     grid-template-columns: 1fr;
   }
 
+  .apod-info-card {
+    border-left: 0;
+    border-top: 1px solid var(--apollo-border);
+    min-height: auto;
+    padding: 32px;
+  }
+
   .apollo-dashboard-grid {
     grid-template-areas:
       "iss"
@@ -2101,7 +2128,6 @@ html[data-bs-theme="light"] .data-detail-panel {
   .apod-media-link,
   .apod-media,
   .apod-embed,
-  .apod-info-card,
   .apod-placeholder,
   .apod-copy-placeholder {
     min-height: 340px;
@@ -2192,13 +2218,12 @@ html[data-bs-theme="light"] .data-detail-panel {
   }
 
   .apod-title {
-    font-size: 1.125rem;
+    font-size: 1.5rem;
   }
 
   .apod-media-link,
   .apod-media,
   .apod-embed,
-  .apod-info-card,
   .apod-placeholder,
   .apod-copy-placeholder {
     min-height: 280px;

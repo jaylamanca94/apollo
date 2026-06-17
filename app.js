@@ -1105,24 +1105,27 @@ async function loadApod() {
     }
 
     els.apodBody.innerHTML = `
-      <div class="apod-showcase">
+      <div class="apollo-card acadia-surface apod-showcase">
         ${media}
-        <div class="apollo-card acadia-surface apod-info-card">
+        <aside class="apod-info-card" aria-label="NASA astronomy picture context">
           <div class="apod-info-header">
             <i class="fa-solid fa-image acadia-icon apod-info-icon" aria-hidden="true"></i>
-            <h2 class="apod-info-title mb-0">NASA Astronomy Picture of the Day</h2>
+            <div>
+              <p class="section-kicker apod-kicker mb-0">NASA APOD</p>
+              <h2 class="apod-info-title mb-0">Astronomy Picture of the Day</h2>
+            </div>
           </div>
-          <p class="apod-date">${data.date ? formatDate(data.date) : "Today"}</p>
+          <p class="apod-date acadia-badge">${data.date ? formatDate(data.date) : "Today"}</p>
           <h3 class="apod-title">${title}</h3>
           ${data.copyright ? `<p class="apod-credit">Credit: ${escapeHtml(data.copyright)}</p>` : ""}
           <p class="apod-summary">${summary}</p>
           ${hasLongExplanation ? `
             <details class="apod-details mt-3">
-              <summary class="fw-semibold" aria-label="Read full description for ${title}">Read full description</summary>
+              <summary aria-label="Read full description for ${title}">Read full description</summary>
               <p class="mb-0 mt-2">${explanation}</p>
             </details>
           ` : ""}
-          <div class="detail-action-row">
+          <div class="detail-action-row apod-action-row">
             ${data.mediaType === "image" && fullImageUrl ? `
               <a class="source-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
                 <i class="fa-regular fa-image" aria-hidden="true"></i>
@@ -1146,7 +1149,7 @@ async function loadApod() {
               NASA source
             </a>
           </div>
-        </div>
+        </aside>
       </div>
     `;
     const mediaLabel = data.mediaType === "video" ? "Video" : data.mediaType === "image" ? "Image" : "Media";
