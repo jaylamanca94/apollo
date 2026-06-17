@@ -51,6 +51,7 @@ Apollo now treats `../Acadia` as the shared design-system baseline. Before addin
 - Accent: `#FF4056`
 
 Default first-time visitors to the user's operating system theme setting and provide a compact header toggle for switching between Light and Dark.
+Browser theme chrome should follow Apollo's active Light or Dark theme, including manual theme toggles, so installed and mobile browser surfaces do not retain the wrong chrome color.
 
 ### Data Accents
 

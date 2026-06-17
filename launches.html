@@ -8,7 +8,7 @@
     <link rel="icon" href="./assets/apollo-app-icon-light.png" type="image/png" sizes="512x512" media="(prefers-color-scheme: light)">
     <link rel="apple-touch-icon" href="./assets/apollo-app-icon-light.png">
     <link rel="manifest" href="./site.webmanifest">
-    <meta name="theme-color" content="#1F2427">
+    <meta name="theme-color" content="#1F2427" id="appThemeColor">
     <script>
       (() => {
         try {
@@ -16,11 +16,15 @@
           const storedTheme = window.localStorage.getItem(storageKey);
           const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
           const theme = ["light", "dark"].includes(storedTheme) ? storedTheme : systemTheme;
+          const themeColor = theme === "dark" ? "#1F2427" : "#E8EAED";
+          const themeColorMeta = document.querySelector("meta[name='theme-color']");
           document.documentElement.setAttribute("data-bs-theme", theme);
           document.documentElement.setAttribute("data-acadia-theme", theme);
+          themeColorMeta?.setAttribute("content", themeColor);
         } catch (error) {
           document.documentElement.setAttribute("data-bs-theme", "light");
           document.documentElement.setAttribute("data-acadia-theme", "light");
+          document.querySelector("meta[name='theme-color']")?.setAttribute("content", "#E8EAED");
         }
       })();
     </script>
@@ -80,6 +84,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="./launches.js?v=dashboard-direction-12"></script>
+    <script src="./launches.js?v=dashboard-direction-13"></script>
   </body>
 </html>

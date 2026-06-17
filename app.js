@@ -68,6 +68,10 @@ const NEO_SENTRY_CONTEXT = {
   summary: "Sentry is NASA/JPL's automated monitoring system for possible future Earth impacts over the next 100 years."
 };
 const THEME_STORAGE_KEY = "apollo-theme";
+const THEME_COLORS = {
+  dark: "#1F2427",
+  light: "#E8EAED"
+};
 const EARTH_RADIUS_KM = 6371;
 const MINUTES_PER_HOUR = 60;
 const HOURS_PER_DAY = 24;
@@ -576,9 +580,18 @@ function updateThemeToggle(theme) {
   }
 }
 
+function updateThemeColorMeta(theme) {
+  const themeColorMeta = document.querySelector("meta[name='theme-color']");
+
+  if (themeColorMeta) {
+    themeColorMeta.setAttribute("content", THEME_COLORS[theme] || THEME_COLORS.light);
+  }
+}
+
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-bs-theme", theme);
   document.documentElement.setAttribute("data-acadia-theme", theme);
+  updateThemeColorMeta(theme);
   updateThemeToggle(theme);
 }
 

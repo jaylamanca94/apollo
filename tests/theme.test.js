@@ -8,6 +8,12 @@ function loadThemeHelpers(fileName, endMarker) {
   const source = fs.readFileSync(path.join(__dirname, "..", fileName), "utf8");
   const helperSource = source.slice(0, source.indexOf(endMarker));
   const elements = {};
+  const themeColorMeta = {
+    attributes: {},
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    }
+  };
   const context = {
     AbortController,
     document: {
@@ -18,6 +24,10 @@ function loadThemeHelpers(fileName, endMarker) {
         }
       },
       querySelector(selector) {
+        if (selector === "meta[name='theme-color']") {
+          return themeColorMeta;
+        }
+
         return elements[selector] || null;
       }
     },
@@ -71,4 +81,35 @@ test("launches theme uses the system light preference when available", () => {
   context.window.matchMedia = () => ({ matches: false });
 
   assert.equal(context.getStoredTheme(), "light");
+});
+
+test("page startup scripts initialize theme chrome color", () => {
+  for (const fileName of ["index.html", "launches.html"]) {
+    const html = fs.readFileSync(path.join(__dirname, "..", fileName), "utf8");
+
+    assert.match(html, /<meta name="theme-color" content="#1F2427" id="appThemeColor">/);
+    assert.match(html, /const themeColor = theme === "dark" \? "#1F2427" : "#E8EAED";/);
+    assert.match(html, /themeColorMeta\?\.setAttribute\("content", themeColor\);/);
+    assert.match(html, /setAttribute\("content", "#E8EAED"\);/);
+  }
+});
+
+test("dashboard theme updates browser chrome color", () => {
+  const context = loadThemeHelpers("app.js", "async function loadLaunches");
+
+  context.applyTheme("dark");
+  assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#1F2427");
+
+  context.applyTheme("light");
+  assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#E8EAED");
+});
+
+test("launches theme updates browser chrome color", () => {
+  const context = loadThemeHelpers("launches.js", "function setBusy");
+
+  context.applyTheme("dark");
+  assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#1F2427");
+
+  context.applyTheme("light");
+  assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#E8EAED");
 });

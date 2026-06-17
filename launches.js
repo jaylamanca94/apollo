@@ -1,5 +1,9 @@
 const LAUNCHES_API = "/api/launches?limit=20";
 const THEME_STORAGE_KEY = "apollo-theme";
+const THEME_COLORS = {
+  dark: "#1F2427",
+  light: "#E8EAED"
+};
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right" aria-hidden="true"></i><span>Refresh data</span>`;
 const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing</span>`;
 
@@ -239,9 +243,18 @@ function updateThemeToggle(theme) {
   }
 }
 
+function updateThemeColorMeta(theme) {
+  const themeColorMeta = document.querySelector("meta[name='theme-color']");
+
+  if (themeColorMeta) {
+    themeColorMeta.setAttribute("content", THEME_COLORS[theme] || THEME_COLORS.light);
+  }
+}
+
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-bs-theme", theme);
   document.documentElement.setAttribute("data-acadia-theme", theme);
+  updateThemeColorMeta(theme);
   updateThemeToggle(theme);
 }
 
