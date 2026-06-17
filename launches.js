@@ -4,7 +4,7 @@ const THEME_COLORS = {
   dark: "#1F2427",
   light: "#E8EAED"
 };
-const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right" aria-hidden="true"></i><span>Refresh data</span>`;
+const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
 const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing</span>`;
 
 const els = {
@@ -239,7 +239,7 @@ function updateThemeToggle(theme) {
   els.themeToggle.title = label;
 
   if (icon) {
-    icon.className = `fa-solid ${isDark ? "fa-sun" : "fa-moon"}`;
+    icon.className = `fa-solid ${isDark ? "fa-sun" : "fa-moon"} acadia-icon`;
   }
 }
 
@@ -306,8 +306,8 @@ function stateMessage(message, options = {}) {
   const role = options.role ? ` role="${escapeHtml(options.role)}"` : "";
 
   return `
-    <div class="state-message${tone} mb-0"${role}>
-      <i class="fa-solid ${icon}" aria-hidden="true"></i>
+    <div class="state-message acadia-alert${tone} mb-0"${role}>
+      <i class="fa-solid ${icon} acadia-icon" aria-hidden="true"></i>
       <span>${escapeHtml(message)}</span>
     </div>
   `;
@@ -363,7 +363,7 @@ function renderLaunches(launches) {
       <div class="next-launch-media">
         ${nextLaunch.imageUrl
           ? `<img src="${escapeHtml(nextLaunch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(nextLaunch, nextLaunchName))}">`
-          : `<div class="launch-page-media-placeholder"><i class="fa-solid fa-rocket" aria-hidden="true"></i></div>`}
+          : `<div class="launch-page-media-placeholder"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></div>`}
       </div>
       <div class="next-launch-content">
         <div class="next-launch-heading">
@@ -394,7 +394,7 @@ function renderLaunches(launches) {
         ${nextLaunchDetails ? `<dl class="detail-list next-launch-detail-list mb-3">${nextLaunchDetails}</dl>` : ""}
         ${nextLaunch.sourceUrl ? `
           <a class="source-link" href="${escapeHtml(nextLaunch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(nextLaunch.name)}">
-            <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+            <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
             Launch source
           </a>
         ` : ""}
@@ -429,7 +429,7 @@ function renderLaunches(launches) {
             <div class="launch-page-media">
               ${launch.imageUrl
                 ? `<img src="${escapeHtml(launch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(launch, launchName))}">`
-                : `<div class="launch-page-media-placeholder"><i class="fa-solid fa-rocket" aria-hidden="true"></i></div>`}
+                : `<div class="launch-page-media-placeholder"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></div>`}
             </div>
             <div class="launch-page-content">
               <div class="launch-page-title-row">
@@ -447,7 +447,7 @@ function renderLaunches(launches) {
               ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
               ${launch.sourceUrl ? `
                 <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">
-                  <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                  <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
                   Launch source
                 </a>
               ` : ""}

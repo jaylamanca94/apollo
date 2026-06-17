@@ -75,7 +75,7 @@ const THEME_COLORS = {
 const EARTH_RADIUS_KM = 6371;
 const MINUTES_PER_HOUR = 60;
 const HOURS_PER_DAY = 24;
-const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right" aria-hidden="true"></i><span>Refresh data</span>`;
+const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
 const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing</span>`;
 const NASA_MONTH_INDEX = {
   jan: 0,
@@ -576,7 +576,7 @@ function updateThemeToggle(theme) {
   els.themeToggle.title = label;
 
   if (icon) {
-    icon.className = `fa-solid ${isDark ? "fa-sun" : "fa-moon"}`;
+    icon.className = `fa-solid ${isDark ? "fa-sun" : "fa-moon"} acadia-icon`;
   }
 }
 
@@ -888,8 +888,8 @@ function stateMessage(message, options = {}) {
   const role = options.role ? ` role="${escapeHtml(options.role)}"` : "";
 
   return `
-    <div class="state-message${tone} mb-0"${role}>
-      <i class="fa-solid ${icon}" aria-hidden="true"></i>
+    <div class="state-message acadia-alert${tone} mb-0"${role}>
+      <i class="fa-solid ${icon} acadia-icon" aria-hidden="true"></i>
       <span>${escapeHtml(message)}</span>
     </div>
   `;
@@ -1006,7 +1006,7 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
         return `
           <article class="source-status-row source-status-${escapeHtml(feed.state)}">
             <span class="source-status-icon">
-              <i class="${escapeHtml(feed.icon)}" aria-hidden="true"></i>
+              <i class="${escapeHtml(feed.icon)} acadia-icon" aria-hidden="true"></i>
             </span>
             <div class="source-status-copy">
               <h3 class="source-status-title mb-0">${escapeHtml(feed.label)}</h3>
@@ -1075,7 +1075,7 @@ async function loadApod() {
     const hasLongExplanation = summaryText !== data.explanation;
     let media = `
       <div class="state-message apod-media-fallback">
-        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
         <span>NASA media is unavailable right now.</span>
       </div>
     `;
@@ -1091,14 +1091,14 @@ async function loadApod() {
     } else if (data.mediaType === "video" && data.mediaUrl) {
       media = `
         <div class="state-message apod-media-fallback">
-          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
           <span>NASA video preview is unavailable here. Use the video link for the source media.</span>
         </div>
       `;
     } else if (data.mediaUrl) {
       media = `
         <div class="state-message apod-media-fallback">
-          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
           <span>NASA media preview is unavailable here. Open the media link or NASA source for the original.</span>
         </div>
       `;
@@ -1107,9 +1107,9 @@ async function loadApod() {
     els.apodBody.innerHTML = `
       <div class="apod-showcase">
         ${media}
-        <div class="apollo-card apod-info-card">
+        <div class="apollo-card acadia-surface apod-info-card">
           <div class="apod-info-header">
-            <i class="fa-solid fa-image apod-info-icon" aria-hidden="true"></i>
+            <i class="fa-solid fa-image acadia-icon apod-info-icon" aria-hidden="true"></i>
             <h2 class="apod-info-title mb-0">NASA Astronomy Picture of the Day</h2>
           </div>
           <p class="apod-date">${data.date ? formatDate(data.date) : "Today"}</p>
@@ -1137,12 +1137,12 @@ async function loadApod() {
             ` : ""}
             ${data.mediaType !== "image" && data.mediaType !== "video" && mediaUrl ? `
               <a class="source-link" href="${mediaUrl}" target="_blank" rel="noopener noreferrer">
-                <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
                 Open media
               </a>
             ` : ""}
             <a class="source-link" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
-              <i class="fa-solid fa-earth-americas" aria-hidden="true"></i>
+              <i class="fa-solid fa-earth-americas acadia-icon" aria-hidden="true"></i>
               NASA source
             </a>
           </div>
@@ -1211,7 +1211,7 @@ async function loadIss() {
       </div>
       <div class="detail-action-row iss-source-row">
         <a class="source-link" href="https://wheretheiss.at/" target="_blank" rel="noopener noreferrer">
-          <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+          <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
           ISS position source
         </a>
       </div>
@@ -1254,7 +1254,7 @@ async function loadPeople() {
 
     els.peopleBody.innerHTML = `
       <div class="summary-metric mb-3">
-        <span class="stat-chip"><i class="fa-solid fa-user-astronaut" aria-hidden="true"></i></span>
+        <span class="stat-chip"><i class="fa-solid fa-user-astronaut acadia-icon" aria-hidden="true"></i></span>
         <div>
           <p class="text-secondary small mb-1">Current crew</p>
           <p class="h3 fw-semibold mb-0">${people.length}</p>
@@ -1343,7 +1343,7 @@ async function loadLaunches() {
 
           return `
             <article class="launch-card">
-              ${launch.imageUrl ? `<img src="${escapeHtml(launch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(launch, launchName))}" class="launch-thumb">` : `<span class="stat-chip"><i class="fa-solid fa-rocket" aria-hidden="true"></i></span>`}
+              ${launch.imageUrl ? `<img src="${escapeHtml(launch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(launch, launchName))}" class="launch-thumb">` : `<span class="stat-chip"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></span>`}
               <div class="launch-main">
                 <p class="launch-meta">${formatDateTime(launch.dateUtc)} · ${formatCountdown(launch.dateUtc)}</p>
                 <div class="launch-title-row">
@@ -1353,13 +1353,13 @@ async function loadLaunches() {
                 <p class="launch-window-summary mb-0">${escapeHtml(launchWindowSummary)}</p>
                 <div class="launch-footer">
                   <details class="data-details launch-details">
-                    <summary aria-label="Show mission details for ${escapeHtml(launch.name)}"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Mission details</summary>
+                    <summary aria-label="Show mission details for ${escapeHtml(launch.name)}"><i class="fa-solid fa-chevron-down acadia-icon" aria-hidden="true"></i>Mission details</summary>
                     <div class="data-detail-panel">
                       <p class="mb-3">${fullDetails}</p>
                       ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
                       ${launch.sourceUrl ? `
                         <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">
-                          <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                          <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
                           Launch source
                         </a>
                       ` : ""}
@@ -1444,7 +1444,7 @@ async function loadNeo() {
         </div>
       </div>
       <div class="neo-risk-note ${hazardNoteClass} mb-3">
-        <i class="fa-solid ${hazardIcon}" aria-hidden="true"></i>
+        <i class="fa-solid ${hazardIcon} acadia-icon" aria-hidden="true"></i>
         <div>
           <p class="mb-1">${escapeHtml(hazardSummary)}</p>
           <p class="neo-risk-context mb-0">${escapeHtml(hazardFlagContext.summary)}</p>
@@ -1463,7 +1463,7 @@ async function loadNeo() {
                 </div>
                 <p class="text-secondary small mb-0">${formatLunarDistance(item.lunarDistance)} · ${formatVelocityKph(item.velocityKph)}</p>
                 <details class="data-details asteroid-details mt-2">
-                  <summary aria-label="Show approach details for ${escapeHtml(item.name)}"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>Approach details</summary>
+                  <summary aria-label="Show approach details for ${escapeHtml(item.name)}"><i class="fa-solid fa-chevron-down acadia-icon" aria-hidden="true"></i>Approach details</summary>
                   <div class="data-detail-panel">
                     <dl class="detail-list mb-3">
                       <div>
@@ -1493,7 +1493,7 @@ async function loadNeo() {
                     </dl>
                     ${item.sourceUrl ? `
                       <a class="source-link" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open NASA object source for ${escapeHtml(item.name)}">
-                        <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                        <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
                         NASA object source
                       </a>
                     ` : ""}
@@ -1527,7 +1527,7 @@ async function loadSpaceWeather() {
 
     els.spaceWeatherBody.innerHTML = `
       <div class="summary-metric mb-3">
-        <span class="stat-chip ${severityClass}"><i class="fa-solid fa-sun" aria-hidden="true"></i></span>
+        <span class="stat-chip ${severityClass}"><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i></span>
         <div>
           <p class="text-secondary small mb-1">Current K-index</p>
           <p class="h3 fw-semibold mb-0">${formatKpIndex(data.kpIndex)}</p>
@@ -1588,7 +1588,7 @@ async function loadSpaceWeather() {
         </div>
       ` : stateMessage("No recent NOAA alerts are listed.")}
       <a class="source-link" href="${escapeHtml(data.sourceUrl)}" target="_blank" rel="noopener noreferrer">
-        <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+        <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
         NOAA space weather source
       </a>
     `;

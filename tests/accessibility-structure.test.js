@@ -69,6 +69,10 @@ function getAttribute(tag, attrName) {
   return match ? match[1] : "";
 }
 
+function hasClass(tag, className) {
+  return getAttribute(tag, "class").split(/\s+/).includes(className);
+}
+
 for (const page of pages) {
   test(`${page.name} has named landmarks and skip navigation`, () => {
     const html = readProjectFile(page.file);
@@ -97,6 +101,34 @@ for (const page of pages) {
       if (link.label === page.activeNavLabel) {
         assert.equal(getAttribute(navLink, "aria-current"), "page");
       }
+    }
+  });
+
+  test(`${page.name} composes Acadia primitives before Apollo adapters`, () => {
+    const html = readProjectFile(page.file);
+    const app = getTagByAttribute(html, "div", "class", "apollo-app");
+    const nav = getTagByAttribute(html, "nav", "class", "apollo-topbar");
+    const navGroup = getTagByAttribute(html, "div", "class", "apollo-primary-links");
+    const main = getTagByAttribute(html, "main", "id", page.skipTarget);
+    const pageHeader = getTagByAttribute(html, "header", "class", "apollo-page-header");
+    const refreshButton = getTagByAttribute(html, "button", "id", page.refreshButtonId);
+
+    assert.ok(hasClass(app, "acadia-app"));
+    assert.ok(hasClass(nav, "acadia-chrome"));
+    assert.ok(hasClass(navGroup, "acadia-nav"));
+    assert.ok(hasClass(main, "acadia-shell"));
+    assert.ok(hasClass(pageHeader, "acadia-page-header"));
+    assert.ok(hasClass(pageHeader, "acadia-surface"));
+    assert.ok(hasClass(pageHeader, "acadia-panel"));
+    assert.ok(hasClass(refreshButton, "acadia-button"));
+    assert.ok(hasClass(refreshButton, "acadia-button-primary"));
+
+    for (const link of page.expectedNavLinks) {
+      const navLink = getTags(html, "a").find((tag) => (
+        getAttribute(tag, "href") === link.href && /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))
+      ));
+
+      assert.ok(hasClass(navLink, "acadia-nav-item"), `${link.label} should use Acadia nav anatomy`);
     }
   });
 

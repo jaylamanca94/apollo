@@ -27,6 +27,7 @@ Apollo now treats `../Acadia` as the shared design-system baseline. Before addin
 - Use Acadia primitives for shared product language: controls, card padding, raised rows, focus rings, state surfaces, motion, table/form patterns, and Font Awesome Free icon sizing.
 - Keep Apollo-specific choices local when they express space-data semantics, live-source context, map behavior, media behavior, or the red product accent.
 - Map Apollo variables onto Acadia-style adapter variables in `styles.css` before creating a new one-off component rule.
+- Apollo markup should compose Acadia primitive classes first (`acadia-app`, `acadia-chrome`, `acadia-nav`, `acadia-shell`, `acadia-surface`, `acadia-panel`, `acadia-button`, `acadia-icon`) and keep `apollo-*` classes as product adapters for data, media, map, and layout semantics.
 - Keep the adapter self-contained until Acadia is published as a shared package. Do not use a fragile local `../Acadia` stylesheet link in deployed Apollo pages.
 - Repeated surfaces should use Acadia anatomy first: page header panel, chrome, card, row, state message, pill, control, and focus ring. Avoid decorative local accent bars or custom elevation when color, icon, copy, or data semantics can carry Apollo identity.
 - Keep adapter-owned hover and focus motion covered by Apollo's `prefers-reduced-motion` override.
