@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Anomalies | Apollo</title>
+    <link rel="icon" href="./assets/apollo-app-icon-dark.png" type="image/png" sizes="512x512" media="(prefers-color-scheme: dark)">
+    <link rel="icon" href="./assets/apollo-app-icon-light.png" type="image/png" sizes="512x512" media="(prefers-color-scheme: light)">
+    <link rel="apple-touch-icon" href="./assets/apollo-app-icon-light.png">
+    <link rel="manifest" href="./site.webmanifest">
+    <meta name="theme-color" content="#1F2427" id="appThemeColor">
+    <script>
+      (() => {
+        try {
+          const storageKey = "apollo-theme";
+          const storedTheme = window.localStorage.getItem(storageKey);
+          const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          const theme = ["light", "dark"].includes(storedTheme) ? storedTheme : systemTheme;
+          document.documentElement.setAttribute("data-bs-theme", theme);
+          document.documentElement.setAttribute("data-acadia-theme", theme);
+          document.querySelector("meta[name='theme-color']")?.setAttribute("content", theme === "dark" ? "#1F2427" : "#E8EAED");
+        } catch (error) {
+          document.documentElement.setAttribute("data-bs-theme", "light");
+          document.documentElement.setAttribute("data-acadia-theme", "light");
+          document.querySelector("meta[name='theme-color']")?.setAttribute("content", "#E8EAED");
+        }
+      })();
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="./styles.css?v=multi-page-1" rel="stylesheet">
+  </head>
+  <body data-apollo-page="anomalies">
+    <div class="apollo-app acadia-app text-body">
+      <a class="apollo-skip-link" href="#anomalies-content">Skip to anomalies content</a>
+      <nav class="navbar navbar-expand apollo-topbar acadia-chrome" aria-label="Primary">
+        <div class="container-fluid apollo-navbar-inner acadia-chrome-inner px-3 px-sm-4">
+          <a class="navbar-brand acadia-brand fw-semibold d-flex align-items-center gap-2" href="./index.html"><span class="acadia-mark"><i class="fa-solid fa-rocket acadia-icon apollo-brand-icon" aria-hidden="true"></i></span>Apollo</a>
+          <div class="apollo-primary-links acadia-nav" aria-label="Apollo pages">
+            <a class="apollo-nav-link acadia-nav-item" href="./index.html">Dashboard</a>
+            <a class="apollo-nav-link acadia-nav-item" href="./iss.html">ISS</a>
+            <a class="apollo-nav-link acadia-nav-item" href="./launches.html">Launches</a>
+            <a class="apollo-nav-link acadia-nav-item" href="./asteroids.html">Asteroids</a>
+            <a class="apollo-nav-link acadia-nav-item" href="./weather.html">Weather</a>
+            <a class="apollo-nav-link acadia-nav-item" href="./gallery.html">Gallery</a>
+            <a class="apollo-nav-link acadia-nav-item apollo-nav-link-active" href="./anomalies.html" aria-current="page">Anomalies</a>
+          </div>
+          <div class="apollo-navbar-actions d-flex align-items-center gap-2 ms-auto">
+            <button class="btn btn-outline-secondary btn-sm apollo-theme-toggle acadia-icon-action" id="themeToggle" type="button" aria-label="Switch to light mode" aria-pressed="true" title="Switch to light mode"><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </nav>
+
+      <main class="apollo-shell acadia-shell" id="anomalies-content" aria-labelledby="dashboardTitle">
+        <div id="dashboardStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Loading sky anomaly context.</div>
+        <div class="d-flex flex-column apollo-page-stack">
+          <header class="apollo-page-header acadia-page-header acadia-surface acadia-panel">
+            <div class="apollo-title-block acadia-page-header-copy">
+              <p class="section-kicker acadia-kicker apollo-hero-kicker mb-0">Sky Explanation Engine</p>
+              <h1 class="apollo-page-title acadia-display mb-0" id="dashboardTitle">Sky Anomalies</h1>
+              <p class="apollo-page-subtitle acadia-text-muted mb-0">Explain unusual sightings with known sky activity first: launches, ISS context, space weather, meteor source gaps, and reported-sighting source gaps.</p>
+            </div>
+            <div class="apollo-dashboard-actions acadia-page-actions">
+              <p class="apollo-update-pill acadia-badge mb-0" id="dashboardUpdated">Last updated: Loading</p>
+              <button class="btn apollo-refresh-button acadia-button acadia-button-primary" id="refreshButton" type="button" aria-describedby="dashboardStatus" aria-controls="skyAnomaliesBody"><i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span></button>
+            </div>
+          </header>
+
+          <section class="card apollo-card acadia-surface apollo-dashboard-card apollo-dashboard-card-wide apollo-accent-sky" id="sky-anomalies">
+            <div class="card-header section-card-header">
+              <div class="dashboard-card-heading"><h2 class="section-title mb-0">What did I see?</h2></div>
+            </div>
+            <div class="card-body section-card-body" id="skyAnomaliesBody" aria-live="polite" aria-busy="true">
+              <div class="sky-anomaly-layout">
+                <div class="sky-anomaly-primary">
+                  <div class="summary-metric sky-anomaly-summary mb-3">
+                    <span class="stat-chip"><i class="fa-solid fa-magnifying-glass-location acadia-icon" aria-hidden="true"></i></span>
+                    <div>
+                      <p class="text-secondary small mb-1">Sighting check</p>
+                      <p class="h3 fw-semibold mb-0">Known context first</p>
+                    </div>
+                  </div>
+                  <form class="sky-anomaly-form" id="skyAnomalyForm">
+                    <div class="sky-anomaly-field">
+                      <label for="skyAnomalyLocation">Location</label>
+                      <input class="form-control" id="skyAnomalyLocation" name="location" type="text" autocomplete="address-level2" placeholder="City, state">
+                    </div>
+                    <div class="sky-anomaly-field">
+                      <label for="skyAnomalyDate">Date</label>
+                      <input class="form-control" id="skyAnomalyDate" name="date" type="date">
+                    </div>
+                    <div class="sky-anomaly-field">
+                      <label for="skyAnomalyTime">Time</label>
+                      <input class="form-control" id="skyAnomalyTime" name="time" type="time">
+                    </div>
+                    <button class="btn sky-anomaly-submit acadia-button" type="submit"><i class="fa-solid fa-wand-magic-sparkles acadia-icon" aria-hidden="true"></i><span>Explain sighting</span></button>
+                  </form>
+                </div>
+                <div class="sky-anomaly-results" id="skyAnomalyResults">
+                  <div class="state-message acadia-alert mb-0"><i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i><span>Loading sky context...</span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./app.js?v=multi-page-1"></script>
+  </body>
+</html>

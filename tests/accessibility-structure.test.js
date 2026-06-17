@@ -16,7 +16,12 @@ const pages = [
     activeNavLabel: "Dashboard",
     expectedNavLinks: [
       { href: "#dashboard", label: "Dashboard" },
-      { href: "./launches.html", label: "Launches" }
+      { href: "./iss.html", label: "ISS" },
+      { href: "./launches.html", label: "Launches" },
+      { href: "./asteroids.html", label: "Asteroids" },
+      { href: "./weather.html", label: "Weather" },
+      { href: "./gallery.html", label: "Gallery" },
+      { href: "./anomalies.html", label: "Anomalies" }
     ],
     controlledIds: [
       "quickStatsBody",
@@ -40,7 +45,12 @@ const pages = [
     activeNavLabel: "Launches",
     expectedNavLinks: [
       { href: "./index.html", label: "Dashboard" },
-      { href: "./launches.html", label: "Launches" }
+      { href: "./iss.html", label: "ISS" },
+      { href: "./launches.html", label: "Launches" },
+      { href: "./asteroids.html", label: "Asteroids" },
+      { href: "./weather.html", label: "Weather" },
+      { href: "./gallery.html", label: "Gallery" },
+      { href: "./anomalies.html", label: "Anomalies" }
     ],
     controlledIds: ["launchPageBody"]
   }

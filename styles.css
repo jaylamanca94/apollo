@@ -317,9 +317,18 @@ body {
   border-radius: var(--acadia-radius-pill);
   box-shadow: var(--acadia-shadow-control);
   display: inline-flex;
+  flex: 1 1 auto;
   gap: 4px;
   margin-left: 16px;
+  max-width: min(100%, 760px);
+  overflow-x: auto;
   padding: 0.25rem;
+  scrollbar-width: none;
+}
+
+.apollo-primary-links::-webkit-scrollbar,
+.acadia-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .apollo-nav-link,
@@ -572,6 +581,10 @@ body {
   grid-column: 1 / -1;
 }
 
+.apollo-detail-grid {
+  grid-template-areas: "iss crew";
+}
+
 .apollo-quick-stats-grid {
   display: grid;
   gap: 12px;
@@ -686,7 +699,7 @@ body {
   grid-template-areas:
     "iss crew"
     "launches asteroids"
-    "launches weather"
+    "weather apod"
     "anomalies anomalies"
     "sources sources";
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -710,6 +723,10 @@ body {
 
 #space-weather {
   grid-area: weather;
+}
+
+#apod {
+  grid-area: apod;
 }
 
 #sky-anomalies {
@@ -2360,8 +2377,15 @@ html[data-bs-theme="light"] .data-detail-panel {
       "launches"
       "asteroids"
       "weather"
+      "apod"
       "anomalies"
       "sources";
+  }
+
+  .apollo-detail-grid {
+    grid-template-areas:
+      "iss"
+      "crew";
   }
 
   .sky-anomaly-layout {

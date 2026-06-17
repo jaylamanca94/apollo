@@ -33,18 +33,23 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link href="./styles.css?v=dashboard-direction-34-acadia" rel="stylesheet">
   </head>
-  <body>
+  <body data-apollo-page="dashboard">
     <div class="apollo-app acadia-app text-body">
       <a class="apollo-skip-link" href="#dashboard">Skip to dashboard content</a>
       <nav class="navbar navbar-expand apollo-topbar acadia-chrome" aria-label="Primary">
         <div class="container-fluid apollo-navbar-inner acadia-chrome-inner px-3 px-sm-4">
-          <a class="navbar-brand acadia-brand fw-semibold d-flex align-items-center gap-2" href="#dashboard">
+          <a class="navbar-brand acadia-brand fw-semibold d-flex align-items-center gap-2" href="./index.html">
             <span class="acadia-mark"><i class="fa-solid fa-rocket acadia-icon apollo-brand-icon" aria-hidden="true"></i></span>
             Apollo
           </a>
           <div class="apollo-primary-links acadia-nav" aria-label="Apollo pages">
             <a class="apollo-nav-link acadia-nav-item apollo-nav-link-active" href="#dashboard" aria-current="page">Dashboard</a>
+            <a class="apollo-nav-link acadia-nav-item" href="./iss.html">ISS</a>
             <a class="apollo-nav-link acadia-nav-item" href="./launches.html">Launches</a>
+            <a class="apollo-nav-link acadia-nav-item" href="./asteroids.html">Asteroids</a>
+            <a class="apollo-nav-link acadia-nav-item" href="./weather.html">Weather</a>
+            <a class="apollo-nav-link acadia-nav-item" href="./gallery.html">Gallery</a>
+            <a class="apollo-nav-link acadia-nav-item" href="./anomalies.html">Anomalies</a>
           </div>
           <div class="apollo-navbar-actions d-flex align-items-center gap-2 ms-auto">
             <button class="btn btn-outline-secondary btn-sm apollo-theme-toggle acadia-icon-action" id="themeToggle" type="button" aria-label="Switch to light mode" aria-pressed="true" title="Switch to light mode">
@@ -122,15 +127,6 @@
             </div>
           </section>
 
-          <article class="apod-feature" id="apod">
-            <div class="apod-feature-body" id="apodBody" aria-live="polite" aria-busy="true">
-              <div class="apod-loading-grid placeholder-glow">
-                <span class="placeholder apod-placeholder"></span>
-                <span class="placeholder apod-copy-placeholder"></span>
-              </div>
-            </div>
-          </article>
-
           <div class="apollo-dashboard-grid">
             <section class="card apollo-card acadia-surface apollo-dashboard-card apollo-accent-iss" id="iss-position">
               <div class="card-header section-card-header">
@@ -198,6 +194,20 @@
                 <div class="state-message acadia-alert mb-0">
                   <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
                   <span>Loading space weather...</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="card apollo-card acadia-surface apollo-dashboard-card apollo-accent-apod" id="apod">
+              <div class="card-header section-card-header">
+                <div class="dashboard-card-heading">
+                  <h2 class="section-title mb-0">Astronomy Picture</h2>
+                </div>
+              </div>
+              <div class="card-body section-card-body apod-feature-body" id="apodBody" aria-live="polite" aria-busy="true">
+                <div class="state-message acadia-alert mb-0">
+                  <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
+                  <span>Loading NASA image...</span>
                 </div>
               </div>
             </section>

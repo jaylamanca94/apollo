@@ -30,6 +30,7 @@ In scope:
 - Near-Earth asteroid daily summary
 - Sky Anomalies explanation engine beta
 - Dedicated launches detail page
+- Dedicated ISS, asteroid, weather, gallery, and anomaly pages
 - Responsive Bootstrap dashboard UI
 - Vercel deployment with serverless NASA proxy routes
 
@@ -45,8 +46,9 @@ Out of scope for the MVP:
 
 ## Features
 
-- Responsive Apollo dashboard shell that follows Acadia with a red Apollo accent and defaults to the user's operating system theme.
-- APOD-first feature panel.
+- Responsive Apollo dashboard and detail-page shell that follows Acadia with a red Apollo accent and defaults to the user's operating system theme.
+- Compact dashboard summary layer for ISS, crew, launches, asteroids, weather, APOD, and Sky Anomalies.
+- APOD detail treatment on the Gallery page.
 - APOD credit, safe image/video media handling, full-media link, NASA source link, and inline full-description detail.
 - ISS latitude, longitude, altitude, velocity, current-position map, source observation time, live orbital context, sunlight state, signal footprint, and source link.
 - Crew count, source-declared roster count, ISS expedition context, current craft/location summary, and responsive People in Space grid.
@@ -54,7 +56,7 @@ Out of scope for the MVP:
 - Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window length, window times, pad, location, and source links.
 - Near-Earth asteroid summary for the current day with closest-approach time, lunar-distance, velocity, exact approach details, source links, NASA hazard-flag context cues, and NASA Sentry monitoring context.
 - NOAA SWPC space-weather status with current K-index observation time, NOAA geomagnetic scale context, 3-day K-index outlook, and typed recent notices with compact NOAA R/S/G scale cues when the source text provides them.
-- Sky Anomalies beta panel that lets a user enter a sighting location/date/time and compares the moment against Apollo's known launch, ISS, asteroid, and space-weather context while clearly naming source gaps for fireball and UAP report imports.
+- Sky Anomalies page that lets a user enter a sighting location/date/time and compares the moment against Apollo's known launch, ISS, asteroid, and space-weather context while clearly naming source gaps for fireball and UAP report imports.
 - Dashboard-level data-source status summary for APOD, ISS position, crew, launches, asteroids, and space weather, with compact upstream source links and source timing context for demo verification.
 - Keyboard skip links, named landmarks, and refresh-control relationships backed by automated accessibility structure checks.
 - Refresh action.
@@ -87,7 +89,8 @@ Out of scope for the MVP:
 - Launch details can graduate to dedicated static pages when the dashboard card would become too dense.
 - Other public APIs remain browser-side for MVP simplicity.
 - Visual direction now follows Acadia: calm gray page background, compact top navigation, red accent actions, split APOD feature, simple bordered cards, 8px repeated surfaces, and standardized responsive spacing.
-- Dashboard content uses a split APOD feature followed by a compact two-column grid for ISS, people in space, launches, asteroids, and space weather.
+- Apollo now uses a multi-page information architecture. The Dashboard is a compact state-at-a-glance surface; ISS, Launches, Asteroids, Weather, Gallery, and Anomalies hold richer detail.
+- Dashboard content uses compact summary cards with detail links instead of embedding full maps, full APOD media, full crew rosters, or long source narratives on the homepage.
 - ISS context should interpret the already-loaded position source before adding any new ISS source. Current orbital context is calculated from live altitude and velocity rather than stored as separate static data. The position source's timestamp should remain visible as compact freshness context for the current map fix, and source-provided visibility/footprint fields should be surfaced as lightweight operational context when available.
 - People in Space should summarize current spacecraft or station occupancy from the existing roster feed before adding richer astronaut sources. The dashboard should preserve the feed's current `spacecraft` field, while retaining compatibility with older `craft` payloads. When the feed provides a declared `number` or `iss_expedition`, Apollo should surface that source context and treat count mismatches as a source-attention state instead of silently trusting the rendered list.
 - The asteroid summary should surface the closest object's approach time and distance before the object list, then use compact NASA CNEOS hazard-flag and Sentry monitoring context plus disclosure details for approach time, miss distance, speed, estimated diameter, NASA tracking flags, and object source links rather than expanding the dashboard card by default. Potentially hazardous asteroid copy should make clear that the flag reflects size and orbital-distance criteria, not an impact prediction. Sentry copy should make clear that it is NASA/JPL impact monitoring context, not a certainty of future impact.

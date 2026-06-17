@@ -427,6 +427,23 @@ function getSkyAnomalyLocation() {
   return getText(els.skyAnomalyLocation?.value, "Selected location");
 }
 
+function getPageType() {
+  return document.body?.dataset?.apolloPage || (document.querySelector("#quickStatsBody") ? "dashboard" : "detail");
+}
+
+function isDashboardPage() {
+  return getPageType() === "dashboard";
+}
+
+function detailLink(href, label = "View details") {
+  return `
+    <a class="source-link dashboard-detail-link" href="${escapeHtml(href)}">
+      <i class="fa-solid fa-arrow-right acadia-icon" aria-hidden="true"></i>
+      ${escapeHtml(label)}
+    </a>
+  `;
+}
+
 function getNearestLaunchMatch(observedAt) {
   const launches = Array.isArray(dashboardData.launches) ? dashboardData.launches : [];
 
@@ -1217,6 +1234,10 @@ function setDashboardStatus(message) {
 }
 
 function setError(container, message) {
+  if (!container) {
+    return;
+  }
+
   container.innerHTML = stateMessage(message, { role: "alert", tone: "warning" });
 }
 
@@ -1363,6 +1384,209 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
   `;
 }
 
+function renderDashboardApodSummary(data) {
+  if (!els.apodBody) {
+    return;
+  }
+
+  const mediaUrl = escapeHtml(data.mediaUrl);
+  const title = escapeHtml(data.title);
+
+  els.apodBody.innerHTML = `
+    <div class="dashboard-summary-card dashboard-summary-media-card">
+      ${data.mediaUrl && data.mediaType === "image" ? `
+        <img class="dashboard-summary-thumb" src="${mediaUrl}" alt="${title}">
+      ` : `
+        <span class="stat-chip"><i class="fa-solid fa-image acadia-icon" aria-hidden="true"></i></span>
+      `}
+      <div class="dashboard-summary-copy">
+        <p class="section-kicker mb-1">NASA APOD</p>
+        <h3 class="dashboard-summary-title mb-1">${title}</h3>
+        <p class="dashboard-summary-detail mb-0">${data.date ? formatDate(data.date) : "Today"}</p>
+      </div>
+      ${detailLink("./gallery.html", "Open gallery")}
+    </div>
+  `;
+}
+
+function renderDashboardIssSummary(data) {
+  if (!els.issBody) {
+    return;
+  }
+
+  els.issBody.innerHTML = `
+    <div class="dashboard-summary-card">
+      <div class="summary-metric mb-3">
+        <span class="stat-chip"><i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i></span>
+        <div>
+          <p class="text-secondary small mb-1">Current ISS location</p>
+          <p class="h3 fw-semibold mb-0">${formatNumber(data.latitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}, ${formatNumber(data.longitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</p>
+        </div>
+      </div>
+      <div class="metadata-grid mb-3">
+        <div>
+          <p class="text-secondary small mb-1">Altitude</p>
+          <p class="fw-semibold mb-0">${formatNumber(data.altitude, { suffix: " km" })}</p>
+        </div>
+        <div>
+          <p class="text-secondary small mb-1">Velocity</p>
+          <p class="fw-semibold mb-0">${formatNumber(data.velocity, { suffix: " km/h" })}</p>
+        </div>
+      </div>
+      ${detailLink("./iss.html", "Open ISS")}
+    </div>
+  `;
+}
+
+function renderDashboardPeopleSummary(roster, craftGroups, countMatches) {
+  if (!els.peopleBody) {
+    return;
+  }
+
+  els.peopleBody.innerHTML = `
+    <div class="dashboard-summary-card">
+      <div class="summary-metric mb-3">
+        <span class="stat-chip"><i class="fa-solid fa-user-astronaut acadia-icon" aria-hidden="true"></i></span>
+        <div>
+          <p class="text-secondary small mb-1">Crew in orbit</p>
+          <p class="h3 fw-semibold mb-0">${roster.people.length.toLocaleString()} aboard</p>
+        </div>
+      </div>
+      <div class="metadata-grid mb-3">
+        <div>
+          <p class="text-secondary small mb-1">Crew locations</p>
+          <p class="fw-semibold mb-0">${craftGroups.length.toLocaleString()}</p>
+        </div>
+        <div>
+          <p class="text-secondary small mb-1">Source status</p>
+          <p class="fw-semibold mb-0">${countMatches ? "Matched" : "Check source"}</p>
+        </div>
+      </div>
+      ${detailLink("./iss.html", "Open crew")}
+    </div>
+  `;
+}
+
+function renderDashboardLaunchSummary(launches) {
+  if (!els.launchBody) {
+    return;
+  }
+
+  const nextLaunch = launches[0];
+  const launchName = splitLaunchName(nextLaunch.name);
+
+  els.launchBody.innerHTML = `
+    <div class="dashboard-summary-card">
+      <p class="launch-count mb-3">${launches.length.toLocaleString()} upcoming launches</p>
+      <div class="summary-metric mb-3">
+        ${nextLaunch.imageUrl ? `<img src="${escapeHtml(nextLaunch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(nextLaunch, launchName))}" class="launch-thumb">` : `<span class="stat-chip"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></span>`}
+        <div>
+          <p class="text-secondary small mb-1">Next launch</p>
+          <p class="h3 fw-semibold mb-0">${escapeHtml(launchName.vehicle)}</p>
+          ${launchName.mission ? `<p class="dashboard-summary-detail mb-0">${escapeHtml(launchName.mission)}</p>` : ""}
+        </div>
+      </div>
+      <div class="metadata-grid mb-3">
+        <div>
+          <p class="text-secondary small mb-1">Countdown</p>
+          <p class="fw-semibold mb-0">${formatCountdown(nextLaunch.dateUtc)}</p>
+        </div>
+        <div>
+          <p class="text-secondary small mb-1">Status</p>
+          <p class="fw-semibold mb-0">${escapeHtml(nextLaunch.status)}</p>
+        </div>
+      </div>
+      ${detailLink("./launches.html", "Open launches")}
+    </div>
+  `;
+}
+
+function renderDashboardNeoSummary(neoSummary) {
+  if (!els.neoBody) {
+    return;
+  }
+
+  const asteroids = neoSummary.asteroids;
+  const hazardous = asteroids.filter((item) => item.hazardous).length;
+  const closestObject = [...asteroids].sort((a, b) => {
+    const left = Number.isFinite(a.closestKilometers) ? a.closestKilometers : Number.POSITIVE_INFINITY;
+    const right = Number.isFinite(b.closestKilometers) ? b.closestKilometers : Number.POSITIVE_INFINITY;
+    return left - right;
+  })[0];
+
+  els.neoBody.innerHTML = `
+    <div class="dashboard-summary-card">
+      <div class="summary-metric mb-3">
+        <span class="stat-chip ${hazardous === 0 ? "space-weather-quiet" : "space-weather-active"}"><i class="fa-solid fa-meteor acadia-icon" aria-hidden="true"></i></span>
+        <div>
+          <p class="text-secondary small mb-1">Near-Earth objects today</p>
+          <p class="h3 fw-semibold mb-0">${asteroids.length.toLocaleString()}</p>
+        </div>
+      </div>
+      <div class="metadata-grid mb-3">
+        <div>
+          <p class="text-secondary small mb-1">Closest approach</p>
+          <p class="fw-semibold mb-0">${formatLunarDistance(closestObject?.lunarDistance)}</p>
+        </div>
+        <div>
+          <p class="text-secondary small mb-1">Hazard status</p>
+          <p class="fw-semibold mb-0">${hazardous === 0 ? "None flagged" : `${hazardous} flagged`}</p>
+        </div>
+      </div>
+      ${detailLink("./asteroids.html", "Open asteroids")}
+    </div>
+  `;
+}
+
+function renderDashboardWeatherSummary(data) {
+  if (!els.spaceWeatherBody) {
+    return;
+  }
+
+  els.spaceWeatherBody.innerHTML = `
+    <div class="dashboard-summary-card">
+      <div class="summary-metric mb-3">
+        <span class="stat-chip space-weather-${escapeHtml(data.severity)}"><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i></span>
+        <div>
+          <p class="text-secondary small mb-1">Current K-index</p>
+          <p class="h3 fw-semibold mb-0">${formatKpIndex(data.kpIndex)}</p>
+        </div>
+      </div>
+      <div class="metadata-grid mb-3">
+        <div>
+          <p class="text-secondary small mb-1">Severity</p>
+          <p class="fw-semibold mb-0">${escapeHtml(data.condition)}</p>
+        </div>
+        <div>
+          <p class="text-secondary small mb-1">Trend</p>
+          <p class="fw-semibold mb-0">${data.forecast[0]?.condition ? escapeHtml(data.forecast[0].condition) : "Outlook unavailable"}</p>
+        </div>
+      </div>
+      ${detailLink("./weather.html", "Open weather")}
+    </div>
+  `;
+}
+
+function renderDashboardAnomalySummary() {
+  if (!els.skyAnomaliesBody) {
+    return;
+  }
+
+  els.skyAnomaliesBody.innerHTML = `
+    <div class="dashboard-summary-card">
+      <div class="summary-metric mb-3">
+        <span class="stat-chip"><i class="fa-solid fa-magnifying-glass-location acadia-icon" aria-hidden="true"></i></span>
+        <div>
+          <p class="text-secondary small mb-1">Sky Explanation Engine</p>
+          <p class="h3 fw-semibold mb-0">What did I see?</p>
+        </div>
+      </div>
+      <p class="dashboard-summary-detail mb-3">Compare a sighting against launches, ISS context, meteor/fireball gaps, space weather, and reported-sighting sources.</p>
+      ${detailLink("./anomalies.html", "Open engine")}
+    </div>
+  `;
+}
+
 function getApiErrorMessage(error, fallback) {
   const errorCode = error.payload?.error?.code;
 
@@ -1442,6 +1666,12 @@ async function loadApod() {
       `;
     }
 
+    if (isDashboardPage()) {
+      renderDashboardApodSummary(data);
+      const mediaLabel = data.mediaType === "video" ? "Video" : data.mediaType === "image" ? "Image" : "Media";
+      return createSourceStatus("apod", "ok", data.date ? `${mediaLabel} for ${formatDate(data.date)}` : `Current ${mediaLabel.toLowerCase()} loaded.`);
+    }
+
     els.apodBody.innerHTML = `
       <div class="apollo-card acadia-surface apod-showcase">
         ${media}
@@ -1507,6 +1737,34 @@ async function loadIss() {
     const observedAtMarkup = observedAtLabel && observedAtLabel !== "Unavailable"
       ? `<p class="iss-position-fix mb-3">Position fix <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
       : "";
+
+    if (isDashboardPage()) {
+      renderDashboardIssSummary(data);
+      setQuickStat("iss", {
+        value: data.latitude !== null && data.longitude !== null ? "In orbit" : "Position unknown",
+        detail: data.altitude !== null ? `${formatNumber(data.altitude, { suffix: " km" })} altitude` : formatIssVisibility(data.visibility),
+        state: data.latitude !== null && data.longitude !== null ? "ok" : "attention"
+      });
+      return createSourceStatus(
+        "iss",
+        data.latitude !== null && data.longitude !== null ? "ok" : "attention",
+        data.latitude !== null && data.longitude !== null
+          ? data.observedAt
+            ? `Station coordinates loaded for ${formatDateTime(data.observedAt)}; ${formatIssVisibility(data.visibility).toLowerCase()}.`
+            : "Current station coordinates loaded."
+          : "Position response was missing coordinates."
+      );
+    }
+
+    if (!els.issBody) {
+      return createSourceStatus(
+        "iss",
+        data.latitude !== null && data.longitude !== null ? "ok" : "attention",
+        data.latitude !== null && data.longitude !== null
+          ? "Current station coordinates loaded for context."
+          : "Position response was missing coordinates."
+      );
+    }
 
     els.issBody.innerHTML = `
       <div class="iss-map mb-3" id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"></div>
@@ -1610,6 +1868,22 @@ async function loadPeople() {
     const expeditionLabel = formatCrewExpedition(roster.expedition);
     const sourceExpeditionDetail = expeditionLabel === "Unavailable" ? "" : `; ${expeditionLabel}`;
 
+    if (isDashboardPage()) {
+      renderDashboardPeopleSummary(roster, craftGroups, countMatches);
+      setQuickStat("people", {
+        value: `${people.length.toLocaleString()} aboard`,
+        detail: `${craftGroups.length} ${crewLocationLabel}`,
+        state: countMatches ? "ok" : "attention"
+      });
+      return createSourceStatus(
+        "people",
+        countMatches ? "ok" : "attention",
+        countMatches
+          ? `${people.length} people across ${craftGroups.length} ${crewLocationLabel} listed${sourceExpeditionDetail}.`
+          : `Source reports ${roster.sourceCount} people but ${people.length} roster entries loaded${sourceExpeditionDetail}.`
+      );
+    }
+
     els.peopleBody.innerHTML = `
       <div class="summary-metric mb-3">
         <span class="stat-chip"><i class="fa-solid fa-user-astronaut acadia-icon" aria-hidden="true"></i></span>
@@ -1678,7 +1952,9 @@ async function loadLaunches() {
     dashboardData.launches = launches;
 
     if (!launches.length) {
-      els.launchBody.innerHTML = stateMessage("No upcoming SpaceX launches are available from the current launch source.");
+      if (els.launchBody) {
+        els.launchBody.innerHTML = stateMessage("No upcoming SpaceX launches are available from the current launch source.");
+      }
       setQuickStat("launches", {
         value: "No upcoming",
         detail: "Schedule empty",
@@ -1750,7 +2026,13 @@ async function loadLaunches() {
       `;
     };
 
-    renderLaunchRows();
+    if (isDashboardPage()) {
+      renderDashboardLaunchSummary(launches);
+    } else if (!els.launchBody) {
+      return createSourceStatus("launches", "ok", `${launches.length} upcoming launches loaded for context.`);
+    } else {
+      renderLaunchRows();
+    }
     setQuickStat("launches", {
       value: formatLaunchQuickDate(launches[0].dateUtc),
       detail: formatCountdown(launches[0].dateUtc),
@@ -1798,6 +2080,20 @@ async function loadNeo() {
       : `${sentryObjects} listed ${sentryObjects === 1 ? "object is" : "objects are"} on NASA's Sentry monitoring list.`;
     const hazardNoteClass = hazardous === 0 ? "neo-risk-note-success" : "neo-risk-note-warning";
     const hazardIcon = hazardous === 0 ? "fa-circle-check" : "fa-circle-info";
+
+    if (isDashboardPage()) {
+      renderDashboardNeoSummary(neoSummary);
+      setQuickStat("neo", {
+        value: `${asteroids.length.toLocaleString()} near Earth`,
+        detail: hazardous === 0 ? "None flagged" : `${hazardous.toLocaleString()} flagged`,
+        state: hazardous === 0 ? "ok" : "attention"
+      });
+      return createSourceStatus("neo", "ok", `${formatDate(date)} NASA NeoWs list loaded: ${asteroids.length} objects, ${hazardous} flagged for tracking, ${sentryObjects} on Sentry monitoring.`);
+    }
+
+    if (!els.neoBody) {
+      return createSourceStatus("neo", "ok", `${formatDate(date)} NASA NeoWs list loaded for context: ${asteroids.length} objects.`);
+    }
 
     els.neoBody.innerHTML = `
       <div class="metadata-grid mb-3">
@@ -1923,6 +2219,32 @@ async function loadSpaceWeather() {
       ? `<p class="space-weather-observed mb-0">Observed <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
       : "";
 
+    if (isDashboardPage()) {
+      renderDashboardWeatherSummary(data);
+      setQuickStat("spaceWeather", {
+        value: data.condition,
+        detail: data.kpIndex === null ? "Kp unavailable" : `Kp ${formatKpIndex(data.kpIndex)}`,
+        state: data.kpIndex === null ? "attention" : data.severity === "quiet" ? "ok" : "attention"
+      });
+      return createSourceStatus(
+        "spaceWeather",
+        data.kpIndex === null ? "attention" : "ok",
+        data.kpIndex === null
+          ? "NOAA response loaded without a current K-index."
+          : data.observedAt
+            ? `Current K-index ${formatKpIndex(data.kpIndex)} observed ${formatDateTime(data.observedAt)}.`
+            : `Current K-index ${formatKpIndex(data.kpIndex)} loaded.`
+      );
+    }
+
+    if (!els.spaceWeatherBody) {
+      return createSourceStatus(
+        "spaceWeather",
+        data.kpIndex === null ? "attention" : "ok",
+        data.kpIndex === null ? "NOAA response loaded without a current K-index." : `Current K-index ${formatKpIndex(data.kpIndex)} loaded for context.`
+      );
+    }
+
     els.spaceWeatherBody.innerHTML = `
       <div class="summary-metric mb-3">
         <span class="stat-chip ${severityClass}"><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i></span>
@@ -2018,7 +2340,24 @@ async function loadSpaceWeather() {
 
 async function loadDashboard() {
   setDashboardStatus("Refreshing live space data.");
-  [
+  const pageType = getPageType();
+  const loadersByPage = {
+    dashboard: [loadApod, loadIss, loadPeople, loadLaunches, loadNeo, loadSpaceWeather],
+    iss: [loadIss, loadPeople],
+    asteroids: [loadNeo],
+    weather: [loadSpaceWeather],
+    gallery: [loadApod],
+    anomalies: [loadIss, loadLaunches, loadNeo, loadSpaceWeather]
+  };
+  const sourceIdsByPage = {
+    dashboard: ["apod", "iss", "people", "launches", "neo", "spaceWeather"],
+    iss: ["iss", "people"],
+    asteroids: ["neo"],
+    weather: ["spaceWeather"],
+    gallery: ["apod"],
+    anomalies: ["iss", "launches", "neo", "spaceWeather"]
+  };
+  const busyElements = [
     els.quickStatsBody,
     els.apodBody,
     els.issBody,
@@ -2028,44 +2367,46 @@ async function loadDashboard() {
     els.spaceWeatherBody,
     els.skyAnomaliesBody,
     els.sourceStatusBody
-  ].forEach((element) => setBusy(element, true));
-  if (els.skyAnomalyResults) {
+  ].filter(Boolean);
+  const loaders = loadersByPage[pageType] || loadersByPage.dashboard;
+  const sourceIds = sourceIdsByPage[pageType] || sourceIdsByPage.dashboard;
+
+  busyElements.forEach((element) => setBusy(element, true));
+
+  if (els.skyAnomalyResults && pageType === "anomalies") {
     els.skyAnomalyResults.innerHTML = stateMessage("Loading sky context...");
   }
-  resetQuickStats();
+
+  if (els.quickStatsBody) {
+    resetQuickStats();
+  }
+
   [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
     button.disabled = true;
     button.innerHTML = REFRESHING_BUTTON_HTML;
   });
-  const sourceResults = await Promise.allSettled([
-    loadApod(),
-    loadIss(),
-    loadPeople(),
-    loadLaunches(),
-    loadNeo(),
-    loadSpaceWeather()
-  ]);
-  renderSourceStatus(sourceResults.map((result, index) => (
-    result.status === "fulfilled" && result.value
-      ? result.value
-      : createSourceStatus(SOURCE_FEEDS[index].id, "error", "Source check did not finish.")
-  )), new Date());
-  if (els.skyAnomalyResults?.dataset.mode === "submitted") {
-    renderSkyExplanation();
-  } else {
-    renderSkyAnomalyOverview();
+
+  const sourceResults = await Promise.allSettled(loaders.map((loader) => loader()));
+
+  if (els.sourceStatusBody) {
+    renderSourceStatus(sourceResults.map((result, index) => (
+      result.status === "fulfilled" && result.value
+        ? result.value
+        : createSourceStatus(sourceIds[index], "error", "Source check did not finish.")
+    )), new Date());
   }
-  [
-    els.quickStatsBody,
-    els.apodBody,
-    els.issBody,
-    els.peopleBody,
-    els.launchBody,
-    els.neoBody,
-    els.spaceWeatherBody,
-    els.skyAnomaliesBody,
-    els.sourceStatusBody
-  ].forEach((element) => setBusy(element, false));
+
+  if (pageType === "anomalies") {
+    if (els.skyAnomalyResults?.dataset.mode === "submitted") {
+      renderSkyExplanation();
+    } else {
+      renderSkyAnomalyOverview();
+    }
+  } else if (isDashboardPage()) {
+    renderDashboardAnomalySummary();
+  }
+
+  busyElements.forEach((element) => setBusy(element, false));
   setDashboardStatus("Live space data refreshed.");
   setDashboardUpdated();
   if (els.refreshButton) {
