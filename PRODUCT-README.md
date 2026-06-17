@@ -28,6 +28,7 @@ In scope:
 - Upcoming SpaceX launches
 - NOAA SWPC space weather
 - Near-Earth asteroid daily summary
+- Sky Anomalies explanation engine beta
 - Dedicated launches detail page
 - Responsive Bootstrap dashboard UI
 - Vercel deployment with serverless NASA proxy routes
@@ -53,6 +54,7 @@ Out of scope for the MVP:
 - Dedicated launches page with a next-launch spotlight plus fuller upcoming list, status, vehicle, provider, window length, window times, pad, location, and source links.
 - Near-Earth asteroid summary for the current day with closest-approach time, lunar-distance, velocity, exact approach details, source links, NASA hazard-flag context cues, and NASA Sentry monitoring context.
 - NOAA SWPC space-weather status with current K-index observation time, NOAA geomagnetic scale context, 3-day K-index outlook, and typed recent notices with compact NOAA R/S/G scale cues when the source text provides them.
+- Sky Anomalies beta panel that lets a user enter a sighting location/date/time and compares the moment against Apollo's known launch, ISS, asteroid, and space-weather context while clearly naming source gaps for fireball and UAP report imports.
 - Dashboard-level data-source status summary for APOD, ISS position, crew, launches, asteroids, and space weather, with compact upstream source links and source timing context for demo verification.
 - Keyboard skip links, named landmarks, and refresh-control relationships backed by automated accessibility structure checks.
 - Refresh action.
@@ -78,6 +80,7 @@ Out of scope for the MVP:
 - NOAA SWPC space weather uses `/api/space-weather`, with current K-index, forecast, and alert/watch/warning notice data normalized before rendering.
 - Current space-weather cards should interpret NOAA geomagnetic storm scale context from the existing K-index feed before adding deeper space-weather charts or new NOAA products.
 - Space-weather notices should keep NOAA's alert/watch/warning distinction visible with compact labels instead of flattening every message into an undifferentiated headline. When the existing notice text includes NOAA R/S/G scale values or clear K-index storm text, Apollo should surface that scale as a compact impact cue rather than adding a broader education panel.
+- Sky Anomalies should stay trust-first: use neutral terms such as sighting, anomaly, report, and observation; compare known sky activity before reported-sighting feeds; and never infer extraterrestrial origin or verification from an unverified report.
 - Server-side normalizers provide stable APOD, launch, Near-Earth Object, and space-weather shapes so third-party response changes are less likely to break card rendering.
 - Frontend rendering escapes API-provided text before inserting it into the page.
 - Frontend data loaders retain compatibility fallbacks for older raw NASA payload shapes.
@@ -94,6 +97,7 @@ Out of scope for the MVP:
 - Dashboard data families use neutral cards, sparse icons, red action accents, and positive green styling for safe/good status messages.
 - Theme choice is stored locally in the browser; first-time visitors start from the operating system theme.
 - Unsupported controls such as export, search, notifications, settings, and new observations are omitted until those workflows are requested.
+- UAP and fireball feeds are not yet connected. Until NUFORC, American Meteor Society, AARO, FAA, or satellite-visibility sources are imported, Apollo should label those checks as planned source gaps rather than fabricating report data.
 
 ## Roadmap
 
@@ -108,6 +112,7 @@ Recommended next steps:
 Future enhancements only if requested:
 
 - Location-based ISS pass times
+- Location-aware Sky Explanation Engine with ISS pass, satellite visibility, Starlink, fireball, aurora, and reported-sighting matching
 - Asteroid or launch charts
 - Data filters
 - Auth

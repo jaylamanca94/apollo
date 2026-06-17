@@ -73,6 +73,7 @@ Dashboard pages should lead with Apollo as the product identity, then the APOD f
 - Launches as a taller list card with three visible launch rows, compact launch-window length context, and a link to the launches detail page.
 - Asteroids as a summary card with closest approach time/distance, hazard and Sentry monitoring context, and nearby object rows. Keep per-object approach details behind compact inline disclosure controls so the card remains scannable.
 - Space weather as a compact status card under asteroid context, with current K-index first, a compact NOAA geomagnetic scale context row, a small 3-day outlook below it, and compact labels plus scale cues for recent NOAA alert/watch/warning notices.
+- Sky Anomalies as a full-width operational card focused on the Sky Explanation Engine. Keep the form compact and the result language sourced, neutral, and careful: `strong`, `possible`, `context`, and `unknown` are acceptable result states, while speculative origin language is not. UAP and fireball report feeds should appear as planned source gaps until real imports exist.
 - Data Sources as a full-width closing card that reports whether each upstream source loaded, needs attention, or is unavailable.
 
 Use one global refresh timestamp near the page title. Avoid repeated per-card timestamps and section jump navigation on single-page dashboard views.

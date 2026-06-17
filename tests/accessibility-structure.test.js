@@ -19,12 +19,14 @@ const pages = [
       { href: "./launches.html", label: "Launches" }
     ],
     controlledIds: [
+      "quickStatsBody",
       "apodBody",
       "issBody",
       "peopleBody",
       "launchBody",
       "neoBody",
       "spaceWeatherBody",
+      "skyAnomaliesBody",
       "sourceStatusBody"
     ]
   },
