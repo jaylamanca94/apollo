@@ -44,7 +44,7 @@ Out of scope for the MVP:
 
 ## Features
 
-- Responsive Apollo dashboard shell with a dark-first Light/Dark theme toggle.
+- Responsive Apollo dashboard shell that follows Acadia with a red Apollo accent and defaults to the user's operating system theme.
 - APOD-first feature panel.
 - APOD credit, safe image/video media handling, full-media link, NASA source link, and inline full-description detail.
 - ISS latitude, longitude, altitude, velocity, current-position map, source observation time, live orbital context, sunlight state, signal footprint, and source link.
@@ -83,7 +83,7 @@ Out of scope for the MVP:
 - Frontend data loaders retain compatibility fallbacks for older raw NASA payload shapes.
 - Launch details can graduate to dedicated static pages when the dashboard card would become too dense.
 - Other public APIs remain browser-side for MVP simplicity.
-- Visual direction now follows a darker operational dashboard shell: charcoal page background, compact top navigation, red accent actions, split APOD feature, simple bordered cards, and low-maintenance spacing.
+- Visual direction now follows Acadia: calm gray page background, compact top navigation, red accent actions, split APOD feature, simple bordered cards, 8px repeated surfaces, and standardized responsive spacing.
 - Dashboard content uses a split APOD feature followed by a compact two-column grid for ISS, people in space, launches, asteroids, and space weather.
 - ISS context should interpret the already-loaded position source before adding any new ISS source. Current orbital context is calculated from live altitude and velocity rather than stored as separate static data. The position source's timestamp should remain visible as compact freshness context for the current map fix, and source-provided visibility/footprint fields should be surfaced as lightweight operational context when available.
 - People in Space should summarize current spacecraft or station occupancy from the existing roster feed before adding richer astronaut sources. The dashboard should preserve the feed's current `spacecraft` field, while retaining compatibility with older `craft` payloads. When the feed provides a declared `number` or `iss_expedition`, Apollo should surface that source context and treat count mismatches as a source-attention state instead of silently trusting the rendered list.
@@ -92,7 +92,7 @@ Out of scope for the MVP:
 - The header avoids section jump navigation and uses compact primary page links only for meaningful detail pages such as Launches.
 - Refresh state uses one global "Last updated" timestamp instead of repeated per-card timestamps.
 - Dashboard data families use neutral cards, sparse icons, red action accents, and positive green styling for safe/good status messages.
-- Theme choice is stored locally in the browser; first-time visitors start in dark mode.
+- Theme choice is stored locally in the browser; first-time visitors start from the operating system theme.
 - Unsupported controls such as export, search, notifications, settings, and new observations are omitted until those workflows are requested.
 
 ## Roadmap

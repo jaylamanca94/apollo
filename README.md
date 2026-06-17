@@ -9,8 +9,8 @@ The app is designed to be easy to demo: each card favors source-backed context, 
 Use a static frontend with serverless API routes.
 
 - Frontend: vanilla HTML, CSS, and JavaScript
-- UI: Bootstrap CDN, Leaflet, and OpenStreetMap tiles
-- Theme: dark-first Light/Dark mode toggle
+- UI: Bootstrap CDN, Leaflet, OpenStreetMap tiles, and an Acadia adapter layer
+- Theme: defaults to the user's operating system setting with a Light/Dark mode toggle
 - API proxies: Vercel serverless functions in `/api`
 - Hosting: Vercel
 - Secrets: `NASA_API_KEY` stored as a server-side environment variable

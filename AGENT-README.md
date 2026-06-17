@@ -5,7 +5,7 @@ Use this file as the working agreement for the Apollo product agent. The agent i
 Read these files first:
 
 1. `PRODUCT-README.md` for Apollo mission, audience, goals, scope, roadmap, and product decisions.
-2. `../Acadia/AGENTS.md`, `../Acadia/FOUNDATIONS.md`, and `../Acadia/src/acadia.css` before custom UI work, so shared design-system primitives are reused when they exist.
+2. `../Acadia/AGENTS.md`, `../Acadia/OPERATING_MODEL.md`, `../Acadia/FOUNDATIONS.md`, and `../Acadia/src/acadia.css` before custom UI work, so shared design-system primitives are reused when they exist.
 3. `DESIGN-README.md` whenever work affects UI, layout, styling, interactions, accessibility, or reusable design utilities.
 4. `README.md` for setup, environment variables, local development, and deployment details.
 

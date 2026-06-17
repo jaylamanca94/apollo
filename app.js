@@ -546,7 +546,11 @@ function getStoredTheme() {
     storedTheme = null;
   }
 
-  return ["light", "dark"].includes(storedTheme) ? storedTheme : "dark";
+  if (["light", "dark"].includes(storedTheme)) {
+    return storedTheme;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 function updateThemeToggle(theme) {

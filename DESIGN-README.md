@@ -6,7 +6,7 @@ This file is intentionally separate because design standards and utilities will 
 
 ## Product Feel
 
-The interface should feel quiet, personal, practical, and easy to scan. The current visual direction is an Apple-like operational dashboard: Apollo identity leads the first viewport, the content uses broad charcoal material surfaces, source-backed data stays compact, and a single warm red accent marks primary action and live context.
+The interface should feel quiet, practical, and easy to scan. Apollo should follow Acadia's Apple-like product system: calm gray app background, translucent elevated surfaces, compact controls, 8px repeated surfaces, and responsive spacing. Apollo's primary differentiator is its warm red accent for brand, primary action, and live space-data context.
 
 - Prefer Bootstrap conventions before custom UI patterns.
 - Keep visual decisions simple enough for a solo product builder to maintain.
@@ -22,10 +22,10 @@ Use this file as the visual source of truth for `Apollo`. Update it whenever spa
 
 ### Acadia Adapter
 
-Apollo now treats `../Acadia` as the shared design-system baseline. Before adding a local UI style, check Acadia's live docs, foundations, and CSS primitives for the needed layout, control, surface, state, icon, or responsive behavior.
+Apollo now treats `../Acadia` as the shared design-system baseline. Before adding a local UI style, check Acadia's live docs, operating model, adoption playbook, foundations, templates, patterns, and CSS primitives for the needed layout, control, surface, state, icon, dashboard, overlay, or responsive behavior.
 
 - Use Acadia primitives for shared product language: controls, card padding, raised rows, focus rings, state surfaces, motion, table/form patterns, and Font Awesome Free icon sizing.
-- Keep Apollo-specific choices local when they express space-data semantics, dark-first identity, live-source context, map behavior, or the red product accent.
+- Keep Apollo-specific choices local when they express space-data semantics, live-source context, map behavior, media behavior, or the red product accent.
 - Map Apollo variables onto Acadia-style adapter variables in `styles.css` before creating a new one-off component rule.
 - Keep adapter-owned hover and focus motion covered by Apollo's `prefers-reduced-motion` override.
 - If an Apollo pattern becomes useful for another product, graduate the neutral part into Acadia and keep Apollo's wording/data treatment here.
@@ -34,21 +34,21 @@ Apollo now treats `../Acadia` as the shared design-system baseline. Before addin
 
 ### Light Mode
 
-- Page background: `#F3F5F7`
-- Content surface: `#FFFFFF`
-- Raised surface: `#EEF1F4`
+- Page background: `#E8EAED`
+- Content surface: translucent `#FCFCFD`
+- Raised surface: translucent `#FFFFFF`
 - Accent: `#D9233B`
 
 ### Dark Mode
 
-- Page background: `#252A2D`
+- Page background: `#1F2427`
 - Top navigation: translucent `#1F2427` material
-- Content surface: `#202528`
-- Raised surface: `#2A3034`
-- Border: `#3A4248`
+- Content surface: translucent `#1F2327`
+- Raised surface: translucent `#2B3035`
+- Border: translucent white at Acadia strength
 - Accent: `#FF4056`
 
-Default first-time visitors to Dark Mode and provide a compact header toggle for switching between Light and Dark.
+Default first-time visitors to the user's operating system theme setting and provide a compact header toggle for switching between Light and Dark.
 
 ### Data Accents
 
@@ -93,19 +93,20 @@ Use compact raised notice rows for source and space-weather status details. Stat
 ### Desktop
 
 - 12-column grid
-- Page margin: `24px`
-- Max content width: about `1232px`
+- Page margin: `128px`
+- Content spans the available viewport inside the Acadia margin contract unless a specific data surface needs a local width cap
 - Column gap: `24px`
 - Content padding: `24px`
-- Form sections: `48px` padding
+- Spacious sections: `48px` padding
+- Dense cards and operational sections: `24px` padding
 - Form field rows span the section and use 4 columns with `24px` gaps
 
 ### Tablet
 
 - 8-column grid
-- Page margin: `16px`
+- Page margin: `32px`
 - Column gap: `16px`
-- Content padding: `16px`
+- Content padding: `24px` where space allows, collapsing to `16px` for dense or narrow surfaces
 
 ### Mobile
 
