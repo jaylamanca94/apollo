@@ -17,8 +17,10 @@
           const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
           const theme = ["light", "dark"].includes(storedTheme) ? storedTheme : systemTheme;
           document.documentElement.setAttribute("data-bs-theme", theme);
+          document.documentElement.setAttribute("data-acadia-theme", theme);
         } catch (error) {
           document.documentElement.setAttribute("data-bs-theme", "light");
+          document.documentElement.setAttribute("data-acadia-theme", "light");
         }
       })();
     </script>

@@ -578,6 +578,7 @@ function updateThemeToggle(theme) {
 
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-bs-theme", theme);
+  document.documentElement.setAttribute("data-acadia-theme", theme);
   updateThemeToggle(theme);
 }
 
