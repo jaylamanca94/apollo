@@ -15,6 +15,12 @@ const allHtmlPages = [
   "anomalies.html"
 ];
 
+const overflowNavLinks = [
+  { href: "./weather.html", label: "Weather" },
+  { href: "./gallery.html", label: "Gallery" },
+  { href: "./anomalies.html", label: "Anomalies" }
+];
+
 const pages = [
   {
     file: "index.html",
@@ -101,6 +107,11 @@ function hasClass(tag, className) {
   return getAttribute(tag, "class").split(/\s+/).includes(className);
 }
 
+function isNavDestination(tag) {
+  const className = getAttribute(tag, "class");
+  return /\bapollo-nav-link\b/.test(className) || /\bapollo-nav-menu-item\b/.test(className);
+}
+
 for (const page of pages) {
   test(`${page.name} has named landmarks and skip navigation`, () => {
     const html = readProjectFile(page.file);
@@ -120,8 +131,7 @@ for (const page of pages) {
 
     for (const link of page.expectedNavLinks) {
       const navLink = getTags(html, "a").find((tag) => {
-        const className = getAttribute(tag, "class");
-        return getAttribute(tag, "href") === link.href && /\bapollo-nav-link\b/.test(className);
+        return getAttribute(tag, "href") === link.href && isNavDestination(tag);
       });
 
       assert.ok(navLink, `${page.file} should include ${link.label} in primary navigation`);
@@ -151,12 +161,13 @@ for (const page of pages) {
     assert.ok(hasClass(refreshButton, "acadia-button"));
     assert.ok(hasClass(refreshButton, "acadia-button-primary"));
 
-    for (const link of page.expectedNavLinks) {
-      const navLink = getTags(html, "a").find((tag) => (
-        getAttribute(tag, "href") === link.href && /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))
-      ));
+    const topLevelNavItems = [
+      ...getTags(html, "a").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))),
+      ...getTags(html, "button").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class")))
+    ];
 
-      assert.ok(hasClass(navLink, "acadia-nav-item"), `${link.label} should use Acadia nav anatomy`);
+    for (const navItem of topLevelNavItems) {
+      assert.ok(hasClass(navItem, "acadia-nav-item"), "Top-level nav items should use Acadia nav anatomy");
     }
   });
 
@@ -247,5 +258,28 @@ test("Apollo brand mark uses the satellite icon on every page", () => {
 
     assert.match(brand, /\bfa-satellite\b/, `${file} should use the satellite brand icon`);
     assert.doesNotMatch(brand, /\bfa-rocket\b/, `${file} should not use the launch icon as the brand mark`);
+  }
+});
+
+test("header primary nav uses a More dropdown when page count exceeds five", () => {
+  for (const file of allHtmlPages) {
+    const html = readProjectFile(file);
+    const topLevelNavItems = [
+      ...getTags(html, "a").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))),
+      ...getTags(html, "button").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class")))
+    ];
+    const moreToggle = topLevelNavItems.find((tag) => /\bapollo-nav-more-toggle\b/.test(getAttribute(tag, "class")));
+
+    assert.ok(topLevelNavItems.length <= 5, `${file} should not expose more than five top-level primary nav items`);
+    assert.ok(moreToggle, `${file} should expose overflow pages through a More dropdown`);
+    assert.equal(getAttribute(moreToggle, "data-bs-toggle"), "dropdown");
+
+    for (const link of overflowNavLinks) {
+      const menuItem = getTags(html, "a").find((tag) => (
+        getAttribute(tag, "href") === link.href && /\bapollo-nav-menu-item\b/.test(getAttribute(tag, "class"))
+      ));
+
+      assert.ok(menuItem, `${file} should include ${link.label} in the More dropdown`);
+    }
   }
 });

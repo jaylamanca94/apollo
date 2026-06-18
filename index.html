@@ -47,9 +47,16 @@
             <a class="apollo-nav-link acadia-nav-item" href="./iss.html">ISS</a>
             <a class="apollo-nav-link acadia-nav-item" href="./launches.html">Launches</a>
             <a class="apollo-nav-link acadia-nav-item" href="./asteroids.html">Asteroids</a>
-            <a class="apollo-nav-link acadia-nav-item" href="./weather.html">Weather</a>
-            <a class="apollo-nav-link acadia-nav-item" href="./gallery.html">Gallery</a>
-            <a class="apollo-nav-link acadia-nav-item" href="./anomalies.html">Anomalies</a>
+            <div class="dropdown apollo-nav-more">
+              <button class="apollo-nav-link acadia-nav-item apollo-nav-more-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                More
+              </button>
+              <ul class="dropdown-menu apollo-nav-menu">
+                <li><a class="dropdown-item apollo-nav-menu-item" href="./weather.html">Weather</a></li>
+                <li><a class="dropdown-item apollo-nav-menu-item" href="./gallery.html">Gallery</a></li>
+                <li><a class="dropdown-item apollo-nav-menu-item" href="./anomalies.html">Anomalies</a></li>
+              </ul>
+            </div>
           </div>
           <div class="apollo-navbar-actions d-flex align-items-center gap-2 ms-auto">
             <button class="btn btn-outline-secondary btn-sm apollo-theme-toggle acadia-icon-action" id="themeToggle" type="button" aria-label="Switch to light mode" aria-pressed="true" title="Switch to light mode">

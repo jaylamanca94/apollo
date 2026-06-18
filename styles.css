@@ -334,10 +334,12 @@ body {
 .apollo-nav-link,
 .acadia-nav-item {
   align-items: center;
+  background: transparent;
   border: 1px solid transparent;
   border-radius: 999px;
   color: var(--acadia-color-text-muted);
   display: inline-flex;
+  font-family: inherit;
   font-size: 0.875rem;
   font-weight: 750;
   min-height: var(--acadia-control-height-sm, 2.375rem);
@@ -367,6 +369,44 @@ body {
 .acadia-nav-item.is-active {
   background: var(--acadia-color-brand-bg);
   border-color: var(--acadia-color-brand-border);
+  color: var(--acadia-color-primary);
+}
+
+.apollo-nav-more {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.apollo-nav-more-toggle.dropdown-toggle::after {
+  margin-left: 0.45rem;
+}
+
+.apollo-nav-menu {
+  background: var(--acadia-color-surface-elevated);
+  border: 1px solid var(--acadia-color-border);
+  border-radius: var(--acadia-radius-md);
+  box-shadow: var(--acadia-shadow-card), var(--apollo-shadow-low);
+  min-width: 12rem;
+  padding: 0.35rem;
+}
+
+.apollo-nav-menu-item {
+  border-radius: var(--acadia-radius-sm);
+  color: var(--acadia-color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 750;
+  padding: 0.55rem 0.75rem;
+}
+
+.apollo-nav-menu-item:hover,
+.apollo-nav-menu-item:focus-visible {
+  background: var(--acadia-color-brand-bg);
+  color: var(--acadia-color-text);
+}
+
+.apollo-nav-menu-item.active,
+.apollo-nav-menu-item[aria-current="page"] {
+  background: var(--acadia-color-brand-bg);
   color: var(--acadia-color-primary);
 }
 
@@ -2436,6 +2476,10 @@ html[data-bs-theme="light"] .data-detail-panel {
   .apollo-nav-link {
     font-size: 0.8125rem;
     padding-inline: 0.55rem;
+  }
+
+  .apollo-nav-menu-item {
+    font-size: 0.8125rem;
   }
 
   .apollo-shell {
