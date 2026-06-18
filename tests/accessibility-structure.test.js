@@ -190,12 +190,8 @@ for (const page of pages) {
     const touchIcon = getTags(html, "link").find((tag) => getAttribute(tag, "rel") === "apple-touch-icon");
 
     assert.ok(
-      iconLinks.some((tag) => getAttribute(tag, "href") === "./assets/apollo-app-icon-dark.png" && getAttribute(tag, "media") === "(prefers-color-scheme: dark)"),
-      `${page.file} should expose the dark-mode app icon`
-    );
-    assert.ok(
-      iconLinks.some((tag) => getAttribute(tag, "href") === "./assets/apollo-app-icon-light.png" && getAttribute(tag, "media") === "(prefers-color-scheme: light)"),
-      `${page.file} should expose the light-mode app icon`
+      iconLinks.some((tag) => getAttribute(tag, "href") === "./assets/favicon.svg" && getAttribute(tag, "type") === "image/svg+xml"),
+      `${page.file} should expose the SVG favicon`
     );
     assert.equal(getAttribute(touchIcon || "", "href"), "./assets/apollo-app-icon-light.png");
   });
@@ -236,16 +232,14 @@ test("nonessential interface motion respects reduced motion preferences", () => 
   assert.match(css, /transform:\s*none !important;/);
 });
 
-test("web manifest points to current PNG app icons", () => {
+test("web manifest points to the current SVG favicon", () => {
   const manifest = JSON.parse(readProjectFile("site.webmanifest"));
   const iconSources = manifest.icons.map((icon) => icon.src);
 
-  assert.deepEqual(iconSources, [
-    "assets/apollo-app-icon-light.png",
-    "assets/apollo-app-icon-dark.png"
-  ]);
-  assert.equal(manifest.icons[0].type, "image/png");
-  assert.equal(manifest.icons[0].sizes, "512x512");
+  assert.deepEqual(iconSources, ["assets/favicon.svg"]);
+  assert.equal(manifest.icons[0].type, "image/svg+xml");
+  assert.equal(manifest.icons[0].sizes, "any");
+  assert.equal(manifest.icons[0].purpose, "any maskable");
 });
 
 test("Apollo brand mark uses the satellite icon on every page", () => {
