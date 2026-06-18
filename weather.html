@@ -58,7 +58,7 @@
       </nav>
 
       <main class="apollo-shell acadia-shell" id="weather-content" aria-labelledby="dashboardTitle">
-        <div id="dashboardStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Loading space weather.</div>
+        <div id="dashboardStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Reading solar weather.</div>
         <div class="d-flex flex-column apollo-page-stack">
           <header class="apollo-page-header acadia-page-header acadia-surface acadia-panel">
             <div class="apollo-title-block acadia-page-header-copy">
@@ -66,7 +66,7 @@
               <h1 class="apollo-page-title acadia-display mb-0" id="dashboardTitle">Space Weather</h1>
             </div>
             <div class="apollo-dashboard-actions acadia-page-actions">
-              <p class="apollo-update-pill acadia-badge mb-0" id="dashboardUpdated">Last updated: Loading</p>
+              <p class="apollo-update-pill acadia-badge mb-0" id="dashboardUpdated">Last updated: Standing by</p>
               <button class="btn apollo-refresh-button acadia-button acadia-button-primary" id="refreshButton" type="button" aria-describedby="dashboardStatus" aria-controls="spaceWeatherBody"><i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span></button>
             </div>
           </header>
@@ -76,7 +76,7 @@
               <div class="dashboard-card-heading"><h2 class="section-title mb-0">Current Conditions</h2></div>
             </div>
             <div class="card-body section-card-body" id="spaceWeatherBody" aria-live="polite" aria-busy="true">
-              <div class="state-message acadia-alert mb-0"><i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i><span>Loading space weather...</span></div>
+              <div class="state-message acadia-alert mb-0"><i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i><span>Checking the solar forecast...</span></div>
             </div>
           </section>
         </div>

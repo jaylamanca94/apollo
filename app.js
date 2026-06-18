@@ -59,6 +59,7 @@ const SOURCE_STATUS_LABELS = {
 };
 
 const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily unavailable because NASA is limiting requests. Other dashboard sections are still live.";
+const ERROR_PREFIX = "Houston, we have a problem.";
 const NEO_HAZARD_FLAG_CONTEXT = {
   label: "NASA potentially hazardous asteroid flag",
   summary: "NASA's flag reflects an orbit that can pass within about 7.48M km of Earth and an estimated size near 140 m or larger. It is not an impact prediction."
@@ -76,7 +77,7 @@ const EARTH_RADIUS_KM = 6371;
 const MINUTES_PER_HOUR = 60;
 const HOURS_PER_DAY = 24;
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
-const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing</span>`;
+const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Preparing launch</span>`;
 const NASA_MONTH_INDEX = {
   jan: 0,
   feb: 1,
@@ -1421,11 +1422,11 @@ function setBusy(element, isBusy) {
 
 function resetQuickStats() {
   [
-    ["iss", "Loading", "Position check", "loading"],
-    ["people", "Loading", "Roster check", "loading"],
-    ["launches", "Loading", "Schedule check", "loading"],
-    ["neo", "Loading", "Near-Earth check", "loading"],
-    ["spaceWeather", "Loading", "NOAA check", "loading"]
+    ["iss", "Preflight", "Acquiring orbit", "loading"],
+    ["people", "Preflight", "Checking crew manifest", "loading"],
+    ["launches", "Preflight", "Opening launch window", "loading"],
+    ["neo", "Preflight", "Scanning near-Earth space", "loading"],
+    ["spaceWeather", "Preflight", "Reading solar weather", "loading"]
   ].forEach(([id, value, detail, state]) => {
     setQuickStat(id, { value, detail, state });
   });
@@ -1456,7 +1457,13 @@ function setError(container, message) {
     return;
   }
 
-  container.innerHTML = stateMessage(message, { role: "alert", tone: "warning" });
+  container.innerHTML = stateMessage(formatErrorMessage(message), { role: "alert", tone: "warning" });
+}
+
+function formatErrorMessage(message) {
+  const text = getText(message, "Telemetry did not come through.");
+
+  return text.startsWith(ERROR_PREFIX) ? text : `${ERROR_PREFIX} ${text}`;
 }
 
 function stateMessage(message, options = {}) {
@@ -1515,7 +1522,7 @@ function renderIssMap(data) {
   }
 
   if (!window.L || data.latitude === null || data.longitude === null) {
-    mapElement.innerHTML = stateMessage("ISS map is unavailable right now.");
+    mapElement.innerHTML = stateMessage("Mission control is reacquiring the ISS map signal.");
     return;
   }
 
@@ -2034,10 +2041,10 @@ function resetSpaceBrief() {
   }
 
   if (els.dashboardSubtitle && isDashboardPage()) {
-    els.dashboardSubtitle.textContent = "Space Activity: Loading";
+    els.dashboardSubtitle.textContent = "Space Activity: Preflight";
   }
 
-  els.spaceBriefBody.innerHTML = stateMessage("Building space brief...");
+  els.spaceBriefBody.innerHTML = stateMessage("Writing the mission brief...");
 }
 
 function commandPanelRow({ icon, label, title, detail, time, href }) {
@@ -2175,24 +2182,24 @@ function renderCommandPanels() {
     const rows = getRecentActivityRows();
     els.recentActivityBody.innerHTML = rows.length
       ? `<div class="command-panel-list">${rows.slice(0, 4).map(commandPanelRow).join("")}</div>`
-      : stateMessage("Recent activity is unavailable until sources load.");
+      : stateMessage("Mission control is waiting for activity telemetry.");
   }
 
   if (els.watchItemsBody) {
     const rows = getWatchItemRows();
     els.watchItemsBody.innerHTML = rows.length
       ? `<div class="command-panel-list">${rows.slice(0, 4).map(commandPanelRow).join("")}</div>`
-      : stateMessage("Watch items are unavailable until sources load.");
+      : stateMessage("Watch items are still coming over the downlink.");
   }
 }
 
 function resetCommandPanels() {
   if (els.recentActivityBody) {
-    els.recentActivityBody.innerHTML = stateMessage("Building recent activity...");
+    els.recentActivityBody.innerHTML = stateMessage("Checking the mission log...");
   }
 
   if (els.watchItemsBody) {
-    els.watchItemsBody.innerHTML = stateMessage("Building watch items...");
+    els.watchItemsBody.innerHTML = stateMessage("Scanning the watchlist...");
   }
 }
 
@@ -2335,7 +2342,7 @@ async function loadApod() {
   } catch (error) {
     dashboardData.apod = null;
     setError(els.apodBody, getApiErrorMessage(error, "NASA's astronomy picture is unavailable right now. This card will update when NASA responds."));
-    return createSourceStatus("apod", "error", "NASA APOD did not load.");
+    return createSourceStatus("apod", "error", "NASA image signal did not come through.");
   }
 }
 
@@ -2473,13 +2480,13 @@ async function loadIss() {
   } catch (error) {
     dashboardData.iss = null;
     resetIssMap();
-    setError(els.issBody, "Could not load the ISS location right now.");
+    setError(els.issBody, "We lost the ISS position signal. Try refreshing in a moment.");
     setQuickStat("iss", {
       value: "Unavailable",
-      detail: "Position offline",
+      detail: "Station signal lost",
       state: "error"
     });
-    return createSourceStatus("iss", "error", "ISS position did not load.");
+    return createSourceStatus("iss", "error", "ISS position signal did not come through.");
   }
 }
 
@@ -2577,13 +2584,13 @@ async function loadPeople() {
     );
   } catch (error) {
     dashboardData.people = null;
-    setError(els.peopleBody, "Could not load the current crew roster right now.");
+    setError(els.peopleBody, "The crew manifest did not come through. Try refreshing in a moment.");
     setQuickStat("people", {
       value: "Unavailable",
-      detail: "Roster offline",
+      detail: "Crew signal lost",
       state: "error"
     });
-    return createSourceStatus("people", "error", "Crew roster did not load.");
+    return createSourceStatus("people", "error", "Crew manifest signal did not come through.");
   }
 }
 
@@ -2682,13 +2689,13 @@ async function loadLaunches() {
     return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded; next launch ${formatDateTime(launches[0].dateUtc)} (${formatLaunchWindowSummary(launches[0])}).`);
   } catch (error) {
     dashboardData.launches = [];
-    setError(els.launchBody, "Could not load upcoming SpaceX launches right now. Other dashboard sections remain available.");
+    setError(els.launchBody, "The launch manifest did not come through. Other dashboard sections remain available.");
     setQuickStat("launches", {
       value: "Unavailable",
-      detail: "Schedule offline",
+      detail: "Manifest signal lost",
       state: "error"
     });
-    return createSourceStatus("launches", "error", "Launch data did not load.");
+    return createSourceStatus("launches", "error", "Launch manifest signal did not come through.");
   }
 }
 
@@ -2841,10 +2848,10 @@ async function loadNeo() {
     setError(els.neoBody, getApiErrorMessage(error, "NASA asteroid data is unavailable right now. Other live sections remain available."));
     setQuickStat("neo", {
       value: "Unavailable",
-      detail: "NASA feed offline",
+      detail: "NASA signal lost",
       state: "error"
     });
-    return createSourceStatus("neo", "error", "Asteroid summary did not load.");
+    return createSourceStatus("neo", "error", "Asteroid tracking signal did not come through.");
   }
 }
 
@@ -2998,18 +3005,18 @@ async function loadSpaceWeather() {
     );
   } catch (error) {
     dashboardData.spaceWeather = null;
-    setError(els.spaceWeatherBody, "Could not load space weather right now.");
+    setError(els.spaceWeatherBody, "The NOAA space-weather signal did not come through. Try refreshing in a moment.");
     setQuickStat("spaceWeather", {
       value: "Unavailable",
-      detail: "NOAA feed offline",
+      detail: "NOAA signal lost",
       state: "error"
     });
-    return createSourceStatus("spaceWeather", "error", "NOAA space weather did not load.");
+    return createSourceStatus("spaceWeather", "error", "NOAA space-weather signal did not come through.");
   }
 }
 
 async function loadDashboard() {
-  setDashboardStatus("Refreshing live space data.");
+  setDashboardStatus("Preparing fresh telemetry.");
   dashboardData.apod = null;
   dashboardData.iss = null;
   dashboardData.people = null;
@@ -3054,7 +3061,7 @@ async function loadDashboard() {
   busyElements.forEach((element) => setBusy(element, true));
 
   if (els.skyAnomalyResults && pageType === "anomalies") {
-    els.skyAnomalyResults.innerHTML = stateMessage("Loading sky context...");
+    els.skyAnomalyResults.innerHTML = stateMessage("Triangulating sky context...");
   }
 
   if (els.quickStatsBody) {

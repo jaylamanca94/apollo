@@ -5,7 +5,8 @@ const THEME_COLORS = {
   light: "#E8EAED"
 };
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
-const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing</span>`;
+const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Preparing launch</span>`;
+const ERROR_PREFIX = "Houston, we have a problem.";
 
 const els = {
   refreshButton: document.querySelector("#launchesRefreshButton"),
@@ -343,7 +344,8 @@ function setLaunchesUpdated(value = formatUpdated()) {
 }
 
 function setError(message) {
-  els.launchPageBody.innerHTML = stateMessage(message, { role: "alert", tone: "warning" });
+  const text = getText(message, "Launch telemetry did not come through.");
+  els.launchPageBody.innerHTML = stateMessage(text.startsWith(ERROR_PREFIX) ? text : `${ERROR_PREFIX} ${text}`, { role: "alert", tone: "warning" });
 }
 
 function stateMessage(message, options = {}) {
@@ -508,7 +510,7 @@ function renderLaunches(launches) {
 }
 
 async function loadLaunches() {
-  setLaunchPageStatus("Refreshing launch data.");
+  setLaunchPageStatus("Preparing the launch manifest.");
   setBusy(els.launchPageBody, true);
 
   if (els.refreshButton) {
@@ -518,12 +520,12 @@ async function loadLaunches() {
 
   try {
     renderLaunches(normalizeLaunches(await fetchJson(LAUNCHES_API)));
-    setLaunchPageStatus("Launch data refreshed.");
+    setLaunchPageStatus("Launch manifest is ready.");
     setLaunchesUpdated();
   } catch (error) {
-    setError("Could not load upcoming SpaceX launches right now.");
-    setLaunchPageStatus("Launch data could not be loaded.");
-    setLaunchesUpdated("Last updated: Unavailable");
+    setError("The launch manifest did not come through. Try refreshing in a moment.");
+    setLaunchPageStatus("Houston, we have a problem. Launch telemetry did not arrive.");
+    setLaunchesUpdated("Last updated: Signal lost");
   } finally {
     setBusy(els.launchPageBody, false);
 
