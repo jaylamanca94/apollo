@@ -58,6 +58,33 @@ function formatDateTime(value) {
   }).format(date);
 }
 
+function formatDateShort(value) {
+  const date = new Date(value);
+
+  if (!Number.isFinite(date.getTime())) {
+    return "Date unavailable";
+  }
+
+  return new Intl.DateTimeFormat([], {
+    day: "numeric",
+    month: "short"
+  }).format(date);
+}
+
+function formatLaunchTime(value) {
+  const date = new Date(value);
+
+  if (!Number.isFinite(date.getTime())) {
+    return "Time unavailable";
+  }
+
+  return new Intl.DateTimeFormat([], {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short"
+  }).format(date);
+}
+
 function formatCountdown(value) {
   const launchDate = new Date(value);
 
@@ -197,6 +224,25 @@ function splitLaunchName(name) {
     vehicle: parts[0] || "Launch",
     mission: parts.slice(1).join(" | ")
   };
+}
+
+function getLaunchMissionLabel(launchName) {
+  return launchName.mission || launchName.vehicle;
+}
+
+function formatLaunchLocation(launch) {
+  const location = getText(launch?.location);
+
+  if (!location) {
+    return getText(launch?.pad, "Location pending");
+  }
+
+  return location
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .slice(0, 2)
+    .join(", ");
 }
 
 function formatLaunchImageAlt(launch, launchName = splitLaunchName(launch?.name)) {
@@ -341,22 +387,89 @@ function renderLaunches(launches) {
   const nextLaunchName = splitLaunchName(nextLaunch.name);
   const nextLaunchWindow = formatLaunchWindow(nextLaunch);
   const nextLaunchWindowSummary = formatLaunchWindowSummary(nextLaunch);
-  const nextLaunchDetails = [
-    ["Status", nextLaunch.status],
-    ["Vehicle", nextLaunch.vehicle || nextLaunchName.vehicle],
-    ["Window length", nextLaunchWindowSummary],
-    ["Launch window", nextLaunchWindow],
-    ["Pad", nextLaunch.pad],
-    ["Location", nextLaunch.location]
+  const nextLaunchLocation = formatLaunchLocation(nextLaunch);
+  const scheduleRows = launches.map((launch, index) => {
+    const launchName = splitLaunchName(launch.name);
+    const missionLabel = getLaunchMissionLabel(launchName);
+    const countdownLabel = formatCountdown(launch.dateUtc);
+    const launchWindow = formatLaunchWindow(launch);
+    const launchWindowSummary = formatLaunchWindowSummary(launch);
+    const launchLocation = formatLaunchLocation(launch);
+    const rowTitleId = `launchTimelineTitle-${index}`;
+    const detailRows = [
+      ["Launch window", launchWindow],
+      ["Pad", launch.pad],
+      ["Location", launch.location],
+      ["Vehicle", launch.vehicle || launchName.vehicle],
+      ["Provider", launch.provider]
+    ]
+      .filter(([, value]) => value)
+      .map(([label, value]) => `
+        <div>
+          <dt>${label}</dt>
+          <dd>${escapeHtml(value)}</dd>
+        </div>
+      `)
+      .join("");
+
+    return `
+      <article class="launch-timeline-row${index === 0 ? " launch-timeline-row-next" : ""}" aria-labelledby="${rowTitleId}">
+        <div class="launch-timeline-rail">
+          <span><span class="visually-hidden">Countdown </span>${escapeHtml(countdownLabel)}</span>
+        </div>
+        <div class="launch-timeline-main">
+          <div class="launch-timeline-header">
+            <div>
+              <p class="launch-timeline-when mb-1">${escapeHtml(formatDateShort(launch.dateUtc))} · ${escapeHtml(formatLaunchTime(launch.dateUtc))}</p>
+              <h3 class="launch-timeline-title mb-0" id="${rowTitleId}">${escapeHtml(missionLabel)}</h3>
+              ${launchName.mission && missionLabel !== launchName.vehicle ? `<p class="launch-timeline-vehicle mb-0">${escapeHtml(launchName.vehicle)}</p>` : ""}
+            </div>
+            <span class="launch-status-pill">${escapeHtml(launch.status)}</span>
+          </div>
+          <div class="launch-timeline-facts">
+            <span><i class="fa-solid fa-location-dot acadia-icon" aria-hidden="true"></i>${escapeHtml(launchLocation)}</span>
+            <span><i class="fa-regular fa-clock acadia-icon" aria-hidden="true"></i>${escapeHtml(launchWindowSummary)}</span>
+          </div>
+          <details class="data-details launch-details launch-timeline-details">
+            <summary aria-label="Show mission details for ${escapeHtml(launch.name)}"><i class="fa-solid fa-chevron-down acadia-icon" aria-hidden="true"></i>Mission details</summary>
+            <div class="data-detail-panel">
+              <p class="mb-3">${escapeHtml(truncateText(launch.details, 360))}</p>
+              ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
+              ${launch.sourceUrl ? `
+                <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">
+                  <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
+                  Launch source
+                </a>
+              ` : ""}
+            </div>
+          </details>
+        </div>
+      </article>
+    `;
+  }).join("");
+  const nextLaunchFacts = [
+    ["Liftoff", `${formatDateShort(nextLaunch.dateUtc)} · ${formatLaunchTime(nextLaunch.dateUtc)}`],
+    ["Countdown", formatCountdown(nextLaunch.dateUtc)],
+    ["Window", nextLaunchWindowSummary],
+    ["Location", nextLaunchLocation]
   ]
     .filter(([, value]) => value)
     .map(([label, value]) => `
       <div>
-        <dt>${label}</dt>
-        <dd>${escapeHtml(value)}</dd>
+        <span>${label}</span>
+        <strong>${escapeHtml(value)}</strong>
       </div>
     `)
     .join("");
+  const nextLaunchActionItems = [
+    nextLaunch.sourceUrl ? `
+      <a class="source-link" href="${escapeHtml(nextLaunch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(nextLaunch.name)}">
+        <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
+        Launch source
+      </a>
+    ` : "",
+    nextLaunchWindow ? `<span>${escapeHtml(nextLaunchWindow)}</span>` : ""
+  ].filter(Boolean).join("");
 
   els.launchPageBody.innerHTML = `
     <section class="next-launch-spotlight" aria-labelledby="nextLaunchTitle">
@@ -370,92 +483,27 @@ function renderLaunches(launches) {
           <div>
             <p class="section-kicker mb-2">Next SpaceX launch</p>
             <h2 class="next-launch-title mb-0" id="nextLaunchTitle">
-              ${escapeHtml(nextLaunchName.vehicle)}
-              ${nextLaunchName.mission ? `<span>${escapeHtml(nextLaunchName.mission)}</span>` : ""}
+              ${escapeHtml(getLaunchMissionLabel(nextLaunchName))}
+              ${nextLaunchName.mission ? `<span>${escapeHtml(nextLaunchName.vehicle)}</span>` : ""}
             </h2>
           </div>
           <span class="launch-status-pill">${escapeHtml(nextLaunch.status)}</span>
         </div>
-        <div class="next-launch-countdown">
-          <div>
-            <p class="text-secondary small mb-1">Liftoff target</p>
-            <p class="mb-0">${formatDateTime(nextLaunch.dateUtc)}</p>
-          </div>
-          <div>
-            <p class="text-secondary small mb-1">Countdown</p>
-            <p class="mb-0">${formatCountdown(nextLaunch.dateUtc)}</p>
-          </div>
-          <div>
-            <p class="text-secondary small mb-1">Window length</p>
-            <p class="mb-0">${escapeHtml(nextLaunchWindowSummary)}</p>
-          </div>
-        </div>
+        <div class="next-launch-keyfacts">${nextLaunchFacts}</div>
         <p class="launch-page-summary">${escapeHtml(truncateText(nextLaunch.details, 300))}</p>
-        ${nextLaunchDetails ? `<dl class="detail-list next-launch-detail-list mb-3">${nextLaunchDetails}</dl>` : ""}
-        ${nextLaunch.sourceUrl ? `
-          <a class="source-link" href="${escapeHtml(nextLaunch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(nextLaunch.name)}">
-            <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
-            Launch source
-          </a>
-        ` : ""}
+        ${nextLaunchActionItems ? `<div class="next-launch-actions">${nextLaunchActionItems}</div>` : ""}
       </div>
     </section>
-    <p class="launch-count">${launches.length} upcoming SpaceX launches</p>
-    <div class="launch-page-list">
-      ${launches.map((launch) => {
-        const launchName = splitLaunchName(launch.name);
-        const launchWindow = formatLaunchWindow(launch);
-        const launchWindowSummary = formatLaunchWindowSummary(launch);
-        const detailRows = [
-          ["Provider", launch.provider],
-          ["Vehicle", launch.vehicle || launchName.vehicle],
-          ["Status", launch.status],
-          ["Window length", launchWindowSummary],
-          ["Launch window", launchWindow],
-          ["Pad", launch.pad],
-          ["Location", launch.location]
-        ]
-          .filter(([, value]) => value)
-          .map(([label, value]) => `
-            <div>
-              <dt>${label}</dt>
-              <dd>${escapeHtml(value)}</dd>
-            </div>
-          `)
-          .join("");
-
-        return `
-          <article class="launch-page-card">
-            <div class="launch-page-media">
-              ${launch.imageUrl
-                ? `<img src="${escapeHtml(launch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(launch, launchName))}">`
-                : `<div class="launch-page-media-placeholder"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></div>`}
-            </div>
-            <div class="launch-page-content">
-              <div class="launch-page-title-row">
-                <div>
-                  <p class="launch-meta">${formatDateTime(launch.dateUtc)} · ${formatCountdown(launch.dateUtc)}</p>
-                  <h2 class="launch-page-title mb-0">
-                    ${escapeHtml(launchName.vehicle)}
-                    ${launchName.mission ? `<span class="launch-mission">${escapeHtml(launchName.mission)}</span>` : ""}
-                  </h2>
-                  <p class="launch-window-summary mb-0">${escapeHtml(launchWindowSummary)}</p>
-                </div>
-                <span class="launch-status-pill">${escapeHtml(launch.status)}</span>
-              </div>
-              <p class="launch-page-summary">${escapeHtml(truncateText(launch.details))}</p>
-              ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
-              ${launch.sourceUrl ? `
-                <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">
-                  <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
-                  Launch source
-                </a>
-              ` : ""}
-            </div>
-          </article>
-        `;
-      }).join("")}
-    </div>
+    <section class="launch-timeline-section" aria-labelledby="upcomingLaunchesTitle">
+      <div class="launch-timeline-section-header">
+        <div>
+          <p class="section-kicker mb-1">Upcoming launches</p>
+          <h2 class="section-title mb-0" id="upcomingLaunchesTitle">Next missions to watch</h2>
+        </div>
+        <p class="launch-count mb-0">${launches.length} upcoming SpaceX launches</p>
+      </div>
+      <div class="launch-timeline-list">${scheduleRows}</div>
+    </section>
   `;
 }
 

@@ -289,3 +289,14 @@ test("header primary nav uses a More dropdown when page count exceeds five", () 
     }
   }
 });
+
+test("launch timeline exposes urgency context and current asset versions", () => {
+  const html = readProjectFile("launches.html");
+  const js = readProjectFile("launches.js");
+
+  assert.match(html, /styles\.css\?v=launch-timeline-a11y-1/);
+  assert.match(html, /launches\.js\?v=launch-timeline-a11y-1/);
+  assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
+  assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
+  assert.doesNotMatch(js, /class="launch-timeline-rail" aria-hidden="true"/);
+});
