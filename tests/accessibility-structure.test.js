@@ -16,7 +16,7 @@ const allHtmlPages = [
 ];
 
 const overflowNavLinks = [
-  { href: "./weather.html", label: "Weather" },
+  { href: "./asteroids.html", label: "Asteroids" },
   { href: "./gallery.html", label: "Gallery" },
   { href: "./anomalies.html", label: "Anomalies" }
 ];

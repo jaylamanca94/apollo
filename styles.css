@@ -312,17 +312,17 @@ body {
 .apollo-primary-links,
 .acadia-nav {
   align-items: center;
-  background: var(--acadia-color-control);
-  border: 1px solid var(--acadia-color-control-border);
-  border-radius: var(--acadia-radius-pill);
-  box-shadow: var(--acadia-shadow-control);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   display: inline-flex;
   flex: 1 1 auto;
-  gap: 4px;
+  gap: 0.5rem;
   margin-left: 16px;
   max-width: min(100%, 760px);
   overflow-x: auto;
-  padding: 0.25rem;
+  padding: 0;
   scrollbar-width: none;
 }
 
@@ -336,16 +336,21 @@ body {
   align-items: center;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--acadia-radius-md);
   color: var(--acadia-color-text-muted);
   display: inline-flex;
   font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 750;
-  min-height: var(--acadia-control-height-sm, 2.375rem);
-  padding: 0.375rem 0.9rem;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  min-height: 2.5rem;
+  padding: 0.55rem 0.85rem;
   text-decoration: none;
-  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
   white-space: nowrap;
 }
 
@@ -353,9 +358,11 @@ body {
 .apollo-nav-link:focus-visible,
 .acadia-nav-item:hover,
 .acadia-nav-item:focus-visible {
-  background: var(--acadia-color-surface-elevated);
-  border-color: var(--acadia-color-border-strong);
+  background: var(--acadia-color-surface-muted);
+  border-color: var(--acadia-color-border);
+  box-shadow: var(--acadia-shadow-control);
   color: var(--acadia-color-text);
+  transform: translateY(-1px);
 }
 
 .apollo-nav-link:focus-visible,
@@ -369,6 +376,7 @@ body {
 .acadia-nav-item.is-active {
   background: var(--acadia-color-brand-bg);
   border-color: var(--acadia-color-brand-border);
+  box-shadow: var(--acadia-shadow-control);
   color: var(--acadia-color-primary);
 }
 
