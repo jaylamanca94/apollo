@@ -94,6 +94,7 @@ const NASA_MONTH_INDEX = {
 let issMap = null;
 const dashboardData = {
   iss: null,
+  people: null,
   launches: [],
   neo: null,
   spaceWeather: null
@@ -106,6 +107,7 @@ const els = {
   dashboardUpdated: document.querySelector("#dashboardUpdated"),
   peopleBody: document.querySelector("#peopleBody"),
   quickStatsBody: document.querySelector("#quickStatsBody"),
+  spaceBriefBody: document.querySelector("#spaceBriefBody"),
   issBody: document.querySelector("#issBody"),
   neoBody: document.querySelector("#neoBody"),
   neoRiskAlert: document.querySelector("#neoRiskAlert"),
@@ -1616,6 +1618,159 @@ function renderDashboardAnomalySummary() {
   `;
 }
 
+function getLaunchBrief(launches) {
+  const launch = launches[0];
+
+  if (!launch) {
+    return "Launch activity is unavailable from the current source.";
+  }
+
+  const launchName = splitLaunchName(launch.name);
+  const mission = launchName.mission ? ` ${launchName.mission}` : "";
+  const status = getText(launch.status, "status pending");
+  const countdown = formatCountdown(launch.dateUtc);
+  const statusLower = status.toLowerCase();
+
+  if (statusLower.includes("success")) {
+    return `${launchName.vehicle}${mission} launched successfully; ${launches.length.toLocaleString()} missions remain on the schedule.`;
+  }
+
+  if (countdown === "Window has opened") {
+    return `${launchName.vehicle}${mission} is in its launch window now with status ${status}.`;
+  }
+
+  return `${launchName.vehicle}${mission} is the next listed mission, ${countdown.toLowerCase()}, with status ${status}.`;
+}
+
+function getAsteroidBrief(neoSummary) {
+  const asteroids = Array.isArray(neoSummary?.asteroids) ? neoSummary.asteroids : null;
+
+  if (!asteroids) {
+    return "Asteroid tracking is unavailable from NASA right now.";
+  }
+
+  const hazardous = asteroids.filter((item) => item.hazardous).length;
+
+  if (hazardous > 0) {
+    return `${asteroids.length.toLocaleString()} near-Earth objects are tracked today; ${hazardous.toLocaleString()} ${hazardous === 1 ? "is" : "are"} flagged for NASA tracking.`;
+  }
+
+  return `${asteroids.length.toLocaleString()} near-Earth objects are tracked today with no hazardous objects flagged.`;
+}
+
+function getWeatherBrief(spaceWeather) {
+  if (!spaceWeather) {
+    return "Space weather is unavailable from NOAA right now.";
+  }
+
+  const kpDetail = spaceWeather.kpIndex === null || spaceWeather.kpIndex === undefined
+    ? "with the current Kp unavailable"
+    : `at Kp ${formatKpIndex(spaceWeather.kpIndex)}`;
+
+  return `Space weather is ${getText(spaceWeather.condition, "unavailable").toLowerCase()} ${kpDetail}.`;
+}
+
+function getCrewBrief(peopleState) {
+  if (!peopleState) {
+    return "Crew status is unavailable from the current roster source.";
+  }
+
+  const crewWord = peopleState.count === 1 ? "person" : "people";
+  const locationWord = peopleState.locationCount === 1 ? "location" : "locations";
+
+  return `${peopleState.count.toLocaleString()} ${crewWord} are currently in orbit across ${peopleState.locationCount.toLocaleString()} crew ${locationWord}.`;
+}
+
+function getIssBrief(iss) {
+  if (!iss || iss.latitude === null || iss.longitude === null) {
+    return "ISS position is unavailable from the current station source.";
+  }
+
+  return `The ISS is reporting normal orbital position${iss.altitude !== null ? ` at ${formatNumber(iss.altitude, { suffix: " km" })} altitude` : ""}.`;
+}
+
+function getSpaceBriefState() {
+  const feedStates = [
+    dashboardData.iss,
+    dashboardData.people,
+    dashboardData.launches.length ? dashboardData.launches : null,
+    dashboardData.neo,
+    dashboardData.spaceWeather
+  ];
+  const unavailableCount = feedStates.filter((item) => !item).length;
+  const hazardous = dashboardData.neo?.asteroids?.filter((item) => item.hazardous).length || 0;
+  const weatherSeverity = dashboardData.spaceWeather?.severity || "unknown";
+  const isStorm = ["active", "storm"].includes(weatherSeverity);
+
+  if (hazardous > 0 || isStorm) {
+    return {
+      label: "Active",
+      tone: "attention",
+      headline: hazardous > 0
+        ? "Space activity needs monitoring."
+        : "Space activity is elevated."
+    };
+  }
+
+  if (unavailableCount >= 2) {
+    return {
+      label: "Partial",
+      tone: "error",
+      headline: "Space activity is only partially visible."
+    };
+  }
+
+  if (unavailableCount === 1) {
+    return {
+      label: "Mostly Calm",
+      tone: "attention",
+      headline: "Space activity is calm where sources are available."
+    };
+  }
+
+  return {
+    label: "Calm",
+    tone: "ok",
+    headline: "Space activity remains calm."
+  };
+}
+
+function renderSpaceBrief() {
+  if (!els.spaceBriefBody) {
+    return;
+  }
+
+  const state = getSpaceBriefState();
+  const lines = [
+    getLaunchBrief(dashboardData.launches),
+    getAsteroidBrief(dashboardData.neo),
+    getWeatherBrief(dashboardData.spaceWeather),
+    getCrewBrief(dashboardData.people),
+    getIssBrief(dashboardData.iss)
+  ];
+
+  els.spaceBriefBody.innerHTML = `
+    <div class="apollo-space-brief-header">
+      <div>
+        <p class="section-kicker mb-1">Space Brief</p>
+        <h2 class="apollo-space-brief-title mb-0">${escapeHtml(state.headline)}</h2>
+      </div>
+      <span class="apollo-space-brief-pill apollo-space-brief-${escapeHtml(state.tone)}">${escapeHtml(state.label)}</span>
+    </div>
+    <ul class="apollo-space-brief-list mb-0">
+      ${lines.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
+    </ul>
+  `;
+}
+
+function resetSpaceBrief() {
+  if (!els.spaceBriefBody) {
+    return;
+  }
+
+  els.spaceBriefBody.innerHTML = stateMessage("Building space brief...");
+}
+
 function getApiErrorMessage(error, fallback) {
   const errorCode = error.payload?.error?.code;
 
@@ -1879,6 +2034,7 @@ async function loadPeople() {
     const { people } = roster;
 
     if (!people.length) {
+      dashboardData.people = null;
       els.peopleBody.innerHTML = stateMessage("No current crew roster is available.");
       setQuickStat("people", {
         value: "No roster",
@@ -1896,6 +2052,11 @@ async function loadPeople() {
       : `${people.length.toLocaleString()} listed below; source reports ${roster.sourceCount.toLocaleString()}`;
     const expeditionLabel = formatCrewExpedition(roster.expedition);
     const sourceExpeditionDetail = expeditionLabel === "Unavailable" ? "" : `; ${expeditionLabel}`;
+    dashboardData.people = {
+      count: people.length,
+      locationCount: craftGroups.length,
+      countMatches
+    };
 
     if (isDashboardPage()) {
       renderDashboardPeopleSummary(roster, craftGroups, countMatches);
@@ -1965,6 +2126,7 @@ async function loadPeople() {
         : `Source reports ${roster.sourceCount} people but ${people.length} roster entries loaded${sourceExpeditionDetail}.`
     );
   } catch (error) {
+    dashboardData.people = null;
     setError(els.peopleBody, "Could not load the current crew roster right now.");
     setQuickStat("people", {
       value: "Unavailable",
@@ -2370,6 +2532,11 @@ async function loadSpaceWeather() {
 
 async function loadDashboard() {
   setDashboardStatus("Refreshing live space data.");
+  dashboardData.iss = null;
+  dashboardData.people = null;
+  dashboardData.launches = [];
+  dashboardData.neo = null;
+  dashboardData.spaceWeather = null;
   const pageType = getPageType();
   const loadersByPage = {
     dashboard: [loadApod, loadIss, loadPeople, loadLaunches, loadNeo, loadSpaceWeather],
@@ -2389,6 +2556,7 @@ async function loadDashboard() {
   };
   const busyElements = [
     els.quickStatsBody,
+    els.spaceBriefBody,
     els.apodBody,
     els.issBody,
     els.peopleBody,
@@ -2412,6 +2580,10 @@ async function loadDashboard() {
     resetQuickStats();
   }
 
+  if (els.spaceBriefBody) {
+    resetSpaceBrief();
+  }
+
   [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
     button.disabled = true;
     button.innerHTML = REFRESHING_BUTTON_HTML;
@@ -2425,6 +2597,10 @@ async function loadDashboard() {
         ? result.value
         : createSourceStatus(sourceIds[index], "error", "Source check did not finish.")
     )), new Date());
+  }
+
+  if (pageType === "dashboard") {
+    renderSpaceBrief();
   }
 
   if (pageType === "anomalies") {

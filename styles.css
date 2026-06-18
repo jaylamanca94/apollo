@@ -707,6 +707,91 @@ body {
   color: var(--apollo-accent);
 }
 
+.apollo-space-brief {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--acadia-color-surface) 96%, var(--acadia-color-primary) 4%),
+    var(--acadia-color-surface)
+  );
+}
+
+.apollo-space-brief-body {
+  display: grid;
+  gap: 18px;
+  padding: var(--acadia-section-padding-dense);
+}
+
+.apollo-space-brief-header {
+  align-items: start;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+.apollo-space-brief-title {
+  color: var(--acadia-color-text);
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.apollo-space-brief-pill {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--acadia-radius-pill);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  font-weight: 800;
+  min-height: 2rem;
+  padding: 0.3rem 0.75rem;
+  white-space: nowrap;
+}
+
+.apollo-space-brief-ok {
+  background: var(--apollo-success-soft);
+  border-color: color-mix(in srgb, var(--apollo-success) 26%, transparent);
+  color: var(--apollo-success);
+}
+
+.apollo-space-brief-attention {
+  background: var(--apollo-warning-soft);
+  border-color: color-mix(in srgb, var(--apollo-warning) 32%, transparent);
+  color: var(--apollo-warning);
+}
+
+.apollo-space-brief-error {
+  background: var(--apollo-accent-soft);
+  border-color: color-mix(in srgb, var(--apollo-accent) 28%, transparent);
+  color: var(--apollo-accent);
+}
+
+.apollo-space-brief-list {
+  color: var(--acadia-color-text-muted);
+  display: grid;
+  gap: 8px;
+  line-height: 1.45;
+  list-style: none;
+  padding: 0;
+}
+
+.apollo-space-brief-list li {
+  align-items: start;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 8px minmax(0, 1fr);
+}
+
+.apollo-space-brief-list li::before {
+  background: var(--acadia-color-primary);
+  border-radius: 999px;
+  content: "";
+  height: 6px;
+  margin-top: 0.58em;
+  width: 6px;
+}
+
 .section-card-header {
   background: transparent;
   border-bottom: 0;
@@ -2081,7 +2166,6 @@ html[data-bs-theme="light"] .data-detail-panel {
 .btn.apollo-refresh-button,
 .apollo-update-pill,
 .apollo-live-chip,
-.apollo-nav-link,
 .launch-count,
 .launch-status-pill,
 .launch-show-all,

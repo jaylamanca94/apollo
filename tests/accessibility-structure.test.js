@@ -41,6 +41,7 @@ const pages = [
     ],
     controlledIds: [
       "quickStatsBody",
+      "spaceBriefBody",
       "apodBody",
       "issBody",
       "peopleBody",
