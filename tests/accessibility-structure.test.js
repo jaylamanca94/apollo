@@ -42,14 +42,8 @@ const pages = [
     controlledIds: [
       "quickStatsBody",
       "spaceBriefBody",
-      "apodBody",
-      "issBody",
-      "peopleBody",
-      "launchBody",
-      "neoBody",
-      "spaceWeatherBody",
-      "skyAnomaliesBody",
-      "sourceStatusBody"
+      "recentActivityBody",
+      "watchItemsBody"
     ]
   },
   {
@@ -259,6 +253,17 @@ test("Apollo brand mark uses the satellite icon on every page", () => {
 
     assert.match(brand, /\bfa-satellite\b/, `${file} should use the satellite brand icon`);
     assert.doesNotMatch(brand, /\bfa-rocket\b/, `${file} should not use the launch icon as the brand mark`);
+  }
+});
+
+test("dashboard stops at command-center panels instead of duplicating detail pages", () => {
+  const html = readProjectFile("index.html");
+
+  assert.match(html, /\bid="recentActivityBody"/);
+  assert.match(html, /\bid="watchItemsBody"/);
+
+  for (const removedRegion of ["issBody", "peopleBody", "launchBody", "neoBody", "spaceWeatherBody", "apodBody", "skyAnomaliesBody", "sourceStatusBody"]) {
+    assert.doesNotMatch(html, new RegExp(`\\bid="${removedRegion}"`), `dashboard should not include ${removedRegion}`);
   }
 });
 

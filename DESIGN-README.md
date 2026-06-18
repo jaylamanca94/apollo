@@ -66,10 +66,10 @@ Use Leaflet for spatial dashboard views. Keep map frames inside the related data
 
 ## Layout Grid
 
-- Dashboard pages should lead with Apollo as the product identity, then a compact state-at-a-glance grid. The homepage should avoid giant maps, giant APOD media, full crew rosters, and long report-style sections.
+- Dashboard pages should lead with Apollo as the product identity, then a compact state-at-a-glance grid, Space Brief, Recent Activity, and Watch Items. The homepage should avoid duplicating the object pages: no giant maps, giant APOD media, full crew rosters, long report-style sections, or full ISS/Launch/Asteroid/Weather preview cards.
 
 - Dashboard summary cards: ISS, Crew, Launches, Asteroids, Weather, APOD, and Sky Anomalies should each summarize the most important current state and include a compact detail link.
-- Space Brief: place a narrative synthesis layer after the quick stats and before object cards. It should answer "what is happening in space?" with status language like Calm, Active, Partial, or Needs attention, then explain the launch, asteroid, space-weather, crew, and ISS signals in short sourced lines. This is the product intelligence layer; avoid turning it into another raw metric grid.
+- Space Brief: place a narrative synthesis layer after the quick stats and before object cards. It should answer "what is happening in space?" with status language like Calm, Active, Partial, or Needs attention, then explain the launch, asteroid, space-weather, crew, and ISS signals in a compact executive-summary paragraph. This is the product intelligence layer; avoid turning it into another raw metric grid.
 - Detail pages: ISS, Launches, Asteroids, Weather, Gallery, and Anomalies may use the richer card treatments, maps, disclosures, APOD media, rosters, source context, and explanation workflows.
 - Gallery/APOD split feature: use the larger cinematic image or media panel on the Gallery page, not the dashboard. For video APOD entries, use a safe embedded preview only when the normalized source provides a known embeddable host; otherwise keep the media panel stable with a concise fallback and a direct video link.
 - ISS detail page: keep ISS orbital context compact and calculated from the same live position response when possible. Show the ISS feed's source observation time as a subdued "Position fix" line near the map so users can judge freshness without adding repeated card timestamps.

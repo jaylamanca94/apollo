@@ -93,6 +93,7 @@ const NASA_MONTH_INDEX = {
 };
 let issMap = null;
 const dashboardData = {
+  apod: null,
   iss: null,
   people: null,
   launches: [],
@@ -108,6 +109,8 @@ const els = {
   peopleBody: document.querySelector("#peopleBody"),
   quickStatsBody: document.querySelector("#quickStatsBody"),
   spaceBriefBody: document.querySelector("#spaceBriefBody"),
+  recentActivityBody: document.querySelector("#recentActivityBody"),
+  watchItemsBody: document.querySelector("#watchItemsBody"),
   issBody: document.querySelector("#issBody"),
   neoBody: document.querySelector("#neoBody"),
   neoRiskAlert: document.querySelector("#neoRiskAlert"),
@@ -1632,14 +1635,14 @@ function getLaunchBrief(launches) {
   const statusLower = status.toLowerCase();
 
   if (statusLower.includes("success")) {
-    return `${launchName.vehicle}${mission} launched successfully; ${launches.length.toLocaleString()} missions remain on the schedule.`;
+    return `${launchName.vehicle}${mission} launched successfully.`;
   }
 
   if (countdown === "Window has opened") {
-    return `${launchName.vehicle}${mission} is in its launch window now with status ${status}.`;
+    return `${launchName.vehicle}${mission} is in its launch window now.`;
   }
 
-  return `${launchName.vehicle}${mission} is the next listed mission, ${countdown.toLowerCase()}, with status ${status}.`;
+  return `${launchName.vehicle}${mission} is next on the schedule, ${countdown.toLowerCase()}.`;
 }
 
 function getAsteroidBrief(neoSummary) {
@@ -1652,10 +1655,10 @@ function getAsteroidBrief(neoSummary) {
   const hazardous = asteroids.filter((item) => item.hazardous).length;
 
   if (hazardous > 0) {
-    return `${asteroids.length.toLocaleString()} near-Earth objects are tracked today; ${hazardous.toLocaleString()} ${hazardous === 1 ? "is" : "are"} flagged for NASA tracking.`;
+    return `${hazardous.toLocaleString()} of ${asteroids.length.toLocaleString()} near-Earth ${asteroids.length === 1 ? "object is" : "objects are"} flagged for NASA tracking.`;
   }
 
-  return `${asteroids.length.toLocaleString()} near-Earth objects are tracked today with no hazardous objects flagged.`;
+  return "No hazardous asteroids are being tracked today.";
 }
 
 function getWeatherBrief(spaceWeather) {
@@ -1667,26 +1670,24 @@ function getWeatherBrief(spaceWeather) {
     ? "with the current Kp unavailable"
     : `at Kp ${formatKpIndex(spaceWeather.kpIndex)}`;
 
-  return `Space weather is ${getText(spaceWeather.condition, "unavailable").toLowerCase()} ${kpDetail}.`;
+  return `Space weather remains ${getText(spaceWeather.condition, "unavailable").toLowerCase()} ${kpDetail}.`;
 }
 
-function getCrewBrief(peopleState) {
+function getOrbitalBrief(peopleState, iss) {
+  if (!peopleState && (!iss || iss.latitude === null || iss.longitude === null)) {
+    return "Orbital operations are partially unavailable from the current sources.";
+  }
+
   if (!peopleState) {
-    return "Crew status is unavailable from the current roster source.";
+    return "The ISS is reporting normal orbital position; crew status is unavailable.";
   }
 
-  const crewWord = peopleState.count === 1 ? "person" : "people";
-  const locationWord = peopleState.locationCount === 1 ? "location" : "locations";
+  const crewWord = peopleState.count === 1 ? "person remains" : "people remain";
+  const issStatus = iss && iss.latitude !== null && iss.longitude !== null
+    ? "and the ISS is reporting normal position"
+    : "while ISS position is unavailable";
 
-  return `${peopleState.count.toLocaleString()} ${crewWord} are currently in orbit across ${peopleState.locationCount.toLocaleString()} crew ${locationWord}.`;
-}
-
-function getIssBrief(iss) {
-  if (!iss || iss.latitude === null || iss.longitude === null) {
-    return "ISS position is unavailable from the current station source.";
-  }
-
-  return `The ISS is reporting normal orbital position${iss.altitude !== null ? ` at ${formatNumber(iss.altitude, { suffix: " km" })} altitude` : ""}.`;
+  return `${peopleState.count.toLocaleString()} ${crewWord} in orbit, ${issStatus}.`;
 }
 
 function getSpaceBriefState() {
@@ -1741,13 +1742,12 @@ function renderSpaceBrief() {
   }
 
   const state = getSpaceBriefState();
-  const lines = [
+  const summary = [
     getLaunchBrief(dashboardData.launches),
     getAsteroidBrief(dashboardData.neo),
     getWeatherBrief(dashboardData.spaceWeather),
-    getCrewBrief(dashboardData.people),
-    getIssBrief(dashboardData.iss)
-  ];
+    getOrbitalBrief(dashboardData.people, dashboardData.iss)
+  ].join(" ");
 
   els.spaceBriefBody.innerHTML = `
     <div class="apollo-space-brief-header">
@@ -1757,9 +1757,7 @@ function renderSpaceBrief() {
       </div>
       <span class="apollo-space-brief-pill apollo-space-brief-${escapeHtml(state.tone)}">${escapeHtml(state.label)}</span>
     </div>
-    <ul class="apollo-space-brief-list mb-0">
-      ${lines.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
-    </ul>
+    <p class="apollo-space-brief-summary mb-0">${escapeHtml(summary)}</p>
   `;
 }
 
@@ -1769,6 +1767,151 @@ function resetSpaceBrief() {
   }
 
   els.spaceBriefBody.innerHTML = stateMessage("Building space brief...");
+}
+
+function commandPanelRow({ icon, label, title, detail, href }) {
+  const content = `
+    <span class="command-panel-icon"><i class="fa-solid ${escapeHtml(icon)} acadia-icon" aria-hidden="true"></i></span>
+    <span class="command-panel-copy">
+      <span class="command-panel-label">${escapeHtml(label)}</span>
+      <span class="command-panel-title">${escapeHtml(title)}</span>
+      <span class="command-panel-detail">${escapeHtml(detail)}</span>
+    </span>
+  `;
+
+  if (href) {
+    return `<a class="command-panel-row command-panel-row-link" href="${escapeHtml(href)}">${content}</a>`;
+  }
+
+  return `<article class="command-panel-row">${content}</article>`;
+}
+
+function getRecentActivityRows() {
+  const rows = [];
+  const launch = dashboardData.launches[0];
+
+  if (launch) {
+    const launchName = splitLaunchName(launch.name);
+    rows.push({
+      icon: "fa-rocket",
+      label: "Launches",
+      title: getText(launch.status, "Launch status loaded"),
+      detail: launchName.mission ? `${launchName.vehicle} ${launchName.mission}` : launchName.vehicle,
+      href: "./launches.html"
+    });
+  }
+
+  if (dashboardData.apod) {
+    rows.push({
+      icon: "fa-image",
+      label: "Gallery",
+      title: "New APOD published",
+      detail: dashboardData.apod.title,
+      href: "./gallery.html"
+    });
+  }
+
+  if (dashboardData.spaceWeather) {
+    rows.push({
+      icon: "fa-sun",
+      label: "Weather",
+      title: dashboardData.spaceWeather.condition,
+      detail: dashboardData.spaceWeather.kpIndex === null ? "Current Kp unavailable" : `Current Kp ${formatKpIndex(dashboardData.spaceWeather.kpIndex)}`,
+      href: "./weather.html"
+    });
+  }
+
+  if (dashboardData.iss?.latitude !== null && dashboardData.iss?.longitude !== null) {
+    rows.push({
+      icon: "fa-satellite",
+      label: "ISS",
+      title: "ISS position updated",
+      detail: dashboardData.iss.altitude !== null ? `${formatNumber(dashboardData.iss.altitude, { suffix: " km" })} altitude` : "Current station coordinates loaded",
+      href: "./iss.html"
+    });
+  }
+
+  return rows;
+}
+
+function getWatchItemRows() {
+  const rows = [];
+  const launch = dashboardData.launches[0];
+  const asteroids = Array.isArray(dashboardData.neo?.asteroids) ? dashboardData.neo.asteroids : [];
+  const hazardous = asteroids.filter((item) => item.hazardous).length;
+  const closestObject = [...asteroids].sort((a, b) => {
+    const left = Number.isFinite(a.closestKilometers) ? a.closestKilometers : Number.POSITIVE_INFINITY;
+    const right = Number.isFinite(b.closestKilometers) ? b.closestKilometers : Number.POSITIVE_INFINITY;
+    return left - right;
+  })[0];
+  const forecast = dashboardData.spaceWeather?.forecast?.[0];
+
+  if (launch) {
+    const launchName = splitLaunchName(launch.name);
+    rows.push({
+      icon: "fa-rocket",
+      label: "Next launch",
+      title: launchName.vehicle,
+      detail: formatCountdown(launch.dateUtc),
+      href: "./launches.html"
+    });
+  }
+
+  rows.push({
+    icon: "fa-meteor",
+    label: "Asteroid risk",
+    title: hazardous === 0 ? "No hazards flagged" : `${hazardous.toLocaleString()} flagged`,
+    detail: closestObject ? `Closest approach ${formatLunarDistance(closestObject.lunarDistance)}` : "No current close-approach list",
+    href: "./asteroids.html"
+  });
+
+  if (dashboardData.spaceWeather) {
+    rows.push({
+      icon: "fa-sun",
+      label: "Solar conditions",
+      title: dashboardData.spaceWeather.condition,
+      detail: forecast?.condition ? `Outlook: ${forecast.condition}` : "NOAA outlook unavailable",
+      href: "./weather.html"
+    });
+  }
+
+  if (dashboardData.people) {
+    rows.push({
+      icon: "fa-user-astronaut",
+      label: "Orbital presence",
+      title: `${dashboardData.people.count.toLocaleString()} aboard`,
+      detail: `${dashboardData.people.locationCount.toLocaleString()} crew locations`,
+      href: "./iss.html"
+    });
+  }
+
+  return rows;
+}
+
+function renderCommandPanels() {
+  if (els.recentActivityBody) {
+    const rows = getRecentActivityRows();
+    els.recentActivityBody.innerHTML = rows.length
+      ? `<div class="command-panel-list">${rows.slice(0, 4).map(commandPanelRow).join("")}</div>`
+      : stateMessage("Recent activity is unavailable until sources load.");
+  }
+
+  if (els.watchItemsBody) {
+    const rows = getWatchItemRows();
+    els.watchItemsBody.innerHTML = rows.length
+      ? `<div class="command-panel-list">${rows.slice(0, 4).map(commandPanelRow).join("")}</div>`
+      : stateMessage("Watch items are unavailable until sources load.");
+  }
+}
+
+function resetCommandPanels() {
+  if (els.recentActivityBody) {
+    els.recentActivityBody.innerHTML = stateMessage("Building recent activity...");
+  }
+
+  if (els.watchItemsBody) {
+    els.watchItemsBody.innerHTML = stateMessage("Building watch items...");
+  }
 }
 
 function getApiErrorMessage(error, fallback) {
@@ -1810,6 +1953,7 @@ async function fetchJson(url, options = {}) {
 async function loadApod() {
   try {
     const data = normalizeApod(await fetchJson(API.apod));
+    dashboardData.apod = data;
     const title = escapeHtml(data.title);
     const mediaUrl = escapeHtml(data.mediaUrl);
     const mediaEmbedUrl = escapeHtml(data.mediaEmbedUrl);
@@ -1907,6 +2051,7 @@ async function loadApod() {
     const mediaLabel = data.mediaType === "video" ? "Video" : data.mediaType === "image" ? "Image" : "Media";
     return createSourceStatus("apod", "ok", data.date ? `${mediaLabel} for ${formatDate(data.date)}` : `Current ${mediaLabel.toLowerCase()} loaded.`);
   } catch (error) {
+    dashboardData.apod = null;
     setError(els.apodBody, getApiErrorMessage(error, "NASA's astronomy picture is unavailable right now. This card will update when NASA responds."));
     return createSourceStatus("apod", "error", "NASA APOD did not load.");
   }
@@ -2035,7 +2180,9 @@ async function loadPeople() {
 
     if (!people.length) {
       dashboardData.people = null;
-      els.peopleBody.innerHTML = stateMessage("No current crew roster is available.");
+      if (els.peopleBody) {
+        els.peopleBody.innerHTML = stateMessage("No current crew roster is available.");
+      }
       setQuickStat("people", {
         value: "No roster",
         detail: "Crew source empty",
@@ -2532,6 +2679,7 @@ async function loadSpaceWeather() {
 
 async function loadDashboard() {
   setDashboardStatus("Refreshing live space data.");
+  dashboardData.apod = null;
   dashboardData.iss = null;
   dashboardData.people = null;
   dashboardData.launches = [];
@@ -2557,6 +2705,8 @@ async function loadDashboard() {
   const busyElements = [
     els.quickStatsBody,
     els.spaceBriefBody,
+    els.recentActivityBody,
+    els.watchItemsBody,
     els.apodBody,
     els.issBody,
     els.peopleBody,
@@ -2584,6 +2734,8 @@ async function loadDashboard() {
     resetSpaceBrief();
   }
 
+  resetCommandPanels();
+
   [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
     button.disabled = true;
     button.innerHTML = REFRESHING_BUTTON_HTML;
@@ -2601,6 +2753,7 @@ async function loadDashboard() {
 
   if (pageType === "dashboard") {
     renderSpaceBrief();
+    renderCommandPanels();
   }
 
   if (pageType === "anomalies") {
