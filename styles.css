@@ -516,6 +516,21 @@ body {
   max-width: 760px;
 }
 
+body:not([data-apollo-page="dashboard"]) .apollo-page-header {
+  align-items: center;
+  padding: var(--acadia-section-padding-dense);
+}
+
+body:not([data-apollo-page="dashboard"]) .apollo-page-title {
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  line-height: 1.05;
+}
+
+body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
+  font-size: 1rem;
+  max-width: 680px;
+}
+
 .apollo-dashboard-actions,
 .acadia-page-actions {
   align-items: center;
@@ -1203,6 +1218,43 @@ body {
   color: var(--apollo-muted);
   font-size: 0.8125rem;
   line-height: 1.35;
+}
+
+.iss-status-summary {
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: var(--acadia-radius-md);
+  box-shadow: var(--apollo-shadow-row);
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.25fr);
+  padding: 18px;
+}
+
+.iss-status-title {
+  color: var(--acadia-color-text);
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.1;
+}
+
+.iss-status-detail {
+  color: var(--apollo-muted);
+  margin-top: 0.45rem;
+}
+
+.iss-status-metrics {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.iss-status-metrics > div {
+  background: color-mix(in srgb, var(--apollo-row-bg) 72%, var(--acadia-color-surface-elevated));
+  border: 1px solid var(--apollo-border);
+  border-radius: var(--acadia-radius-sm);
+  padding: 12px;
 }
 
 html[data-bs-theme="dark"] .iss-map .leaflet-tile {
@@ -2549,6 +2601,10 @@ html[data-bs-theme="light"] .data-detail-panel {
   html[data-bs-theme="light"] {
     --acadia-page-margin: var(--acadia-page-margin-tablet);
   }
+
+  .iss-status-summary {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 767.98px) {
@@ -2582,6 +2638,10 @@ html[data-bs-theme="light"] .data-detail-panel {
 
   .apollo-nav-menu-item {
     font-size: 0.8125rem;
+  }
+
+  .iss-status-metrics {
+    grid-template-columns: 1fr;
   }
 
   .apollo-shell {

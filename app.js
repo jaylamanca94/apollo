@@ -1690,6 +1690,58 @@ function getOrbitalBrief(peopleState, iss) {
   return `${peopleState.count.toLocaleString()} ${crewWord} in orbit, ${issStatus}.`;
 }
 
+function getIssRegion(latitude, longitude) {
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    return "current orbital track";
+  }
+
+  if (latitude > 66) {
+    return "the Arctic region";
+  }
+
+  if (latitude < -60) {
+    return "the Southern Ocean";
+  }
+
+  if (latitude >= -55 && latitude <= 25 && (longitude >= 120 || longitude <= -70)) {
+    return latitude < 0 ? "the South Pacific" : "the Pacific";
+  }
+
+  if (latitude >= -45 && latitude <= 45 && longitude > -70 && longitude < 20) {
+    return latitude < 5 ? "the South Atlantic" : "the Atlantic";
+  }
+
+  if (latitude >= -40 && latitude <= 35 && longitude >= 20 && longitude < 120) {
+    return latitude < 0 ? "the southern Indian Ocean" : "the Indian Ocean";
+  }
+
+  if (latitude >= 5 && latitude <= 75 && longitude >= -170 && longitude < -50) {
+    return "North America";
+  }
+
+  if (latitude >= -55 && latitude < 15 && longitude >= -85 && longitude < -35) {
+    return "South America";
+  }
+
+  if (latitude >= 35 && latitude <= 75 && longitude >= -15 && longitude < 45) {
+    return "Europe";
+  }
+
+  if (latitude >= -35 && latitude < 38 && longitude >= -20 && longitude < 55) {
+    return "Africa";
+  }
+
+  if (latitude >= 5 && latitude <= 75 && longitude >= 45 && longitude < 150) {
+    return "Asia";
+  }
+
+  if (latitude >= -45 && latitude < -5 && longitude >= 110 && longitude < 180) {
+    return "Australia";
+  }
+
+  return "the current orbital track";
+}
+
 function getSpaceBriefState() {
   const feedStates = [
     dashboardData.iss,
@@ -1822,10 +1874,12 @@ function getRecentActivityRows() {
   }
 
   if (dashboardData.iss?.latitude !== null && dashboardData.iss?.longitude !== null) {
+    const region = getIssRegion(dashboardData.iss.latitude, dashboardData.iss.longitude);
+
     rows.push({
       icon: "fa-satellite",
       label: "ISS",
-      title: "ISS position updated",
+      title: `ISS over ${region}`,
       detail: dashboardData.iss.altitude !== null ? `${formatNumber(dashboardData.iss.altitude, { suffix: " km" })} altitude` : "Current station coordinates loaded",
       href: "./iss.html"
     });
@@ -2062,6 +2116,7 @@ async function loadIss() {
     resetIssMap();
     const data = normalizeIss(await fetchJson(API.iss));
     dashboardData.iss = data;
+    const issRegion = getIssRegion(data.latitude, data.longitude);
     const observedAtLabel = data.observedAt ? formatDateTime(data.observedAt) : "";
     const observedAtMarkup = observedAtLabel && observedAtLabel !== "Unavailable"
       ? `<p class="iss-position-fix mb-3">Position fix <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
@@ -2096,6 +2151,27 @@ async function loadIss() {
     }
 
     els.issBody.innerHTML = `
+      <div class="iss-status-summary mb-3">
+        <div>
+          <p class="section-kicker mb-1">ISS Status</p>
+          <h2 class="iss-status-title mb-0">Normal operations</h2>
+          <p class="iss-status-detail mb-0">Currently over ${escapeHtml(issRegion)}.</p>
+        </div>
+        <div class="iss-status-metrics">
+          <div>
+            <p class="text-secondary small mb-1">Altitude</p>
+            <p class="fw-semibold mb-0">${formatNumber(data.altitude, { suffix: " km" })}</p>
+          </div>
+          <div>
+            <p class="text-secondary small mb-1">Velocity</p>
+            <p class="fw-semibold mb-0">${formatNumber(data.velocity, { suffix: " km/h" })}</p>
+          </div>
+          <div>
+            <p class="text-secondary small mb-1">Sunlight state</p>
+            <p class="fw-semibold mb-0">${escapeHtml(formatIssVisibility(data.visibility))}</p>
+          </div>
+        </div>
+      </div>
       <div class="iss-map mb-3" id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"></div>
       ${observedAtMarkup}
       <div class="metadata-grid">
