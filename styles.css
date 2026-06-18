@@ -1806,6 +1806,54 @@ html[data-bs-theme="light"] .data-detail-panel {
   padding: 1rem;
 }
 
+#spaceWeatherBody {
+  display: grid;
+  gap: 16px;
+}
+
+.space-weather-brief {
+  align-items: center;
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  box-shadow: var(--apollo-shadow-row);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.space-weather-brief.space-weather-quiet {
+  background: var(--apollo-success-soft);
+  border-color: color-mix(in srgb, var(--apollo-success) 35%, transparent);
+}
+
+.space-weather-brief.space-weather-active {
+  background: var(--apollo-warning-soft);
+  border-color: color-mix(in srgb, var(--apollo-warning) 38%, transparent);
+}
+
+.space-weather-brief.space-weather-storm {
+  background: var(--apollo-accent-soft);
+  border-color: rgba(255, 64, 86, 0.28);
+}
+
+.space-weather-brief-title,
+.space-weather-section-title {
+  color: var(--acadia-color-text);
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.space-weather-brief-copy {
+  color: var(--apollo-muted-strong);
+  line-height: 1.45;
+  margin-top: 0.55rem;
+  max-width: 900px;
+}
+
 .space-weather-status.space-weather-quiet,
 .stat-chip.space-weather-quiet {
   background: var(--apollo-success-soft);
@@ -1886,8 +1934,70 @@ html[data-bs-theme="light"] .data-detail-panel {
 }
 
 .space-weather-forecast {
-  border-top: 1px solid var(--apollo-border);
-  padding-top: 1rem;
+  display: grid;
+  gap: 12px;
+}
+
+.space-weather-section-heading {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.space-weather-trend-label {
+  color: var(--apollo-muted);
+  font-size: 0.875rem;
+  font-weight: 750;
+  line-height: 1.35;
+  text-align: right;
+}
+
+.space-weather-trend-line {
+  align-items: stretch;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.space-weather-trend-step {
+  align-items: center;
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: var(--acadia-radius-pill);
+  box-shadow: var(--apollo-shadow-row);
+  color: var(--acadia-color-text);
+  display: flex;
+  gap: 0.55rem;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 0.65rem 0.8rem;
+}
+
+.space-weather-trend-step.space-weather-quiet {
+  background: var(--apollo-success-soft);
+  border-color: color-mix(in srgb, var(--apollo-success) 30%, transparent);
+}
+
+.space-weather-trend-step.space-weather-active {
+  background: var(--apollo-warning-soft);
+  border-color: color-mix(in srgb, var(--apollo-warning) 34%, transparent);
+}
+
+.space-weather-trend-step.space-weather-storm {
+  background: var(--apollo-accent-soft);
+  border-color: rgba(255, 64, 86, 0.28);
+}
+
+.space-weather-trend-step strong {
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.space-weather-trend-step small {
+  color: var(--apollo-muted-strong);
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .space-weather-forecast-grid {
@@ -1935,8 +2045,8 @@ html[data-bs-theme="light"] .data-detail-panel {
 }
 
 .space-weather-alerts {
-  border-top: 1px solid var(--apollo-border);
-  padding-top: 1rem;
+  display: grid;
+  gap: 12px;
 }
 
 .space-weather-alerts ul {
@@ -1950,7 +2060,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   border-radius: 8px;
   box-shadow: var(--apollo-shadow-row);
   display: grid;
-  gap: 0.25rem;
+  gap: 0.5rem;
   padding: 0.75rem 0.875rem;
 }
 
@@ -1994,12 +2104,12 @@ html[data-bs-theme="light"] .data-detail-panel {
 }
 
 .space-weather-alert-impact {
-  align-items: center;
+  align-items: flex-start;
   color: var(--apollo-muted);
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   font-size: 0.8125rem;
-  gap: 0.35rem 0.5rem;
+  gap: 0.15rem;
   line-height: 1.35;
 }
 
@@ -3162,10 +3272,21 @@ html[data-bs-theme="light"] .data-detail-panel {
     flex-direction: column;
   }
 
+  .space-weather-brief,
+  .space-weather-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .space-weather-trend-label {
+    text-align: left;
+  }
+
   .space-weather-scale-context {
     grid-template-columns: 1fr;
   }
 
+  .space-weather-trend-line,
   .space-weather-forecast-grid {
     grid-template-columns: 1fr;
   }

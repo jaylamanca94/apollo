@@ -904,6 +904,101 @@ function getNoaaScaleContext(scale, kpIndex) {
   };
 }
 
+function getSpaceWeatherBrief(data, forecastRows = []) {
+  const current = getText(data?.condition, "Space weather");
+  const currentSentence = data?.severity === "storm"
+    ? `${current} are active right now.`
+    : `Geomagnetic conditions are currently ${current.toLowerCase()}.`;
+  const forecastMax = forecastRows
+    .map((item) => item.maxKp)
+    .filter(Number.isFinite)
+    .sort((a, b) => b - a)[0];
+  let outlook = "NOAA's short-range forecast is unavailable.";
+
+  if (Number.isFinite(forecastMax)) {
+    if (forecastMax >= 5) {
+      outlook = `NOAA's 3-day outlook reaches Kp ${formatKpIndex(forecastMax)}, which crosses the G1 geomagnetic storm threshold.`;
+    } else if (forecastMax >= 4) {
+      outlook = `Activity may increase to Kp ${formatKpIndex(forecastMax)} in the next 72 hours, but remains below NOAA storm thresholds.`;
+    } else {
+      outlook = `The next 72 hours remain below NOAA storm thresholds, peaking near Kp ${formatKpIndex(forecastMax)}.`;
+    }
+  }
+
+  return `${currentSentence} ${outlook}`;
+}
+
+function getSpaceWeatherTrendLabel(forecastRows = []) {
+  const values = forecastRows.map((item) => item.maxKp).filter(Number.isFinite);
+
+  if (values.length < 2) {
+    return "Trend unavailable";
+  }
+
+  const first = values[0];
+  const peak = Math.max(...values);
+  const last = values[values.length - 1];
+
+  if (peak >= 5) {
+    return `Storm threshold possible: Kp ${formatKpIndex(peak)}`;
+  }
+
+  if (peak - first >= 1) {
+    return `Slight increase expected: Kp ${formatKpIndex(first)} to ${formatKpIndex(peak)}`;
+  }
+
+  if (first - last >= 1) {
+    return `Easing trend: Kp ${formatKpIndex(first)} to ${formatKpIndex(last)}`;
+  }
+
+  return `Stable outlook: Kp ${formatKpIndex(first)} to ${formatKpIndex(peak)}`;
+}
+
+function getSpaceWeatherAlertInterpretation(alert) {
+  const headline = getText(alert?.headline).toLowerCase();
+  const type = getText(alert?.type, "Notice");
+
+  if (alert?.impactScale?.summary) {
+    return {
+      title: alert.impactScale.label || `${type} context`,
+      summary: alert.impactScale.summary
+    };
+  }
+
+  if (headline.includes("electron")) {
+    return {
+      title: "Satellite environment watch",
+      summary: "Elevated high-energy electron activity can affect the satellite environment; minimal impact is expected for most users."
+    };
+  }
+
+  if (headline.includes("geomagnetic") || headline.includes("k-index")) {
+    return {
+      title: "Geomagnetic activity watch",
+      summary: "NOAA is flagging changing geomagnetic conditions; monitor for aurora, HF radio, navigation, or satellite-drag effects if storm levels rise."
+    };
+  }
+
+  if (headline.includes("radio blackout") || headline.includes("x-ray")) {
+    return {
+      title: "Radio conditions watch",
+      summary: "Solar radio conditions may be changing; impacts are usually most relevant to HF radio and aviation communication paths."
+    };
+  }
+
+  if (headline.includes("proton")) {
+    return {
+      title: "Radiation environment watch",
+      summary: "NOAA is flagging energetic particle activity; impacts are mainly relevant to satellites, polar aviation, and space operations."
+    };
+  }
+
+  return {
+    title: `${type} context`,
+    summary: "NOAA has issued a space-weather notice. Apollo has no additional impact signal from the alert text."
+  };
+}
+
 function formatDiameterRange(minValue, maxValue) {
   const min = Number.isFinite(minValue) ? Math.round(minValue).toLocaleString() : "";
   const max = Number.isFinite(maxValue) ? Math.round(maxValue).toLocaleString() : "";
@@ -2761,6 +2856,8 @@ async function loadSpaceWeather() {
     const recentAlerts = data.alerts.slice(0, 2);
     const forecastRows = data.forecast.slice(0, 3);
     const noaaScaleContext = getNoaaScaleContext(data.noaaScale, data.kpIndex);
+    const weatherBrief = getSpaceWeatherBrief(data, forecastRows);
+    const trendLabel = getSpaceWeatherTrendLabel(forecastRows);
     const observedAtLabel = data.observedAt ? formatDateTime(data.observedAt) : "";
     const observedAtMarkup = observedAtLabel && observedAtLabel !== "Unavailable"
       ? `<p class="space-weather-observed mb-0">Observed <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
@@ -2793,7 +2890,7 @@ async function loadSpaceWeather() {
     }
 
     els.spaceWeatherBody.innerHTML = `
-      <div class="summary-metric mb-3">
+      <div class="summary-metric">
         <span class="stat-chip ${severityClass}"><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i></span>
         <div>
           <p class="text-secondary small mb-1">Current K-index</p>
@@ -2801,24 +2898,31 @@ async function loadSpaceWeather() {
           ${observedAtMarkup}
         </div>
       </div>
-      <div class="space-weather-status ${severityClass} mb-3">
+      <section class="space-weather-brief ${severityClass}" aria-labelledby="spaceWeatherBriefTitle">
         <div>
-          <p class="section-kicker mb-1">${escapeHtml(data.condition)}</p>
-          <p class="mb-0">${escapeHtml(data.summary)}</p>
+          <p class="section-kicker mb-1">Space Weather Brief</p>
+          <h3 class="space-weather-brief-title mb-0" id="spaceWeatherBriefTitle">${escapeHtml(data.condition)}</h3>
+          <p class="space-weather-brief-copy mb-0">${escapeHtml(weatherBrief)}</p>
         </div>
         ${data.kpLabel ? `<span class="space-weather-kp">${escapeHtml(data.kpLabel)}</span>` : ""}
-      </div>
-      <div class="space-weather-scale-context mb-3">
-        <div>
-          <p class="text-secondary small mb-1">NOAA geomagnetic scale</p>
-          <p class="space-weather-scale-label mb-0">${escapeHtml(noaaScaleContext.label)}</p>
-          <p class="space-weather-scale-range mb-0">${escapeHtml(noaaScaleContext.range)}</p>
-        </div>
-        <p class="space-weather-scale-summary mb-0">${escapeHtml(noaaScaleContext.summary)}</p>
-      </div>
+      </section>
       ${forecastRows.length ? `
-        <div class="space-weather-forecast mb-3">
-          <p class="text-secondary small mb-2">3-day K-index outlook</p>
+        <section class="space-weather-forecast" aria-labelledby="spaceWeatherForecastTitle">
+          <div class="space-weather-section-heading">
+            <div>
+              <p class="section-kicker mb-1">Next 72 hours</p>
+              <h3 class="space-weather-section-title mb-0" id="spaceWeatherForecastTitle">Kp Trend</h3>
+            </div>
+            <p class="space-weather-trend-label mb-0">${escapeHtml(trendLabel)}</p>
+          </div>
+          <div class="space-weather-trend-line" aria-label="K-index trend">
+            ${forecastRows.map((item) => `
+              <span class="space-weather-trend-step space-weather-${escapeHtml(item.severity)}">
+                <strong>${formatKpIndex(item.maxKp)}</strong>
+                <small>${formatShortDate(item.date)}</small>
+              </span>
+            `).join("")}
+          </div>
           <div class="space-weather-forecast-grid">
             ${forecastRows.map((item) => `
               <article class="space-weather-forecast-day space-weather-${escapeHtml(item.severity)}">
@@ -2830,29 +2934,48 @@ async function loadSpaceWeather() {
               </article>
             `).join("")}
           </div>
-        </div>
+        </section>
       ` : ""}
+      <div class="space-weather-status ${severityClass}">
+        <div>
+          <p class="section-kicker mb-1">${escapeHtml(data.condition)}</p>
+          <p class="mb-0">${escapeHtml(data.summary)}</p>
+        </div>
+      </div>
+      <div class="space-weather-scale-context">
+        <div>
+          <p class="text-secondary small mb-1">NOAA geomagnetic scale</p>
+          <p class="space-weather-scale-label mb-0">${escapeHtml(noaaScaleContext.label)}</p>
+          <p class="space-weather-scale-range mb-0">${escapeHtml(noaaScaleContext.range)}</p>
+        </div>
+        <p class="space-weather-scale-summary mb-0">${escapeHtml(noaaScaleContext.summary)}</p>
+      </div>
       ${recentAlerts.length ? `
-        <div class="space-weather-alerts mb-3">
-          <p class="text-secondary small mb-2">Recent NOAA notices</p>
+        <section class="space-weather-alerts" aria-labelledby="spaceWeatherAlertsTitle">
+          <div class="space-weather-section-heading">
+            <div>
+              <p class="section-kicker mb-1">Watch Items</p>
+              <h3 class="space-weather-section-title mb-0" id="spaceWeatherAlertsTitle">Recent NOAA Notices</h3>
+            </div>
+          </div>
           <ul class="list-unstyled mb-0">
-            ${recentAlerts.map((alert) => `
+            ${recentAlerts.map((alert) => {
+              const interpretation = getSpaceWeatherAlertInterpretation(alert);
+              return `
               <li>
                 <div class="space-weather-alert-heading">
                   <span class="space-weather-alert-pill">${escapeHtml(alert.type)}</span>
                   <span>${escapeHtml(alert.headline)}</span>
                 </div>
-                ${alert.impactScale?.label ? `
-                  <p class="space-weather-alert-impact mb-0">
-                    <span>${escapeHtml(alert.impactScale.label)}</span>
-                    ${alert.impactScale.summary ? `<span>${escapeHtml(alert.impactScale.summary)}</span>` : ""}
-                  </p>
-                ` : ""}
+                <p class="space-weather-alert-impact mb-0">
+                  <span>${escapeHtml(interpretation.title)}</span>
+                  <span>${escapeHtml(interpretation.summary)}</span>
+                </p>
                 ${alert.issuedAt ? `<time datetime="${escapeHtml(alert.issuedAt)}">${formatDateTime(alert.issuedAt)}</time>` : ""}
               </li>
-            `).join("")}
+            `; }).join("")}
           </ul>
-        </div>
+        </section>
       ` : stateMessage("No recent NOAA alerts are listed.")}
       <a class="source-link" href="${escapeHtml(data.sourceUrl)}" target="_blank" rel="noopener noreferrer">
         <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
