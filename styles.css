@@ -489,10 +489,15 @@ body {
   padding: var(--acadia-section-padding-spacious);
 }
 
+body[data-apollo-page="dashboard"] .apollo-page-header {
+  align-items: center;
+  padding: clamp(2rem, 4vw, 3rem);
+}
+
 .apollo-title-block,
 .acadia-page-header-copy {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .apollo-hero-kicker,
@@ -514,6 +519,13 @@ body {
   font-size: 1.25rem;
   line-height: 1.45;
   max-width: 760px;
+}
+
+body[data-apollo-page="dashboard"] .apollo-page-subtitle {
+  color: var(--acadia-color-text);
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.25;
 }
 
 body:not([data-apollo-page="dashboard"]) .apollo-page-header {
@@ -645,6 +657,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 }
 
 .apollo-detail-grid {
+  gap: 24px;
   grid-template-areas: "iss crew";
 }
 
@@ -732,7 +745,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 
 .apollo-space-brief-body {
   display: grid;
-  gap: 18px;
+  gap: 14px;
   padding: var(--acadia-section-padding-dense);
 }
 
@@ -749,37 +762,6 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   font-weight: 800;
   letter-spacing: 0;
   line-height: 1.15;
-}
-
-.apollo-space-brief-pill {
-  align-items: center;
-  border: 1px solid transparent;
-  border-radius: var(--acadia-radius-pill);
-  display: inline-flex;
-  flex: 0 0 auto;
-  font-size: 0.78rem;
-  font-weight: 800;
-  min-height: 2rem;
-  padding: 0.3rem 0.75rem;
-  white-space: nowrap;
-}
-
-.apollo-space-brief-ok {
-  background: var(--apollo-success-soft);
-  border-color: color-mix(in srgb, var(--apollo-success) 26%, transparent);
-  color: var(--apollo-success);
-}
-
-.apollo-space-brief-attention {
-  background: var(--apollo-warning-soft);
-  border-color: color-mix(in srgb, var(--apollo-warning) 32%, transparent);
-  color: var(--apollo-warning);
-}
-
-.apollo-space-brief-error {
-  background: var(--apollo-accent-soft);
-  border-color: color-mix(in srgb, var(--apollo-accent) 28%, transparent);
-  color: var(--apollo-accent);
 }
 
 .apollo-space-brief-summary {
@@ -883,6 +865,14 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   min-width: 0;
 }
 
+.command-panel-meta {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
 .command-panel-label {
   color: var(--apollo-muted);
   font-size: 0.72rem;
@@ -890,6 +880,14 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   letter-spacing: 0;
   line-height: 1.2;
   text-transform: uppercase;
+}
+
+.command-panel-time {
+  color: var(--apollo-muted);
+  flex: 0 0 auto;
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .command-panel-title {
@@ -1111,6 +1109,12 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   padding: 1rem;
 }
 
+#issBody,
+#peopleBody {
+  display: grid;
+  gap: 16px;
+}
+
 .stat-chip {
   align-items: center;
   background: var(--apollo-accent-soft);
@@ -1122,6 +1126,88 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   height: 2.5rem;
   justify-content: center;
   width: 2.5rem;
+}
+
+.crew-brief {
+  align-items: center;
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  box-shadow: var(--apollo-shadow-row);
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.crew-brief-title {
+  color: var(--acadia-color-text);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.crew-brief-summary {
+  color: var(--apollo-muted);
+  line-height: 1.4;
+  margin-top: 0.35rem;
+}
+
+.crew-manifest-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.crew-manifest-card {
+  border-left: 3px solid var(--apollo-accent);
+  min-width: 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+}
+
+.crew-manifest-header {
+  align-items: baseline;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.crew-manifest-title {
+  color: var(--acadia-color-text);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.crew-manifest-header span {
+  color: var(--apollo-muted);
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.crew-manifest-list {
+  color: var(--acadia-color-text);
+  display: grid;
+  gap: 0.45rem;
+  line-height: 1.35;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.crew-manifest-list li {
+  overflow-wrap: anywhere;
+}
+
+.crew-source-note {
+  color: var(--apollo-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
 }
 
 .crew-grid {
@@ -1200,7 +1286,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   border-radius: 8px;
   display: flex;
   justify-content: center;
-  min-height: 220px;
+  min-height: 240px;
   overflow: hidden;
 }
 
@@ -1218,6 +1304,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   color: var(--apollo-muted);
   font-size: 0.8125rem;
   line-height: 1.35;
+  margin-top: 14px;
 }
 
 .iss-status-summary {
@@ -1230,6 +1317,11 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   gap: 18px;
   grid-template-columns: auto minmax(0, 1fr);
   padding: 18px;
+}
+
+.iss-status-headline {
+  display: grid;
+  gap: 0.65rem;
 }
 
 .iss-status-title {
@@ -1257,6 +1349,75 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   font-weight: 750;
   line-height: 1.2;
   padding: 0.45rem 0.65rem;
+}
+
+.iss-orbital-brief {
+  color: var(--apollo-muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  max-width: 780px;
+}
+
+.iss-current-position {
+  align-items: center;
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  box-shadow: var(--apollo-shadow-row);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 1rem;
+}
+
+.iss-position-copy {
+  min-width: 0;
+}
+
+.iss-position-title {
+  color: var(--acadia-color-text);
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.iss-position-summary {
+  color: var(--apollo-muted);
+  line-height: 1.4;
+  margin-top: 0.4rem;
+}
+
+.iss-position-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.iss-position-stats div {
+  border-left: 2px solid var(--apollo-accent);
+  min-width: 132px;
+  padding-left: 0.75rem;
+}
+
+.iss-position-stats span,
+.iss-coordinate-strip span {
+  color: var(--apollo-muted);
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.iss-position-stats strong,
+.iss-coordinate-strip strong {
+  color: var(--acadia-color-text);
+  display: block;
+  font-size: 1rem;
+  line-height: 1.3;
+  margin-top: 0.2rem;
 }
 
 html[data-bs-theme="dark"] .iss-map .leaflet-tile {
@@ -1291,6 +1452,51 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   padding: 1rem;
 }
 
+.orbit-snapshot-list {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.orbit-snapshot-item {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.orbit-snapshot-item span {
+  align-items: center;
+  background: var(--apollo-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--apollo-accent) 24%, transparent);
+  border-radius: var(--acadia-radius-pill);
+  color: var(--apollo-accent);
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+
+.orbit-snapshot-item strong {
+  color: var(--acadia-color-text);
+  font-size: 0.95rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.iss-coordinate-strip {
+  border-top: 1px solid var(--apollo-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 32px;
+  padding-top: 4px;
+}
+
+.iss-coordinate-strip div {
+  min-width: 160px;
+}
+
 .orbit-context-grid {
   display: grid;
   gap: 14px;
@@ -1310,7 +1516,7 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
 }
 
 .iss-source-row {
-  margin-top: 16px;
+  margin-top: 24px;
 }
 
 .detail-action-row {
@@ -2611,6 +2817,14 @@ html[data-bs-theme="light"] .data-detail-panel {
   .iss-status-line {
     justify-content: flex-start;
   }
+
+  .iss-current-position {
+    grid-template-columns: 1fr;
+  }
+
+  .iss-position-stats {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 767.98px) {
@@ -2692,6 +2906,19 @@ html[data-bs-theme="light"] .data-detail-panel {
   .sky-anomaly-result-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .crew-brief {
+    align-items: flex-start;
+  }
+
+  .crew-manifest-header,
+  .crew-brief {
+    flex-direction: column;
+  }
+
+  .crew-manifest-header {
+    align-items: flex-start;
   }
 
   .apod-info-card,

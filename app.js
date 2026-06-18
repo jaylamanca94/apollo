@@ -106,6 +106,7 @@ const els = {
   refreshButtonMobile: document.querySelector("#refreshButtonMobile"),
   themeToggle: document.querySelector("#themeToggle"),
   dashboardUpdated: document.querySelector("#dashboardUpdated"),
+  dashboardSubtitle: document.querySelector(".apollo-page-subtitle"),
   peopleBody: document.querySelector("#peopleBody"),
   quickStatsBody: document.querySelector("#quickStatsBody"),
   spaceBriefBody: document.querySelector("#spaceBriefBody"),
@@ -415,6 +416,61 @@ function formatRelativeHours(hours) {
 
   const days = Math.round(absHours / 24);
   return `${days} ${days === 1 ? "day" : "days"} ${hours >= 0 ? "after" : "before"}`;
+}
+
+function formatRelativeTimestamp(value, fallback = "Live") {
+  const date = new Date(value);
+
+  if (!Number.isFinite(date.getTime())) {
+    return fallback;
+  }
+
+  const diffMs = Date.now() - date.getTime();
+
+  if (diffMs < 0) {
+    return fallback;
+  }
+
+  const minutes = Math.floor(diffMs / 60000);
+
+  if (minutes < 1) {
+    return "Just now";
+  }
+
+  if (minutes < 60) {
+    return `${minutes} min ago`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+
+  if (hours < 24) {
+    return `${hours}h ago`;
+  }
+
+  return new Intl.DateTimeFormat([], {
+    day: "numeric",
+    month: "short"
+  }).format(date);
+}
+
+function formatActivityDate(value, fallback = "Today") {
+  if (!value) {
+    return fallback;
+  }
+
+  const date = new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T12:00:00` : value);
+
+  if (!Number.isFinite(date.getTime())) {
+    return fallback;
+  }
+
+  const todayKey = getLocalDateKey(new Date());
+
+  if (getLocalDateKey(date) === todayKey) {
+    return "Today";
+  }
+
+  return formatShortDate(value);
 }
 
 function getSkyObservationDate() {
@@ -1059,6 +1115,67 @@ function summarizeCraftOccupancy(people) {
   return [...occupancy.entries()]
     .map(([craft, count]) => ({ craft, count }))
     .sort((a, b) => b.count - a.count || a.craft.localeCompare(b.craft));
+}
+
+function groupCrewByCraft(people) {
+  const grouped = people.reduce((groups, person) => {
+    const craft = getText(person.craft, "Location unavailable");
+    const members = groups.get(craft) || [];
+    members.push(person);
+    groups.set(craft, members);
+    return groups;
+  }, new Map());
+
+  return [...grouped.entries()]
+    .map(([craft, members]) => ({
+      craft,
+      count: members.length,
+      members: members.sort((a, b) => a.name.localeCompare(b.name))
+    }))
+    .sort((a, b) => b.count - a.count || a.craft.localeCompare(b.craft));
+}
+
+function formatReadableList(items) {
+  const values = items.map((item) => getText(item)).filter(Boolean);
+
+  if (values.length === 0) {
+    return "";
+  }
+
+  if (values.length === 1) {
+    return values[0];
+  }
+
+  if (values.length === 2) {
+    return `${values[0]} and ${values[1]}`;
+  }
+
+  return `${values.slice(0, -1).join(", ")}, and ${values[values.length - 1]}`;
+}
+
+function getIssOrbitalBriefText(iss, peopleState) {
+  const hasPosition = Boolean(iss && iss.latitude !== null && iss.longitude !== null);
+  const region = hasPosition
+    ? getIssRegion(iss.latitude, iss.longitude)
+    : "its current orbital track";
+  const altitude = iss?.altitude !== null ? formatNumber(iss.altitude, { suffix: " km" }) : "current altitude";
+  const velocity = iss?.velocity !== null ? formatNumber(iss.velocity, { suffix: " km/h" }) : "orbital velocity";
+  const crewText = peopleState?.count
+    ? `${peopleState.count.toLocaleString()} ${peopleState.count === 1 ? "crew member" : "crew members"} aboard`
+    : "the current crew manifest loading";
+  const craftList = peopleState?.craftGroups?.length
+    ? ` Crew are distributed across ${formatReadableList(peopleState.craftGroups.map((group) => group.craft))}.`
+    : "";
+
+  return `The International Space Station is operating normally with ${crewText}. The station is currently over ${region} at ${altitude} and traveling at ${velocity}.${craftList}`;
+}
+
+function updateIssOrbitalBrief() {
+  const brief = document.querySelector("#issOrbitalBriefText");
+
+  if (brief && dashboardData.iss) {
+    brief.textContent = getIssOrbitalBriefText(dashboardData.iss, dashboardData.people);
+  }
 }
 
 function normalizeLaunches(data) {
@@ -1801,13 +1918,16 @@ function renderSpaceBrief() {
     getOrbitalBrief(dashboardData.people, dashboardData.iss)
   ].join(" ");
 
+  if (els.dashboardSubtitle && isDashboardPage()) {
+    els.dashboardSubtitle.textContent = `Space Activity: ${state.label}`;
+  }
+
   els.spaceBriefBody.innerHTML = `
     <div class="apollo-space-brief-header">
       <div>
         <p class="section-kicker mb-1">Space Brief</p>
         <h2 class="apollo-space-brief-title mb-0">${escapeHtml(state.headline)}</h2>
       </div>
-      <span class="apollo-space-brief-pill apollo-space-brief-${escapeHtml(state.tone)}">${escapeHtml(state.label)}</span>
     </div>
     <p class="apollo-space-brief-summary mb-0">${escapeHtml(summary)}</p>
   `;
@@ -1818,14 +1938,21 @@ function resetSpaceBrief() {
     return;
   }
 
+  if (els.dashboardSubtitle && isDashboardPage()) {
+    els.dashboardSubtitle.textContent = "Space Activity: Loading";
+  }
+
   els.spaceBriefBody.innerHTML = stateMessage("Building space brief...");
 }
 
-function commandPanelRow({ icon, label, title, detail, href }) {
+function commandPanelRow({ icon, label, title, detail, time, href }) {
   const content = `
     <span class="command-panel-icon"><i class="fa-solid ${escapeHtml(icon)} acadia-icon" aria-hidden="true"></i></span>
     <span class="command-panel-copy">
-      <span class="command-panel-label">${escapeHtml(label)}</span>
+      <span class="command-panel-meta">
+        <span class="command-panel-label">${escapeHtml(label)}</span>
+        ${time ? `<span class="command-panel-time">${escapeHtml(time)}</span>` : ""}
+      </span>
       <span class="command-panel-title">${escapeHtml(title)}</span>
       <span class="command-panel-detail">${escapeHtml(detail)}</span>
     </span>
@@ -1849,6 +1976,7 @@ function getRecentActivityRows() {
       label: "Launches",
       title: getText(launch.status, "Launch status loaded"),
       detail: launchName.mission ? `${launchName.vehicle} ${launchName.mission}` : launchName.vehicle,
+      time: formatCountdown(launch.dateUtc),
       href: "./launches.html"
     });
   }
@@ -1859,6 +1987,7 @@ function getRecentActivityRows() {
       label: "Gallery",
       title: "New APOD published",
       detail: dashboardData.apod.title,
+      time: formatActivityDate(dashboardData.apod.date),
       href: "./gallery.html"
     });
   }
@@ -1869,6 +1998,7 @@ function getRecentActivityRows() {
       label: "Weather",
       title: dashboardData.spaceWeather.condition,
       detail: dashboardData.spaceWeather.kpIndex === null ? "Current Kp unavailable" : `Current Kp ${formatKpIndex(dashboardData.spaceWeather.kpIndex)}`,
+      time: formatRelativeTimestamp(dashboardData.spaceWeather.observedAt, "Live"),
       href: "./weather.html"
     });
   }
@@ -1881,6 +2011,7 @@ function getRecentActivityRows() {
       label: "ISS",
       title: `ISS over ${region}`,
       detail: dashboardData.iss.altitude !== null ? `${formatNumber(dashboardData.iss.altitude, { suffix: " km" })} altitude` : "Current station coordinates loaded",
+      time: formatRelativeTimestamp(dashboardData.iss.observedAt, "Live track"),
       href: "./iss.html"
     });
   }
@@ -1913,18 +2044,20 @@ function getWatchItemRows() {
 
   rows.push({
     icon: "fa-meteor",
-    label: "Asteroid risk",
-    title: hazardous === 0 ? "No hazards flagged" : `${hazardous.toLocaleString()} flagged`,
-    detail: closestObject ? `Closest approach ${formatLunarDistance(closestObject.lunarDistance)}` : "No current close-approach list",
+    label: "Closest asteroid",
+    title: closestObject ? formatLunarDistance(closestObject.lunarDistance) : "Unavailable",
+    detail: closestObject
+      ? `${closestObject.name}${hazardous === 0 ? " · no hazards flagged" : ` · ${hazardous.toLocaleString()} flagged`}`
+      : "No current close-approach list",
     href: "./asteroids.html"
   });
 
   if (dashboardData.spaceWeather) {
     rows.push({
       icon: "fa-sun",
-      label: "Solar conditions",
-      title: dashboardData.spaceWeather.condition,
-      detail: forecast?.condition ? `Outlook: ${forecast.condition}` : "NOAA outlook unavailable",
+      label: "Kp forecast",
+      title: forecast?.maxKp !== null && forecast?.maxKp !== undefined ? `${formatKpIndex(forecast.maxKp)} ${forecast.date ? formatActivityDate(forecast.date, "") : ""}`.trim() : "Unavailable",
+      detail: forecast?.condition ? forecast.condition : "NOAA outlook unavailable",
       href: "./weather.html"
     });
   }
@@ -2151,10 +2284,11 @@ async function loadIss() {
     }
 
     els.issBody.innerHTML = `
-      <div class="iss-status-summary mb-3">
-        <div>
+      <div class="iss-status-summary">
+        <div class="iss-status-headline">
           <p class="section-kicker mb-1">ISS Status</p>
           <h2 class="iss-status-title mb-0">Normal Operations</h2>
+          <p class="iss-orbital-brief mb-0" id="issOrbitalBriefText">${escapeHtml(getIssOrbitalBriefText(data, dashboardData.people))}</p>
         </div>
         <p class="iss-status-line mb-0">
           <span>${formatNumber(data.altitude, { suffix: " km" })} altitude</span>
@@ -2163,47 +2297,60 @@ async function loadIss() {
           <span>Over ${escapeHtml(issRegion)}</span>
         </p>
       </div>
-      <div class="iss-map mb-3" id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"></div>
+      <div class="iss-map" id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"></div>
       ${observedAtMarkup}
-      <div class="metadata-grid">
-        <div>
-          <p class="text-secondary small mb-1">Current latitude</p>
-          <p class="fw-semibold mb-0">${formatNumber(data.latitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</p>
+      <div class="iss-current-position">
+        <div class="iss-position-copy">
+          <p class="section-kicker mb-1">Current Position</p>
+          <h3 class="iss-position-title mb-0">${escapeHtml(issRegion)}</h3>
+          <p class="iss-position-summary mb-0">The station is moving at orbital speed while ${escapeHtml(formatIssVisibility(data.visibility).toLowerCase())}.</p>
         </div>
-        <div>
-          <p class="text-secondary small mb-1">Current longitude</p>
-          <p class="fw-semibold mb-0">${formatNumber(data.longitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</p>
-        </div>
-        <div>
-          <p class="text-secondary small mb-1">Altitude</p>
-          <p class="fw-semibold mb-0">${formatNumber(data.altitude, { suffix: " km" })}</p>
-        </div>
-        <div>
-          <p class="text-secondary small mb-1">Velocity</p>
-          <p class="fw-semibold mb-0">${formatNumber(data.velocity, { suffix: " km/h" })}</p>
+        <div class="iss-position-stats">
+          <div>
+            <span>Altitude</span>
+            <strong>${formatNumber(data.altitude, { suffix: " km" })}</strong>
+          </div>
+          <div>
+            <span>Velocity</span>
+            <strong>${formatNumber(data.velocity, { suffix: " km/h" })}</strong>
+          </div>
         </div>
       </div>
-      <div class="iss-orbit-context mt-3">
-        <p class="section-kicker mb-2">Orbital context</p>
-        <div class="orbit-context-grid">
-          <div>
-            <p class="text-secondary small mb-1">Estimated orbit time</p>
-            <p class="fw-semibold mb-0">${formatOrbitMinutes(data.orbitPeriodMinutes)}</p>
-          </div>
-          <div>
-            <p class="text-secondary small mb-1">Estimated orbits per day</p>
-            <p class="fw-semibold mb-0">${formatOrbitsPerDay(data.orbitsPerDay)}</p>
-          </div>
-          <div>
-            <p class="text-secondary small mb-1">Sunlight state</p>
-            <p class="fw-semibold mb-0">${escapeHtml(formatIssVisibility(data.visibility))}</p>
-          </div>
-          <div>
-            <p class="text-secondary small mb-1">Signal footprint</p>
-            <p class="fw-semibold mb-0">${formatFootprintKilometers(data.footprint)}</p>
-          </div>
+      <div class="iss-orbit-context">
+        <p class="section-kicker mb-2">Orbital Snapshot</p>
+        <div class="orbit-snapshot-list">
+          <article class="orbit-snapshot-item">
+            <span><i class="fa-solid fa-earth-americas acadia-icon" aria-hidden="true"></i></span>
+            <strong>Over ${escapeHtml(issRegion)}</strong>
+          </article>
+          <article class="orbit-snapshot-item">
+            <span><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i></span>
+            <strong>${escapeHtml(formatIssVisibility(data.visibility))}</strong>
+          </article>
+          <article class="orbit-snapshot-item">
+            <span><i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i></span>
+            <strong>${formatOrbitsPerDay(data.orbitsPerDay)} orbits/day</strong>
+          </article>
+          <article class="orbit-snapshot-item">
+            <span><i class="fa-solid fa-tower-broadcast acadia-icon" aria-hidden="true"></i></span>
+            <strong>${formatFootprintKilometers(data.footprint)} footprint</strong>
+          </article>
+          <article class="orbit-snapshot-item">
+            <span><i class="fa-regular fa-clock acadia-icon" aria-hidden="true"></i></span>
+            <strong>One orbit every ${formatOrbitMinutes(data.orbitPeriodMinutes)}</strong>
+          </article>
         </div>
         <p class="orbit-context-note mb-0">Orbit estimates use current altitude and velocity; sunlight and footprint come from the ISS position source.</p>
+      </div>
+      <div class="iss-coordinate-strip" aria-label="ISS coordinates">
+        <div>
+          <span>Latitude</span>
+          <strong>${formatNumber(data.latitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</strong>
+        </div>
+        <div>
+          <span>Longitude</span>
+          <strong>${formatNumber(data.longitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</strong>
+        </div>
       </div>
       <div class="detail-action-row iss-source-row">
         <a class="source-link" href="https://wheretheiss.at/" target="_blank" rel="noopener noreferrer">
@@ -2213,6 +2360,7 @@ async function loadIss() {
       </div>
     `;
     renderIssMap(data);
+    updateIssOrbitalBrief();
     setQuickStat("iss", {
       value: data.latitude !== null && data.longitude !== null ? "In orbit" : "Position unknown",
       detail: data.altitude !== null ? `${formatNumber(data.altitude, { suffix: " km" })} altitude` : formatIssVisibility(data.visibility),
@@ -2259,16 +2407,21 @@ async function loadPeople() {
     }
 
     const craftGroups = summarizeCraftOccupancy(people);
+    const craftManifest = groupCrewByCraft(people);
     const crewLocationLabel = craftGroups.length === 1 ? "crew location" : "crew locations";
     const countMatches = roster.sourceCount === null || roster.sourceCount === people.length;
     const rosterCheck = countMatches
       ? `${people.length.toLocaleString()} listed below`
       : `${people.length.toLocaleString()} listed below; source reports ${roster.sourceCount.toLocaleString()}`;
     const expeditionLabel = formatCrewExpedition(roster.expedition);
+    const crewBriefDetail = expeditionLabel === "Unavailable"
+      ? "Crew are grouped by spacecraft assignment."
+      : `${expeditionLabel} crew are grouped by spacecraft assignment.`;
     const sourceExpeditionDetail = expeditionLabel === "Unavailable" ? "" : `; ${expeditionLabel}`;
     dashboardData.people = {
       count: people.length,
       locationCount: craftGroups.length,
+      craftGroups,
       countMatches
     };
 
@@ -2289,44 +2442,32 @@ async function loadPeople() {
     }
 
     els.peopleBody.innerHTML = `
-      <div class="summary-metric mb-3">
+      <div class="crew-brief">
         <span class="stat-chip"><i class="fa-solid fa-user-astronaut acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="text-secondary small mb-1">Current crew</p>
-          <p class="h3 fw-semibold mb-0">${people.length}</p>
+          <p class="section-kicker mb-1">Crew Manifest</p>
+          <h3 class="crew-brief-title mb-0">${people.length.toLocaleString()} aboard across ${craftGroups.length.toLocaleString()} ${crewLocationLabel}</h3>
+          <p class="crew-brief-summary mb-0">${escapeHtml(crewBriefDetail)}</p>
         </div>
       </div>
-      <div class="metadata-grid mb-3">
-        <div>
-          <p class="text-secondary small mb-1">Source roster count</p>
-          <p class="fw-semibold mb-0">${escapeHtml(formatCrewSourceCount(roster.sourceCount))}</p>
-          <p class="text-secondary small mb-0">${escapeHtml(rosterCheck)}</p>
-        </div>
-        <div>
-          <p class="text-secondary small mb-1">ISS expedition</p>
-          <p class="fw-semibold mb-0">${escapeHtml(expeditionLabel)}</p>
-        </div>
-      </div>
-      <div class="crew-location-summary mb-3" aria-label="Crew locations">
-        <p class="text-secondary small mb-2">${craftGroups.length} ${crewLocationLabel}</p>
-        <div class="crew-location-grid">
-          ${craftGroups.map((group) => `
-            <article class="crew-location">
-              <p class="crew-location-count mb-1">${group.count}</p>
-              <p class="crew-location-name mb-0">${escapeHtml(group.craft)}</p>
-            </article>
-          `).join("")}
-        </div>
-      </div>
-      <div class="crew-grid">
-        ${people.map((person) => `
-          <article class="crew-person">
-            <h3 class="crew-name mb-0">${escapeHtml(person.name)}</h3>
-            ${person.craft ? `<p class="crew-craft mb-0">${escapeHtml(person.craft)}</p>` : ""}
+      <div class="crew-manifest-grid">
+        ${craftManifest.map((group) => `
+          <article class="crew-manifest-card">
+            <header class="crew-manifest-header">
+              <h3 class="crew-manifest-title mb-0">${escapeHtml(group.craft)}</h3>
+              <span>${group.count.toLocaleString()} ${group.count === 1 ? "person" : "aboard"}</span>
+            </header>
+            <ul class="crew-manifest-list">
+              ${group.members.map((person) => `<li>${escapeHtml(person.name)}</li>`).join("")}
+            </ul>
           </article>
         `).join("")}
       </div>
+      <div class="crew-source-note">
+        <p class="mb-0"><strong>Source roster count:</strong> ${escapeHtml(formatCrewSourceCount(roster.sourceCount))}; ${escapeHtml(rosterCheck)}.</p>
+      </div>
     `;
+    updateIssOrbitalBrief();
     setQuickStat("people", {
       value: `${people.length.toLocaleString()} aboard`,
       detail: `${craftGroups.length} ${crewLocationLabel}`,
