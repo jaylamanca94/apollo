@@ -209,7 +209,8 @@ test("ISS map is exposed as a named interactive region", () => {
   const js = readProjectFile("app.js");
 
   assert.match(js, /class="iss-status-summary mb-3"/);
-  assert.match(js, /Currently over \$\{escapeHtml\(issRegion\)\}/);
+  assert.match(js, /Normal Operations/);
+  assert.match(js, /Over \$\{escapeHtml\(issRegion\)\}/);
   assert.match(js, /id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"/);
   assert.doesNotMatch(js, /id="issMap" role="img"/);
 });

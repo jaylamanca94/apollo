@@ -2154,23 +2154,14 @@ async function loadIss() {
       <div class="iss-status-summary mb-3">
         <div>
           <p class="section-kicker mb-1">ISS Status</p>
-          <h2 class="iss-status-title mb-0">Normal operations</h2>
-          <p class="iss-status-detail mb-0">Currently over ${escapeHtml(issRegion)}.</p>
+          <h2 class="iss-status-title mb-0">Normal Operations</h2>
         </div>
-        <div class="iss-status-metrics">
-          <div>
-            <p class="text-secondary small mb-1">Altitude</p>
-            <p class="fw-semibold mb-0">${formatNumber(data.altitude, { suffix: " km" })}</p>
-          </div>
-          <div>
-            <p class="text-secondary small mb-1">Velocity</p>
-            <p class="fw-semibold mb-0">${formatNumber(data.velocity, { suffix: " km/h" })}</p>
-          </div>
-          <div>
-            <p class="text-secondary small mb-1">Sunlight state</p>
-            <p class="fw-semibold mb-0">${escapeHtml(formatIssVisibility(data.visibility))}</p>
-          </div>
-        </div>
+        <p class="iss-status-line mb-0">
+          <span>${formatNumber(data.altitude, { suffix: " km" })} altitude</span>
+          <span>${formatNumber(data.velocity, { suffix: " km/h" })}</span>
+          <span>${escapeHtml(formatIssVisibility(data.visibility))}</span>
+          <span>Over ${escapeHtml(issRegion)}</span>
+        </p>
       </div>
       <div class="iss-map mb-3" id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"></div>
       ${observedAtMarkup}

@@ -1,15 +1,19 @@
 # Apollo Project Notes
 
+## Product Identity
+
+Apollo helps people understand what is happening in space right now.
+
 ## Goals
 
-- Create a public space-data dashboard that is simple to understand and easy to demo.
+- Create a public space-intelligence dashboard that is simple to understand and easy to demo.
 - Keep the product deployable, maintainable, and portable across machines.
 - Use managed services and environment variables for public deployment.
 - Preserve a tight MVP scope while making the app feel polished.
 
 ## Product Discipline
 
-Apollo must stay focused on its core job: making live and near-live space data simple to understand and easy to demo.
+Apollo must stay focused on its core job: making live and near-live space activity simple to understand and easy to demo.
 
 - Do not broaden Apollo into a general science, education, simulation, productivity, or account-based platform unless the founder explicitly changes the product direction.
 - Prefer focused dashboard clarity over feature volume.

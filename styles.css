@@ -1221,13 +1221,14 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 }
 
 .iss-status-summary {
+  align-items: center;
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: var(--acadia-radius-md);
   box-shadow: var(--apollo-shadow-row);
   display: grid;
   gap: 18px;
-  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.25fr);
+  grid-template-columns: auto minmax(0, 1fr);
   padding: 18px;
 }
 
@@ -1239,22 +1240,23 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   line-height: 1.1;
 }
 
-.iss-status-detail {
+.iss-status-line {
   color: var(--apollo-muted);
-  margin-top: 0.45rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
-.iss-status-metrics {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.iss-status-metrics > div {
+.iss-status-line span {
   background: color-mix(in srgb, var(--apollo-row-bg) 72%, var(--acadia-color-surface-elevated));
   border: 1px solid var(--apollo-border);
-  border-radius: var(--acadia-radius-sm);
-  padding: 12px;
+  border-radius: var(--acadia-radius-pill);
+  color: var(--acadia-color-text);
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.2;
+  padding: 0.45rem 0.65rem;
 }
 
 html[data-bs-theme="dark"] .iss-map .leaflet-tile {
@@ -2605,6 +2607,10 @@ html[data-bs-theme="light"] .data-detail-panel {
   .iss-status-summary {
     grid-template-columns: 1fr;
   }
+
+  .iss-status-line {
+    justify-content: flex-start;
+  }
 }
 
 @media (max-width: 767.98px) {
@@ -2638,10 +2644,6 @@ html[data-bs-theme="light"] .data-detail-panel {
 
   .apollo-nav-menu-item {
     font-size: 0.8125rem;
-  }
-
-  .iss-status-metrics {
-    grid-template-columns: 1fr;
   }
 
   .apollo-shell {

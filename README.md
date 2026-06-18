@@ -1,6 +1,6 @@
 # Apollo
 
-Apollo is a small Bootstrap MVP dashboard for live and near-live public space data. It leads with NASA's Astronomy Picture of the Day, then summarizes the ISS position, crew in space with source roster context, SpaceX launches, NOAA space weather, near-Earth asteroid approaches, and upstream source status.
+Apollo is a small Bootstrap MVP for understanding what is happening in space right now. It leads with a plain-English Space Brief, recent activity, watch items, and focused pages for ISS operations, launches, space weather, asteroids, and NASA imagery.
 
 The app is designed to be easy to demo: each card favors source-backed context, plain labels, source timing, APOD image/video media actions, and quick links to the original sources.
 
