@@ -290,6 +290,16 @@ test("header primary nav uses a More dropdown when page count exceeds five", () 
   }
 });
 
+test("More dropdown can render outside the primary nav row", () => {
+  const css = readProjectFile("styles.css");
+  const primaryLinksRule = css.match(/\.apollo-primary-links,\s*\n\.acadia-nav\s*\{[\s\S]*?\n\}/)?.[0] || "";
+  const navMoreRule = css.match(/\.apollo-nav-more\s*\{[\s\S]*?\n\}/)?.[0] || "";
+
+  assert.match(primaryLinksRule, /overflow:\s*visible;/);
+  assert.doesNotMatch(primaryLinksRule, /overflow-x:\s*auto;/);
+  assert.match(navMoreRule, /position:\s*relative;/);
+});
+
 test("launch timeline exposes urgency context and current asset versions", () => {
   const html = readProjectFile("launches.html");
   const js = readProjectFile("launches.js");

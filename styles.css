@@ -321,7 +321,7 @@ body {
   gap: 0.5rem;
   margin-left: 16px;
   max-width: min(100%, 760px);
-  overflow-x: auto;
+  overflow: visible;
   padding: 0;
   scrollbar-width: none;
 }
@@ -383,10 +383,16 @@ body {
 .apollo-nav-more {
   display: inline-flex;
   flex: 0 0 auto;
+  position: relative;
+  z-index: 20;
 }
 
 .apollo-nav-more-toggle.dropdown-toggle::after {
   margin-left: 0.45rem;
+}
+
+.apollo-nav-menu {
+  z-index: 1080;
 }
 
 .apollo-nav-menu {
@@ -818,6 +824,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 .command-panel-list {
   display: grid;
   gap: 10px;
+  grid-template-columns: 1fr;
 }
 
 .command-panel-row {
@@ -3032,6 +3039,10 @@ html[data-bs-theme="light"] .data-detail-panel {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .command-panel-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .apod-info-card {
     border-left: 0;
     border-top: 1px solid var(--apollo-border);
@@ -3150,6 +3161,10 @@ html[data-bs-theme="light"] .data-detail-panel {
   }
 
   .apollo-quick-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .command-panel-list {
     grid-template-columns: 1fr;
   }
 
