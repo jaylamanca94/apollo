@@ -35,7 +35,7 @@
       <a class="apollo-skip-link" href="#asteroids-content">Skip to asteroid content</a>
       <nav class="navbar navbar-expand apollo-topbar acadia-chrome" aria-label="Primary">
         <div class="container-fluid apollo-navbar-inner acadia-chrome-inner px-3 px-sm-4">
-          <a class="navbar-brand acadia-brand fw-semibold d-flex align-items-center gap-2" href="./index.html"><span class="acadia-mark"><i class="fa-solid fa-rocket acadia-icon apollo-brand-icon" aria-hidden="true"></i></span>Apollo</a>
+          <a class="navbar-brand acadia-brand fw-semibold d-flex align-items-center gap-2" href="./index.html"><span class="acadia-mark"><i class="fa-solid fa-satellite acadia-icon apollo-brand-icon" aria-hidden="true"></i></span>Apollo</a>
           <div class="apollo-primary-links acadia-nav" aria-label="Apollo pages">
             <a class="apollo-nav-link acadia-nav-item" href="./index.html">Dashboard</a>
             <a class="apollo-nav-link acadia-nav-item" href="./iss.html">ISS</a>
@@ -62,9 +62,11 @@
             </div>
             <div class="apollo-dashboard-actions acadia-page-actions">
               <p class="apollo-update-pill acadia-badge mb-0" id="dashboardUpdated">Last updated: Loading</p>
-              <button class="btn apollo-refresh-button acadia-button acadia-button-primary" id="refreshButton" type="button" aria-describedby="dashboardStatus" aria-controls="neoBody"><i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span></button>
+              <button class="btn apollo-refresh-button acadia-button acadia-button-primary" id="refreshButton" type="button" aria-describedby="dashboardStatus" aria-controls="neoRiskAlert neoBody"><i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span></button>
             </div>
           </header>
+
+          <div class="neo-risk-alert-slot" id="neoRiskAlert" aria-live="polite" aria-atomic="true"></div>
 
           <section class="card apollo-card acadia-surface apollo-dashboard-card apollo-accent-neo" id="asteroids">
             <div class="card-header section-card-header">

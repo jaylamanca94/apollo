@@ -36,7 +36,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `index.html` - dashboard markup
 - `launches.html` - dedicated launches detail page markup
 - `styles.css` - minimal Bootstrap-aligned styling
-- `assets/apollo-app-icon-light.png` and `assets/apollo-app-icon-dark.png` - Apollo 512px app icons for light and dark browser schemes
+- `assets/apollo-app-icon-light.png` and `assets/apollo-app-icon-dark.png` - Apollo 512px satellite app icons for light and dark browser schemes
 - `site.webmanifest` - browser app manifest pointing to the PNG app icons
 - `app.js` - frontend data loading and rendering
 - `launches.js` - launches detail page data loading and rendering

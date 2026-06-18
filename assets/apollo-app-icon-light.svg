@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Apollo satellite app icon">
+  <defs>
+    <linearGradient id="apollo-bg-light" x1="92" y1="48" x2="420" y2="468" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E53145"/>
+      <stop offset="0.58" stop-color="#B71F31"/>
+      <stop offset="1" stop-color="#5F111B"/>
+    </linearGradient>
+    <linearGradient id="apollo-mark-light" x1="132" y1="94" x2="378" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.72" stop-color="#EEF0F2"/>
+      <stop offset="1" stop-color="#C7CDD2"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#apollo-bg-light)"/>
+  <g transform="rotate(-32 256 256)" fill="url(#apollo-mark-light)">
+    <rect x="210" y="198" width="92" height="92" rx="18"/>
+    <path d="M88 178c0-12 10-22 22-22h78c12 0 22 10 22 22v44c0 12-10 22-22 22h-78c-12 0-22-10-22-22z"/>
+    <path d="M302 178c0-12 10-22 22-22h78c12 0 22 10 22 22v44c0 12-10 22-22 22h-78c-12 0-22-10-22-22z"/>
+    <path d="M105 263c0-9 7-16 16-16h63c9 0 16 7 16 16v46c0 9-7 16-16 16h-63c-9 0-16-7-16-16z"/>
+    <path d="M312 263c0-9 7-16 16-16h63c9 0 16 7 16 16v46c0 9-7 16-16 16h-63c-9 0-16-7-16-16z"/>
+    <rect x="188" y="230" width="24" height="28" rx="10"/>
+    <rect x="300" y="230" width="24" height="28" rx="10"/>
+    <path d="M248 290h16v62a8 8 0 0 1-8 8 8 8 0 0 1-8-8z"/>
+    <path d="M226 360c0-9 7-16 16-16h28c9 0 16 7 16 16v34c0 9-7 16-16 16h-28c-9 0-16-7-16-16z"/>
+    <path d="M256 182c-13 0-24-11-24-24s11-24 24-24 24 11 24 24-11 24-24 24z"/>
+    <path d="M251 132h10V97a5 5 0 0 0-10 0z"/>
+    <path d="M316 319c17 11 29 28 32 48 1 8-4 16-12 17s-16-4-17-12c-2-12-9-23-19-29-7-4-9-14-5-21s14-9 21-3z"/>
+    <path d="M334 289c38 22 63 60 69 104 1 8-5 16-13 17s-16-5-17-13c-5-34-24-63-54-81-7-4-10-13-6-21s14-10 21-6z"/>
+  </g>
+</svg>

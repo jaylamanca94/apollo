@@ -5,6 +5,16 @@ const test = require("node:test");
 
 const rootDir = path.join(__dirname, "..");
 
+const allHtmlPages = [
+  "index.html",
+  "iss.html",
+  "launches.html",
+  "asteroids.html",
+  "weather.html",
+  "gallery.html",
+  "anomalies.html"
+];
+
 const pages = [
   {
     file: "index.html",
@@ -79,6 +89,12 @@ function getTags(html, tagName) {
 function getAttribute(tag, attrName) {
   const match = tag.match(new RegExp(`\\b${escapeRegExp(attrName)}=["']([^"']*)["']`, "i"));
   return match ? match[1] : "";
+}
+
+function getElementByClass(html, tagName, className) {
+  const pattern = new RegExp(`<${tagName}\\b(?=[^>]*\\bclass=["'][^"']*\\b${escapeRegExp(className)}\\b)[\\s\\S]*?<\\/${tagName}>`, "i");
+  const match = html.match(pattern);
+  return match ? match[0] : "";
 }
 
 function hasClass(tag, className) {
@@ -222,4 +238,14 @@ test("web manifest points to current PNG app icons", () => {
   ]);
   assert.equal(manifest.icons[0].type, "image/png");
   assert.equal(manifest.icons[0].sizes, "512x512");
+});
+
+test("Apollo brand mark uses the satellite icon on every page", () => {
+  for (const file of allHtmlPages) {
+    const html = readProjectFile(file);
+    const brand = getElementByClass(html, "a", "navbar-brand");
+
+    assert.match(brand, /\bfa-satellite\b/, `${file} should use the satellite brand icon`);
+    assert.doesNotMatch(brand, /\bfa-rocket\b/, `${file} should not use the launch icon as the brand mark`);
+  }
 });

@@ -1350,33 +1350,27 @@ html[data-bs-theme="light"] .data-detail-panel {
   overflow-wrap: anywhere;
 }
 
-.neo-risk-note {
-  align-items: flex-start;
-  background: var(--apollo-warning-soft);
-  border: 1px solid color-mix(in srgb, var(--apollo-warning) 38%, transparent);
-  border-radius: 8px;
-  color: var(--bs-body-color);
-  display: flex;
-  gap: 0.75rem;
-  padding: 0.875rem 1rem;
+.neo-risk-alert-slot:empty {
+  display: none;
 }
 
-.neo-risk-note i {
-  color: var(--apollo-warning);
+.neo-risk-alert {
+  align-items: flex-start;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.neo-risk-alert i {
   margin-top: 0.2rem;
 }
 
-.neo-risk-note-success {
-  background: var(--apollo-success-soft);
-  border-color: color-mix(in srgb, var(--apollo-success) 38%, transparent);
+.neo-risk-alert.acadia-alert-success i {
+  color: var(--acadia-color-success);
 }
 
-.neo-risk-note-success i {
-  color: var(--apollo-success);
-}
-
-.neo-risk-note-warning {
-  background: var(--apollo-warning-soft);
+.neo-risk-alert.acadia-alert-warning i {
+  color: var(--acadia-color-warning);
 }
 
 .neo-risk-context {
@@ -1984,7 +1978,6 @@ html[data-bs-theme="light"] .data-detail-panel {
 .launch-card,
 .data-detail-panel,
 .detail-list > div,
-.neo-risk-note,
 .space-weather-status,
 .space-weather-scale-context,
 .space-weather-forecast-day,
@@ -2012,7 +2005,6 @@ html[data-bs-theme="light"] .data-detail-panel {
 .iss-orbit-context,
 .data-detail-panel,
 .detail-list > div,
-.neo-risk-note,
 .space-weather-status,
 .space-weather-scale-context,
 .space-weather-forecast-day,

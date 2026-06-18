@@ -168,7 +168,8 @@ Use `8px` or less for repeated list items. Main dashboard and feature cards may 
 
 Current icon mapping:
 
-- Brand and launch placeholders: rocket
+- Brand and app icon: satellite
+- Launch placeholders: rocket
 - APOD: image
 - People in Space metric: astronaut
 - Space Weather metric: sun
@@ -176,8 +177,8 @@ Current icon mapping:
 ## Favicon And App Icon
 
 - Apollo uses supplied 512px PNG app icons at `assets/apollo-app-icon-dark.png` and `assets/apollo-app-icon-light.png`.
-- The Dark Mode icon uses a red rocket mark on a charcoal gradient background.
-- The Light Mode icon uses a white rocket mark on a red gradient background.
+- The Dark Mode icon uses a red satellite mark on a charcoal gradient background.
+- The Light Mode icon uses a white satellite mark on a red gradient background.
 - HTML should expose both icons with media-specific favicon links, while the web manifest and Apple touch icon should use the light icon as the default install/touch artwork.
 - Every web or mobile product should eventually have a simple recognizable favicon/app icon.
 - Use a Font Awesome Free icon as the preferred starting point when it fits the product.

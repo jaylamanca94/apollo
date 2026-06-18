@@ -108,6 +108,7 @@ const els = {
   quickStatsBody: document.querySelector("#quickStatsBody"),
   issBody: document.querySelector("#issBody"),
   neoBody: document.querySelector("#neoBody"),
+  neoRiskAlert: document.querySelector("#neoRiskAlert"),
   spaceWeatherBody: document.querySelector("#spaceWeatherBody"),
   skyAnomaliesBody: document.querySelector("#skyAnomaliesBody"),
   skyAnomalyDate: document.querySelector("#skyAnomalyDate"),
@@ -1254,6 +1255,34 @@ function stateMessage(message, options = {}) {
   `;
 }
 
+function renderNeoRiskAlert({
+  hazardous,
+  hazardSummary,
+  hazardFlagContext,
+  sentrySummary,
+  sentryContext
+}) {
+  if (!els.neoRiskAlert) {
+    return;
+  }
+
+  const isClear = hazardous === 0;
+  const tone = isClear ? "success" : "warning";
+  const icon = isClear ? "fa-circle-check" : "fa-circle-info";
+  const role = isClear ? "status" : "alert";
+
+  els.neoRiskAlert.innerHTML = `
+    <div class="neo-risk-alert acadia-alert acadia-alert-${tone}" role="${role}">
+      <i class="fa-solid ${icon} acadia-icon" aria-hidden="true"></i>
+      <div>
+        <p class="mb-1"><strong>${escapeHtml(hazardSummary)}</strong></p>
+        <p class="neo-risk-context mb-0">${escapeHtml(hazardFlagContext.summary)}</p>
+        <p class="neo-risk-context mb-0">${escapeHtml(sentrySummary)} ${escapeHtml(sentryContext.summary)}</p>
+      </div>
+    </div>
+  `;
+}
+
 function resetIssMap() {
   if (issMap) {
     issMap.remove();
@@ -2078,8 +2107,6 @@ async function loadNeo() {
     const sentrySummary = sentryObjects === 0
       ? "None of today's listed objects are on NASA's Sentry monitoring list."
       : `${sentryObjects} listed ${sentryObjects === 1 ? "object is" : "objects are"} on NASA's Sentry monitoring list.`;
-    const hazardNoteClass = hazardous === 0 ? "neo-risk-note-success" : "neo-risk-note-warning";
-    const hazardIcon = hazardous === 0 ? "fa-circle-check" : "fa-circle-info";
 
     if (isDashboardPage()) {
       renderDashboardNeoSummary(neoSummary);
@@ -2094,6 +2121,14 @@ async function loadNeo() {
     if (!els.neoBody) {
       return createSourceStatus("neo", "ok", `${formatDate(date)} NASA NeoWs list loaded for context: ${asteroids.length} objects.`);
     }
+
+    renderNeoRiskAlert({
+      hazardous,
+      hazardSummary,
+      hazardFlagContext,
+      sentrySummary,
+      sentryContext
+    });
 
     els.neoBody.innerHTML = `
       <div class="metadata-grid mb-3">
@@ -2123,14 +2158,6 @@ async function loadNeo() {
         <div>
           <p class="text-secondary small mb-1">Fastest relative speed</p>
           <p class="fw-semibold mb-0">${formatVelocityKph(fastestVelocity)}</p>
-        </div>
-      </div>
-      <div class="neo-risk-note ${hazardNoteClass} mb-3">
-        <i class="fa-solid ${hazardIcon} acadia-icon" aria-hidden="true"></i>
-        <div>
-          <p class="mb-1">${escapeHtml(hazardSummary)}</p>
-          <p class="neo-risk-context mb-0">${escapeHtml(hazardFlagContext.summary)}</p>
-          <p class="neo-risk-context mb-0">${escapeHtml(sentrySummary)} ${escapeHtml(sentryContext.summary)}</p>
         </div>
       </div>
       ${asteroids.length ? `
@@ -2196,6 +2223,9 @@ async function loadNeo() {
     return createSourceStatus("neo", "ok", `${formatDate(date)} NASA NeoWs list loaded: ${asteroids.length} objects, ${hazardous} flagged for tracking, ${sentryObjects} on Sentry monitoring.`);
   } catch (error) {
     dashboardData.neo = null;
+    if (els.neoRiskAlert) {
+      els.neoRiskAlert.innerHTML = "";
+    }
     setError(els.neoBody, getApiErrorMessage(error, "NASA asteroid data is unavailable right now. Other live sections remain available."));
     setQuickStat("neo", {
       value: "Unavailable",
@@ -2363,6 +2393,7 @@ async function loadDashboard() {
     els.issBody,
     els.peopleBody,
     els.launchBody,
+    els.neoRiskAlert,
     els.neoBody,
     els.spaceWeatherBody,
     els.skyAnomaliesBody,
