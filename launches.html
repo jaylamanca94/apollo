@@ -40,21 +40,12 @@
             <span class="acadia-mark"><i class="fa-solid fa-satellite acadia-icon apollo-brand-icon" aria-hidden="true"></i></span>
             Apollo
           </a>
-          <div class="apollo-primary-links acadia-nav" aria-label="Apollo pages">
-            <a class="apollo-nav-link acadia-nav-item" href="./index.html">Dashboard</a>
-            <a class="apollo-nav-link acadia-nav-item" href="./iss.html">ISS</a>
-            <a class="apollo-nav-link acadia-nav-item apollo-nav-link-active" href="./launches.html" aria-current="page">Launches</a>
-            <a class="apollo-nav-link acadia-nav-item" href="./weather.html">Weather</a>
-            <div class="dropdown apollo-nav-more">
-              <button class="apollo-nav-link acadia-nav-item apollo-nav-more-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                More
-              </button>
-              <ul class="dropdown-menu apollo-nav-menu">
-                <li><a class="dropdown-item apollo-nav-menu-item" href="./asteroids.html">Asteroids</a></li>
-                <li><a class="dropdown-item apollo-nav-menu-item" href="./gallery.html">Gallery</a></li>
-                <li><a class="dropdown-item apollo-nav-menu-item" href="./anomalies.html">Anomalies</a></li>
-              </ul>
-            </div>
+          <div class="apollo-primary-links acadia-nav apollo-mobile-dock" aria-label="Apollo pages">
+            <a class="apollo-nav-link acadia-nav-item" href="./index.html"><i class="fa-solid fa-gauge-high acadia-icon" aria-hidden="true"></i><span>Dashboard</span></a>
+            <a class="apollo-nav-link acadia-nav-item" href="./iss.html"><i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i><span>ISS</span></a>
+            <a class="apollo-nav-link acadia-nav-item apollo-nav-link-active" href="./launches.html" aria-current="page"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i><span>Launches</span></a>
+            <a class="apollo-nav-link acadia-nav-item" href="./weather.html"><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i><span>Weather</span></a>
+            <a class="apollo-nav-link acadia-nav-item" href="./gallery.html"><i class="fa-solid fa-images acadia-icon" aria-hidden="true"></i><span>Gallery</span></a>
           </div>
           <div class="apollo-navbar-actions d-flex align-items-center gap-2 ms-auto">
             <button class="btn btn-outline-secondary btn-sm apollo-theme-toggle acadia-icon-action" id="themeToggle" type="button" aria-label="Switch to light mode" aria-pressed="true" title="Switch to light mode">
@@ -69,8 +60,8 @@
         <div class="d-flex flex-column apollo-page-stack">
           <header class="apollo-page-header acadia-page-header acadia-surface acadia-panel">
             <div class="apollo-title-block acadia-page-header-copy">
-              <p class="section-kicker acadia-kicker apollo-hero-kicker mb-0">Apollo launches</p>
-              <h1 class="apollo-page-title acadia-display mb-0" id="launchesTitle">Mission Schedule</h1>
+              <h1 class="apollo-page-title acadia-display mb-0" id="launchesTitle">Launches</h1>
+              <p class="apollo-page-subtitle acadia-text-muted mb-0">Mission Schedule</p>
             </div>
             <div class="apollo-dashboard-actions acadia-page-actions">
               <p class="apollo-update-pill acadia-badge mb-0" id="launchesUpdated">Last updated: Standing by</p>

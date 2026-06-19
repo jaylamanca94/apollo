@@ -15,10 +15,12 @@ const allHtmlPages = [
   "anomalies.html"
 ];
 
-const overflowNavLinks = [
-  { href: "./asteroids.html", label: "Asteroids" },
-  { href: "./gallery.html", label: "Gallery" },
-  { href: "./anomalies.html", label: "Anomalies" }
+const v1NavLinks = [
+  { href: "./index.html", label: "Dashboard" },
+  { href: "./iss.html", label: "ISS" },
+  { href: "./launches.html", label: "Launches" },
+  { href: "./weather.html", label: "Weather" },
+  { href: "./gallery.html", label: "Gallery" }
 ];
 
 const pages = [
@@ -34,10 +36,8 @@ const pages = [
       { href: "#dashboard", label: "Dashboard" },
       { href: "./iss.html", label: "ISS" },
       { href: "./launches.html", label: "Launches" },
-      { href: "./asteroids.html", label: "Asteroids" },
       { href: "./weather.html", label: "Weather" },
-      { href: "./gallery.html", label: "Gallery" },
-      { href: "./anomalies.html", label: "Anomalies" }
+      { href: "./gallery.html", label: "Gallery" }
     ],
     controlledIds: [
       "quickStatsBody",
@@ -58,10 +58,8 @@ const pages = [
       { href: "./index.html", label: "Dashboard" },
       { href: "./iss.html", label: "ISS" },
       { href: "./launches.html", label: "Launches" },
-      { href: "./asteroids.html", label: "Asteroids" },
       { href: "./weather.html", label: "Weather" },
-      { href: "./gallery.html", label: "Gallery" },
-      { href: "./anomalies.html", label: "Anomalies" }
+      { href: "./gallery.html", label: "Gallery" }
     ],
     controlledIds: ["launchPageBody"]
   }
@@ -104,7 +102,7 @@ function hasClass(tag, className) {
 
 function isNavDestination(tag) {
   const className = getAttribute(tag, "class");
-  return /\bapollo-nav-link\b/.test(className) || /\bapollo-nav-menu-item\b/.test(className);
+  return /\bapollo-nav-link\b/.test(className);
 }
 
 for (const page of pages) {
@@ -267,37 +265,41 @@ test("dashboard stops at command-center panels instead of duplicating detail pag
   }
 });
 
-test("header primary nav uses a More dropdown when page count exceeds five", () => {
+test("header primary nav exposes the five v1 destinations", () => {
   for (const file of allHtmlPages) {
     const html = readProjectFile(file);
     const topLevelNavItems = [
       ...getTags(html, "a").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))),
       ...getTags(html, "button").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class")))
     ];
-    const moreToggle = topLevelNavItems.find((tag) => /\bapollo-nav-more-toggle\b/.test(getAttribute(tag, "class")));
 
     assert.ok(topLevelNavItems.length <= 5, `${file} should not expose more than five top-level primary nav items`);
-    assert.ok(moreToggle, `${file} should expose overflow pages through a More dropdown`);
-    assert.equal(getAttribute(moreToggle, "data-bs-toggle"), "dropdown");
 
-    for (const link of overflowNavLinks) {
-      const menuItem = getTags(html, "a").find((tag) => (
-        getAttribute(tag, "href") === link.href && /\bapollo-nav-menu-item\b/.test(getAttribute(tag, "class"))
+    for (const link of v1NavLinks) {
+      const expectedHref = file === "index.html" && link.label === "Dashboard" ? "#dashboard" : link.href;
+      const navItem = topLevelNavItems.find((tag) => (
+        getAttribute(tag, "href") === expectedHref && /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))
       ));
 
-      assert.ok(menuItem, `${file} should include ${link.label} in the More dropdown`);
+      assert.ok(navItem, `${file} should include ${link.label} as a v1 nav destination`);
     }
   }
 });
 
-test("More dropdown can render outside the primary nav row", () => {
+test("internal pages use compact headers instead of dashboard-scale heroes", () => {
+  const css = readProjectFile("styles.css");
+
+  assert.match(css, /body:not\(\[data-apollo-page="dashboard"\]\) \.apollo-page-header\s*\{[\s\S]*?padding:\s*clamp\(1rem,\s*2vw,\s*1\.25rem\);/);
+  assert.match(css, /body:not\(\[data-apollo-page="dashboard"\]\) \.apollo-page-title\s*\{[\s\S]*?font-size:\s*clamp\(1\.8rem,\s*2\.4vw,\s*2\.25rem\);/);
+  assert.doesNotMatch(css, /\.launch-page-shell \.apollo-page-title\s*\{[\s\S]*?font-size:\s*3\.85rem;/);
+});
+
+test("primary nav row does not clip compact destinations", () => {
   const css = readProjectFile("styles.css");
   const primaryLinksRule = css.match(/\.apollo-primary-links,\s*\n\.acadia-nav\s*\{[\s\S]*?\n\}/)?.[0] || "";
-  const navMoreRule = css.match(/\.apollo-nav-more\s*\{[\s\S]*?\n\}/)?.[0] || "";
 
   assert.match(primaryLinksRule, /overflow:\s*visible;/);
   assert.doesNotMatch(primaryLinksRule, /overflow-x:\s*auto;/);
-  assert.match(navMoreRule, /position:\s*relative;/);
 });
 
 test("launch timeline exposes urgency context and current asset versions", () => {
