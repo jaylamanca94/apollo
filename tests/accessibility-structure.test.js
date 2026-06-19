@@ -23,9 +23,9 @@ const v1NavLinks = [
 ];
 
 const overflowNavLinks = [
-  { href: "./asteroids.html", label: "Asteroids" },
-  { href: "./gallery.html", label: "Gallery" },
-  { href: "./anomalies.html", label: "Anomalies" }
+  { href: "./asteroids.html", label: "Asteroids", page: "asteroids.html", iconClass: "fa-meteor" },
+  { href: "./gallery.html", label: "Gallery", page: "gallery.html", iconClass: "fa-image" },
+  { href: "./anomalies.html", label: "Anomalies", page: "anomalies.html", iconClass: "fa-magnifying-glass-location" }
 ];
 
 const pages = [
@@ -303,6 +303,21 @@ test("header primary nav exposes v1 destinations without dropping overflow pages
 
       assert.ok(menuItem, `${file} should include ${link.label} in the More dropdown`);
     }
+  }
+});
+
+test("overflow pages identify the active destination in the dock toggle", () => {
+  for (const link of overflowNavLinks) {
+    const html = readProjectFile(link.page);
+    const moreToggle = getElementByClass(html, "button", "apollo-nav-more-toggle");
+    const moreToggleTag = moreToggle.match(/<button\b[^>]*>/i)?.[0] || "";
+
+    assert.ok(moreToggle, `${link.page} should expose an overflow toggle`);
+    assert.equal(getAttribute(moreToggleTag, "aria-current"), "page");
+    assert.match(moreToggle, new RegExp(`<span>${escapeRegExp(link.label)}<\\/span>`));
+    assert.match(moreToggle, new RegExp(`\\b${escapeRegExp(link.iconClass)}\\b`));
+    assert.doesNotMatch(moreToggle, /<span>More<\/span>/);
+    assert.doesNotMatch(moreToggle, /\bfa-ellipsis\b/);
   }
 });
 
