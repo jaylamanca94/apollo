@@ -3124,8 +3124,8 @@ html[data-bs-theme="light"] .data-detail-panel {
     background: color-mix(in srgb, #101316 84%, transparent);
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: var(--acadia-radius-pill);
-    bottom: 0.75rem;
-    bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    bottom: var(--acadia-mobile-tabbar-bottom, 1.25rem);
+    bottom: calc(var(--acadia-mobile-tabbar-bottom, 1.25rem) + env(safe-area-inset-bottom));
     box-shadow:
       0 1.125rem 2.75rem rgba(0, 0, 0, 0.28),
       inset 0 1px 0 rgba(255, 255, 255, 0.12);
