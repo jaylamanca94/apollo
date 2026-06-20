@@ -81,8 +81,8 @@
                   <div class="summary-metric sky-anomaly-summary mb-3">
                     <span class="stat-chip"><i class="fa-solid fa-magnifying-glass-location acadia-icon" aria-hidden="true"></i></span>
                     <div>
-                      <p class="text-secondary small mb-1">Sighting check</p>
-                      <p class="h3 fw-semibold mb-0">Known context first</p>
+                      <p class="text-secondary small mb-1">Observe</p>
+                      <p class="h3 fw-semibold mb-0">Report a sighting</p>
                     </div>
                   </div>
                   <form class="sky-anomaly-form" id="skyAnomalyForm">
@@ -98,6 +98,34 @@
                       <label for="skyAnomalyTime">Time</label>
                       <input class="form-control" id="skyAnomalyTime" name="time" type="time">
                     </div>
+                    <fieldset class="sky-anomaly-choice-group">
+                      <legend>How did it move?</legend>
+                      <div class="sky-anomaly-choice-row">
+                        <label><input type="radio" name="movement" value="stationary"><span>Stationary</span></label>
+                        <label><input type="radio" name="movement" value="straight"><span>Straight line</span></label>
+                        <label><input type="radio" name="movement" value="zig-zag"><span>Zig-zag</span></label>
+                        <label><input type="radio" name="movement" value="hovering"><span>Hovering</span></label>
+                        <label><input type="radio" name="movement" value="unknown" checked><span>Unknown</span></label>
+                      </div>
+                    </fieldset>
+                    <fieldset class="sky-anomaly-choice-group">
+                      <legend>Brightness</legend>
+                      <div class="sky-anomaly-choice-row">
+                        <label><input type="radio" name="brightness" value="faint"><span>Faint</span></label>
+                        <label><input type="radio" name="brightness" value="moderate" checked><span>Moderate</span></label>
+                        <label><input type="radio" name="brightness" value="bright"><span>Bright</span></label>
+                        <label><input type="radio" name="brightness" value="unknown"><span>Unknown</span></label>
+                      </div>
+                    </fieldset>
+                    <fieldset class="sky-anomaly-choice-group">
+                      <legend>Duration</legend>
+                      <div class="sky-anomaly-choice-row">
+                        <label><input type="radio" name="duration" value="seconds"><span>Seconds</span></label>
+                        <label><input type="radio" name="duration" value="minutes" checked><span>Minutes</span></label>
+                        <label><input type="radio" name="duration" value="longer"><span>Longer</span></label>
+                        <label><input type="radio" name="duration" value="unknown"><span>Unknown</span></label>
+                      </div>
+                    </fieldset>
                     <button class="btn sky-anomaly-submit acadia-button" type="submit"><i class="fa-solid fa-wand-magic-sparkles acadia-icon" aria-hidden="true"></i><span>Explain sighting</span></button>
                   </form>
                 </div>

@@ -490,6 +490,185 @@ function getSkyAnomalyLocation() {
   return getText(els.skyAnomalyLocation?.value, "Selected location");
 }
 
+const SKY_OBSERVATION_LABELS = {
+  brightness: {
+    bright: "Bright",
+    faint: "Faint",
+    moderate: "Moderate",
+    unknown: "Unknown"
+  },
+  duration: {
+    longer: "Longer",
+    minutes: "Minutes",
+    seconds: "Seconds",
+    unknown: "Unknown"
+  },
+  movement: {
+    hovering: "Hovering",
+    stationary: "Stationary",
+    straight: "Straight line",
+    unknown: "Unknown",
+    "zig-zag": "Zig-zag"
+  }
+};
+
+function getSkyObservationTraits() {
+  const formData = els.skyAnomalyForm ? new FormData(els.skyAnomalyForm) : null;
+  const movement = getText(formData?.get("movement"), "unknown");
+  const brightness = getText(formData?.get("brightness"), "unknown");
+  const duration = getText(formData?.get("duration"), "unknown");
+
+  return {
+    brightness,
+    brightnessLabel: SKY_OBSERVATION_LABELS.brightness[brightness] || "Unknown",
+    duration,
+    durationLabel: SKY_OBSERVATION_LABELS.duration[duration] || "Unknown",
+    movement,
+    movementLabel: SKY_OBSERVATION_LABELS.movement[movement] || "Unknown"
+  };
+}
+
+function clampConfidence(value) {
+  return Math.max(5, Math.min(96, Math.round(value)));
+}
+
+function getSkyRowStateScore(row) {
+  const scores = {
+    strong: 82,
+    possible: 58,
+    context: 28,
+    weak: 14,
+    unknown: 8
+  };
+
+  return scores[row?.state] || 8;
+}
+
+function getSkyConfidenceCandidates(rows, traits) {
+  const findRow = (label) => rows.find((row) => row.label === label);
+  const launchRow = findRow("Launch activity");
+  const issRow = findRow("ISS pass");
+  const weatherRow = findRow("Space weather");
+  const meteorRow = findRow("Meteor or fireball");
+  const candidates = [];
+
+  const addCandidate = ({ detail, label, source, state, score }) => {
+    candidates.push({
+      confidence: clampConfidence(score),
+      detail,
+      label,
+      source,
+      state
+    });
+  };
+
+  addCandidate({
+    label: "Recent launch activity",
+    state: launchRow?.state || "unknown",
+    score: getSkyRowStateScore(launchRow) + (traits.movement === "straight" ? 4 : 0),
+    detail: launchRow?.detail || "Apollo could not compare this sighting against launch timing.",
+    source: launchRow?.source || "The Space Devs launch feed"
+  });
+
+  addCandidate({
+    label: "ISS pass",
+    state: issRow?.state || "unknown",
+    score: getSkyRowStateScore(issRow) + (traits.movement === "straight" ? 16 : 0) + (traits.duration === "minutes" ? 7 : 0),
+    detail: issRow?.state === "unknown"
+      ? "Apollo could not load station position context for this check."
+      : "Straight-line movement over minutes can fit an orbital pass; exact overhead matching needs Apollo's planned location-aware pass service.",
+    source: issRow?.source || "Where the ISS At"
+  });
+
+  addCandidate({
+    label: "Starlink or satellite train",
+    state: "context",
+    score: 20 + (traits.movement === "straight" ? 22 : 0) + (traits.duration === "minutes" ? 12 : 0) + (["faint", "moderate"].includes(traits.brightness) ? 6 : 0),
+    detail: "Straight-line lights over minutes can fit a satellite-train pattern, but Apollo does not have satellite visibility or Starlink pass data connected yet.",
+    source: "Satellite visibility import planned"
+  });
+
+  addCandidate({
+    label: "Bright planet or star",
+    state: "context",
+    score: 18 + (["stationary", "hovering"].includes(traits.movement) ? 22 : 0) + (traits.brightness === "bright" ? 14 : 0) + (traits.duration === "longer" ? 10 : 0),
+    detail: "Stationary or hovering bright lights can be planets or bright stars; Apollo needs a planet-position source before confirming this explanation.",
+    source: "Planet ephemeris import planned"
+  });
+
+  addCandidate({
+    label: "Aircraft or drone",
+    state: "context",
+    score: 20 + (["hovering", "zig-zag"].includes(traits.movement) ? 18 : 0) + (["minutes", "longer"].includes(traits.duration) ? 8 : 0),
+    detail: "Hovering, direction changes, or longer duration can fit aircraft or drone behavior; Apollo does not have flight-track data connected.",
+    source: "Flight tracking import planned"
+  });
+
+  addCandidate({
+    label: "Meteor or fireball",
+    state: meteorRow?.state || "unknown",
+    score: 16 + (traits.duration === "seconds" ? 28 : 0) + (traits.brightness === "bright" ? 12 : 0) + (traits.movement === "straight" ? 6 : 0),
+    detail: meteorRow?.detail || "Apollo needs a witness fireball report import before it can compare confirmed reports.",
+    source: meteorRow?.source || "American Meteor Society planned"
+  });
+
+  if (weatherRow?.state === "possible") {
+    addCandidate({
+      label: "Aurora or space-weather effect",
+      state: weatherRow.state,
+      score: getSkyRowStateScore(weatherRow) + (traits.duration === "longer" ? 8 : 0),
+      detail: weatherRow.detail,
+      source: weatherRow.source
+    });
+  }
+
+  return candidates
+    .sort((left, right) => right.confidence - left.confidence)
+    .slice(0, 4);
+}
+
+function getSkyEvidenceRows(rows) {
+  const neo = dashboardData.neo;
+  const findRow = (label) => rows.find((row) => row.label === label);
+  const issRow = findRow("ISS pass");
+  const launchRow = findRow("Launch activity");
+  const weatherRow = findRow("Space weather");
+  const meteorRow = findRow("Meteor or fireball");
+
+  return [
+    {
+      label: "ISS context",
+      state: issRow?.state === "unknown" ? "unknown" : "context",
+      value: issRow?.state === "unknown" ? "Position unavailable" : "Position loaded",
+      source: issRow?.source || "Where the ISS At"
+    },
+    {
+      label: "Launch schedule",
+      state: launchRow?.state || "unknown",
+      value: launchRow?.headline || "Launch feed unavailable",
+      source: launchRow?.source || "The Space Devs launch feed"
+    },
+    {
+      label: "Space weather",
+      state: weatherRow?.state || "unknown",
+      value: weatherRow?.headline || "Space-weather feed unavailable",
+      source: weatherRow?.source || "NOAA SWPC"
+    },
+    {
+      label: "Near-Earth objects",
+      state: neo?.asteroids?.length ? "context" : "unknown",
+      value: neo?.asteroids?.length ? `${neo.asteroids.length.toLocaleString()} listed today` : "Asteroid feed unavailable",
+      source: "NASA NeoWs"
+    },
+    {
+      label: "Meteor reports",
+      state: meteorRow?.state || "unknown",
+      value: meteorRow?.headline || "Fireball reports not connected yet",
+      source: meteorRow?.source || "American Meteor Society planned"
+    }
+  ];
+}
+
 function getPageType() {
   return document.body?.dataset?.apolloPage || (document.querySelector("#quickStatsBody") ? "dashboard" : "detail");
 }
@@ -655,8 +834,8 @@ function renderSkyAnomalyOverview() {
   els.skyAnomalyResults.innerHTML = `
     <div class="sky-anomaly-result-header">
       <div>
-        <p class="section-kicker mb-1">Known context</p>
-        <h3 class="sky-anomaly-result-title mb-0">Ready for a sighting check</h3>
+        <p class="section-kicker mb-1">Investigate</p>
+        <h3 class="sky-anomaly-result-title mb-0">Known context loaded</h3>
       </div>
       <span class="sky-explanation-pill sky-explanation-context">Beta</span>
     </div>
@@ -668,7 +847,7 @@ function renderSkyAnomalyOverview() {
         </article>
       `).join("")}
     </div>
-    <p class="sky-anomaly-note mb-0">Apollo compares known sky activity first and does not infer origin.</p>
+    <p class="sky-anomaly-note mb-0">Apollo starts with known explanations and source gaps before labeling anything unexplained.</p>
   `;
 }
 
@@ -680,30 +859,83 @@ function renderSkyExplanation() {
   const observedAt = getSkyObservationDate();
   const location = getSkyAnomalyLocation();
   const rows = getSkyExplanationRows(observedAt);
+  const traits = getSkyObservationTraits();
+  const candidates = getSkyConfidenceCandidates(rows, traits);
+  const evidenceRows = getSkyEvidenceRows(rows);
   const resultSummary = getSkyResultSummary(rows);
+  const resultTone = rows.some((row) => row.state === "strong") ? "strong" : rows.some((row) => row.state === "possible") ? "possible" : "context";
 
   els.skyAnomalyResults.dataset.mode = "submitted";
   els.skyAnomalyResults.innerHTML = `
     <div class="sky-anomaly-result-header">
       <div>
-        <p class="section-kicker mb-1">${escapeHtml(location)}</p>
-        <h3 class="sky-anomaly-result-title mb-0">${escapeHtml(resultSummary)}</h3>
+        <p class="section-kicker mb-1">Explain</p>
+        <h3 class="sky-anomaly-result-title mb-0">Apollo Analysis</h3>
         <p class="sky-anomaly-observed-at mb-0">${escapeHtml(formatDateTime(observedAt.toISOString()))}</p>
       </div>
-      <span class="sky-explanation-pill sky-explanation-${escapeHtml(rows.some((row) => row.state === "strong") ? "strong" : rows.some((row) => row.state === "possible") ? "possible" : "context")}">Sourced check</span>
+      <span class="sky-explanation-pill sky-explanation-${escapeHtml(resultTone)}">${escapeHtml(resultSummary)}</span>
     </div>
-    <div class="sky-explanation-list">
-      ${rows.map((row) => `
-        <article class="sky-explanation-row sky-explanation-${escapeHtml(row.state)}">
-          <div class="sky-explanation-row-copy">
-            <p class="sky-explanation-label mb-1">${escapeHtml(row.label)}</p>
-            <h4 class="sky-explanation-headline mb-1">${escapeHtml(row.headline)}</h4>
-            <p class="sky-explanation-detail mb-0">${escapeHtml(row.detail)}</p>
-            <p class="sky-explanation-source mb-0">${escapeHtml(row.source)}</p>
-          </div>
-        </article>
-      `).join("")}
+    <div class="sky-observation-recap">
+      <span>${escapeHtml(location)}</span>
+      <span>${escapeHtml(traits.movementLabel)}</span>
+      <span>${escapeHtml(traits.brightnessLabel)}</span>
+      <span>${escapeHtml(traits.durationLabel)}</span>
     </div>
+    <section class="sky-analysis-section" aria-labelledby="skyAnalysisTitle">
+      <div class="sky-anomaly-section-heading">
+        <p class="section-kicker mb-1">Most likely explanations</p>
+        <h4 class="sky-anomaly-subtitle mb-0" id="skyAnalysisTitle">Source-weighted confidence</h4>
+      </div>
+      <ol class="sky-confidence-list mb-0">
+        ${candidates.map((candidate, index) => `
+          <li class="sky-confidence-row sky-explanation-${escapeHtml(candidate.state)}">
+            <span class="sky-confidence-rank">${index + 1}</span>
+            <div class="sky-confidence-copy">
+              <h5 class="sky-explanation-headline mb-1">${escapeHtml(candidate.label)}</h5>
+              <p class="sky-explanation-detail mb-0">${escapeHtml(candidate.detail)}</p>
+              <p class="sky-explanation-source mb-0">${escapeHtml(candidate.source)}</p>
+            </div>
+            <span class="sky-confidence-score">${candidate.confidence}% confidence</span>
+          </li>
+        `).join("")}
+      </ol>
+    </section>
+    <section class="sky-evidence-section" aria-labelledby="skyEvidenceTitle">
+      <div class="sky-anomaly-section-heading">
+        <p class="section-kicker mb-1">Known sky activity</p>
+        <h4 class="sky-anomaly-subtitle mb-0" id="skyEvidenceTitle">Evidence checked</h4>
+      </div>
+      <div class="sky-evidence-grid">
+        ${evidenceRows.map((row) => `
+          <article class="sky-evidence-card sky-explanation-${escapeHtml(row.state)}">
+            <span class="sky-evidence-icon"><i class="fa-solid ${row.state === "unknown" ? "fa-circle-info" : "fa-check"} acadia-icon" aria-hidden="true"></i></span>
+            <div>
+              <p class="sky-context-label mb-1">${escapeHtml(row.label)}</p>
+              <p class="sky-context-value mb-0">${escapeHtml(row.value)}</p>
+              <p class="sky-explanation-source mb-0">${escapeHtml(row.source)}</p>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+    <section class="sky-explanation-raw" aria-labelledby="skyRawContextTitle">
+      <details class="data-details">
+        <summary id="skyRawContextTitle"><i class="fa-solid fa-chevron-down acadia-icon" aria-hidden="true"></i>Source context</summary>
+        <div class="sky-explanation-list data-detail-panel">
+          ${rows.map((row) => `
+            <article class="sky-explanation-row sky-explanation-${escapeHtml(row.state)}">
+              <div class="sky-explanation-row-copy">
+                <p class="sky-explanation-label mb-1">${escapeHtml(row.label)}</p>
+                <h4 class="sky-explanation-headline mb-1">${escapeHtml(row.headline)}</h4>
+                <p class="sky-explanation-detail mb-0">${escapeHtml(row.detail)}</p>
+                <p class="sky-explanation-source mb-0">${escapeHtml(row.source)}</p>
+              </div>
+            </article>
+          `).join("")}
+        </div>
+      </details>
+    </section>
+    <p class="sky-anomaly-note mb-0">Confidence reflects Apollo's connected sources and observation traits; it is not an identity claim.</p>
   `;
 }
 
@@ -1145,6 +1377,28 @@ function getNeoIndicatorText(item) {
   }
 
   return indicators.length ? indicators.join(" and ") : "No hazard indicators";
+}
+
+function getNeoIndicatorSentence(item) {
+  if (item?.hazardous) {
+    return "NASA's potential-hazard flag is the watch item; that flag reflects size and orbit, not an impact prediction.";
+  }
+
+  if (item?.sentryObject) {
+    return "NASA does not list it as potentially hazardous today; Sentry monitoring is the watch item.";
+  }
+
+  return "NASA lists no hazard indicators for this pass.";
+}
+
+function getNeoFeaturedNarrative(item) {
+  const sizeLabel = getNeoSizeLabel(item).toLowerCase();
+  const diameter = formatApproxDiameterRange(item.minDiameterMeters, item.maxDiameterMeters)
+    .replace(/^Approx\.\s*/, "approximately ");
+  const distance = formatLunarDistance(item.lunarDistance);
+  const passLabel = getNeoPassLabel(item.lunarDistance).toLowerCase();
+
+  return `${escapeHtml(item.name)} is a ${escapeHtml(sizeLabel)}, ${escapeHtml(diameter)}, passing Earth at ${escapeHtml(distance)}. Apollo classifies this as a ${escapeHtml(passLabel)}. ${escapeHtml(getNeoIndicatorSentence(item))}`;
 }
 
 function getNeoRiskLevel({ hazardous, sentryObjects, closestObject }) {
@@ -2998,25 +3252,11 @@ async function loadNeo() {
             <h3 class="neo-section-title mb-0" id="neoWatchStatusTitle">Risk level: ${escapeHtml(riskStatus.label)}</h3>
           </div>
         </div>
-        <div class="neo-watch-grid">
-          <div>
-            <p class="text-secondary small mb-1">Hazardous objects</p>
-            <p class="fw-semibold mb-0">${hazardous.toLocaleString()}</p>
-          </div>
-          <div>
-            <p class="text-secondary small mb-1">Sentry objects</p>
-            <p class="fw-semibold mb-0">${sentryObjects.toLocaleString()}</p>
-          </div>
-          <div>
-            <p class="text-secondary small mb-1">Closest approach</p>
-            <p class="fw-semibold mb-0">${formatCompactLunarDistance(closestObject?.lunarDistance)}</p>
-            <p class="text-secondary small mb-0">${formatDistanceKilometers(closestObject?.closestKilometers)}</p>
-          </div>
-          <div>
-            <p class="text-secondary small mb-1">Risk level</p>
-            <p class="fw-semibold mb-0">${escapeHtml(riskStatus.label)}</p>
-          </div>
-        </div>
+        <ul class="neo-watch-list list-unstyled mb-0">
+          <li><span>Hazardous objects</span><strong>${hazardous.toLocaleString()}</strong></li>
+          <li><span>Sentry objects</span><strong>${sentryObjects.toLocaleString()}</strong></li>
+          <li><span>Closest approach</span><strong>${formatCompactLunarDistance(closestObject?.lunarDistance)}</strong></li>
+        </ul>
       </section>
 
       ${featuredObject ? `
@@ -3038,6 +3278,7 @@ async function loadNeo() {
               <h4 class="neo-object-title mb-2">${escapeHtml(featuredObject.name)}</h4>
               <p class="neo-object-interpretation mb-1">${escapeHtml(getNeoSizeLabel(featuredObject))}</p>
               <p class="neo-object-detail mb-0">${escapeHtml(formatApproxDiameterRange(featuredObject.minDiameterMeters, featuredObject.maxDiameterMeters))}</p>
+              <p class="neo-featured-summary mb-0">${getNeoFeaturedNarrative(featuredObject)}</p>
             </div>
             <div class="neo-featured-metrics">
               <p class="neo-distance-value mb-1">${formatLunarDistance(featuredObject.lunarDistance)}</p>
