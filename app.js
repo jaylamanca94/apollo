@@ -1019,6 +1019,240 @@ function formatDiameterRange(minValue, maxValue) {
   return "Size unavailable";
 }
 
+function formatApproxDiameterRange(minValue, maxValue) {
+  const min = Number.isFinite(minValue) ? minValue : null;
+  const max = Number.isFinite(maxValue) ? maxValue : null;
+
+  if (min === null && max === null) {
+    return "Diameter unavailable";
+  }
+
+  const useKilometers = (max ?? min) >= 1000 && (min ?? max) >= 500;
+  const formatKilometers = (value) => (value / 1000).toLocaleString([], {
+    maximumFractionDigits: value / 1000 >= 10 ? 0 : 1,
+    minimumFractionDigits: 0
+  });
+
+  if (useKilometers) {
+    if (min !== null && max !== null && Math.round(min) !== Math.round(max)) {
+      return `Approx. ${formatKilometers(min)} to ${formatKilometers(max)} km diameter`;
+    }
+
+    return `Approx. ${formatKilometers(max ?? min)} km diameter`;
+  }
+
+  const formatDiameterValue = (value) => {
+    if (value >= 1000) {
+      const kilometers = value / 1000;
+      return `${kilometers.toLocaleString([], {
+        maximumFractionDigits: kilometers >= 10 ? 0 : 1,
+        minimumFractionDigits: 0
+      })} km`;
+    }
+
+    return `${Math.round(value).toLocaleString()} m`;
+  };
+
+  if (min !== null && max !== null && Math.round(min) !== Math.round(max)) {
+    return `Approx. ${formatDiameterValue(min)} to ${formatDiameterValue(max)} diameter`;
+  }
+
+  return `Approx. ${formatDiameterValue(max ?? min)} diameter`;
+}
+
+function getNeoSizeLabel(item) {
+  const maxDiameter = item?.maxDiameterMeters;
+
+  if (!Number.isFinite(maxDiameter)) {
+    return "Size unavailable";
+  }
+
+  if (maxDiameter >= 1000) {
+    return "Large asteroid";
+  }
+
+  if (maxDiameter >= 140) {
+    return "Medium asteroid";
+  }
+
+  if (maxDiameter >= 25) {
+    return "Small asteroid";
+  }
+
+  return "Very small object";
+}
+
+function formatCompactLunarDistance(value) {
+  if (!Number.isFinite(value)) {
+    return "Unavailable";
+  }
+
+  return `${value.toLocaleString([], {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: value < 10 ? 1 : 0
+  })} LD`;
+}
+
+function getNeoPassLabel(lunarDistance) {
+  if (!Number.isFinite(lunarDistance)) {
+    return "Approach distance unavailable";
+  }
+
+  if (lunarDistance <= 1) {
+    return "Close pass";
+  }
+
+  if (lunarDistance <= 10) {
+    return "Nearby pass";
+  }
+
+  if (lunarDistance <= 50) {
+    return "Moderate-distance pass";
+  }
+
+  return "Distant pass";
+}
+
+function getNeoPassSummary(lunarDistance) {
+  if (!Number.isFinite(lunarDistance)) {
+    return "approaches with unavailable distance data";
+  }
+
+  if (lunarDistance <= 1) {
+    return "close passes inside one lunar distance";
+  }
+
+  if (lunarDistance <= 10) {
+    return "nearby passes within ten lunar distances";
+  }
+
+  if (lunarDistance <= 50) {
+    return "moderate-distance passes";
+  }
+
+  return "relatively distant passes";
+}
+
+function getNeoIndicatorText(item) {
+  const indicators = [];
+
+  if (item?.hazardous) {
+    indicators.push("NASA potential-hazard flag");
+  }
+
+  if (item?.sentryObject) {
+    indicators.push("Sentry monitoring");
+  }
+
+  return indicators.length ? indicators.join(" and ") : "No hazard indicators";
+}
+
+function getNeoRiskLevel({ hazardous, sentryObjects, closestObject }) {
+  const closestLunarDistance = closestObject?.lunarDistance;
+
+  if (sentryObjects > 0) {
+    return {
+      label: "Watch",
+      tone: "attention",
+      headline: "Sentry object listed"
+    };
+  }
+
+  if (hazardous > 0) {
+    return {
+      label: "Elevated",
+      tone: "attention",
+      headline: "Potential-hazard flag present"
+    };
+  }
+
+  if (Number.isFinite(closestLunarDistance) && closestLunarDistance <= 1) {
+    return {
+      label: "Notable",
+      tone: "attention",
+      headline: "Close pass today"
+    };
+  }
+
+  return {
+    label: "Minimal",
+    tone: "clear",
+    headline: "No hazard indicators today"
+  };
+}
+
+function formatCountWord(value) {
+  const words = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+  return words[value] || value.toLocaleString();
+}
+
+function capitalizeSentence(value) {
+  const text = getText(value);
+  return text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}` : "";
+}
+
+function getNeoBriefLines({ asteroids, hazardous, sentryObjects, closestObject }) {
+  const objectCount = asteroids.length;
+  const objectCountText = capitalizeSentence(formatCountWord(objectCount));
+  const objectNoun = objectCount === 1 ? "object is" : "objects are";
+  const hazardLine = hazardous === 0
+    ? "No listed objects are considered potentially hazardous today."
+    : `${capitalizeSentence(formatCountWord(hazardous))} listed ${hazardous === 1 ? "object is" : "objects are"} considered potentially hazardous today.`;
+  const objectLine = objectCount === 0
+    ? "No near-Earth objects are listed for today's feed."
+    : `${objectCountText} near-Earth ${objectNoun} making ${getNeoPassSummary(closestObject?.lunarDistance)}.`;
+  const closestLine = closestObject
+    ? `The closest object will remain ${formatLunarDistance(closestObject.lunarDistance)} away.`
+    : "Closest-approach distance is unavailable.";
+  const sentryLine = sentryObjects === 0
+    ? "No objects are currently on NASA's Sentry monitoring list."
+    : `${capitalizeSentence(formatCountWord(sentryObjects))} ${sentryObjects === 1 ? "object is" : "objects are"} currently on NASA's Sentry monitoring list.`;
+
+  return [hazardLine, objectLine, closestLine, sentryLine];
+}
+
+function renderNeoDetails(item) {
+  return `
+    <details class="data-details asteroid-details mt-3">
+      <summary aria-label="Show approach details for ${escapeHtml(item.name)}"><i class="fa-solid fa-chevron-down acadia-icon" aria-hidden="true"></i>Approach details</summary>
+      <div class="data-detail-panel">
+        <dl class="detail-list mb-3">
+          <div>
+            <dt>Close approach</dt>
+            <dd>${escapeHtml(item.closeApproach || "Time unavailable")}</dd>
+          </div>
+          <div>
+            <dt>Miss distance</dt>
+            <dd>${formatDistanceKilometers(item.closestKilometers)}</dd>
+          </div>
+          <div>
+            <dt>Relative speed</dt>
+            <dd>${formatVelocityKph(item.velocityKph)}</dd>
+          </div>
+          <div>
+            <dt>Estimated diameter</dt>
+            <dd>${formatDiameterRange(item.minDiameterMeters, item.maxDiameterMeters)}</dd>
+          </div>
+          <div>
+            <dt>NASA tracking flag</dt>
+            <dd>${item.hazardous ? "Potentially hazardous asteroid" : "Not flagged as potentially hazardous"}</dd>
+          </div>
+          <div>
+            <dt>Sentry monitoring</dt>
+            <dd>${item.sentryObject ? "On NASA's Sentry monitoring list" : "Not on NASA's Sentry monitoring list"}</dd>
+          </div>
+        </dl>
+        ${item.sourceUrl ? `
+          <a class="source-link" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open NASA object source for ${escapeHtml(item.name)}">
+            <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
+            NASA object source
+          </a>
+        ` : ""}
+      </div>
+    </details>
+  `;
+}
+
 function getApodSourceUrl(date) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return "https://apod.nasa.gov/apod/";
@@ -2716,16 +2950,10 @@ async function loadNeo() {
     const closestApproachDate = closestObject?.closeApproach ? getNeoApproachDate(closestObject.closeApproach) : null;
     const closestApproachIso = Number.isFinite(closestApproachDate?.getTime()) ? closestApproachDate.toISOString() : "";
     const closestApproachLabel = closestObject?.closeApproach ? formatNeoApproachTime(closestObject.closeApproach) : "Time unavailable";
-    const fastestVelocity = asteroids
-      .map((item) => item.velocityKph)
-      .filter(Number.isFinite)
-      .sort((a, b) => b - a)[0];
-    const hazardSummary = hazardous === 0
-      ? "No listed objects are flagged as potentially hazardous today."
-      : `${hazardous} listed ${hazardous === 1 ? "object is" : "objects are"} flagged for NASA tracking. That flag reflects size and orbit, not an expected impact.`;
-    const sentrySummary = sentryObjects === 0
-      ? "None of today's listed objects are on NASA's Sentry monitoring list."
-      : `${sentryObjects} listed ${sentryObjects === 1 ? "object is" : "objects are"} on NASA's Sentry monitoring list.`;
+    const riskStatus = getNeoRiskLevel({ hazardous, sentryObjects, closestObject });
+    const briefLines = getNeoBriefLines({ asteroids, hazardous, sentryObjects, closestObject });
+    const featuredObject = closestObject || sortedAsteroids[0] || null;
+    const additionalObjects = sortedAsteroids.filter((item) => item !== featuredObject).slice(0, 4);
 
     if (isDashboardPage()) {
       renderDashboardNeoSummary(neoSummary);
@@ -2741,98 +2969,113 @@ async function loadNeo() {
       return createSourceStatus("neo", "ok", `${formatDate(date)} NASA NeoWs list loaded for context: ${asteroids.length} objects.`);
     }
 
-    renderNeoRiskAlert({
-      hazardous,
-      hazardSummary,
-      hazardFlagContext,
-      sentrySummary,
-      sentryContext
-    });
+    if (els.neoRiskAlert) {
+      els.neoRiskAlert.innerHTML = "";
+    }
 
     els.neoBody.innerHTML = `
-      <div class="metadata-grid mb-3">
-        <div>
-          <p class="text-secondary small mb-1">Near-Earth objects today</p>
-          <p class="fw-semibold mb-0">${asteroids.length}</p>
+      <section class="neo-brief neo-brief-${escapeHtml(riskStatus.tone)}" aria-labelledby="neoBriefTitle">
+        <div class="neo-brief-heading">
+          <span class="stat-chip neo-risk-chip neo-risk-${escapeHtml(riskStatus.tone)}"><i class="fa-solid fa-shield-halved acadia-icon" aria-hidden="true"></i></span>
+          <div>
+            <p class="section-kicker mb-1">Near-Earth Brief</p>
+            <h3 class="neo-section-title mb-0" id="neoBriefTitle">${escapeHtml(riskStatus.headline)}</h3>
+          </div>
         </div>
-        <div>
-          <p class="text-secondary small mb-1">Flagged as potentially hazardous</p>
-          <p class="fw-semibold mb-0">${hazardous}</p>
-        </div>
-        <div>
-          <p class="text-secondary small mb-1">On Sentry monitoring list</p>
-          <p class="fw-semibold mb-0">${sentryObjects}</p>
-        </div>
-        <div>
-          <p class="text-secondary small mb-1">Closest approach</p>
-          <p class="fw-semibold mb-0">${formatLunarDistance(closestObject?.lunarDistance)}</p>
-          <p class="text-secondary small mb-0">${formatDistanceKilometers(closestObject?.closestKilometers)}</p>
-          <p class="text-secondary small mb-0">
-            ${closestApproachIso
-              ? `<time datetime="${escapeHtml(closestApproachIso)}">${escapeHtml(closestApproachLabel)}</time>`
-              : escapeHtml(closestApproachLabel)}
-          </p>
-          ${closestObject?.name ? `<p class="text-secondary small mb-0">${escapeHtml(closestObject.name)}</p>` : ""}
-        </div>
-        <div>
-          <p class="text-secondary small mb-1">Fastest relative speed</p>
-          <p class="fw-semibold mb-0">${formatVelocityKph(fastestVelocity)}</p>
-        </div>
-      </div>
-      ${asteroids.length ? `
-        <ul class="list-group list-group-flush">
-          ${sortedAsteroids.slice(0, 5).map((item) => `
-            <li class="list-group-item px-0 py-3 asteroid-row">
-              <div class="asteroid-main">
-                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
-                  <span class="fw-semibold">${escapeHtml(item.name)}</span>
-                  ${item.hazardous ? `<span class="badge rounded-pill text-bg-warning">Potentially hazardous</span>` : ""}
-                  ${item.sentryObject ? `<span class="badge rounded-pill text-bg-info">Sentry monitored</span>` : ""}
-                </div>
-                <p class="text-secondary small mb-0">${formatLunarDistance(item.lunarDistance)} · ${formatVelocityKph(item.velocityKph)}</p>
-                <details class="data-details asteroid-details mt-2">
-                  <summary aria-label="Show approach details for ${escapeHtml(item.name)}"><i class="fa-solid fa-chevron-down acadia-icon" aria-hidden="true"></i>Approach details</summary>
-                  <div class="data-detail-panel">
-                    <dl class="detail-list mb-3">
-                      <div>
-                        <dt>Close approach</dt>
-                        <dd>${escapeHtml(item.closeApproach || "Time unavailable")}</dd>
-                      </div>
-                      <div>
-                        <dt>Miss distance</dt>
-                        <dd>${formatDistanceKilometers(item.closestKilometers)}</dd>
-                      </div>
-                      <div>
-                        <dt>Relative speed</dt>
-                        <dd>${formatVelocityKph(item.velocityKph)}</dd>
-                      </div>
-                      <div>
-                        <dt>Estimated diameter</dt>
-                        <dd>${formatDiameterRange(item.minDiameterMeters, item.maxDiameterMeters)}</dd>
-                      </div>
-                      <div>
-                        <dt>NASA tracking flag</dt>
-                        <dd>${item.hazardous ? "Potentially hazardous asteroid" : "Not flagged as potentially hazardous"}</dd>
-                      </div>
-                      <div>
-                        <dt>Sentry monitoring</dt>
-                        <dd>${item.sentryObject ? "On NASA's Sentry monitoring list" : "Not on NASA's Sentry monitoring list"}</dd>
-                      </div>
-                    </dl>
-                    ${item.sourceUrl ? `
-                      <a class="source-link" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open NASA object source for ${escapeHtml(item.name)}">
-                        <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
-                        NASA object source
-                      </a>
-                    ` : ""}
-                  </div>
-                </details>
-              </div>
-              <span class="asteroid-size text-secondary text-sm-end">${formatDiameterRange(item.minDiameterMeters, item.maxDiameterMeters)}</span>
-            </li>
-          `).join("")}
+        <ul class="neo-brief-list mb-0">
+          ${briefLines.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
         </ul>
+        <div class="neo-source-context">
+          <p class="mb-1"><strong>${escapeHtml(hazardFlagContext.label)}</strong>: ${escapeHtml(hazardFlagContext.summary)}</p>
+          <p class="mb-0"><strong>${escapeHtml(sentryContext.label)}</strong>: ${escapeHtml(sentryContext.summary)}</p>
+        </div>
+      </section>
+
+      <section class="neo-watch-status" aria-labelledby="neoWatchStatusTitle">
+        <div class="space-weather-section-heading">
+          <div>
+            <p class="section-kicker mb-1">Watch Status</p>
+            <h3 class="neo-section-title mb-0" id="neoWatchStatusTitle">Risk level: ${escapeHtml(riskStatus.label)}</h3>
+          </div>
+        </div>
+        <div class="neo-watch-grid">
+          <div>
+            <p class="text-secondary small mb-1">Hazardous objects</p>
+            <p class="fw-semibold mb-0">${hazardous.toLocaleString()}</p>
+          </div>
+          <div>
+            <p class="text-secondary small mb-1">Sentry objects</p>
+            <p class="fw-semibold mb-0">${sentryObjects.toLocaleString()}</p>
+          </div>
+          <div>
+            <p class="text-secondary small mb-1">Closest approach</p>
+            <p class="fw-semibold mb-0">${formatCompactLunarDistance(closestObject?.lunarDistance)}</p>
+            <p class="text-secondary small mb-0">${formatDistanceKilometers(closestObject?.closestKilometers)}</p>
+          </div>
+          <div>
+            <p class="text-secondary small mb-1">Risk level</p>
+            <p class="fw-semibold mb-0">${escapeHtml(riskStatus.label)}</p>
+          </div>
+        </div>
+      </section>
+
+      ${featuredObject ? `
+        <section class="neo-featured-section" aria-labelledby="neoFeaturedTitle">
+          <div class="space-weather-section-heading">
+            <div>
+              <p class="section-kicker mb-1">Closest Approach</p>
+              <h3 class="neo-section-title mb-0" id="neoFeaturedTitle">Featured Approach</h3>
+            </div>
+            <p class="neo-section-note mb-0">
+              ${closestApproachIso
+                ? `<time datetime="${escapeHtml(closestApproachIso)}">${escapeHtml(closestApproachLabel)}</time>`
+                : escapeHtml(closestApproachLabel)}
+            </p>
+          </div>
+          <article class="neo-featured-card">
+            <div class="neo-object-copy">
+              <p class="neo-object-role mb-1">Closest object today</p>
+              <h4 class="neo-object-title mb-2">${escapeHtml(featuredObject.name)}</h4>
+              <p class="neo-object-interpretation mb-1">${escapeHtml(getNeoSizeLabel(featuredObject))}</p>
+              <p class="neo-object-detail mb-0">${escapeHtml(formatApproxDiameterRange(featuredObject.minDiameterMeters, featuredObject.maxDiameterMeters))}</p>
+            </div>
+            <div class="neo-featured-metrics">
+              <p class="neo-distance-value mb-1">${formatLunarDistance(featuredObject.lunarDistance)}</p>
+              <p class="neo-object-interpretation mb-1">${escapeHtml(getNeoPassLabel(featuredObject.lunarDistance))}</p>
+              <p class="neo-object-detail mb-0">${escapeHtml(getNeoIndicatorText(featuredObject))}</p>
+            </div>
+            ${renderNeoDetails(featuredObject)}
+          </article>
+        </section>
       ` : stateMessage("No near-Earth objects are listed for today.")}
+
+      ${additionalObjects.length ? `
+        <section class="neo-additional-section" aria-labelledby="neoAdditionalTitle">
+          <div class="space-weather-section-heading">
+            <div>
+              <p class="section-kicker mb-1">Additional Objects</p>
+              <h3 class="neo-section-title mb-0" id="neoAdditionalTitle">Other passes today</h3>
+            </div>
+          </div>
+          <ul class="neo-object-list list-unstyled mb-0">
+            ${additionalObjects.map((item) => `
+              <li class="neo-object-card">
+                <div class="neo-object-copy">
+                  <h4 class="neo-object-title mb-2">${escapeHtml(item.name)}</h4>
+                  <p class="neo-object-interpretation mb-1">${escapeHtml(getNeoSizeLabel(item))}</p>
+                  <p class="neo-object-detail mb-0">${escapeHtml(formatApproxDiameterRange(item.minDiameterMeters, item.maxDiameterMeters))}</p>
+                </div>
+                <div class="neo-object-pass">
+                  <p class="neo-object-interpretation mb-1">${escapeHtml(getNeoPassLabel(item.lunarDistance))}</p>
+                  <p class="neo-distance-value mb-1">${formatLunarDistance(item.lunarDistance)}</p>
+                  <p class="neo-object-detail mb-0">${escapeHtml(getNeoIndicatorText(item))}</p>
+                </div>
+                ${renderNeoDetails(item)}
+              </li>
+            `).join("")}
+          </ul>
+        </section>
+      ` : ""}
     `;
     setQuickStat("neo", {
       value: `${asteroids.length.toLocaleString()} near Earth`,

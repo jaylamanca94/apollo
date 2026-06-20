@@ -1807,6 +1807,161 @@ html[data-bs-theme="light"] .data-detail-panel {
   line-height: 1.35;
 }
 
+#neoBody {
+  display: grid;
+  gap: 16px;
+}
+
+.neo-brief,
+.neo-watch-status,
+.neo-featured-section,
+.neo-additional-section {
+  display: grid;
+  gap: 12px;
+}
+
+.neo-brief {
+  background: var(--apollo-success-soft);
+  border: 1px solid color-mix(in srgb, var(--apollo-success) 35%, transparent);
+  border-radius: 8px;
+  box-shadow: var(--apollo-shadow-row);
+  padding: 1rem;
+}
+
+.neo-brief-heading {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+}
+
+.neo-risk-chip.neo-risk-clear {
+  background: var(--apollo-success-soft);
+  border-color: color-mix(in srgb, var(--apollo-success) 35%, transparent);
+  color: var(--apollo-success);
+}
+
+.neo-risk-chip.neo-risk-attention {
+  background: var(--apollo-warning-soft);
+  border-color: color-mix(in srgb, var(--apollo-warning) 38%, transparent);
+  color: var(--apollo-warning);
+}
+
+.neo-section-title {
+  color: var(--acadia-color-text);
+  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.neo-brief-list {
+  color: var(--apollo-muted-strong);
+  display: grid;
+  gap: 0.45rem;
+  line-height: 1.45;
+  padding-left: 1.2rem;
+}
+
+.neo-source-context {
+  border-top: 1px solid color-mix(in srgb, var(--apollo-success) 24%, transparent);
+  color: var(--apollo-muted-strong);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  padding-top: 0.75rem;
+}
+
+.neo-watch-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.neo-watch-grid > div,
+.neo-featured-card,
+.neo-object-card {
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  box-shadow: var(--apollo-shadow-row);
+  min-width: 0;
+  padding: 1rem;
+}
+
+.neo-watch-grid p,
+.neo-object-card p,
+.neo-featured-card p {
+  overflow-wrap: anywhere;
+}
+
+.neo-featured-card {
+  align-items: start;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(12rem, 0.8fr);
+}
+
+.neo-featured-card .asteroid-details {
+  grid-column: 1 / -1;
+}
+
+.neo-object-list {
+  display: grid;
+  gap: 10px;
+}
+
+.neo-object-card {
+  align-items: start;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(12rem, 0.8fr);
+}
+
+.neo-object-card .asteroid-details {
+  grid-column: 1 / -1;
+}
+
+.neo-object-title {
+  color: var(--bs-body-color);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.neo-object-role,
+.neo-section-note {
+  color: var(--apollo-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.neo-object-interpretation {
+  color: var(--apollo-muted-strong);
+  font-size: 0.9375rem;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.neo-object-detail {
+  color: var(--apollo-muted);
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.neo-distance-value {
+  color: var(--bs-body-color);
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.neo-featured-metrics,
+.neo-object-pass {
+  justify-self: end;
+  text-align: right;
+}
+
 .space-weather-status {
   align-items: center;
   background: var(--apollo-row-bg);
@@ -3287,8 +3442,23 @@ html[data-bs-theme="light"] .data-detail-panel {
   .metadata-grid,
   .detail-list,
   .crew-grid,
-  .orbit-context-grid {
+  .orbit-context-grid,
+  .neo-watch-grid,
+  .neo-featured-card,
+  .neo-object-card {
     grid-template-columns: 1fr;
+  }
+
+  .neo-brief-heading,
+  .space-weather-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .neo-featured-metrics,
+  .neo-object-pass {
+    justify-self: start;
+    text-align: left;
   }
 
   .launch-card {
