@@ -6,7 +6,7 @@ const vm = require("node:vm");
 
 function loadDashboardHelpers({ elements = {}, fetchPayload = null } = {}) {
   const source = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
-  const helperSource = source.slice(0, source.indexOf("async function loadLaunches"));
+  const helperSource = source.slice(0, source.indexOf("async function loadDashboard"));
   const context = {
     AbortController,
     document: {
@@ -238,4 +238,36 @@ test("loadApod avoids iframe embeds for unknown media types", async () => {
   assert.equal(status.id, "apod");
   assert.equal(status.state, "ok");
   assert.match(status.detail, /^Media for/);
+});
+
+test("loadNeo uses the featured object's approach time when distance is unavailable", async () => {
+  const neoBody = {
+    innerHTML: ""
+  };
+  const { loadNeo } = loadDashboardHelpers({
+    elements: {
+      "#neoBody": neoBody
+    },
+    fetchPayload: {
+      asteroids: [
+        {
+          name: "Fallback object",
+          closeApproach: "2026-Jun-10 15:41",
+          closestKilometers: null,
+          lunarDistance: null,
+          velocityKph: 26999.6,
+          minDiameterMeters: 8,
+          maxDiameterMeters: 20
+        }
+      ]
+    }
+  });
+
+  const status = await loadNeo();
+
+  assert.match(neoBody.innerHTML, /Fallback object/);
+  assert.match(neoBody.innerHTML, /<time datetime="2026-06-10T15:41:00.000Z">Jun 10, 2026, 3:41 PM UTC<\/time>/);
+  assert.doesNotMatch(neoBody.innerHTML, /<p class="neo-section-note mb-0">\s*Time unavailable\s*<\/p>/);
+  assert.equal(status.id, "neo");
+  assert.equal(status.state, "ok");
 });

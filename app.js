@@ -2947,13 +2947,13 @@ async function loadNeo() {
     const hazardous = asteroids.filter((item) => item.hazardous).length;
     const sentryObjects = asteroids.filter((item) => item.sentryObject).length;
     const closestObject = sortedAsteroids.find((item) => Number.isFinite(item.closestKilometers));
-    const closestApproachDate = closestObject?.closeApproach ? getNeoApproachDate(closestObject.closeApproach) : null;
-    const closestApproachIso = Number.isFinite(closestApproachDate?.getTime()) ? closestApproachDate.toISOString() : "";
-    const closestApproachLabel = closestObject?.closeApproach ? formatNeoApproachTime(closestObject.closeApproach) : "Time unavailable";
     const riskStatus = getNeoRiskLevel({ hazardous, sentryObjects, closestObject });
     const briefLines = getNeoBriefLines({ asteroids, hazardous, sentryObjects, closestObject });
     const featuredObject = closestObject || sortedAsteroids[0] || null;
     const additionalObjects = sortedAsteroids.filter((item) => item !== featuredObject).slice(0, 4);
+    const featuredApproachDate = featuredObject?.closeApproach ? getNeoApproachDate(featuredObject.closeApproach) : null;
+    const featuredApproachIso = Number.isFinite(featuredApproachDate?.getTime()) ? featuredApproachDate.toISOString() : "";
+    const featuredApproachLabel = featuredObject?.closeApproach ? formatNeoApproachTime(featuredObject.closeApproach) : "Time unavailable";
 
     if (isDashboardPage()) {
       renderDashboardNeoSummary(neoSummary);
@@ -3027,9 +3027,9 @@ async function loadNeo() {
               <h3 class="neo-section-title mb-0" id="neoFeaturedTitle">Featured Approach</h3>
             </div>
             <p class="neo-section-note mb-0">
-              ${closestApproachIso
-                ? `<time datetime="${escapeHtml(closestApproachIso)}">${escapeHtml(closestApproachLabel)}</time>`
-                : escapeHtml(closestApproachLabel)}
+              ${featuredApproachIso
+                ? `<time datetime="${escapeHtml(featuredApproachIso)}">${escapeHtml(featuredApproachLabel)}</time>`
+                : escapeHtml(featuredApproachLabel)}
             </p>
           </div>
           <article class="neo-featured-card">
