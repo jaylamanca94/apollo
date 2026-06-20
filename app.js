@@ -1516,6 +1516,58 @@ function getApodSourceUrl(date) {
   return `https://apod.nasa.gov/apod/ap${year.slice(2)}${month}${day}.html`;
 }
 
+function getApodCategory(data) {
+  const text = `${data?.title || ""} ${data?.explanation || ""}`.toLowerCase();
+
+  if (/(nebula|supernova|star-forming|star forming|star birth|young star|stellar)/.test(text)) {
+    return "Deep sky";
+  }
+
+  if (/(eclipse|occult|conjunction|transit|meteor shower)/.test(text)) {
+    return "Sky event";
+  }
+
+  if (/(moon|lunar|venus|mars|jupiter|saturn|mercury|planet)/.test(text)) {
+    return "Planetary sky";
+  }
+
+  if (/(galaxy|galaxies|andromeda|milky way)/.test(text)) {
+    return "Galaxy";
+  }
+
+  if (/(aurora|cloud|atmosphere|earth)/.test(text)) {
+    return "Earth and sky";
+  }
+
+  return "Astronomy";
+}
+
+function getApodMediaTypeLabel(mediaType) {
+  const type = getText(mediaType).toLowerCase();
+
+  if (type === "image") {
+    return "Photography";
+  }
+
+  if (type === "video") {
+    return "Video";
+  }
+
+  return "NASA media";
+}
+
+function getApodWhyItMatters(data) {
+  const firstSentence = getText(data?.explanation)
+    .split(/(?<=[.!?])\s+/)
+    .find(Boolean);
+
+  if (firstSentence) {
+    return `Apollo pairs the live dashboard with visual context from NASA: ${firstSentence}`;
+  }
+
+  return "This image adds a visual counterpart to Apollo's live space context.";
+}
+
 function getStoredTheme() {
   let storedTheme = null;
 
@@ -2740,6 +2792,13 @@ async function loadApod() {
     const explanation = escapeHtml(data.explanation);
     const summary = escapeHtml(summaryText);
     const hasLongExplanation = summaryText !== data.explanation;
+    const apodFacts = [
+      ["Category", getApodCategory(data)],
+      ["Date", data.date ? formatDate(data.date) : "Today"],
+      ["Source", "NASA APOD"],
+      ["Type", getApodMediaTypeLabel(data.mediaType)]
+    ];
+    const whyItMatters = getApodWhyItMatters(data);
     let media = `
       <div class="state-message apod-media-fallback">
         <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
@@ -2798,6 +2857,23 @@ async function loadApod() {
               <p class="mb-0 mt-2">${explanation}</p>
             </details>
           ` : ""}
+          <div class="apod-context-stack">
+            <section class="apod-quick-facts" aria-labelledby="apodQuickFactsTitle">
+              <h4 class="apod-panel-title" id="apodQuickFactsTitle">Quick Facts</h4>
+              <dl class="apod-fact-grid mb-0">
+                ${apodFacts.map(([label, value]) => `
+                  <div>
+                    <dt>${escapeHtml(label)}</dt>
+                    <dd>${escapeHtml(value)}</dd>
+                  </div>
+                `).join("")}
+              </dl>
+            </section>
+            <section class="apod-why-matters" aria-labelledby="apodWhyMattersTitle">
+              <h4 class="apod-panel-title" id="apodWhyMattersTitle">Why It Matters</h4>
+              <p class="mb-0">${escapeHtml(whyItMatters)}</p>
+            </section>
+          </div>
           <div class="detail-action-row apod-action-row">
             ${data.mediaType === "image" && fullImageUrl ? `
               <a class="source-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">

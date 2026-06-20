@@ -277,9 +277,10 @@ test("dashboard stops at command-center panels instead of duplicating detail pag
 test("header primary nav exposes v1 destinations without dropping overflow pages", () => {
   for (const file of allHtmlPages) {
     const html = readProjectFile(file);
+    const headerNav = getElementByClass(html, "div", "apollo-primary-links");
     const topLevelNavItems = [
-      ...getTags(html, "a").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))),
-      ...getTags(html, "button").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class")))
+      ...getTags(headerNav, "a").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))),
+      ...getTags(headerNav, "button").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class")))
     ];
     const moreToggle = topLevelNavItems.find((tag) => /\bapollo-nav-more-toggle\b/.test(getAttribute(tag, "class")));
 
@@ -341,10 +342,14 @@ test("primary nav row does not clip compact destinations", () => {
 
 test("mobile dock stays viewport-bottom anchored", () => {
   const css = readProjectFile("styles.css");
+  const html = readProjectFile("index.html");
   const mobileBlock = css.match(/@media \(max-width:\s*767\.98px\)\s*\{[\s\S]*?\n\}/)?.[0] || "";
   const topbarRule = mobileBlock.match(/\.apollo-topbar\s*\{[\s\S]*?\n  \}/)?.[0] || "";
   const mobileDockRule = mobileBlock.match(/\.apollo-primary-links\.apollo-mobile-dock\s*\{[\s\S]*?\n  \}/)?.[0] || "";
 
+  assert.match(html, /<\/nav>\s*<div class="apollo-primary-links acadia-nav apollo-mobile-dock" aria-label="Apollo pages">/);
+  assert.match(css, /\.apollo-primary-links\.apollo-mobile-dock\s*\{[\s\S]*?display:\s*none;/);
+  assert.match(mobileBlock, /\.apollo-topbar \.apollo-primary-links:not\(\.apollo-mobile-dock\)\s*\{[\s\S]*?display:\s*none;/);
   assert.match(topbarRule, /-webkit-backdrop-filter:\s*none;/);
   assert.match(topbarRule, /backdrop-filter:\s*none;/);
   assert.match(mobileDockRule, /position:\s*fixed;/);
@@ -356,7 +361,7 @@ test("launch timeline exposes urgency context and current asset versions", () =>
   const html = readProjectFile("launches.html");
   const js = readProjectFile("launches.js");
 
-  assert.match(html, /styles\.css\?v=mobile-dock-bottom-1/);
+  assert.match(html, /styles\.css\?v=apod-context-dock-2/);
   assert.match(html, /launches\.js\?v=launch-timeline-a11y-1/);
   assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);

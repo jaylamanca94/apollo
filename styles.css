@@ -332,6 +332,10 @@ body {
   display: none;
 }
 
+.apollo-primary-links.apollo-mobile-dock {
+  display: none;
+}
+
 .apollo-primary-links::-webkit-scrollbar,
 .acadia-nav::-webkit-scrollbar {
   display: none;
@@ -1062,6 +1066,74 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   color: var(--bs-body-color);
   cursor: pointer;
   font-weight: 750;
+}
+
+.apod-context-stack {
+  border-top: 1px solid var(--apollo-border);
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+  padding-top: 18px;
+}
+
+.apod-quick-facts,
+.apod-why-matters {
+  min-width: 0;
+}
+
+.apod-panel-title {
+  color: var(--bs-body-color);
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 0.625rem;
+}
+
+.apod-fact-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.apod-fact-grid > div {
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  box-shadow: var(--apollo-shadow-row);
+  min-width: 0;
+  padding: 0.75rem 0.875rem;
+}
+
+.apod-fact-grid dt {
+  color: var(--apollo-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
+  text-transform: uppercase;
+}
+
+.apod-fact-grid dd {
+  color: var(--bs-body-color);
+  font-size: 0.9rem;
+  font-weight: 750;
+  line-height: 1.25;
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+}
+
+.apod-why-matters {
+  background: var(--apollo-row-bg);
+  border: 1px solid var(--apollo-border);
+  border-radius: 8px;
+  box-shadow: var(--apollo-shadow-row);
+  padding: 0.875rem 1rem;
+}
+
+.apod-why-matters p {
+  color: var(--apollo-muted-strong);
+  font-size: 0.92rem;
+  line-height: 1.48;
 }
 
 .apod-action-row {
@@ -3513,6 +3585,10 @@ html[data-bs-theme="light"] .data-detail-panel {
     display: none;
   }
 
+  .apollo-topbar .apollo-primary-links:not(.apollo-mobile-dock) {
+    display: none;
+  }
+
   .apollo-primary-links.apollo-mobile-dock {
     -webkit-backdrop-filter: blur(1.125rem) saturate(145%);
     align-items: center;
@@ -3631,7 +3707,8 @@ html[data-bs-theme="light"] .data-detail-panel {
 
   .sky-anomaly-form,
   .sky-context-grid,
-  .sky-evidence-grid {
+  .sky-evidence-grid,
+  .apod-fact-grid {
     grid-template-columns: 1fr;
   }
 

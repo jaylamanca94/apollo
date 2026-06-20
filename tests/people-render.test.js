@@ -209,6 +209,17 @@ test("loadApod renders embeddable videos with direct media links", async () => {
   assert.match(status.detail, /^Video for/);
 });
 
+test("APOD context labels nebula imagery as deep sky before broad galaxy mentions", () => {
+  const { getApodCategory, getApodWhyItMatters } = loadDashboardHelpers();
+  const apod = {
+    title: "The Eagle Nebula in Infrared",
+    explanation: "A star-forming region glows inside the Eagle Nebula. The view sits inside our galaxy."
+  };
+
+  assert.equal(getApodCategory(apod), "Deep sky");
+  assert.match(getApodWhyItMatters(apod), /^Apollo pairs the live dashboard with visual context from NASA:/);
+});
+
 test("loadApod avoids iframe embeds for unknown media types", async () => {
   const apodBody = {
     innerHTML: ""
