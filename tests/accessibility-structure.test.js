@@ -339,11 +339,24 @@ test("primary nav row does not clip compact destinations", () => {
   assert.match(navMoreRule, /position:\s*relative;/);
 });
 
+test("mobile dock stays viewport-bottom anchored", () => {
+  const css = readProjectFile("styles.css");
+  const mobileBlock = css.match(/@media \(max-width:\s*767\.98px\)\s*\{[\s\S]*?\n\}/)?.[0] || "";
+  const topbarRule = mobileBlock.match(/\.apollo-topbar\s*\{[\s\S]*?\n  \}/)?.[0] || "";
+  const mobileDockRule = mobileBlock.match(/\.apollo-primary-links\.apollo-mobile-dock\s*\{[\s\S]*?\n  \}/)?.[0] || "";
+
+  assert.match(topbarRule, /-webkit-backdrop-filter:\s*none;/);
+  assert.match(topbarRule, /backdrop-filter:\s*none;/);
+  assert.match(mobileDockRule, /position:\s*fixed;/);
+  assert.match(mobileDockRule, /bottom:\s*calc\(var\(--acadia-mobile-tabbar-bottom,\s*1\.25rem\) \+ env\(safe-area-inset-bottom\)\);/);
+  assert.match(mobileDockRule, /top:\s*auto;/);
+});
+
 test("launch timeline exposes urgency context and current asset versions", () => {
   const html = readProjectFile("launches.html");
   const js = readProjectFile("launches.js");
 
-  assert.match(html, /styles\.css\?v=nav-overflow-1/);
+  assert.match(html, /styles\.css\?v=mobile-dock-bottom-1/);
   assert.match(html, /launches\.js\?v=launch-timeline-a11y-1/);
   assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
