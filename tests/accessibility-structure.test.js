@@ -19,13 +19,13 @@ const v1NavLinks = [
   { href: "./index.html", label: "Dashboard" },
   { href: "./iss.html", label: "ISS" },
   { href: "./launches.html", label: "Launches" },
-  { href: "./weather.html", label: "Weather" }
+  { href: "./gallery.html", label: "Gallery" }
 ];
 
-const overflowNavLinks = [
-  { href: "./asteroids.html", label: "Asteroids", page: "asteroids.html", iconClass: "fa-meteor" },
-  { href: "./gallery.html", label: "Gallery", page: "gallery.html", iconClass: "fa-image" },
-  { href: "./anomalies.html", label: "Anomalies", page: "anomalies.html", iconClass: "fa-magnifying-glass-location" }
+const watchNavLinks = [
+  { href: "./weather.html", label: "Weather", page: "weather.html" },
+  { href: "./asteroids.html", label: "Asteroids", page: "asteroids.html" },
+  { href: "./anomalies.html", label: "Anomalies", page: "anomalies.html" }
 ];
 
 const pages = [
@@ -103,6 +103,13 @@ function getElementByClass(html, tagName, className) {
   const pattern = new RegExp(`<${tagName}\\b(?=[^>]*\\bclass=["'][^"']*\\b${escapeRegExp(className)}\\b)[\\s\\S]*?<\\/${tagName}>`, "i");
   const match = html.match(pattern);
   return match ? match[0] : "";
+}
+
+function getHeaderPrimaryNav(html) {
+  const start = html.search(/<div class="apollo-primary-links acadia-nav" aria-label="Apollo pages">/);
+  const end = html.search(/<div class="apollo-navbar-actions/);
+
+  return start >= 0 && end > start ? html.slice(start, end) : "";
 }
 
 function hasClass(tag, className) {
@@ -274,19 +281,24 @@ test("dashboard stops at command-center panels instead of duplicating detail pag
   }
 });
 
-test("header primary nav exposes v1 destinations without dropping overflow pages", () => {
+test("header primary nav exposes five named destinations without a generic overflow", () => {
   for (const file of allHtmlPages) {
     const html = readProjectFile(file);
-    const headerNav = getElementByClass(html, "div", "apollo-primary-links");
+    const headerNav = getHeaderPrimaryNav(html);
     const topLevelNavItems = [
       ...getTags(headerNav, "a").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))),
       ...getTags(headerNav, "button").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class")))
     ];
-    const moreToggle = topLevelNavItems.find((tag) => /\bapollo-nav-more-toggle\b/.test(getAttribute(tag, "class")));
+    const watchToggle = topLevelNavItems.find((tag) => /\bapollo-nav-more-toggle\b/.test(getAttribute(tag, "class")));
+    const watchToggleHtml = getElementByClass(headerNav, "button", "apollo-nav-more-toggle");
 
-    assert.ok(topLevelNavItems.length <= 5, `${file} should not expose more than five top-level primary nav items`);
-    assert.ok(moreToggle, `${file} should expose overflow pages through a More dropdown`);
-    assert.equal(getAttribute(moreToggle, "data-bs-toggle"), "dropdown");
+    assert.equal(topLevelNavItems.length, 5, `${file} should expose exactly five top-level primary nav items`);
+    assert.ok(watchToggle, `${file} should expose Watch as the grouped navigation item`);
+    assert.equal(getAttribute(watchToggle, "data-bs-toggle"), "dropdown");
+    assert.match(watchToggleHtml, /<span>Watch<\/span>/);
+    assert.match(watchToggleHtml, /\bfa-binoculars\b/);
+    assert.doesNotMatch(headerNav, /<span>More<\/span>/);
+    assert.doesNotMatch(headerNav, /\bfa-ellipsis\b/);
 
     for (const link of v1NavLinks) {
       const expectedHref = file === "index.html" && link.label === "Dashboard" ? "#dashboard" : link.href;
@@ -297,28 +309,28 @@ test("header primary nav exposes v1 destinations without dropping overflow pages
       assert.ok(navItem, `${file} should include ${link.label} as a v1 nav destination`);
     }
 
-    for (const link of overflowNavLinks) {
+    for (const link of watchNavLinks) {
       const menuItem = getTags(html, "a").find((tag) => (
         getAttribute(tag, "href") === link.href && /\bapollo-nav-menu-item\b/.test(getAttribute(tag, "class"))
       ));
 
-      assert.ok(menuItem, `${file} should include ${link.label} in the More dropdown`);
+      assert.ok(menuItem, `${file} should include ${link.label} in the Watch group`);
     }
   }
 });
 
-test("overflow pages identify the active destination in the dock toggle", () => {
-  for (const link of overflowNavLinks) {
+test("watch pages keep the grouped destination active without becoming More", () => {
+  for (const link of watchNavLinks) {
     const html = readProjectFile(link.page);
-    const moreToggle = getElementByClass(html, "button", "apollo-nav-more-toggle");
-    const moreToggleTag = moreToggle.match(/<button\b[^>]*>/i)?.[0] || "";
+    const watchToggle = getElementByClass(html, "button", "apollo-nav-more-toggle");
+    const watchToggleTag = watchToggle.match(/<button\b[^>]*>/i)?.[0] || "";
 
-    assert.ok(moreToggle, `${link.page} should expose an overflow toggle`);
-    assert.equal(getAttribute(moreToggleTag, "aria-current"), "page");
-    assert.match(moreToggle, new RegExp(`<span>${escapeRegExp(link.label)}<\\/span>`));
-    assert.match(moreToggle, new RegExp(`\\b${escapeRegExp(link.iconClass)}\\b`));
-    assert.doesNotMatch(moreToggle, /<span>More<\/span>/);
-    assert.doesNotMatch(moreToggle, /\bfa-ellipsis\b/);
+    assert.ok(watchToggle, `${link.page} should expose the Watch navigation group`);
+    assert.equal(getAttribute(watchToggleTag, "aria-current"), "page");
+    assert.match(watchToggle, /<span>Watch<\/span>/);
+    assert.match(watchToggle, /\bfa-binoculars\b/);
+    assert.doesNotMatch(watchToggle, /<span>More<\/span>/);
+    assert.doesNotMatch(watchToggle, /\bfa-ellipsis\b/);
   }
 });
 
@@ -353,15 +365,22 @@ test("mobile dock stays viewport-bottom anchored", () => {
   assert.match(topbarRule, /-webkit-backdrop-filter:\s*none;/);
   assert.match(topbarRule, /backdrop-filter:\s*none;/);
   assert.match(mobileDockRule, /position:\s*fixed;/);
+  assert.match(mobileDockRule, /background:\s*var\(--acadia-mobile-nav-background\);/);
+  assert.match(mobileDockRule, /border:\s*1px solid var\(--acadia-mobile-nav-border\);/);
+  assert.match(mobileDockRule, /box-shadow:\s*var\(--acadia-mobile-nav-shadow\);/);
+  assert.match(mobileDockRule, /color:\s*var\(--acadia-mobile-nav-color\);/);
   assert.match(mobileDockRule, /bottom:\s*calc\(var\(--acadia-mobile-tabbar-bottom,\s*1\.25rem\) \+ env\(safe-area-inset-bottom\)\);/);
   assert.match(mobileDockRule, /top:\s*auto;/);
+  assert.match(css, /html\[data-bs-theme="light"\]\s*\{[\s\S]*?--acadia-mobile-nav-background:\s*rgba\(250, 250, 252, 0\.84\);/);
+  assert.match(css, /--acadia-mobile-nav-active-background:\s*rgba\(15, 23, 42, 0\.1\);/);
+  assert.match(css, /--acadia-mobile-nav-focus-halo:\s*rgba\(255, 255, 255, 0\.22\);/);
 });
 
 test("launch timeline exposes urgency context and current asset versions", () => {
   const html = readProjectFile("launches.html");
   const js = readProjectFile("launches.js");
 
-  assert.match(html, /styles\.css\?v=apod-context-dock-2/);
+  assert.match(html, /styles\.css\?v=apod-theme-dock-1/);
   assert.match(html, /launches\.js\?v=launch-timeline-a11y-1/);
   assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
