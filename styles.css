@@ -482,6 +482,18 @@ body {
   color: var(--acadia-color-text);
 }
 
+.apollo-theme-toggle.is-dark,
+.acadia-theme-toggle.is-dark {
+  color: var(--acadia-color-primary);
+}
+
+.apollo-theme-toggle .acadia-icon,
+.acadia-theme-toggle .acadia-icon {
+  font-size: 1.25rem;
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
 .apollo-live-chip,
 .acadia-badge {
   align-items: center;
@@ -1421,20 +1433,21 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 }
 
 .iss-status-summary {
-  align-items: center;
+  align-items: start;
   background: var(--apollo-row-bg);
   border: 1px solid var(--apollo-border);
   border-radius: var(--acadia-radius-md);
   box-shadow: var(--apollo-shadow-row);
   display: grid;
-  gap: 18px;
-  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
   padding: 18px;
 }
 
 .iss-status-headline {
   display: grid;
   gap: 0.65rem;
+  min-width: 0;
 }
 
 .iss-status-title {
@@ -1450,7 +1463,8 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  min-width: 0;
 }
 
 .iss-status-line span {
@@ -1458,9 +1472,12 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   border: 1px solid var(--apollo-border);
   border-radius: var(--acadia-radius-pill);
   color: var(--acadia-color-text);
+  flex: 0 1 auto;
   font-size: 0.9rem;
   font-weight: 750;
   line-height: 1.2;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   padding: 0.45rem 0.65rem;
 }
 
@@ -1469,6 +1486,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   font-size: 0.95rem;
   line-height: 1.45;
   max-width: 780px;
+  overflow-wrap: anywhere;
 }
 
 .iss-current-position {

@@ -4,10 +4,15 @@ const path = require("node:path");
 const test = require("node:test");
 const vm = require("node:vm");
 
-function loadThemeHelpers(fileName, endMarker) {
+function loadThemeHelpers(fileName, endMarker, options = {}) {
   const source = fs.readFileSync(path.join(__dirname, "..", fileName), "utf8");
   const helperSource = source.slice(0, source.indexOf(endMarker));
   const elements = {};
+
+  if (options.themeToggle) {
+    elements["#themeToggle"] = options.themeToggle;
+  }
+
   const themeColorMeta = {
     attributes: {},
     setAttribute(name, value) {
@@ -57,6 +62,37 @@ function loadThemeHelpers(fileName, endMarker) {
   return context;
 }
 
+function createThemeToggleDouble() {
+  const classes = new Set(["apollo-theme-toggle", "acadia-icon-action", "acadia-theme-toggle"]);
+  const icon = { className: "" };
+
+  return {
+    attributes: {},
+    icon,
+    title: "",
+    classList: {
+      contains(className) {
+        return classes.has(className);
+      },
+      toggle(className, force) {
+        if (force) {
+          classes.add(className);
+          return true;
+        }
+
+        classes.delete(className);
+        return false;
+      }
+    },
+    querySelector(selector) {
+      return selector === "i" ? icon : null;
+    },
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    }
+  };
+}
+
 test("dashboard theme defaults safely when matchMedia is unavailable", () => {
   const { getStoredTheme } = loadThemeHelpers("app.js", "async function loadLaunches");
 
@@ -103,6 +139,32 @@ test("dashboard theme updates browser chrome color", () => {
   context.applyTheme("light");
   assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#E8EAED");
 });
+
+for (const { fileName, marker, name } of [
+  { fileName: "app.js", marker: "async function loadLaunches", name: "dashboard" },
+  { fileName: "launches.js", marker: "function setBusy", name: "launches" }
+]) {
+  test(`${name} theme toggle uses Acadia state classes and toggle icons`, () => {
+    const themeToggle = createThemeToggleDouble();
+    const context = loadThemeHelpers(fileName, marker, { themeToggle });
+
+    context.applyTheme("dark");
+    assert.equal(themeToggle.classList.contains("is-dark"), true);
+    assert.equal(themeToggle.classList.contains("is-light"), false);
+    assert.equal(themeToggle.attributes["aria-label"], "Switch to light mode");
+    assert.equal(themeToggle.attributes["aria-pressed"], "true");
+    assert.equal(themeToggle.title, "Dark mode");
+    assert.equal(themeToggle.icon.className, "fa-solid fa-toggle-on acadia-icon");
+
+    context.applyTheme("light");
+    assert.equal(themeToggle.classList.contains("is-dark"), false);
+    assert.equal(themeToggle.classList.contains("is-light"), true);
+    assert.equal(themeToggle.attributes["aria-label"], "Switch to dark mode");
+    assert.equal(themeToggle.attributes["aria-pressed"], "false");
+    assert.equal(themeToggle.title, "Light mode");
+    assert.equal(themeToggle.icon.className, "fa-solid fa-toggle-off acadia-icon");
+  });
+}
 
 test("launches theme updates browser chrome color", () => {
   const context = loadThemeHelpers("launches.js", "function setBusy");

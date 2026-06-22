@@ -281,12 +281,14 @@ function updateThemeToggle(theme) {
   const label = `Switch to ${nextTheme} mode`;
   const icon = els.themeToggle.querySelector("i");
 
+  els.themeToggle.classList.toggle("is-dark", isDark);
+  els.themeToggle.classList.toggle("is-light", !isDark);
   els.themeToggle.setAttribute("aria-label", label);
   els.themeToggle.setAttribute("aria-pressed", String(isDark));
-  els.themeToggle.title = label;
+  els.themeToggle.title = isDark ? "Dark mode" : "Light mode";
 
   if (icon) {
-    icon.className = `fa-solid ${isDark ? "fa-sun" : "fa-moon"} acadia-icon`;
+    icon.className = `fa-solid ${isDark ? "fa-toggle-on" : "fa-toggle-off"} acadia-icon`;
   }
 }
 

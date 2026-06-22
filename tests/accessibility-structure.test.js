@@ -232,6 +232,20 @@ test("ISS map is exposed as a named interactive region", () => {
   assert.doesNotMatch(js, /id="issMap" role="img"/);
 });
 
+test("ISS status summary stacks and wraps operational metrics", () => {
+  const css = readProjectFile("styles.css");
+  const statusSummaryRule = css.match(/\.iss-status-summary\s*\{[\s\S]*?\n\}/)?.[0] || "";
+  const statusLineRule = css.match(/\.iss-status-line\s*\{[\s\S]*?\n\}/)?.[0] || "";
+  const statusMetricRule = css.match(/\.iss-status-line span\s*\{[\s\S]*?\n\}/)?.[0] || "";
+
+  assert.match(statusSummaryRule, /grid-template-columns:\s*minmax\(0,\s*1fr\);/);
+  assert.match(statusSummaryRule, /align-items:\s*start;/);
+  assert.match(statusLineRule, /flex-wrap:\s*wrap;/);
+  assert.match(statusLineRule, /justify-content:\s*flex-start;/);
+  assert.match(statusMetricRule, /max-width:\s*100%;/);
+  assert.match(statusMetricRule, /overflow-wrap:\s*anywhere;/);
+});
+
 test("repeated disclosure controls receive item-specific accessible names", () => {
   const js = readProjectFile("app.js");
 
@@ -334,6 +348,27 @@ test("watch pages keep the grouped destination active without becoming More", ()
   }
 });
 
+test("theme toggles use Acadia icon action anatomy on every page", () => {
+  const css = readProjectFile("styles.css");
+
+  assert.match(css, /\.apollo-theme-toggle,\s*\n\.acadia-icon-action\s*\{[\s\S]*?height:\s*2\.5rem;/);
+  assert.match(css, /\.apollo-theme-toggle\.is-dark,\s*\n\.acadia-theme-toggle\.is-dark\s*\{[\s\S]*?color:\s*var\(--acadia-color-primary\);/);
+  assert.match(css, /\.apollo-theme-toggle \.acadia-icon,\s*\n\.acadia-theme-toggle \.acadia-icon\s*\{[\s\S]*?font-size:\s*1\.25rem;/);
+
+  for (const file of allHtmlPages) {
+    const html = readProjectFile(file);
+    const toggle = getElementByClass(html, "button", "apollo-theme-toggle");
+    const toggleTag = toggle.match(/<button\b[^>]*>/i)?.[0] || "";
+
+    assert.ok(toggle, `${file} should include the compact theme toggle`);
+    assert.equal(getAttribute(toggleTag, "id"), "themeToggle");
+    assert.equal(getAttribute(toggleTag, "type"), "button");
+    assert.ok(hasClass(toggleTag, "acadia-icon-action"), `${file} should use the Acadia icon action primitive`);
+    assert.ok(hasClass(toggleTag, "acadia-theme-toggle"), `${file} should use the Acadia theme toggle primitive`);
+    assert.match(toggle, /\bfa-toggle-on\b/, `${file} should render the Acadia toggle icon before JavaScript runs`);
+  }
+});
+
 test("internal pages use compact headers instead of dashboard-scale heroes", () => {
   const css = readProjectFile("styles.css");
 
@@ -380,8 +415,8 @@ test("launch timeline exposes urgency context and current asset versions", () =>
   const html = readProjectFile("launches.html");
   const js = readProjectFile("launches.js");
 
-  assert.match(html, /styles\.css\?v=apod-theme-dock-1/);
-  assert.match(html, /launches\.js\?v=launch-timeline-a11y-1/);
+  assert.match(html, /styles\.css\?v=visual-polish-1/);
+  assert.match(html, /launches\.js\?v=visual-polish-1/);
   assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
   assert.doesNotMatch(js, /class="launch-timeline-rail" aria-hidden="true"/);
