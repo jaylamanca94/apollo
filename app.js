@@ -77,7 +77,7 @@ const EARTH_RADIUS_KM = 6371;
 const MINUTES_PER_HOUR = 60;
 const HOURS_PER_DAY = 24;
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
-const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Preparing launch</span>`;
+const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing data</span>`;
 const NASA_MONTH_INDEX = {
   jan: 0,
   feb: 1,

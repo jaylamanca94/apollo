@@ -5,7 +5,7 @@ const THEME_COLORS = {
   light: "#E8EAED"
 };
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
-const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Preparing launch</span>`;
+const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing data</span>`;
 const ERROR_PREFIX = "Houston, we have a problem.";
 
 const els = {

@@ -369,6 +369,23 @@ test("theme toggles use Acadia icon action anatomy on every page", () => {
   }
 });
 
+test("refresh loading copy stays source-neutral across shared pages", () => {
+  const appJs = readProjectFile("app.js");
+  const launchesJs = readProjectFile("launches.js");
+
+  assert.match(appJs, /const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"><\/span><span>Refreshing data<\/span>`;/);
+  assert.match(launchesJs, /const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"><\/span><span>Refreshing data<\/span>`;/);
+  assert.doesNotMatch(appJs, /Preparing launch/);
+  assert.doesNotMatch(launchesJs, /<span>Preparing launch<\/span>/);
+
+  for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
+    const html = readProjectFile(file);
+    assert.match(html, /app\.js\?v=refresh-copy-1/, `${file} should load the current shared app script`);
+  }
+
+  assert.match(readProjectFile("launches.html"), /launches\.js\?v=refresh-copy-1/);
+});
+
 test("internal pages use compact headers instead of dashboard-scale heroes", () => {
   const css = readProjectFile("styles.css");
 
@@ -416,7 +433,7 @@ test("launch timeline exposes urgency context and current asset versions", () =>
   const js = readProjectFile("launches.js");
 
   assert.match(html, /styles\.css\?v=visual-polish-1/);
-  assert.match(html, /launches\.js\?v=visual-polish-1/);
+  assert.match(html, /launches\.js\?v=refresh-copy-1/);
   assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
   assert.doesNotMatch(js, /class="launch-timeline-rail" aria-hidden="true"/);
