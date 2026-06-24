@@ -59,7 +59,7 @@ const SOURCE_STATUS_LABELS = {
 };
 
 const NASA_RATE_LIMIT_MESSAGE = "NASA data is temporarily unavailable because NASA is limiting requests. Other dashboard sections are still live.";
-const ERROR_PREFIX = "Houston, we have a problem.";
+const ERROR_PREFIX = "Data did not load.";
 const NEO_HAZARD_FLAG_CONTEXT = {
   label: "NASA potentially hazardous asteroid flag",
   summary: "NASA's flag reflects an orbit that can pass within about 7.48M km of Earth and an estimated size near 140 m or larger. It is not an impact prediction."
@@ -834,8 +834,8 @@ function renderSkyAnomalyOverview() {
   els.skyAnomalyResults.innerHTML = `
     <div class="sky-anomaly-result-header">
       <div>
-        <p class="section-kicker mb-1">Investigate</p>
-        <h3 class="sky-anomaly-result-title mb-0">Known context loaded</h3>
+        <p class="section-kicker mb-1">Known context</p>
+        <h3 class="sky-anomaly-result-title mb-0">Sources ready</h3>
       </div>
       <span class="sky-explanation-pill sky-explanation-context">Beta</span>
     </div>
@@ -870,7 +870,7 @@ function renderSkyExplanation() {
     <div class="sky-anomaly-result-header">
       <div>
         <p class="section-kicker mb-1">Explain</p>
-        <h3 class="sky-anomaly-result-title mb-0">Apollo Analysis</h3>
+        <h3 class="sky-anomaly-result-title mb-0">Sighting context</h3>
         <p class="sky-anomaly-observed-at mb-0">${escapeHtml(formatDateTime(observedAt.toISOString()))}</p>
       </div>
       <span class="sky-explanation-pill sky-explanation-${escapeHtml(resultTone)}">${escapeHtml(resultSummary)}</span>
@@ -883,8 +883,8 @@ function renderSkyExplanation() {
     </div>
     <section class="sky-analysis-section" aria-labelledby="skyAnalysisTitle">
       <div class="sky-anomaly-section-heading">
-        <p class="section-kicker mb-1">Most likely explanations</p>
-        <h4 class="sky-anomaly-subtitle mb-0" id="skyAnalysisTitle">Source-weighted confidence</h4>
+        <p class="section-kicker mb-1">Possible explanations</p>
+        <h4 class="sky-anomaly-subtitle mb-0" id="skyAnalysisTitle">Source and trait fit</h4>
       </div>
       <ol class="sky-confidence-list mb-0">
         ${candidates.map((candidate, index) => `
@@ -895,7 +895,7 @@ function renderSkyExplanation() {
               <p class="sky-explanation-detail mb-0">${escapeHtml(candidate.detail)}</p>
               <p class="sky-explanation-source mb-0">${escapeHtml(candidate.source)}</p>
             </div>
-            <span class="sky-confidence-score">${candidate.confidence}% confidence</span>
+            <span class="sky-confidence-score">${candidate.confidence}/100 fit</span>
           </li>
         `).join("")}
       </ol>
@@ -903,7 +903,7 @@ function renderSkyExplanation() {
     <section class="sky-evidence-section" aria-labelledby="skyEvidenceTitle">
       <div class="sky-anomaly-section-heading">
         <p class="section-kicker mb-1">Known sky activity</p>
-        <h4 class="sky-anomaly-subtitle mb-0" id="skyEvidenceTitle">Evidence checked</h4>
+        <h4 class="sky-anomaly-subtitle mb-0" id="skyEvidenceTitle">Sources checked</h4>
       </div>
       <div class="sky-evidence-grid">
         ${evidenceRows.map((row) => `
@@ -935,7 +935,7 @@ function renderSkyExplanation() {
         </div>
       </details>
     </section>
-    <p class="sky-anomaly-note mb-0">Confidence reflects Apollo's connected sources and observation traits; it is not an identity claim.</p>
+    <p class="sky-anomaly-note mb-0">Fit scores reflect Apollo's connected sources and observation traits; they are not identity claims.</p>
   `;
 }
 
@@ -1800,7 +1800,7 @@ function getIssOrbitalBriefText(iss, peopleState) {
   const velocity = iss?.velocity !== null ? formatNumber(iss.velocity, { suffix: " km/h" }) : "orbital velocity";
   const crewText = peopleState?.count
     ? `${peopleState.count.toLocaleString()} ${peopleState.count === 1 ? "crew member" : "crew members"} aboard`
-    : "the current crew manifest loading";
+    : "the current crew roster loading";
   const craftList = peopleState?.craftGroups?.length
     ? ` Crew are distributed across ${formatReadableList(peopleState.craftGroups.map((group) => group.craft))}.`
     : "";
@@ -1964,11 +1964,11 @@ function setBusy(element, isBusy) {
 
 function resetQuickStats() {
   [
-    ["iss", "Preflight", "Acquiring orbit", "loading"],
-    ["people", "Preflight", "Checking crew manifest", "loading"],
-    ["launches", "Preflight", "Opening launch window", "loading"],
-    ["neo", "Preflight", "Scanning near-Earth space", "loading"],
-    ["spaceWeather", "Preflight", "Reading solar weather", "loading"]
+    ["iss", "Loading", "Loading ISS position", "loading"],
+    ["people", "Loading", "Checking crew roster", "loading"],
+    ["launches", "Loading", "Loading launch schedule", "loading"],
+    ["neo", "Loading", "Loading asteroid list", "loading"],
+    ["spaceWeather", "Loading", "Loading space weather", "loading"]
   ].forEach(([id, value, detail, state]) => {
     setQuickStat(id, { value, detail, state });
   });
@@ -2064,7 +2064,7 @@ function renderIssMap(data) {
   }
 
   if (!window.L || data.latitude === null || data.longitude === null) {
-    mapElement.innerHTML = stateMessage("Mission control is reacquiring the ISS map signal.");
+    mapElement.innerHTML = stateMessage("Reacquiring the ISS map position.");
     return;
   }
 
@@ -2372,12 +2372,12 @@ function renderDashboardAnomalySummary() {
       <div class="summary-metric mb-3">
         <span class="stat-chip"><i class="fa-solid fa-magnifying-glass-location acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="text-secondary small mb-1">Sky Explanation Engine</p>
+          <p class="text-secondary small mb-1">Sighting context check</p>
           <p class="h3 fw-semibold mb-0">What did I see?</p>
         </div>
       </div>
-      <p class="dashboard-summary-detail mb-3">Compare a sighting against launches, ISS context, meteor/fireball gaps, space weather, and reported-sighting sources.</p>
-      ${detailLink("./anomalies.html", "Open engine")}
+      <p class="dashboard-summary-detail mb-3">Check a sighting against launches, ISS position, space weather, asteroid context, and planned report-source gaps.</p>
+      ${detailLink("./anomalies.html", "Check sighting")}
     </div>
   `;
 }
@@ -2583,10 +2583,10 @@ function resetSpaceBrief() {
   }
 
   if (els.dashboardSubtitle && isDashboardPage()) {
-    els.dashboardSubtitle.textContent = "Space Activity: Preflight";
+    els.dashboardSubtitle.textContent = "Space Activity: Loading";
   }
 
-  els.spaceBriefBody.innerHTML = stateMessage("Writing the mission brief...");
+  els.spaceBriefBody.innerHTML = stateMessage("Writing the space brief...");
 }
 
 function commandPanelRow({ icon, label, title, detail, time, href }) {
@@ -2724,24 +2724,24 @@ function renderCommandPanels() {
     const rows = getRecentActivityRows();
     els.recentActivityBody.innerHTML = rows.length
       ? `<div class="command-panel-list">${rows.slice(0, 4).map(commandPanelRow).join("")}</div>`
-      : stateMessage("Mission control is waiting for activity telemetry.");
+      : stateMessage("No recent activity is available yet.");
   }
 
   if (els.watchItemsBody) {
     const rows = getWatchItemRows();
     els.watchItemsBody.innerHTML = rows.length
       ? `<div class="command-panel-list">${rows.slice(0, 4).map(commandPanelRow).join("")}</div>`
-      : stateMessage("Watch items are still coming over the downlink.");
+      : stateMessage("No watch items are available yet.");
   }
 }
 
 function resetCommandPanels() {
   if (els.recentActivityBody) {
-    els.recentActivityBody.innerHTML = stateMessage("Checking the mission log...");
+    els.recentActivityBody.innerHTML = stateMessage("Checking recent activity...");
   }
 
   if (els.watchItemsBody) {
-    els.watchItemsBody.innerHTML = stateMessage("Scanning the watchlist...");
+    els.watchItemsBody.innerHTML = stateMessage("Checking watch items...");
   }
 }
 
@@ -3150,13 +3150,13 @@ async function loadPeople() {
     );
   } catch (error) {
     dashboardData.people = null;
-    setError(els.peopleBody, "The crew manifest did not come through. Try refreshing in a moment.");
+    setError(els.peopleBody, "The crew roster did not load. Try refreshing in a moment.");
     setQuickStat("people", {
       value: "Unavailable",
       detail: "Crew signal lost",
       state: "error"
     });
-    return createSourceStatus("people", "error", "Crew manifest signal did not come through.");
+    return createSourceStatus("people", "error", "Crew roster did not load.");
   }
 }
 
@@ -3255,13 +3255,13 @@ async function loadLaunches() {
     return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded; next launch ${formatDateTime(launches[0].dateUtc)} (${formatLaunchWindowSummary(launches[0])}).`);
   } catch (error) {
     dashboardData.launches = [];
-    setError(els.launchBody, "The launch manifest did not come through. Other dashboard sections remain available.");
+    setError(els.launchBody, "The launch schedule did not load. Other dashboard sections remain available.");
     setQuickStat("launches", {
       value: "Unavailable",
-      detail: "Manifest signal lost",
+      detail: "Schedule unavailable",
       state: "error"
     });
-    return createSourceStatus("launches", "error", "Launch manifest signal did not come through.");
+    return createSourceStatus("launches", "error", "Launch schedule did not load.");
   }
 }
 
@@ -3578,7 +3578,7 @@ async function loadSpaceWeather() {
 }
 
 async function loadDashboard() {
-  setDashboardStatus("Preparing fresh telemetry.");
+  setDashboardStatus("Refreshing live data.");
   dashboardData.apod = null;
   dashboardData.iss = null;
   dashboardData.people = null;
@@ -3623,7 +3623,7 @@ async function loadDashboard() {
   busyElements.forEach((element) => setBusy(element, true));
 
   if (els.skyAnomalyResults && pageType === "anomalies") {
-    els.skyAnomalyResults.innerHTML = stateMessage("Triangulating sky context...");
+    els.skyAnomalyResults.innerHTML = stateMessage("Checking known sky context...");
   }
 
   if (els.quickStatsBody) {

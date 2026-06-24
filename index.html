@@ -86,13 +86,13 @@
       </div>
 
       <main class="apollo-shell acadia-shell" id="dashboard" aria-labelledby="dashboardTitle">
-        <div id="dashboardStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Preparing mission control.</div>
+        <div id="dashboardStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Preparing dashboard data.</div>
         <div class="d-flex flex-column apollo-page-stack">
           <header class="apollo-page-header acadia-page-header acadia-surface acadia-panel">
             <div class="apollo-title-block acadia-page-header-copy">
               <p class="section-kicker acadia-kicker apollo-hero-kicker mb-0">Live space intelligence</p>
               <h1 class="apollo-page-title acadia-display mb-0" id="dashboardTitle">Apollo</h1>
-              <p class="apollo-page-subtitle acadia-text-muted mb-0">Space Activity: Calm</p>
+              <p class="apollo-page-subtitle acadia-text-muted mb-0">Space Activity: Loading</p>
             </div>
             <div class="apollo-dashboard-actions acadia-page-actions">
               <p class="apollo-update-pill acadia-badge mb-0" id="dashboardUpdated">Last updated: Standing by</p>
@@ -110,40 +110,40 @@
                 <span class="apollo-quick-stat-icon"><i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i></span>
                 <div>
                   <p class="apollo-quick-stat-label mb-0">ISS</p>
-                  <p class="apollo-quick-stat-value mb-0">Preflight</p>
-                  <p class="apollo-quick-stat-detail mb-0">Acquiring orbit</p>
+                  <p class="apollo-quick-stat-value mb-0">Loading</p>
+                  <p class="apollo-quick-stat-detail mb-0">Loading ISS position</p>
                 </div>
               </article>
               <article class="apollo-quick-stat acadia-surface" data-quick-stat="people">
                 <span class="apollo-quick-stat-icon"><i class="fa-solid fa-user-astronaut acadia-icon" aria-hidden="true"></i></span>
                 <div>
                   <p class="apollo-quick-stat-label mb-0">Crew</p>
-                  <p class="apollo-quick-stat-value mb-0">Preflight</p>
-                  <p class="apollo-quick-stat-detail mb-0">Checking crew manifest</p>
+                  <p class="apollo-quick-stat-value mb-0">Loading</p>
+                  <p class="apollo-quick-stat-detail mb-0">Checking crew roster</p>
                 </div>
               </article>
               <article class="apollo-quick-stat acadia-surface" data-quick-stat="launches">
                 <span class="apollo-quick-stat-icon"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></span>
                 <div>
                   <p class="apollo-quick-stat-label mb-0">Next Launch</p>
-                  <p class="apollo-quick-stat-value mb-0">Preflight</p>
-                  <p class="apollo-quick-stat-detail mb-0">Opening launch window</p>
+                  <p class="apollo-quick-stat-value mb-0">Loading</p>
+                  <p class="apollo-quick-stat-detail mb-0">Loading launch schedule</p>
                 </div>
               </article>
               <article class="apollo-quick-stat acadia-surface" data-quick-stat="neo">
                 <span class="apollo-quick-stat-icon"><i class="fa-solid fa-meteor acadia-icon" aria-hidden="true"></i></span>
                 <div>
                   <p class="apollo-quick-stat-label mb-0">Asteroids</p>
-                  <p class="apollo-quick-stat-value mb-0">Preflight</p>
-                  <p class="apollo-quick-stat-detail mb-0">Scanning near-Earth space</p>
+                  <p class="apollo-quick-stat-value mb-0">Loading</p>
+                  <p class="apollo-quick-stat-detail mb-0">Loading asteroid list</p>
                 </div>
               </article>
               <article class="apollo-quick-stat acadia-surface" data-quick-stat="spaceWeather">
                 <span class="apollo-quick-stat-icon"><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i></span>
                 <div>
                   <p class="apollo-quick-stat-label mb-0">Space Weather</p>
-                  <p class="apollo-quick-stat-value mb-0">Preflight</p>
-                  <p class="apollo-quick-stat-detail mb-0">Reading solar weather</p>
+                  <p class="apollo-quick-stat-value mb-0">Loading</p>
+                  <p class="apollo-quick-stat-detail mb-0">Loading space weather</p>
                 </div>
               </article>
             </div>
@@ -154,7 +154,7 @@
             <div class="apollo-space-brief-body" id="spaceBriefBody" aria-live="polite" aria-busy="true">
               <div class="state-message acadia-alert mb-0">
                 <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
-                <span>Writing the mission brief...</span>
+                <span>Writing the space brief...</span>
               </div>
             </div>
           </section>
@@ -169,7 +169,7 @@
               <div class="card-body section-card-body" id="recentActivityBody" aria-live="polite" aria-busy="true">
                 <div class="state-message acadia-alert mb-0">
                   <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
-                  <span>Checking the mission log...</span>
+                  <span>Checking recent activity...</span>
                 </div>
               </div>
             </section>
@@ -183,7 +183,7 @@
               <div class="card-body section-card-body" id="watchItemsBody" aria-live="polite" aria-busy="true">
                 <div class="state-message acadia-alert mb-0">
                   <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
-                  <span>Scanning the watchlist...</span>
+                  <span>Checking watch items...</span>
                 </div>
               </div>
             </section>
@@ -194,6 +194,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="./app.js?v=refresh-copy-1"></script>
+    <script src="./app.js?v=clarity-copy-1"></script>
   </body>
 </html>

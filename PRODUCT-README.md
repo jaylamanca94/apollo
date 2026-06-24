@@ -32,7 +32,7 @@ In scope:
 - Upcoming SpaceX launches
 - NOAA SWPC space weather
 - Near-Earth asteroid daily summary
-- Sky Anomalies explanation engine beta
+- Sky Anomalies sighting context check beta
 - Dedicated launches detail page
 - Dedicated ISS, asteroid, weather, gallery, and anomaly pages
 - Responsive Bootstrap dashboard UI
@@ -119,7 +119,7 @@ Recommended next steps:
 Future enhancements only if requested:
 
 - Location-based ISS pass times
-- Location-aware Sky Explanation Engine with ISS pass, satellite visibility, Starlink, fireball, aurora, and reported-sighting matching
+- Location-aware sky sighting checks with ISS pass, satellite visibility, Starlink, fireball, aurora, and reported-sighting matching
 - Asteroid or launch charts
 - Data filters
 - Auth

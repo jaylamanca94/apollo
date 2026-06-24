@@ -380,10 +380,10 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=refresh-copy-1/, `${file} should load the current shared app script`);
+    assert.match(html, /app\.js\?v=clarity-copy-1/, `${file} should load the current shared app script`);
   }
 
-  assert.match(readProjectFile("launches.html"), /launches\.js\?v=refresh-copy-1/);
+  assert.match(readProjectFile("launches.html"), /launches\.js\?v=clarity-copy-1/);
 });
 
 test("internal pages use compact headers instead of dashboard-scale heroes", () => {
@@ -433,7 +433,7 @@ test("launch timeline exposes urgency context and current asset versions", () =>
   const js = readProjectFile("launches.js");
 
   assert.match(html, /styles\.css\?v=visual-polish-1/);
-  assert.match(html, /launches\.js\?v=refresh-copy-1/);
+  assert.match(html, /launches\.js\?v=clarity-copy-1/);
   assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
   assert.doesNotMatch(js, /class="launch-timeline-rail" aria-hidden="true"/);

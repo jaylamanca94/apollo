@@ -6,7 +6,7 @@ const THEME_COLORS = {
 };
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
 const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing data</span>`;
-const ERROR_PREFIX = "Houston, we have a problem.";
+const ERROR_PREFIX = "Data did not load.";
 
 const els = {
   refreshButton: document.querySelector("#launchesRefreshButton"),
@@ -346,7 +346,7 @@ function setLaunchesUpdated(value = formatUpdated()) {
 }
 
 function setError(message) {
-  const text = getText(message, "Launch telemetry did not come through.");
+  const text = getText(message, "Launch schedule did not load.");
   els.launchPageBody.innerHTML = stateMessage(text.startsWith(ERROR_PREFIX) ? text : `${ERROR_PREFIX} ${text}`, { role: "alert", tone: "warning" });
 }
 
@@ -512,7 +512,7 @@ function renderLaunches(launches) {
 }
 
 async function loadLaunches() {
-  setLaunchPageStatus("Preparing the launch manifest.");
+  setLaunchPageStatus("Loading launch schedule.");
   setBusy(els.launchPageBody, true);
 
   if (els.refreshButton) {
@@ -522,11 +522,11 @@ async function loadLaunches() {
 
   try {
     renderLaunches(normalizeLaunches(await fetchJson(LAUNCHES_API)));
-    setLaunchPageStatus("Launch manifest is ready.");
+    setLaunchPageStatus("Launch schedule loaded.");
     setLaunchesUpdated();
   } catch (error) {
-    setError("The launch manifest did not come through. Try refreshing in a moment.");
-    setLaunchPageStatus("Houston, we have a problem. Launch telemetry did not arrive.");
+    setError("The launch schedule did not load. Try refreshing in a moment.");
+    setLaunchPageStatus("Data did not load. Launch schedule did not arrive.");
     setLaunchesUpdated("Last updated: Signal lost");
   } finally {
     setBusy(els.launchPageBody, false);

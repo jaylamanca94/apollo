@@ -74,12 +74,12 @@
       </div>
 
       <main class="apollo-shell acadia-shell" id="anomalies-content" aria-labelledby="dashboardTitle">
-        <div id="dashboardStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Triangulating sky context.</div>
+        <div id="dashboardStatus" class="visually-hidden" aria-live="polite" aria-atomic="true">Checking known sky context.</div>
         <div class="d-flex flex-column apollo-page-stack">
           <header class="apollo-page-header acadia-page-header acadia-surface acadia-panel">
             <div class="apollo-title-block acadia-page-header-copy">
               <h1 class="apollo-page-title acadia-display mb-0" id="dashboardTitle">Sky Anomalies</h1>
-              <p class="apollo-page-subtitle acadia-text-muted mb-0">Sky Explanation Engine</p>
+              <p class="apollo-page-subtitle acadia-text-muted mb-0">Sighting Context Check</p>
             </div>
             <div class="apollo-dashboard-actions acadia-page-actions">
               <p class="apollo-update-pill acadia-badge mb-0" id="dashboardUpdated">Last updated: Standing by</p>
@@ -97,8 +97,8 @@
                   <div class="summary-metric sky-anomaly-summary mb-3">
                     <span class="stat-chip"><i class="fa-solid fa-magnifying-glass-location acadia-icon" aria-hidden="true"></i></span>
                     <div>
-                      <p class="text-secondary small mb-1">Observe</p>
-                      <p class="h3 fw-semibold mb-0">Report a sighting</p>
+                      <p class="text-secondary small mb-1">Describe</p>
+                      <p class="h3 fw-semibold mb-0">Check a sighting</p>
                     </div>
                   </div>
                   <form class="sky-anomaly-form" id="skyAnomalyForm">
@@ -142,11 +142,11 @@
                         <label><input type="radio" name="duration" value="unknown"><span>Unknown</span></label>
                       </div>
                     </fieldset>
-                    <button class="btn sky-anomaly-submit acadia-button" type="submit"><i class="fa-solid fa-wand-magic-sparkles acadia-icon" aria-hidden="true"></i><span>Explain sighting</span></button>
+                    <button class="btn sky-anomaly-submit acadia-button" type="submit"><i class="fa-solid fa-wand-magic-sparkles acadia-icon" aria-hidden="true"></i><span>Check sighting</span></button>
                   </form>
                 </div>
                 <div class="sky-anomaly-results" id="skyAnomalyResults">
-                  <div class="state-message acadia-alert mb-0"><i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i><span>Triangulating sky context...</span></div>
+                  <div class="state-message acadia-alert mb-0"><i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i><span>Checking known sky context...</span></div>
                 </div>
               </div>
             </div>
@@ -156,6 +156,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="./app.js?v=refresh-copy-1"></script>
+    <script src="./app.js?v=clarity-copy-1"></script>
   </body>
 </html>
