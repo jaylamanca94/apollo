@@ -28,6 +28,21 @@ const watchNavLinks = [
   { href: "./anomalies.html", label: "Anomalies", page: "anomalies.html" }
 ];
 
+const publicPageNavLinks = [
+  { href: "./index.html", label: "Dashboard" },
+  { href: "./iss.html", label: "ISS" },
+  { href: "./launches.html", label: "Launches" },
+  { href: "./weather.html", label: "Weather" },
+  { href: "./asteroids.html", label: "Asteroids" },
+  { href: "./gallery.html", label: "Gallery" },
+  { href: "./anomalies.html", label: "Anomalies" }
+];
+
+const dashboardNavLinks = [
+  { href: "#dashboard", label: "Dashboard" },
+  ...publicPageNavLinks.slice(1)
+];
+
 const pages = [
   {
     file: "index.html",
@@ -37,21 +52,24 @@ const pages = [
     statusId: "dashboardStatus",
     refreshButtonId: "refreshButton",
     activeNavLabel: "Dashboard",
-    expectedNavLinks: [
-      { href: "#dashboard", label: "Dashboard" },
-      { href: "./iss.html", label: "ISS" },
-      { href: "./launches.html", label: "Launches" },
-      { href: "./weather.html", label: "Weather" },
-      { href: "./asteroids.html", label: "Asteroids" },
-      { href: "./gallery.html", label: "Gallery" },
-      { href: "./anomalies.html", label: "Anomalies" }
-    ],
+    expectedNavLinks: dashboardNavLinks,
     controlledIds: [
       "quickStatsBody",
       "spaceBriefBody",
       "recentActivityBody",
       "watchItemsBody"
     ]
+  },
+  {
+    file: "iss.html",
+    name: "ISS page",
+    skipTarget: "iss-content",
+    headingId: "dashboardTitle",
+    statusId: "dashboardStatus",
+    refreshButtonId: "refreshButton",
+    activeNavLabel: "ISS",
+    expectedNavLinks: publicPageNavLinks,
+    controlledIds: ["issBody", "peopleBody"]
   },
   {
     file: "launches.html",
@@ -61,16 +79,52 @@ const pages = [
     statusId: "launchPageStatus",
     refreshButtonId: "launchesRefreshButton",
     activeNavLabel: "Launches",
-    expectedNavLinks: [
-      { href: "./index.html", label: "Dashboard" },
-      { href: "./iss.html", label: "ISS" },
-      { href: "./launches.html", label: "Launches" },
-      { href: "./weather.html", label: "Weather" },
-      { href: "./asteroids.html", label: "Asteroids" },
-      { href: "./gallery.html", label: "Gallery" },
-      { href: "./anomalies.html", label: "Anomalies" }
-    ],
+    expectedNavLinks: publicPageNavLinks,
     controlledIds: ["launchPageBody"]
+  },
+  {
+    file: "asteroids.html",
+    name: "asteroids page",
+    skipTarget: "asteroids-content",
+    headingId: "dashboardTitle",
+    statusId: "dashboardStatus",
+    refreshButtonId: "refreshButton",
+    activeNavLabel: "Asteroids",
+    expectedNavLinks: publicPageNavLinks,
+    controlledIds: ["neoRiskAlert", "neoBody"]
+  },
+  {
+    file: "weather.html",
+    name: "weather page",
+    skipTarget: "weather-content",
+    headingId: "dashboardTitle",
+    statusId: "dashboardStatus",
+    refreshButtonId: "refreshButton",
+    activeNavLabel: "Weather",
+    expectedNavLinks: publicPageNavLinks,
+    controlledIds: ["spaceWeatherBody"]
+  },
+  {
+    file: "gallery.html",
+    name: "gallery page",
+    skipTarget: "gallery-content",
+    headingId: "dashboardTitle",
+    statusId: "dashboardStatus",
+    refreshButtonId: "refreshButton",
+    activeNavLabel: "Gallery",
+    expectedNavLinks: publicPageNavLinks,
+    controlledIds: ["apodBody"]
+  },
+  {
+    file: "anomalies.html",
+    name: "anomalies page",
+    skipTarget: "anomalies-content",
+    headingId: "dashboardTitle",
+    statusId: "dashboardStatus",
+    refreshButtonId: "refreshButton",
+    activeNavLabel: "Anomalies",
+    expectedNavLinks: publicPageNavLinks,
+    controlledIds: ["skyAnomaliesBody"]
   }
 ];
 

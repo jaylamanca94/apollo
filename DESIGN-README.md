@@ -33,6 +33,16 @@ Apollo now treats `../Acadia` as the shared design-system baseline. Before addin
 - Keep adapter-owned hover and focus motion covered by Apollo's `prefers-reduced-motion` override.
 - If an Apollo pattern becomes useful for another product, graduate the neutral part into Acadia and keep Apollo's wording/data treatment here.
 
+### Relay-Informed Mobile Standard
+
+Relay is the current Acadia reference for mobile product judgment. Apollo should adopt the neutral lessons without copying Relay's media styling:
+
+- Each phone screen should answer one space-data question and make the next action obvious.
+- Keep object, source, freshness, risk/status, and action attached in launch, asteroid, weather, ISS, and gallery rows.
+- Let focused search, watch, and source-detail flows use bottom-friendly controls and remove competing navigation when the task needs attention.
+- Never let sample, unavailable, delayed, or fallback space data masquerade as live source-backed activity.
+- Keep mobile dashboards decision-oriented; deeper maps, rosters, explanations, and diagnostics belong on detail pages.
+
 ## Color
 
 ### Light Mode
@@ -221,7 +231,7 @@ Current icon mapping:
 - Provide a hidden skip link on every page so keyboard users can move directly to the main content.
 - Preserve visible focus states.
 - Use semantic HTML whenever practical.
-- Dynamic dashboard panels should expose loading and refresh changes with `aria-live` and `aria-busy`; refresh controls should point to a concise live status message and list the regions they refresh with `aria-controls`.
+- Dynamic dashboard and detail-page panels should expose loading and refresh changes with `aria-live` and `aria-busy`; refresh controls should point to a concise live status message and list the regions they refresh with `aria-controls`. Every region listed in `aria-controls` should start with `aria-busy="true"` while initial data is loading.
 - Interactive embedded maps should be exposed as named regions, not static images, so map controls remain reachable to assistive technology.
 - Nonessential hover, focus, and disclosure motion should respect `prefers-reduced-motion`.
 - Keep text readable in both light and dark mode.

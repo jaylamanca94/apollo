@@ -50,7 +50,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `api/space-weather.js` - serverless NOAA SWPC endpoint for current space weather status
 - `api/health.js` - serverless health endpoint for uptime checks and server configuration status
 - `tests/api-contracts.test.js` - fixture tests for normalized API response contracts
-- `tests/accessibility-structure.test.js` - static accessibility contract checks for page landmarks, live regions, skip links, and refresh controls
+- `tests/accessibility-structure.test.js` - static accessibility contract checks for public-page landmarks, live regions, skip links, navigation state, and refresh controls
 - `tests/people-render.test.js` - focused frontend helper coverage for crew roster spacecraft parsing and APOD media rendering
 - `package.json` - local development/check scripts
 - `vercel.json` - Vercel deployment configuration
@@ -140,7 +140,7 @@ Run the project checks with:
 npm run check
 ```
 
-This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, launch, and space-weather contracts, static accessibility structure checks, and focused crew roster/APOD media rendering helpers.
+This validates JavaScript syntax and runs fixture tests for the normalized APOD, Near-Earth Object, launch, and space-weather contracts, static accessibility structure checks across public pages, and focused crew roster/APOD media rendering helpers.
 
 GitHub Actions runs the same checks on pushes to `main` and on pull requests.
 
