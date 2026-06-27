@@ -103,6 +103,14 @@ Use `DESIGN-README.md` as the product's design source of truth.
 - Treat work pushed only to a non-main branch as incomplete unless a true external blocker prevents merging or pushing to `main`.
 - If validation, lint, tests, build, or runtime verification fails, diagnose and fix the issue, rerun the relevant checks, then commit and push the resolved work to `origin/main`.
 
+## Native Apple Platform Work
+
+- When Apollo work touches iOS, iPadOS, tvOS, watchOS, visionOS, Swift, SwiftUI, an Xcode project/workspace, or anything expected to run in an Apple simulator, keep Xcode current as part of the same task.
+- Do not let source files, assets, entitlements, build settings, schemes, target membership, build phases, package references, generated project files, or local workspace state drift away from what Xcode will build and run.
+- Founder requests for Apollo Apple-platform work are approval for agents to use Xcode, Xcode build tools, Simulator, `simctl`, device/scheme selection, derived-data cleanup, and simulator build/run verification needed to complete the request.
+- Completion requires the relevant Xcode target to build and the intended simulator flow to remain usable whenever local tooling allows it. If that cannot be done, document the exact Apple account, signing, device, network, toolchain, or hardware blocker.
+- Not keeping Xcode up to date, leaving a forked/outdated project state, or breaking the simulator review path means the task is incomplete.
+
 ## Failure And Blocker Handling
 
 - Diagnose and try to resolve tool, network, GitHub, Vercel, Supabase, dependency, test, build, lint, and environment failures before reporting a blocker.
