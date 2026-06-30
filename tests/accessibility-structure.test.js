@@ -57,7 +57,8 @@ const pages = [
       "quickStatsBody",
       "spaceBriefBody",
       "recentActivityBody",
-      "watchItemsBody"
+      "watchItemsBody",
+      "sourceStatusBody"
     ]
   },
   {
@@ -343,10 +344,72 @@ test("dashboard stops at command-center panels instead of duplicating detail pag
 
   assert.match(html, /\bid="recentActivityBody"/);
   assert.match(html, /\bid="watchItemsBody"/);
+  assert.match(html, /\bid="sourceStatusBody"/);
+  assert.match(html, /Data Sources/);
 
-  for (const removedRegion of ["issBody", "peopleBody", "launchBody", "neoBody", "spaceWeatherBody", "apodBody", "skyAnomaliesBody", "sourceStatusBody"]) {
+  for (const removedRegion of ["issBody", "peopleBody", "launchBody", "neoBody", "spaceWeatherBody", "apodBody", "skyAnomaliesBody"]) {
     assert.doesNotMatch(html, new RegExp(`\\bid="${removedRegion}"`), `dashboard should not include ${removedRegion}`);
   }
+});
+
+test("dashboard source state avoids overclaiming during partial loads", () => {
+  const html = readProjectFile("index.html");
+  const js = readProjectFile("app.js");
+
+  assert.match(html, /data-source-state="loading"/);
+  assert.doesNotMatch(html, /<span>Live data<\/span>/);
+  assert.match(js, /function getSourceStateFamily\(statuses\)/);
+  assert.match(js, /label:\s*"Partial data"/);
+  assert.match(js, /label:\s*"Data unavailable"/);
+  assert.match(js, /setDashboardFreshness\(statuses, checkedAt\)/);
+});
+
+test("detail pages render intentional unavailable source states", () => {
+  const appJs = readProjectFile("app.js");
+  const launchesJs = readProjectFile("launches.js");
+
+  assert.match(appJs, /function unavailableStateMarkup/);
+  assert.match(appJs, /NASA image did not load/);
+  assert.match(appJs, /Near-Earth asteroid list did not load/);
+  assert.match(appJs, /Space-weather conditions did not load/);
+  assert.match(launchesJs, /function renderLaunchesUnavailable/);
+  assert.match(launchesJs, /Launch schedule did not load/);
+  assert.match(launchesJs, /setLaunchesUpdated\(formatLastChecked\(\)\)/);
+  assert.doesNotMatch(launchesJs, /Last updated: Signal lost/);
+});
+
+test("sky anomaly results use qualitative evidence and explicit assumptions", () => {
+  const js = readProjectFile("app.js");
+
+  assert.doesNotMatch(js, /\/100 fit/);
+  assert.doesNotMatch(js, /Fit scores reflect/);
+  assert.match(js, /Planned source gap/);
+  assert.match(js, /Connected source match/);
+  assert.match(js, /browser-local time/);
+  assert.match(js, /Location "\$\{escapeHtml\(location\)\}" is descriptive context/);
+  assert.match(js, /not doing location-aware overhead, aircraft, planet, fireball, or UAP matching yet/);
+});
+
+test("watch items prioritize loaded signals before source limitations", () => {
+  const js = readProjectFile("app.js");
+
+  assert.match(js, /const availableRows = \[\];/);
+  assert.match(js, /const limitationRows = \[\];/);
+  assert.match(js, /label:\s*"ISS track"/);
+  assert.match(js, /label:\s*"Orbital presence"/);
+  assert.match(js, /label:\s*"Source limitation"/);
+  assert.match(js, /return \[\.\.\.availableRows, \.\.\.limitationRows\];/);
+});
+
+test("freshness copy separates successful updates from failed checks", () => {
+  const appJs = readProjectFile("app.js");
+  const launchesJs = readProjectFile("launches.js");
+
+  assert.match(appJs, /function formatLastChecked\(date = new Date\(\)\)/);
+  assert.match(appJs, /formatUpdated\(checkedAt\) : formatLastChecked\(checkedAt\)/);
+  assert.match(launchesJs, /function formatLastChecked\(date = new Date\(\)\)/);
+  assert.doesNotMatch(appJs, /Signal lost/);
+  assert.doesNotMatch(launchesJs, /Signal lost/);
 });
 
 test("header primary nav exposes five named destinations without a generic overflow", () => {
@@ -477,6 +540,7 @@ test("mobile dock stays viewport-bottom anchored", () => {
   assert.match(mobileDockRule, /color:\s*var\(--acadia-mobile-nav-color\);/);
   assert.match(mobileDockRule, /bottom:\s*calc\(var\(--acadia-mobile-tabbar-bottom,\s*1\.25rem\) \+ env\(safe-area-inset-bottom\)\);/);
   assert.match(mobileDockRule, /top:\s*auto;/);
+  assert.match(mobileBlock, /\.apollo-shell\s*\{[\s\S]*?padding:\s*28px var\(--acadia-page-margin\) calc\(8\.75rem \+ env\(safe-area-inset-bottom\)\);/);
   assert.match(css, /html\[data-bs-theme="light"\]\s*\{[\s\S]*?--acadia-mobile-nav-background:\s*rgba\(250, 250, 252, 0\.84\);/);
   assert.match(css, /--acadia-mobile-nav-active-background:\s*rgba\(15, 23, 42, 0\.1\);/);
   assert.match(css, /--acadia-mobile-nav-focus-halo:\s*rgba\(255, 255, 255, 0\.22\);/);

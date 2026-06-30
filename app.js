@@ -106,6 +106,7 @@ const els = {
   refreshButton: document.querySelector("#refreshButton"),
   refreshButtonMobile: document.querySelector("#refreshButtonMobile"),
   themeToggle: document.querySelector("#themeToggle"),
+  liveChip: document.querySelector(".apollo-live-chip"),
   dashboardUpdated: document.querySelector("#dashboardUpdated"),
   dashboardSubtitle: document.querySelector(".apollo-page-subtitle"),
   peopleBody: document.querySelector("#peopleBody"),
@@ -128,9 +129,14 @@ const els = {
   sourceStatusBody: document.querySelector("#sourceStatusBody"),
   dashboardStatus: document.querySelector("#dashboardStatus")
 };
+let latestSourceStatuses = new Map();
 
 function formatUpdated(date = new Date()) {
   return `Last updated: ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+}
+
+function formatLastChecked(date = new Date()) {
+  return `Last checked: ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
 }
 
 function formatCheckedAt(date = new Date()) {
@@ -486,6 +492,34 @@ function getSkyObservationDate() {
   return Number.isFinite(observedAt.getTime()) ? observedAt : new Date();
 }
 
+function getSkyObservationContext() {
+  const dateValue = els.skyAnomalyDate?.value;
+  const timeValue = els.skyAnomalyTime?.value;
+  const hasDate = Boolean(dateValue);
+  const hasTime = Boolean(timeValue);
+  const observedAt = getSkyObservationDate();
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "browser local time";
+
+  if (hasDate && hasTime) {
+    return {
+      observedAt,
+      timeSummary: `Apollo interpreted ${dateValue} at ${timeValue} as browser-local time (${timezone}).`
+    };
+  }
+
+  if (hasDate || hasTime) {
+    return {
+      observedAt,
+      timeSummary: `The sighting time was incomplete, so Apollo used the current browser-local time (${timezone}) for this beta check.`
+    };
+  }
+
+  return {
+    observedAt,
+    timeSummary: `No sighting time was entered, so Apollo used the current browser-local time (${timezone}) for this beta check.`
+  };
+}
+
 function getSkyAnomalyLocation() {
   return getText(els.skyAnomalyLocation?.value, "Selected location");
 }
@@ -528,7 +562,7 @@ function getSkyObservationTraits() {
   };
 }
 
-function clampConfidence(value) {
+function clampSortScore(value) {
   return Math.max(5, Math.min(96, Math.round(value)));
 }
 
@@ -554,11 +588,12 @@ function getSkyConfidenceCandidates(rows, traits) {
 
   const addCandidate = ({ detail, label, source, state, score }) => {
     candidates.push({
-      confidence: clampConfidence(score),
       detail,
+      evidenceLabel: getSkyEvidenceLabel({ source, state }),
       label,
       source,
-      state
+      state,
+      sortScore: clampSortScore(score)
     });
   };
 
@@ -623,8 +658,32 @@ function getSkyConfidenceCandidates(rows, traits) {
   }
 
   return candidates
-    .sort((left, right) => right.confidence - left.confidence)
+    .sort((left, right) => right.sortScore - left.sortScore)
     .slice(0, 4);
+}
+
+function getSkyEvidenceLabel(candidate) {
+  const source = getText(candidate?.source);
+  const state = candidate?.state || "unknown";
+  const isPlanned = /planned/i.test(source);
+
+  if (isPlanned) {
+    return "Planned source gap";
+  }
+
+  if (state === "strong") {
+    return "Connected source match";
+  }
+
+  if (state === "possible") {
+    return "Partial source context";
+  }
+
+  if (state === "context" || state === "weak") {
+    return "Trait-only possibility";
+  }
+
+  return "Source unavailable";
 }
 
 function getSkyEvidenceRows(rows) {
@@ -856,7 +915,8 @@ function renderSkyExplanation() {
     return;
   }
 
-  const observedAt = getSkyObservationDate();
+  const observationContext = getSkyObservationContext();
+  const observedAt = observationContext.observedAt;
   const location = getSkyAnomalyLocation();
   const rows = getSkyExplanationRows(observedAt);
   const traits = getSkyObservationTraits();
@@ -881,10 +941,14 @@ function renderSkyExplanation() {
       <span>${escapeHtml(traits.brightnessLabel)}</span>
       <span>${escapeHtml(traits.durationLabel)}</span>
     </div>
+    <div class="sky-assumption-list">
+      <p class="mb-0">${escapeHtml(observationContext.timeSummary)}</p>
+      <p class="mb-0">Location "${escapeHtml(location)}" is descriptive context; Apollo is not doing location-aware overhead, aircraft, planet, fireball, or UAP matching yet.</p>
+    </div>
     <section class="sky-analysis-section" aria-labelledby="skyAnalysisTitle">
       <div class="sky-anomaly-section-heading">
         <p class="section-kicker mb-1">Possible explanations</p>
-        <h4 class="sky-anomaly-subtitle mb-0" id="skyAnalysisTitle">Source and trait fit</h4>
+        <h4 class="sky-anomaly-subtitle mb-0" id="skyAnalysisTitle">Evidence context</h4>
       </div>
       <ol class="sky-confidence-list mb-0">
         ${candidates.map((candidate, index) => `
@@ -895,7 +959,7 @@ function renderSkyExplanation() {
               <p class="sky-explanation-detail mb-0">${escapeHtml(candidate.detail)}</p>
               <p class="sky-explanation-source mb-0">${escapeHtml(candidate.source)}</p>
             </div>
-            <span class="sky-confidence-score">${candidate.confidence}/100 fit</span>
+            <span class="sky-confidence-score">${escapeHtml(candidate.evidenceLabel)}</span>
           </li>
         `).join("")}
       </ol>
@@ -935,7 +999,7 @@ function renderSkyExplanation() {
         </div>
       </details>
     </section>
-    <p class="sky-anomaly-note mb-0">Fit scores reflect Apollo's connected sources and observation traits; they are not identity claims.</p>
+    <p class="sky-anomaly-note mb-0">Apollo uses connected source context and visible traits only; planned source gaps are not checked evidence or identity claims.</p>
   `;
 }
 
@@ -1667,6 +1731,57 @@ function createSourceStatus(id, state, detail) {
   };
 }
 
+function getSourceFeed(id) {
+  return SOURCE_FEEDS.find((feed) => feed.id === id) || null;
+}
+
+function unavailableStateMarkup({ title, message, sourceId, sourceLabel, sourceUrl, tryNext = "Try refreshing again in a moment." }) {
+  const feed = getSourceFeed(sourceId);
+  const label = sourceLabel || feed?.label || "Upstream source";
+  const url = sourceUrl || feed?.sourceUrl || "";
+
+  return `
+    <div class="source-unavailable-state" role="alert">
+      <div class="source-unavailable-heading">
+        <span class="source-unavailable-icon"><i class="fa-solid fa-circle-exclamation acadia-icon" aria-hidden="true"></i></span>
+        <div>
+          <p class="section-kicker mb-1">Source unavailable</p>
+          <h3 class="source-unavailable-title mb-0">${escapeHtml(title)}</h3>
+        </div>
+      </div>
+      <p class="source-unavailable-copy mb-0">${escapeHtml(message)}</p>
+      <div class="source-unavailable-recovery">
+        <p class="mb-0"><strong>What to try:</strong> ${escapeHtml(tryNext)}</p>
+        <p class="mb-0"><strong>Source checked:</strong> ${escapeHtml(label)}</p>
+      </div>
+      <div class="source-unavailable-actions">
+        ${url ? `
+          <a class="source-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">
+            <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
+            Open source
+          </a>
+        ` : ""}
+        <a class="source-link" href="./index.html">
+          <i class="fa-solid fa-gauge-high acadia-icon" aria-hidden="true"></i>
+          Dashboard
+        </a>
+        <a class="source-link" href="./iss.html">
+          <i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i>
+          ISS
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+function setSourceUnavailable(container, options) {
+  if (!container) {
+    return;
+  }
+
+  container.innerHTML = unavailableStateMarkup(options);
+}
+
 function normalizeApod(data) {
   const apod = data?.apod && typeof data.apod === "object" ? data.apod : data;
   const date = getText(apod?.date);
@@ -2123,6 +2238,68 @@ function setDashboardUpdated(value = formatUpdated()) {
   if (els.dashboardUpdated) {
     els.dashboardUpdated.textContent = value;
   }
+}
+
+function getSourceStateFamily(statuses) {
+  const visibleStatuses = statuses.filter((status) => status && status.id);
+  const unavailableCount = visibleStatuses.filter((status) => status.state === "error").length;
+
+  if (!visibleStatuses.length || unavailableCount === visibleStatuses.length) {
+    return "unavailable";
+  }
+
+  if (unavailableCount > 0) {
+    return "partial";
+  }
+
+  return "live";
+}
+
+function setHeaderSourceState(family) {
+  if (!els.liveChip) {
+    return;
+  }
+
+  const stateCopy = {
+    live: {
+      label: "Live data",
+      aria: "Live public space data"
+    },
+    partial: {
+      label: "Partial data",
+      aria: "Partial public space data"
+    },
+    unavailable: {
+      label: "Data unavailable",
+      aria: "Public space data unavailable"
+    },
+    loading: {
+      label: "Checking data",
+      aria: "Public space data loading"
+    }
+  };
+  const copy = stateCopy[family] || stateCopy.unavailable;
+  const label = els.liveChip.querySelector("span:last-child");
+
+  els.liveChip.dataset.sourceState = family;
+  els.liveChip.setAttribute("aria-label", copy.aria);
+
+  if (label) {
+    label.textContent = copy.label;
+  }
+}
+
+function setDashboardFreshness(statuses, checkedAt = new Date()) {
+  const family = getSourceStateFamily(statuses);
+  setHeaderSourceState(family);
+  setDashboardUpdated(family === "live" ? formatUpdated(checkedAt) : formatLastChecked(checkedAt));
+  setDashboardStatus(
+    family === "live"
+      ? "Live space data refreshed."
+      : family === "partial"
+        ? "Partial space data refreshed; source limitations are listed."
+        : "Source unavailable. Last check finished."
+  );
 }
 
 function renderSourceStatus(statuses, checkedAt = new Date()) {
@@ -2664,7 +2841,8 @@ function getRecentActivityRows() {
 }
 
 function getWatchItemRows() {
-  const rows = [];
+  const availableRows = [];
+  const limitationRows = [];
   const launch = dashboardData.launches[0];
   const asteroids = Array.isArray(dashboardData.neo?.asteroids) ? dashboardData.neo.asteroids : [];
   const hazardous = asteroids.filter((item) => item.hazardous).length;
@@ -2675,39 +2853,18 @@ function getWatchItemRows() {
   })[0];
   const forecast = dashboardData.spaceWeather?.forecast?.[0];
 
-  if (launch) {
-    const launchName = splitLaunchName(launch.name);
-    rows.push({
-      icon: "fa-rocket",
-      label: "Next launch",
-      title: launchName.vehicle,
-      detail: formatCountdown(launch.dateUtc),
-      href: "./launches.html"
-    });
-  }
-
-  rows.push({
-    icon: "fa-meteor",
-    label: "Closest asteroid",
-    title: closestObject ? formatLunarDistance(closestObject.lunarDistance) : "Unavailable",
-    detail: closestObject
-      ? `${closestObject.name}${hazardous === 0 ? " · no hazards flagged" : ` · ${hazardous.toLocaleString()} flagged`}`
-      : "No current close-approach list",
-    href: "./asteroids.html"
-  });
-
-  if (dashboardData.spaceWeather) {
-    rows.push({
-      icon: "fa-sun",
-      label: "Kp forecast",
-      title: forecast?.maxKp !== null && forecast?.maxKp !== undefined ? `${formatKpIndex(forecast.maxKp)} ${forecast.date ? formatActivityDate(forecast.date, "") : ""}`.trim() : "Unavailable",
-      detail: forecast?.condition ? forecast.condition : "NOAA outlook unavailable",
-      href: "./weather.html"
+  if (dashboardData.iss?.latitude !== null && dashboardData.iss?.longitude !== null) {
+    availableRows.push({
+      icon: "fa-satellite",
+      label: "ISS track",
+      title: `Over ${getIssRegion(dashboardData.iss.latitude, dashboardData.iss.longitude)}`,
+      detail: dashboardData.iss.altitude !== null ? `${formatNumber(dashboardData.iss.altitude, { suffix: " km" })} altitude` : "Station position loaded",
+      href: "./iss.html"
     });
   }
 
   if (dashboardData.people) {
-    rows.push({
+    availableRows.push({
       icon: "fa-user-astronaut",
       label: "Orbital presence",
       title: `${dashboardData.people.count.toLocaleString()} aboard`,
@@ -2716,7 +2873,62 @@ function getWatchItemRows() {
     });
   }
 
-  return rows;
+  if (launch) {
+    const launchName = splitLaunchName(launch.name);
+    availableRows.push({
+      icon: "fa-rocket",
+      label: "Next launch",
+      title: launchName.vehicle,
+      detail: formatCountdown(launch.dateUtc),
+      href: "./launches.html"
+    });
+  } else if (latestSourceStatuses.get("launches")?.state === "error") {
+    limitationRows.push({
+      icon: "fa-rocket",
+      label: "Source limitation",
+      title: "Launch schedule unavailable",
+      detail: "The Space Devs feed did not load",
+      href: "./launches.html"
+    });
+  }
+
+  if (closestObject) {
+    availableRows.push({
+      icon: "fa-meteor",
+      label: "Closest asteroid",
+      title: formatLunarDistance(closestObject.lunarDistance),
+      detail: `${closestObject.name}${hazardous === 0 ? " · no hazards flagged" : ` · ${hazardous.toLocaleString()} flagged`}`,
+      href: "./asteroids.html"
+    });
+  } else if (latestSourceStatuses.get("neo")?.state === "error") {
+    limitationRows.push({
+      icon: "fa-meteor",
+      label: "Source limitation",
+      title: "Asteroid list unavailable",
+      detail: "NASA NeoWs did not load",
+      href: "./asteroids.html"
+    });
+  }
+
+  if (dashboardData.spaceWeather) {
+    availableRows.push({
+      icon: "fa-sun",
+      label: "Kp forecast",
+      title: forecast?.maxKp !== null && forecast?.maxKp !== undefined ? `${formatKpIndex(forecast.maxKp)} ${forecast.date ? formatActivityDate(forecast.date, "") : ""}`.trim() : "Unavailable",
+      detail: forecast?.condition ? forecast.condition : "NOAA outlook unavailable",
+      href: "./weather.html"
+    });
+  } else if (latestSourceStatuses.get("spaceWeather")?.state === "error") {
+    limitationRows.push({
+      icon: "fa-sun",
+      label: "Source limitation",
+      title: "Space weather unavailable",
+      detail: "NOAA SWPC did not load",
+      href: "./weather.html"
+    });
+  }
+
+  return [...availableRows, ...limitationRows];
 }
 
 function renderCommandPanels() {
@@ -2907,7 +3119,16 @@ async function loadApod() {
     return createSourceStatus("apod", "ok", data.date ? `${mediaLabel} for ${formatDate(data.date)}` : `Current ${mediaLabel.toLowerCase()} loaded.`);
   } catch (error) {
     dashboardData.apod = null;
-    setError(els.apodBody, getApiErrorMessage(error, "NASA's astronomy picture is unavailable right now. This card will update when NASA responds."));
+    if (getPageType() === "gallery") {
+      setSourceUnavailable(els.apodBody, {
+        sourceId: "apod",
+        title: "NASA image did not load",
+        message: "Apollo could not load the current Astronomy Picture of the Day, so the Gallery is intentionally paused instead of showing sample media.",
+        tryNext: "Refresh the page or open NASA APOD to check whether the source is responding."
+      });
+    } else {
+      setError(els.apodBody, getApiErrorMessage(error, "NASA's astronomy picture is unavailable right now. This card will update when NASA responds."));
+    }
     return createSourceStatus("apod", "error", "NASA image signal did not come through.");
   }
 }
@@ -3407,7 +3628,16 @@ async function loadNeo() {
     if (els.neoRiskAlert) {
       els.neoRiskAlert.innerHTML = "";
     }
-    setError(els.neoBody, getApiErrorMessage(error, "NASA asteroid data is unavailable right now. Other live sections remain available."));
+    if (getPageType() === "asteroids") {
+      setSourceUnavailable(els.neoBody, {
+        sourceId: "neo",
+        title: "Near-Earth asteroid list did not load",
+        message: "Apollo could not load the current NASA NeoWs close-approach list, so this page is not showing guessed asteroid activity.",
+        tryNext: "Refresh again shortly or open NASA's source to check source availability."
+      });
+    } else {
+      setError(els.neoBody, getApiErrorMessage(error, "NASA asteroid data is unavailable right now. Other live sections remain available."));
+    }
     setQuickStat("neo", {
       value: "Unavailable",
       detail: "NASA signal lost",
@@ -3567,7 +3797,16 @@ async function loadSpaceWeather() {
     );
   } catch (error) {
     dashboardData.spaceWeather = null;
-    setError(els.spaceWeatherBody, "The NOAA space-weather signal did not come through. Try refreshing in a moment.");
+    if (getPageType() === "weather") {
+      setSourceUnavailable(els.spaceWeatherBody, {
+        sourceId: "spaceWeather",
+        title: "Space-weather conditions did not load",
+        message: "Apollo could not load the current NOAA SWPC K-index and notices, so this page is not showing stale or inferred conditions.",
+        tryNext: "Refresh again shortly or open NOAA SWPC to check source availability."
+      });
+    } else {
+      setError(els.spaceWeatherBody, "The NOAA space-weather signal did not come through. Try refreshing in a moment.");
+    }
     setQuickStat("spaceWeather", {
       value: "Unavailable",
       detail: "NOAA signal lost",
@@ -3579,6 +3818,7 @@ async function loadSpaceWeather() {
 
 async function loadDashboard() {
   setDashboardStatus("Refreshing live data.");
+  setHeaderSourceState("loading");
   dashboardData.apod = null;
   dashboardData.iss = null;
   dashboardData.people = null;
@@ -3642,13 +3882,16 @@ async function loadDashboard() {
   });
 
   const sourceResults = await Promise.allSettled(loaders.map((loader) => loader()));
+  const checkedAt = new Date();
+  const statuses = sourceResults.map((result, index) => (
+    result.status === "fulfilled" && result.value
+      ? result.value
+      : createSourceStatus(sourceIds[index], "error", "Source check did not finish.")
+  ));
+  latestSourceStatuses = new Map(statuses.map((status) => [status.id, status]));
 
   if (els.sourceStatusBody) {
-    renderSourceStatus(sourceResults.map((result, index) => (
-      result.status === "fulfilled" && result.value
-        ? result.value
-        : createSourceStatus(sourceIds[index], "error", "Source check did not finish.")
-    )), new Date());
+    renderSourceStatus(statuses, checkedAt);
   }
 
   if (pageType === "dashboard") {
@@ -3667,8 +3910,7 @@ async function loadDashboard() {
   }
 
   busyElements.forEach((element) => setBusy(element, false));
-  setDashboardStatus("Live space data refreshed.");
-  setDashboardUpdated();
+  setDashboardFreshness(statuses, checkedAt);
   if (els.refreshButton) {
     els.refreshButton.disabled = false;
     els.refreshButton.innerHTML = REFRESH_BUTTON_HTML;

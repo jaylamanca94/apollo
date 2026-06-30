@@ -42,6 +42,10 @@ function formatUpdated(date = new Date()) {
   return `Last updated: ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
 }
 
+function formatLastChecked(date = new Date()) {
+  return `Last checked: ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+}
+
 function formatDateTime(value) {
   const date = new Date(value);
 
@@ -347,7 +351,7 @@ function setLaunchesUpdated(value = formatUpdated()) {
 
 function setError(message) {
   const text = getText(message, "Launch schedule did not load.");
-  els.launchPageBody.innerHTML = stateMessage(text.startsWith(ERROR_PREFIX) ? text : `${ERROR_PREFIX} ${text}`, { role: "alert", tone: "warning" });
+  els.launchPageBody.innerHTML = renderLaunchesUnavailable(text.startsWith(ERROR_PREFIX) ? text : `${ERROR_PREFIX} ${text}`);
 }
 
 function stateMessage(message, options = {}) {
@@ -359,6 +363,39 @@ function stateMessage(message, options = {}) {
     <div class="state-message acadia-alert${tone} mb-0"${role}>
       <i class="fa-solid ${icon} acadia-icon" aria-hidden="true"></i>
       <span>${escapeHtml(message)}</span>
+    </div>
+  `;
+}
+
+function renderLaunchesUnavailable(message) {
+  return `
+    <div class="source-unavailable-state" role="alert">
+      <div class="source-unavailable-heading">
+        <span class="source-unavailable-icon"><i class="fa-solid fa-circle-exclamation acadia-icon" aria-hidden="true"></i></span>
+        <div>
+          <p class="section-kicker mb-1">Source unavailable</p>
+          <h3 class="source-unavailable-title mb-0">Launch schedule did not load</h3>
+        </div>
+      </div>
+      <p class="source-unavailable-copy mb-0">${escapeHtml(message)}</p>
+      <div class="source-unavailable-recovery">
+        <p class="mb-0"><strong>What to try:</strong> Refresh again shortly or open The Space Devs source to check availability.</p>
+        <p class="mb-0"><strong>Source checked:</strong> The Space Devs launch feed.</p>
+      </div>
+      <div class="source-unavailable-actions">
+        <a class="source-link" href="https://thespacedevs.com/llapi" target="_blank" rel="noopener noreferrer">
+          <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
+          Open source
+        </a>
+        <a class="source-link" href="./index.html">
+          <i class="fa-solid fa-gauge-high acadia-icon" aria-hidden="true"></i>
+          Dashboard
+        </a>
+        <a class="source-link" href="./iss.html">
+          <i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i>
+          ISS
+        </a>
+      </div>
     </div>
   `;
 }
@@ -527,7 +564,7 @@ async function loadLaunches() {
   } catch (error) {
     setError("The launch schedule did not load. Try refreshing in a moment.");
     setLaunchPageStatus("Data did not load. Launch schedule did not arrive.");
-    setLaunchesUpdated("Last updated: Signal lost");
+    setLaunchesUpdated(formatLastChecked());
   } finally {
     setBusy(els.launchPageBody, false);
 
