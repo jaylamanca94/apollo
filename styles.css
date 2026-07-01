@@ -21,6 +21,9 @@ html[data-bs-theme="dark"] {
   --apollo-warning-soft: rgba(255, 200, 87, 0.15);
   --apollo-muted: #aeb6c2;
   --apollo-muted-strong: #f4f5f6;
+  --apollo-interaction-pressed: rgba(255, 255, 255, 0.08);
+  --apollo-row-border-hover: rgba(255, 255, 255, 0.2);
+  --apollo-shadow-row-hover: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 2px 5px rgba(0, 0, 0, 0.18), 0 0.45rem 1rem rgba(0, 0, 0, 0.12);
   --apollo-focus-outline: 3px solid color-mix(in srgb, var(--acadia-color-primary) 42%, transparent);
   --apollo-focus-outline-soft: 3px solid color-mix(in srgb, var(--acadia-color-primary) 34%, transparent);
   --apollo-transition-surface: background-color var(--acadia-motion-fast), border-color var(--acadia-motion-fast), box-shadow var(--acadia-motion-fast), color var(--acadia-motion-fast), transform var(--acadia-motion-fast);
@@ -120,6 +123,9 @@ html[data-bs-theme="light"] {
   --apollo-warning-soft: rgba(153, 107, 0, 0.12);
   --apollo-muted: #667085;
   --apollo-muted-strong: #171717;
+  --apollo-interaction-pressed: rgba(15, 23, 42, 0.075);
+  --apollo-row-border-hover: rgba(15, 23, 42, 0.2);
+  --apollo-shadow-row-hover: inset 0 1px 0 rgba(255, 255, 255, 0.86), 0 2px 5px rgba(15, 23, 42, 0.055), 0 0.45rem 1rem rgba(15, 23, 42, 0.04);
   --acadia-color-brand: var(--apollo-accent);
   --acadia-color-brand-ink: var(--apollo-accent);
   --acadia-color-brand-bg: var(--apollo-accent-soft);
@@ -188,6 +194,10 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .apollo-app {
   min-height: 100vh;
   background:
@@ -231,7 +241,7 @@ body {
 
 .apollo-app .btn:not(.apollo-refresh-button):active,
 .acadia-button:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.99);
 }
 
 .apollo-app .btn:not(.apollo-refresh-button):focus-visible,
@@ -290,6 +300,7 @@ body {
   background: var(--acadia-color-surface) !important;
   border-bottom: 1px solid var(--acadia-color-border);
   box-shadow: var(--acadia-shadow-chrome);
+  -webkit-backdrop-filter: var(--acadia-vibrancy);
   backdrop-filter: var(--acadia-vibrancy);
   position: sticky;
   top: 0;
@@ -310,7 +321,23 @@ body {
   color: var(--bs-body-color);
   font-size: 1rem;
   font-weight: 800 !important;
+  min-height: 2.5rem;
+  outline-offset: 4px;
   text-decoration: none;
+  transition: color var(--acadia-motion-fast), opacity var(--acadia-motion-fast);
+}
+
+.apollo-app .navbar-brand:hover,
+.apollo-app .navbar-brand:focus-visible,
+.acadia-brand:hover,
+.acadia-brand:focus-visible {
+  color: var(--acadia-color-text);
+  opacity: 0.88;
+}
+
+.apollo-app .navbar-brand:focus-visible,
+.acadia-brand:focus-visible {
+  outline: var(--apollo-focus-outline);
 }
 
 .acadia-mark {
@@ -390,6 +417,7 @@ body {
   font-family: inherit;
   font-size: 0.9375rem;
   font-weight: 800;
+  line-height: 1;
   min-height: 2.5rem;
   padding: 0.55rem 0.85rem;
   text-decoration: none;
@@ -417,6 +445,14 @@ body {
 .acadia-nav-item:focus-visible {
   outline: var(--apollo-focus-outline);
   outline-offset: 3px;
+}
+
+.apollo-nav-link:active,
+.acadia-nav-item:active,
+.apollo-theme-toggle:active,
+.acadia-icon-action:active {
+  background: var(--apollo-interaction-pressed);
+  transform: translateY(0) scale(0.98);
 }
 
 .apollo-nav-link-active,
@@ -490,7 +526,7 @@ body {
   justify-content: center;
   padding: 0;
   width: 2.5rem;
-  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease, transform 160ms ease;
 }
 
 .apollo-theme-toggle:hover,
@@ -526,6 +562,8 @@ body {
   border-radius: 999px;
   background: var(--acadia-color-surface-elevated);
   box-shadow: var(--apollo-shadow-low);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
   white-space: nowrap;
 }
 
@@ -649,7 +687,9 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   display: inline-flex;
   font-size: 0.875rem;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
   justify-content: center;
+  line-height: 1.2;
   min-height: 28px;
   min-width: 178px;
   padding: 0.25rem 1rem;
@@ -692,6 +732,11 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   outline-offset: 3px;
 }
 
+.btn.apollo-refresh-button:active {
+  box-shadow: 0 0.25rem 0.7rem color-mix(in srgb, var(--acadia-color-primary) 12%, transparent);
+  transform: translateY(0) scale(0.985);
+}
+
 .btn.apollo-refresh-button:disabled {
   background: color-mix(in srgb, var(--apollo-accent) 58%, var(--apollo-surface-raised)) !important;
   border-color: color-mix(in srgb, var(--apollo-accent) 44%, var(--apollo-border)) !important;
@@ -709,6 +754,17 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   display: inline-block;
   height: 1rem;
   width: 1rem;
+}
+
+.apollo-quick-stats-grid[aria-busy="true"] .apollo-quick-stat,
+.apod-feature-body[aria-busy="true"] .state-message,
+.section-card-body[aria-busy="true"] .state-message,
+.launch-detail-body[aria-busy="true"] .state-message {
+  background:
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--acadia-color-text) 4%, transparent), transparent),
+    var(--apollo-row-bg);
+  background-size: 220% 100%;
+  animation: apollo-loading-sheen 1.4s ease-in-out infinite;
 }
 
 .apod-feature-body[aria-busy="false"],
@@ -761,6 +817,8 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   box-shadow: var(--apollo-shadow-row);
   display: flex;
   gap: 0.85rem;
+  isolation: isolate;
+  min-height: 88px;
   min-width: 0;
   padding: 1rem;
 }
@@ -833,6 +891,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 .apollo-space-brief-body {
   display: grid;
   gap: 14px;
+  min-width: 0;
   padding: var(--acadia-section-padding-dense);
 }
 
@@ -865,6 +924,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 }
 
 .section-card-body {
+  min-width: 0;
   padding: 0 var(--acadia-section-padding-dense) var(--acadia-section-padding-dense);
 }
 
@@ -930,9 +990,15 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 .command-panel-row-link:hover,
 .command-panel-row-link:focus-visible {
   background: var(--apollo-row-bg-hover);
-  border-color: var(--apollo-border-strong);
+  border-color: var(--apollo-row-border-hover);
+  box-shadow: var(--apollo-shadow-row-hover);
   color: var(--acadia-color-text);
   transform: translateY(-1px);
+}
+
+.command-panel-row-link:active {
+  box-shadow: var(--apollo-shadow-row);
+  transform: translateY(0) scale(0.995);
 }
 
 .command-panel-row-link:focus-visible {
@@ -1006,9 +1072,14 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 
 .apod-placeholder,
 .apod-copy-placeholder {
+  background:
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--acadia-color-text) 5%, transparent), transparent),
+    var(--apollo-row-bg);
+  background-size: 220% 100%;
   display: block;
   min-height: 440px;
   border-radius: 10px;
+  animation: apollo-loading-sheen 1.4s ease-in-out infinite;
 }
 
 .apod-showcase {
@@ -1142,6 +1213,13 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   color: var(--bs-body-color);
   cursor: pointer;
   font-weight: 750;
+  outline-offset: 3px;
+  transition: color var(--acadia-motion-fast);
+}
+
+.apod-details summary:hover,
+.apod-details summary:focus-visible {
+  color: var(--apollo-accent);
 }
 
 .apod-context-stack {
@@ -1226,6 +1304,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   box-shadow: var(--apollo-shadow-row);
   color: var(--bs-secondary-color);
   display: flex;
+  align-items: flex-start;
   gap: 0.75rem;
   line-height: 1.45;
   padding: 1rem;
@@ -1482,7 +1561,8 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 
 .crew-person:hover {
   background: var(--apollo-row-bg-hover);
-  border-color: var(--apollo-border-strong);
+  border-color: var(--apollo-row-border-hover);
+  box-shadow: var(--apollo-shadow-row-hover);
 }
 
 .crew-name {
@@ -1759,9 +1839,10 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   display: inline-flex;
   gap: 0.5rem;
   text-decoration: underline;
+  text-decoration-thickness: 1px;
   text-underline-offset: 2px;
   overflow-wrap: anywhere;
-  transition: color 160ms ease;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
 }
 
 .source-link i {
@@ -1771,6 +1852,7 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
 .source-link:hover,
 .source-link:focus-visible {
   color: var(--apollo-accent);
+  text-decoration-color: currentColor;
 }
 
 .source-link:focus-visible {
@@ -1815,7 +1897,8 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
 
 .launch-card:hover {
   background: var(--apollo-row-bg-hover);
-  border-color: var(--apollo-border-strong);
+  border-color: var(--apollo-row-border-hover);
+  box-shadow: var(--apollo-shadow-row-hover);
   transform: translateY(-1px);
 }
 
@@ -1916,6 +1999,10 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   transform: translateY(-1px);
 }
 
+.launch-show-all:active {
+  transform: translateY(0) scale(0.99);
+}
+
 .launch-show-all:focus-visible {
   box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--apollo-accent) 22%, transparent);
   outline: 0;
@@ -1925,8 +2012,10 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
   color: var(--apollo-muted-strong);
   cursor: pointer;
   display: inline-flex;
+  align-items: flex-start;
   gap: 8px;
   text-decoration: underline;
+  text-decoration-thickness: 1px;
   text-underline-offset: 2px;
   transition: color var(--acadia-motion-fast);
 }
@@ -1946,6 +2035,10 @@ html[data-bs-theme="dark"] .iss-map .leaflet-tile {
 .data-details summary:hover,
 .data-details summary:focus-visible {
   color: var(--apollo-accent);
+}
+
+.data-details summary:active {
+  color: var(--apollo-accent-hover);
 }
 
 .data-details summary:hover i,
@@ -2637,7 +2730,7 @@ html[data-bs-theme="light"] .data-detail-panel {
 
 .sky-anomaly-choice-row label:hover span {
   background: var(--apollo-row-bg-hover);
-  border-color: var(--apollo-border-strong);
+  border-color: var(--apollo-row-border-hover);
 }
 
 .sky-anomaly-choice-row input:checked + span {
@@ -2671,6 +2764,10 @@ html[data-bs-theme="light"] .data-detail-panel {
   background: color-mix(in srgb, var(--apollo-accent-soft) 68%, var(--apollo-row-bg-hover));
   border-color: color-mix(in srgb, var(--apollo-accent) 42%, transparent);
   color: var(--bs-body-color);
+}
+
+.sky-anomaly-submit:active {
+  transform: scale(0.99);
 }
 
 .sky-anomaly-submit:focus-visible {
@@ -2991,7 +3088,8 @@ html[data-bs-theme="light"] .data-detail-panel {
 
 .source-status-row:hover {
   background: var(--apollo-row-bg-hover);
-  border-color: var(--apollo-border-strong);
+  border-color: var(--apollo-row-border-hover);
+  box-shadow: var(--apollo-shadow-row-hover);
 }
 
 .source-status-icon {
@@ -3058,8 +3156,9 @@ html[data-bs-theme="light"] .data-detail-panel {
   line-height: 1.35;
   margin-top: 0.45rem;
   text-decoration: underline;
+  text-decoration-thickness: 1px;
   text-underline-offset: 2px;
-  transition: color var(--acadia-motion-fast);
+  transition: color var(--acadia-motion-fast), text-decoration-color var(--acadia-motion-fast);
 }
 
 .source-status-link i {
@@ -3070,6 +3169,7 @@ html[data-bs-theme="light"] .data-detail-panel {
 .source-status-link:hover,
 .source-status-link:focus-visible {
   color: var(--apollo-accent);
+  text-decoration-color: currentColor;
 }
 
 .source-status-link:focus-visible {
@@ -3096,10 +3196,21 @@ html[data-bs-theme="light"] .data-detail-panel {
   }
 }
 
+@keyframes apollo-loading-sheen {
+  from {
+    background-position: 180% 0;
+  }
+
+  to {
+    background-position: -40% 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
+    background-position: 0 0 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
     transition-delay: 0ms !important;
@@ -3280,7 +3391,8 @@ html[data-bs-theme="light"] .data-detail-panel {
 
 .list-group-flush > .list-group-item:hover {
   background: var(--apollo-row-bg-hover);
-  border-color: var(--apollo-border-strong);
+  border-color: var(--apollo-row-border-hover);
+  box-shadow: var(--apollo-shadow-row-hover);
 }
 
 .list-group-flush > .list-group-item:last-child {
@@ -3488,7 +3600,8 @@ html[data-bs-theme="light"] .data-detail-panel {
 .launch-timeline-row:hover,
 .launch-timeline-row:focus-within {
   background: var(--apollo-row-bg-hover);
-  border-color: var(--apollo-border-strong);
+  border-color: var(--apollo-row-border-hover);
+  box-shadow: var(--apollo-shadow-row-hover);
   transform: translateY(-1px);
 }
 
@@ -3584,7 +3697,8 @@ html[data-bs-theme="light"] .data-detail-panel {
 
 .launch-page-card:hover {
   background: var(--apollo-row-bg-hover);
-  border-color: var(--apollo-border-strong);
+  border-color: var(--apollo-row-border-hover);
+  box-shadow: var(--apollo-shadow-row-hover);
   transform: translateY(-1px);
 }
 
@@ -3837,6 +3951,11 @@ html[data-bs-theme="light"] .data-detail-panel {
     transform: none;
   }
 
+  .apollo-primary-links.apollo-mobile-dock .apollo-nav-link:active {
+    background: var(--acadia-mobile-nav-active-background);
+    transform: scale(0.96);
+  }
+
   .apollo-primary-links.apollo-mobile-dock .apollo-nav-link:focus-visible {
     background: var(--acadia-mobile-nav-hover-background);
     border-color: transparent;
@@ -3865,8 +3984,15 @@ html[data-bs-theme="light"] .data-detail-panel {
     width: 100%;
   }
 
+  .apollo-primary-links.apollo-mobile-dock .apollo-nav-more-toggle::after {
+    display: none;
+  }
+
   .apollo-primary-links.apollo-mobile-dock .apollo-nav-menu {
+    border-radius: var(--acadia-radius-md);
+    box-shadow: var(--acadia-shadow-card), var(--apollo-shadow-low);
     margin-bottom: 0.5rem !important;
+    min-width: 13rem;
   }
 
   .apollo-shell {
@@ -3874,7 +4000,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   }
 
   .apollo-page-stack {
-    gap: 24px;
+    gap: 20px;
   }
 
   .apollo-page-header {
@@ -3884,6 +4010,11 @@ html[data-bs-theme="light"] .data-detail-panel {
   .apollo-dashboard-actions {
     align-items: start;
     justify-content: flex-start;
+    width: 100%;
+  }
+
+  .apollo-dashboard-actions .apollo-refresh-button {
+    width: 100%;
   }
 
   .apollo-page-title {

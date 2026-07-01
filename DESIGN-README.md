@@ -216,8 +216,10 @@ Current icon mapping:
 ## Interaction Feel
 
 - Clickable cards and list rows should have clear pointer, hover, and keyboard focus states.
+- Pressed states should feel native and precise: use a small scale/settle effect on controls and interactive rows, keep hover lift to `-1px`, and pair row hover with the shared row-hover border and shadow tokens instead of inventing one-off motion.
 - The global refresh action should read as the primary action, use the red accent fill, and show a compact spinner while data is refreshing.
 - Loading, unavailable, and error states should use the shared state-message surface with a small icon so the page feels composed before live data arrives.
+- Loading placeholders may use one restrained sheen animation on row-colored surfaces, and must fall back cleanly under `prefers-reduced-motion`.
 - User navigation should use a compact icon/name control when account actions are needed.
 - Add buttons should add a new row below the current section or item type.
 - Remove buttons are destructive, clearly labeled, and use red styling.
