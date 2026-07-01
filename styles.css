@@ -2869,6 +2869,11 @@ html[data-bs-theme="light"] .data-detail-panel {
   padding: 0.9rem 1rem;
 }
 
+.sky-assumption-list-compact {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+
 .sky-analysis-section,
 .sky-evidence-section,
 .sky-explanation-raw {
@@ -3880,6 +3885,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   html[data-bs-theme="dark"],
   html[data-bs-theme="light"] {
     --acadia-page-margin: var(--acadia-page-margin-mobile);
+    scroll-padding-bottom: calc(8.75rem + env(safe-area-inset-bottom));
   }
 
   .apollo-navbar-inner {
@@ -3978,6 +3984,7 @@ html[data-bs-theme="light"] .data-detail-panel {
   .apollo-primary-links.apollo-mobile-dock .apollo-nav-more {
     display: flex;
     min-width: 0;
+    position: relative;
   }
 
   .apollo-primary-links.apollo-mobile-dock .apollo-nav-more-toggle {
@@ -3991,12 +3998,18 @@ html[data-bs-theme="light"] .data-detail-panel {
   .apollo-primary-links.apollo-mobile-dock .apollo-nav-menu {
     border-radius: var(--acadia-radius-md);
     box-shadow: var(--acadia-shadow-card), var(--apollo-shadow-low);
-    margin-bottom: 0.5rem !important;
+    inset: auto 0 calc(100% + 0.75rem) auto !important;
+    margin: 0 !important;
     min-width: 13rem;
+    transform: none !important;
   }
 
   .apollo-shell {
     padding: 28px var(--acadia-page-margin) calc(8.75rem + env(safe-area-inset-bottom));
+  }
+
+  .apollo-app :is(a, button, input, summary, [tabindex]):not([tabindex="-1"]) {
+    scroll-margin-bottom: calc(8.75rem + env(safe-area-inset-bottom));
   }
 
   .apollo-page-stack {

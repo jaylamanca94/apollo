@@ -380,6 +380,7 @@ test("detail pages render intentional unavailable source states", () => {
 
 test("sky anomaly results use qualitative evidence and explicit assumptions", () => {
   const js = readProjectFile("app.js");
+  const html = readProjectFile("anomalies.html");
 
   assert.doesNotMatch(js, /\/100 fit/);
   assert.doesNotMatch(js, /Fit scores reflect/);
@@ -388,6 +389,34 @@ test("sky anomaly results use qualitative evidence and explicit assumptions", ()
   assert.match(js, /browser-local time/);
   assert.match(js, /Location "\$\{escapeHtml\(location\)\}" is descriptive context/);
   assert.match(js, /not doing location-aware overhead, aircraft, planet, fireball, or UAP matching yet/);
+  assert.match(html, /Time is interpreted in browser-local terms unless you specify otherwise\./);
+  assert.match(html, /Typed location is descriptive context; Apollo does not yet do overhead, aircraft, planet, fireball, satellite, or UAP matching from it\./);
+});
+
+test("sky anomaly overview reflects connected source readiness", () => {
+  const js = readProjectFile("app.js");
+
+  assert.match(js, /function getSkyContextSourceRows\(\)/);
+  assert.match(js, /function getSkyOverviewState\(contextRows\)/);
+  assert.match(js, /headline:\s*"Sources ready"/);
+  assert.match(js, /headline:\s*"Partial source context"/);
+  assert.match(js, /headline:\s*"Sources unavailable"/);
+  assert.match(js, /Loaded connected source/);
+  assert.match(js, /Connected source unavailable/);
+  assert.match(js, /Unavailable connected sources and planned imports limit this pre-submit check/);
+  assert.match(js, /Connected context did not load; Apollo can only compare visible traits against planned source gaps/);
+  assert.doesNotMatch(js, /<h3 class="sky-anomaly-result-title mb-0">Sources ready<\/h3>/);
+});
+
+test("sky anomaly evidence ranks connected source context before planned gaps", () => {
+  const js = readProjectFile("app.js");
+
+  assert.match(js, /function getSkyCandidatePriority\(candidate\)/);
+  assert.match(js, /\/planned\/i\.test\(source\)[\s\S]*?return 3;/);
+  assert.match(js, /state === "unknown"[\s\S]*?return 2;/);
+  assert.match(js, /return 1;/);
+  assert.match(js, /const priorityDelta = getSkyCandidatePriority\(left\) - getSkyCandidatePriority\(right\);/);
+  assert.match(js, /return priorityDelta \|\| right\.sortScore - left\.sortScore;/);
 });
 
 test("watch items prioritize loaded signals before source limitations", () => {
@@ -541,9 +570,43 @@ test("mobile dock stays viewport-bottom anchored", () => {
   assert.match(mobileDockRule, /bottom:\s*calc\(var\(--acadia-mobile-tabbar-bottom,\s*1\.25rem\) \+ env\(safe-area-inset-bottom\)\);/);
   assert.match(mobileDockRule, /top:\s*auto;/);
   assert.match(mobileBlock, /\.apollo-shell\s*\{[\s\S]*?padding:\s*28px var\(--acadia-page-margin\) calc\(8\.75rem \+ env\(safe-area-inset-bottom\)\);/);
+  assert.match(mobileBlock, /scroll-padding-bottom:\s*calc\(8\.75rem \+ env\(safe-area-inset-bottom\)\);/);
+  assert.match(mobileBlock, /\.apollo-app :is\(a, button, input, summary, \[tabindex\]\):not\(\[tabindex="-1"\]\)\s*\{[\s\S]*?scroll-margin-bottom:\s*calc\(8\.75rem \+ env\(safe-area-inset-bottom\)\);/);
   assert.match(css, /html\[data-bs-theme="light"\]\s*\{[\s\S]*?--acadia-mobile-nav-background:\s*rgba\(250, 250, 252, 0\.84\);/);
   assert.match(css, /--acadia-mobile-nav-active-background:\s*rgba\(15, 23, 42, 0\.1\);/);
   assert.match(css, /--acadia-mobile-nav-focus-halo:\s*rgba\(255, 255, 255, 0\.22\);/);
+});
+
+test("mobile Watch menu opens as navigation above the dock", () => {
+  const css = readProjectFile("styles.css");
+  const mobileBlock = css.match(/@media \(max-width:\s*767\.98px\)\s*\{[\s\S]*?\n\}/)?.[0] || "";
+  const mobileMenuRule = mobileBlock.match(/\.apollo-primary-links\.apollo-mobile-dock \.apollo-nav-menu\s*\{[\s\S]*?\n  \}/)?.[0] || "";
+
+  assert.match(mobileBlock, /\.apollo-primary-links\.apollo-mobile-dock \.apollo-nav-more\s*\{[\s\S]*?position:\s*relative;/);
+  assert.match(mobileMenuRule, /inset:\s*auto 0 calc\(100% \+ 0\.75rem\) auto !important;/);
+  assert.match(mobileMenuRule, /margin:\s*0 !important;/);
+  assert.match(mobileMenuRule, /transform:\s*none !important;/);
+});
+
+test("mobile nav exposes clear names while hiding icon glyphs", () => {
+  const destinations = ["Dashboard", "ISS", "Launches", "Watch", "Gallery"];
+
+  for (const file of allHtmlPages) {
+    const html = readProjectFile(file);
+    const dockStart = html.search(/<div class="apollo-primary-links acadia-nav apollo-mobile-dock"/);
+    const mainStart = html.search(/<main\b/);
+    const mobileDock = dockStart >= 0 && mainStart > dockStart ? html.slice(dockStart, mainStart) : "";
+
+    assert.ok(mobileDock, `${file} should include the mobile dock`);
+
+    for (const destination of destinations) {
+      assert.match(mobileDock, new RegExp(`<span>${destination}<\\/span>`), `${file} should name ${destination} in the mobile dock`);
+    }
+
+    for (const iconTag of getTags(mobileDock, "i")) {
+      assert.equal(getAttribute(iconTag, "aria-hidden"), "true", `${file} mobile nav icons should be hidden from assistive technology`);
+    }
+  }
 });
 
 test("launch timeline exposes urgency context and current asset versions", () => {

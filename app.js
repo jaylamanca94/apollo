@@ -658,8 +658,27 @@ function getSkyConfidenceCandidates(rows, traits) {
   }
 
   return candidates
-    .sort((left, right) => right.sortScore - left.sortScore)
+    .sort((left, right) => {
+      const priorityDelta = getSkyCandidatePriority(left) - getSkyCandidatePriority(right);
+
+      return priorityDelta || right.sortScore - left.sortScore;
+    })
     .slice(0, 4);
+}
+
+function getSkyCandidatePriority(candidate) {
+  const source = getText(candidate?.source);
+  const state = candidate?.state || "unknown";
+
+  if (/planned/i.test(source)) {
+    return 3;
+  }
+
+  if (state === "unknown") {
+    return 2;
+  }
+
+  return 1;
 }
 
 function getSkyEvidenceLabel(candidate) {
@@ -684,6 +703,66 @@ function getSkyEvidenceLabel(candidate) {
   }
 
   return "Source unavailable";
+}
+
+function getSkyContextSourceRows() {
+  const statusFor = (id) => latestSourceStatuses.get(id);
+  const hasIssPosition = dashboardData.iss && dashboardData.iss.latitude !== null && dashboardData.iss.longitude !== null;
+  const hasLaunches = Array.isArray(dashboardData.launches) && dashboardData.launches.length > 0;
+  const hasSpaceWeather = Boolean(dashboardData.spaceWeather);
+  const hasAsteroids = Array.isArray(dashboardData.neo?.asteroids);
+
+  return [
+    {
+      label: "ISS",
+      state: statusFor("iss")?.state === "ok" && hasIssPosition ? "ok" : "error",
+      value: hasIssPosition ? "Position loaded" : "Unavailable"
+    },
+    {
+      label: "Launches",
+      state: statusFor("launches")?.state === "ok" ? "ok" : "error",
+      value: hasLaunches ? `${dashboardData.launches.length} upcoming` : statusFor("launches")?.state === "ok" ? "No upcoming loaded" : "Unavailable"
+    },
+    {
+      label: "Space weather",
+      state: statusFor("spaceWeather")?.state === "ok" && hasSpaceWeather ? "ok" : "error",
+      value: dashboardData.spaceWeather?.condition || "Unavailable"
+    },
+    {
+      label: "Asteroids",
+      state: statusFor("neo")?.state === "ok" && hasAsteroids ? "ok" : "error",
+      value: hasAsteroids ? `${dashboardData.neo.asteroids.length} today` : "Unavailable"
+    }
+  ];
+}
+
+function getSkyOverviewState(contextRows) {
+  const loadedCount = contextRows.filter((row) => row.state === "ok").length;
+
+  if (loadedCount === contextRows.length) {
+    return {
+      badge: "Ready",
+      headline: "Sources ready",
+      note: "Connected ISS, launches, space weather, and asteroid context loaded. Planned satellite, aircraft, planet, fireball, and UAP imports remain source gaps.",
+      tone: "context"
+    };
+  }
+
+  if (loadedCount > 0) {
+    return {
+      badge: "Partial",
+      headline: "Partial source context",
+      note: "Unavailable connected sources and planned imports limit this pre-submit check.",
+      tone: "possible"
+    };
+  }
+
+  return {
+    badge: "Limited",
+    headline: "Sources unavailable",
+    note: "Connected context did not load; Apollo can only compare visible traits against planned source gaps until sources recover.",
+    tone: "unknown"
+  };
 }
 
 function getSkyEvidenceRows(rows) {
@@ -870,43 +949,28 @@ function renderSkyAnomalyOverview() {
     return;
   }
 
-  const contextRows = [
-    {
-      label: "ISS",
-      value: dashboardData.iss && dashboardData.iss.latitude !== null && dashboardData.iss.longitude !== null ? "Position loaded" : "Unavailable"
-    },
-    {
-      label: "Launches",
-      value: dashboardData.launches.length ? `${dashboardData.launches.length} upcoming` : "Unavailable"
-    },
-    {
-      label: "Space weather",
-      value: dashboardData.spaceWeather?.condition || "Unavailable"
-    },
-    {
-      label: "Asteroids",
-      value: dashboardData.neo?.asteroids ? `${dashboardData.neo.asteroids.length} today` : "Unavailable"
-    }
-  ];
+  const contextRows = getSkyContextSourceRows();
+  const overviewState = getSkyOverviewState(contextRows);
 
   els.skyAnomalyResults.dataset.mode = "overview";
   els.skyAnomalyResults.innerHTML = `
     <div class="sky-anomaly-result-header">
       <div>
         <p class="section-kicker mb-1">Known context</p>
-        <h3 class="sky-anomaly-result-title mb-0">Sources ready</h3>
+        <h3 class="sky-anomaly-result-title mb-0">${escapeHtml(overviewState.headline)}</h3>
       </div>
-      <span class="sky-explanation-pill sky-explanation-context">Beta</span>
+      <span class="sky-explanation-pill sky-explanation-${escapeHtml(overviewState.tone)}">${escapeHtml(overviewState.badge)}</span>
     </div>
     <div class="sky-context-grid">
       ${contextRows.map((row) => `
-        <article class="sky-context-cell">
+        <article class="sky-context-cell sky-explanation-${escapeHtml(row.state === "ok" ? "context" : "unknown")}">
           <p class="sky-context-label mb-1">${escapeHtml(row.label)}</p>
           <p class="sky-context-value mb-0">${escapeHtml(row.value)}</p>
+          <p class="sky-context-source-state mb-0">${escapeHtml(row.state === "ok" ? "Loaded connected source" : "Connected source unavailable")}</p>
         </article>
       `).join("")}
     </div>
-    <p class="sky-anomaly-note mb-0">Apollo starts with known explanations and source gaps before labeling anything unexplained.</p>
+    <p class="sky-anomaly-note mb-0">${escapeHtml(overviewState.note)}</p>
   `;
 }
 
@@ -2824,7 +2888,7 @@ function getRecentActivityRows() {
     });
   }
 
-  if (dashboardData.iss?.latitude !== null && dashboardData.iss?.longitude !== null) {
+  if (dashboardData.iss && dashboardData.iss.latitude !== null && dashboardData.iss.longitude !== null) {
     const region = getIssRegion(dashboardData.iss.latitude, dashboardData.iss.longitude);
 
     rows.push({
@@ -2853,7 +2917,7 @@ function getWatchItemRows() {
   })[0];
   const forecast = dashboardData.spaceWeather?.forecast?.[0];
 
-  if (dashboardData.iss?.latitude !== null && dashboardData.iss?.longitude !== null) {
+  if (dashboardData.iss && dashboardData.iss.latitude !== null && dashboardData.iss.longitude !== null) {
     availableRows.push({
       icon: "fa-satellite",
       label: "ISS track",
