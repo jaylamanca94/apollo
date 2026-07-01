@@ -1,194 +1,188 @@
 # Review Report: Apollo UX Recommendations
 
-Date: 2026-06-30
+Date: 2026-07-01
 Automation ID: 02-review
 Input: `automation/research/latest.md`
 Product: Apollo
 
 ## Review Position
 
-Apollo's mission is to help people understand what is happening in space right now through a focused, source-backed, easy-to-demo public dashboard. The product docs explicitly prioritize tight MVP scope, demo clarity, source quality, maintainability, and trust over feature volume.
+Apollo's mission is to help people understand what is happening in space right now through a focused, source-backed, easy-to-demo public dashboard. The current product docs prioritize trust, demo clarity, source quality, maintainability, and tight MVP scope over feature volume.
 
-The research recommendations are mostly aligned with that mission because they do not add new data sources, accounts, persistence, filters, charts, or reporting workflows. The strongest approved work improves trust when live sources fail and reduces overclaiming in Sky Anomalies. The next Design automation should avoid expanding Apollo beyond its current live and near-live space context job.
+The July 1 research recommendations are mostly aligned with that mission. They do not ask for new data sources, accounts, persistence, charts, filters, geocoding, reporting, or broader science content. The strongest work closes state-coherence gaps that make Apollo look unfinished when upstream sources fail. The Design automation should keep the detail-page degraded states and the ISS detail flow largely intact, and should focus on finishing partial states consistently across dashboard, mobile navigation, and Sky Anomalies.
 
 ## Decision Summary
 
 Approved for Design input:
 
-- R1. Reconcile "Live data" with partial or failed source states.
-- R2. Restore or expose a source-status summary where users need it most.
-- R3. Make unavailable detail pages feel intentionally degraded, not empty.
-- R4. Reduce false precision in Sky Anomalies results.
-- R5. Clarify location and time assumptions in the anomaly check.
-- R6. Prioritize useful partial results over unavailable watch items.
-- R7. Align refresh and freshness language across pages.
-- R8. Keep the mobile dock from covering scannable content.
+- R1. Make dashboard partial states finish consistently.
+- R2. Give Recent Activity and Watch Items partial-state content.
+- R3. Keep the mobile dock clear of content and form controls.
+- R4. Make the mobile Watch menu feel like navigation, not an overlay collision.
+- R5. Reframe Sky Anomalies source readiness when sources are degraded.
+- R6. Rank checked evidence above planned source gaps in Anomalies results.
+- R7. Clarify Anomalies assumptions before submission.
+- R8. Improve mobile navigation recognizability and assistive-technology confidence, with scope limits.
 
-Not approved for the next Design pass:
-
-- R9. Make card affordance match interactivity on dashboard metrics.
-- R10. Make the theme toggle visually self-explanatory.
+No recommendation is rejected outright. R4 and R8 are approved only as focused navigation clarity and accessibility work; they should not become a larger mobile-navigation redesign.
 
 Recommended sequencing:
 
-1. Trust and degraded states: R1, R2, R3, R7.
-2. Sky Anomalies caution and context: R4, R5.
-3. Partial dashboard usefulness and mobile clearance: R6, R8.
+1. Dashboard completion under degraded data: R1, R2.
+2. Mobile usability and menu separation: R3, R4.
+3. Sky Anomalies source truthfulness: R5, R6, R7.
+4. Mobile navigation accessibility verification: R8.
 
 ## Product Constraints For Approved Work
 
 - Keep Apollo static, vanilla, Bootstrap/Acadia-aligned, and framework-free.
 - Do not add new upstream APIs, geocoding, user accounts, saved locations, persistence, search, notifications, charts, or reporting workflows.
-- Do not show sample, fallback, or inferred data as live source-backed activity.
-- Use existing source families and existing loaders wherever possible.
+- Do not show sample, fallback, stale, inferred, or planned-source data as live source-backed activity.
+- Use existing source families, existing loader results, `latestSourceStatuses`, and current source-state copy wherever practical.
 - Prefer concise state, source, and recovery language over diagnostic detail.
-- Preserve the dashboard as a compact state-at-a-glance surface; do not reintroduce full detail-page content on the homepage.
+- Preserve the dashboard as a compact state-at-a-glance surface; do not move detail-page density back onto the homepage.
+- Preserve the current successful detail-page unavailable states and ISS detail flow unless a small consistency adjustment is needed.
+- Static tests are not enough for this pass. Approved work should include browser verification in a degraded run because the current failure is a runtime state-coherence gap.
 
 ## Decisions
 
-### R1. Reconcile "Live data" with partial or failed source states
+### R1. Make dashboard partial states finish consistently
 
 Decision: Approved.
 
-Rationale: This directly supports Apollo's core promise. A global "Live data" claim conflicts with a partial or failed source state and weakens trust. The work is low complexity and should use state Apollo already computes for Space Brief and source statuses.
+Rationale: This is the highest-value recommendation because it directly protects Apollo's trust promise. The July 1 screenshot shows a completed source-status summary and "Space Activity: Partial" while the global chip still says "Checking data", the freshness label still says "Last updated: Standing by", and the refresh button remains disabled as "Refreshing data". That contradiction makes a source outage look like a broken app. Fixing it uses state Apollo already computes and does not expand scope.
 
 Acceptance criteria:
 
-- The dashboard header status no longer says "Live data" when multiple primary sources are unavailable.
-- The visible status and accessible label use the same state family as the dashboard: live/loaded when sources load, partial/degraded when some fail, and unavailable when the page cannot load any relevant source.
-- Planned Sky Anomalies gaps are not counted as live-source failures.
-- The state updates after refresh and remains correct on initial load, manual refresh, and failed refresh.
-- Tests cover all-loaded and partial-source states.
+- When dashboard source checks finish with at least one loaded source and at least one unavailable source, the header chip, page subtitle, freshness label, refresh button, live region, quick stats, Space Brief, Recent Activity, Watch Items, and Source availability card all show a final partial state.
+- After source checks finish, no visible dashboard control remains stuck on "Checking data", "Standing by", "Refreshing data", "Checking recent activity", or "Checking watch items".
+- The refresh button is re-enabled and restored to "Refresh data" after partial or unavailable checks, not only after all-loaded checks.
+- `aria-busy` is set to `false` for every dynamic dashboard region included in `aria-controls` after the check finishes.
+- "Last updated" is used only for all-loaded successful states; partial and unavailable states use "Last checked".
+- Browser verification covers a degraded dashboard run where the Source availability card has completed while most sources are unavailable.
 
-### R2. Restore or expose a source-status summary where users need it most
+### R2. Give Recent Activity and Watch Items partial-state content
+
+Decision: Approved.
+
+Rationale: Recent Activity and Watch Items are primary decision panels. Leaving them in loading states after Apollo already knows the final source status weakens the dashboard's core job: quickly answering what is happening and what deserves attention. The work should reuse loaded source results and source limitation rows rather than inventing content.
+
+Acceptance criteria:
+
+- Recent Activity renders final content in partial states using only loaded sources; examples may include crew roster, ISS position, APOD, launch, asteroid, or space-weather events when those sources actually loaded.
+- If no recent-activity event can be built from loaded data, the panel shows a completed empty or limitation state rather than "Checking recent activity...".
+- Watch Items show available live signals first and source limitations second.
+- Source limitations are clearly labeled as unavailable source context, not as live activity.
+- Both panels set `aria-busy="false"` when the dashboard source check finishes.
+- Tests or browser checks cover a partial state where one source loads and the remaining primary dashboard sources fail.
+
+### R3. Keep the mobile dock clear of content and form controls
+
+Decision: Approved.
+
+Rationale: The fixed mobile dock is an accepted Acadia-style navigation pattern, but the screenshots show it covering dashboard cards and Sky Anomalies radio controls. That is a direct usability and accessibility problem on a core responsive surface. This is a layout correction, not a feature expansion.
+
+Acceptance criteria:
+
+- Phone-width pages reserve bottom clearance for the fixed dock height, the dock gap, and `env(safe-area-inset-bottom)`.
+- The last dashboard card, Source availability rows, Watch-menu content, Sky Anomalies radio groups, and form submit controls can scroll fully above the dock.
+- Focused form controls and keyboard focus targets are not hidden behind the dock when scrolled into view.
+- The mobile dock remains fixed, visually consistent, and limited to the documented five primary destinations.
+- Browser verification includes dashboard, Watch menu, and Sky Anomalies form screenshots at 390x844 and at one shorter phone viewport such as 375x667.
+
+### R4. Make the mobile Watch menu feel like navigation, not an overlay collision
 
 Decision: Approved with scope limits.
 
-Rationale: The product and design docs already define a dashboard source-status summary, and `app.js` already contains `renderSourceStatus`, but the dashboard markup does not expose `sourceStatusBody`. Restoring this is an alignment and trust fix, not feature expansion. Detail pages also need a compact source state when their single source fails.
+Rationale: Weather, Asteroids, and Anomalies are in-scope Watch destinations. On mobile, the menu currently opens over quick-stat cards while the dock remains in the same visual layer, which makes the menu feel cramped and temporary. Improving separation helps navigation confidence without adding destinations or changing the information architecture.
 
 Acceptance criteria:
 
-- The dashboard exposes a compact Data Sources closing section with `sourceStatusBody` or an equivalent target wired to the existing source-status renderer.
-- The section reports loaded, attention, and unavailable states for existing Apollo source families only.
-- Detail pages with a failed primary source show concise source status, recovery, and source-link context instead of only a one-line alert.
-- The summary explains source availability in user terms and does not expose stack traces, function errors, API internals, or implementation diagnostics.
-- Dashboard tests are updated so the compact source-status section is allowed without reopening full ISS, people, launch, asteroid, weather, APOD, or anomaly dashboard detail regions.
-- Refresh `aria-controls` includes any newly exposed status region.
+- On phone-width viewports, opening Watch presents Weather, Asteroids, and Anomalies as a clear navigation surface above or apart from underlying page cards.
+- The open menu does not visually merge with, obscure, or look like part of the card beneath it.
+- The menu clears the fixed dock and safe-area inset.
+- The active Watch destination remains marked with `aria-current="page"` on the Watch trigger and the matching menu item.
+- The solution uses the existing Bootstrap/Acadia dropdown pattern or a small local adaptation; it must not introduce a new drawer/modal framework.
+- No additional destinations, report actions, settings, filters, or saved-location controls are added.
 
-### R3. Make unavailable detail pages feel intentionally degraded, not empty
+### R5. Reframe Sky Anomalies source readiness when sources are degraded
 
 Decision: Approved.
 
-Rationale: Launches, Weather, Asteroids, and Gallery are in scope and should remain composed when their source fails. A full-page empty state improves demo clarity and maintainability because each detail page can share the same degraded-state pattern instead of custom blank/error fragments.
+Rationale: Sky Anomalies is explicitly trust-first. The pre-submit overview saying "Sources ready" while ISS, Launches, Space Weather, and Asteroids are unavailable overstates what Apollo can check. Correcting this copy improves source quality and user trust without adding any source or matching capability.
 
 Acceptance criteria:
 
-- Launches, Weather, Asteroids, and Gallery render a complete unavailable state when their primary source fails.
-- The state includes what did not load, what the user can try next, the relevant upstream source link when useful, and at least one still-useful navigation path such as Dashboard or ISS.
-- Failed pages do not show a large empty content area below a short alert.
-- No unavailable page renders fake, sample, stale, or guessed data as current activity.
-- The pattern remains compact and page-specific; it does not become a diagnostics dashboard.
-- Tests or static checks cover the shared degraded-state markup for at least one shared `app.js` page and the separate `launches.js` page.
+- The pre-submit Sky Anomalies overview uses source-state-aware language: "Sources ready" only when the connected context sources loaded, "Partial source context" when some loaded, and "Sources unavailable" or equivalent when none loaded.
+- Each context cell keeps its current source-specific state visible, but the headline no longer contradicts the cells.
+- The overview explains that unavailable connected sources and planned source gaps limit the check before submission.
+- The page uses "Last checked" when the connected context is partial or unavailable.
+- Tests cover all-loaded, partial, and all-unavailable overview states.
 
-### R4. Reduce false precision in Sky Anomalies results
+### R6. Rank checked evidence above planned source gaps in Anomalies results
 
 Decision: Approved.
 
-Rationale: Sky Anomalies is explicitly trust-first. Numeric "fit" scores imply precision that Apollo does not have while satellite visibility, flight tracking, planet-position, fireball, and UAP feeds are planned gaps. Removing numeric precision strengthens the product without adding scope.
+Rationale: The submitted result already uses cautious qualitative labels, which should be preserved. The remaining issue is hierarchy: planned gaps such as satellite visibility, fireball reports, and planet positions can appear above connected-but-unavailable source context. That makes unchecked possibilities feel more persuasive than Apollo's actual evidence. Reordering and grouping the result strengthens the trust-first posture without expanding scope.
 
 Acceptance criteria:
 
-- Submitted anomaly results no longer show numeric `/100 fit` scores while key comparison sources are unavailable.
-- Possible explanations use qualitative evidence labels such as connected source match, partial source context, trait-only possibility, or planned source gap.
-- Planned sources are clearly labeled as not connected and are not presented as checked evidence.
-- Result ordering can remain, but the language must not imply identity, verification, probability, or extraterrestrial origin.
-- Tests assert that numeric fit-score copy is absent and planned source gaps remain visible.
+- Submitted Anomalies results show connected checked evidence and connected source status before planned source gaps.
+- Strong or possible matches from connected Apollo sources may rank first when they are actually checked.
+- When connected sources are unavailable, the result should say so before listing trait-only possibilities or planned imports.
+- Planned gaps remain visible but are grouped or ordered after checked context and unavailable connected-source status.
+- Result language does not imply identity, verification, probability, extraterrestrial origin, exact overhead matching, aircraft matching, planet matching, fireball matching, or UAP matching.
+- Numeric fit-score copy remains absent.
+- Tests cover a degraded result where connected sources are unavailable and planned gaps do not occupy the top evidence ranks.
 
-### R5. Clarify location and time assumptions in the anomaly check
+### R7. Clarify Anomalies assumptions before submission
 
-Decision: Approved.
+Decision: Approved with scope limits.
 
-Rationale: The current form collects location, date, and time, but Apollo does not yet perform location-aware pass matching or geocoding. Clarifying interpretation prevents the beta check from overstating precision and fits the existing future-roadmap boundary.
-
-Acceptance criteria:
-
-- Submitted results state how Apollo interpreted the sighting time, including browser/local timezone handling when available.
-- The location recap makes clear that the typed location is descriptive context unless/until location-aware matching is added.
-- Copy avoids implying exact overhead ISS, satellite, aircraft, planet, fireball, or UAP matching from the free-form location field.
-- Empty or partial date/time inputs produce clear fallback language rather than hidden assumptions.
-- Tests cover the displayed time-assumption copy.
-
-### R6. Prioritize useful partial results over unavailable watch items
-
-Decision: Approved.
-
-Rationale: In partial states, Apollo should still answer "what should I pay attention to?" with the strongest available live signals. This improves the dashboard's primary purpose without adding content or sources.
+Rationale: The form asks for location, date, and time before the user sees the strongest limitations. Because Apollo does not yet perform geocoding, location-aware ISS pass matching, satellite visibility, aircraft matching, planet-position checks, fireball imports, or UAP report matching, the key assumptions should be visible before the user submits. This aligns with the roadmap boundary and prevents overclaiming.
 
 Acceptance criteria:
 
-- Watch Items show available live signals before unavailable source rows when the dashboard is partially loaded.
-- If a data family is unavailable, it is grouped or labeled as a source limitation rather than presented as the lead watch item.
-- ISS, crew, launch, asteroid, and weather watch rows continue to use existing loaded data only.
-- The dashboard still exposes outage context through the source-status summary.
-- Tests cover a partial state where ISS/crew are available and asteroid/weather/launch data are unavailable.
+- Before the user taps "Check sighting", the Anomalies page concisely states that time is interpreted in browser-local terms unless otherwise specified.
+- Before submission, the page states that the typed location is descriptive context until location-aware matching is added.
+- Pre-submit copy names the main unavailable matching categories carefully and briefly, without turning the form into a long explainer.
+- The same assumptions remain present in the submitted result recap.
+- The copy avoids implying exact overhead, aircraft, planet, fireball, satellite, or UAP matching from the free-form location field.
+- The pre-submit assumption text remains readable on mobile and is not covered by the dock.
 
-### R7. Align refresh and freshness language across pages
+### R8. Improve mobile navigation recognizability and assistive-technology confidence
 
-Decision: Approved.
+Decision: Approved with scope limits.
 
-Rationale: Apollo already uses a global freshness pattern, but failed pages mix "Last updated", "Signal lost", and normal-looking timestamps. A consistent convention improves trust and reduces content drift across `app.js` and `launches.js`.
-
-Acceptance criteria:
-
-- "Last updated" is used only when page data successfully loads.
-- Failed source attempts use consistent wording such as "Last checked" or "Source unavailable" instead of a normal successful freshness label.
-- Source observation times remain separately labeled as observations, fixes, windows, or source dates where relevant.
-- Dashboard, Launches, Weather, Asteroids, Gallery, and Anomalies follow the same convention.
-- Shared tests cover success and failure freshness copy in both `app.js` pages and `launches.js`.
-
-### R8. Keep the mobile dock from covering scannable content
-
-Decision: Approved.
-
-Rationale: Mobile dashboard scanning is core to demo quality. The fixed dock is an accepted navigation pattern, but content must have enough clear space around it. This is a small CSS/layout correction, not a product expansion.
+Rationale: This is lower priority than R1 through R7, but it is still aligned with Apollo's responsive demo quality. The mobile dock visually hides labels, and duplicated desktop/mobile navigation structures can create assistive-technology risk if hidden controls are exposed incorrectly. The useful work is verification and minimal state/name clarity, not a larger redesign.
 
 Acceptance criteria:
 
-- On phone-width viewports, content bottom clearance accounts for the fixed dock height, the intended gap, and safe-area inset.
-- The last visible dashboard card, watch menu content, and focus targets can scroll fully above the dock.
-- The mobile dock remains fixed, accessible, and consistent with the documented Acadia-style mobile navigation.
-- Browser verification includes dashboard and Watch menu screenshots at a phone viewport such as 390x844 or 375x667.
-
-### R9. Make card affordance match interactivity on dashboard metrics
-
-Decision: Not approved for the next Design pass.
-
-Rationale: The dashboard already provides primary navigation and command-panel links for deeper actions. Making quick-stat metrics clickable would duplicate existing navigation, while a standalone visual affordance pass is lower value than the trust and degraded-state work. Quick stats can remain status-only as long as they do not gain pointer, hover, or focus behavior that implies clickability.
-
-No acceptance criteria because no work is approved from this recommendation.
-
-### R10. Make the theme toggle visually self-explanatory
-
-Decision: Not approved for the next Design pass.
-
-Rationale: The design docs explicitly call for a compact light/dark icon toggle preserved as a utility control. The existing control has an accessible label and title. Adding visible explanatory text would consume scarce header space, especially on mobile, without improving Apollo's primary space-data mission.
-
-No acceptance criteria because no work is approved from this recommendation.
+- Every mobile dock destination has a clear accessible name: Dashboard, ISS, Launches, Watch, and Gallery.
+- Icons in navigation remain `aria-hidden="true"` so assistive technology reads destination names rather than icon glyphs.
+- At a phone viewport, the hidden desktop navigation is not exposed as an extra usable navigation set in browser accessibility inspection.
+- The current top-level destination is visually clear and exposed with `aria-current="page"` where appropriate.
+- For Watch pages, the Watch trigger and the active menu item both expose the current state.
+- Any visible-label treatment must preserve the compact icon-first Acadia mobile pattern, keep five destinations, avoid increasing dock collision, and pass the R3 clearance criteria.
+- Static accessibility checks are updated, and at least one mobile accessibility snapshot or manual browser accessibility inspection is documented.
 
 ## Design Automation Instructions
 
-The next Design automation should produce a focused UX/design plan for the approved recommendations only. It should treat trust under partial data as the main design problem.
+The next Design automation should produce a focused UX/design plan for the approved recommendations only. Treat "partial state must complete everywhere" as the main design problem.
 
 Design should not:
 
-- Add new pages, source integrations, charts, filters, saved settings, report submission, notifications, accounts, or geocoding.
-- Turn Sky Anomalies into an identity or reporting workflow.
+- Add new pages, source integrations, charts, filters, saved settings, report submission, notifications, accounts, geocoding, or location-aware matching.
+- Turn Sky Anomalies into an identity, certainty, probability, or reporting workflow.
 - Add educational panels that compete with source status and current activity.
-- Spend time on R9 or R10 unless those areas are already being touched by an approved header or dashboard-state change.
+- Redesign the whole navigation system or add a new mobile drawer framework.
+- Reopen the completed unavailable detail-page pattern unless a small consistency fix is necessary.
 
 Design should focus on:
 
-- A global source-state language model that handles live, partial, degraded, and unavailable states.
-- A compact source-status card or page-state pattern that works on dashboard and failed detail pages.
-- Sky Anomalies result language that separates connected evidence from planned source gaps.
-- Mobile spacing rules that keep fixed navigation clear of content.
+- A final dashboard state model for live, partial, and unavailable checks that drives header, freshness, buttons, command panels, source status, and ARIA state together.
+- Partial-state content rules for Recent Activity and Watch Items.
+- Mobile spacing rules that keep fixed navigation clear of content, forms, menus, and focus targets.
+- A mobile Watch menu presentation that reads as navigation.
+- Sky Anomalies source-readiness and result hierarchy that separates checked evidence, unavailable connected sources, trait-only possibilities, and planned source gaps.
+- Minimal mobile navigation accessibility verification and current-state clarity.
