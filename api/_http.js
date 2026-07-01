@@ -1,10 +1,12 @@
 async function fetchJson(url, options = {}) {
-  const timeoutMs = Number.isFinite(options.timeoutMs) ? options.timeoutMs : 10000;
+  const { timeoutMs: requestedTimeoutMs, ...fetchOptions } = options;
+  const timeoutMs = Number.isFinite(requestedTimeoutMs) ? requestedTimeoutMs : 10000;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const response = await fetch(url, {
+      ...fetchOptions,
       signal: controller.signal
     });
     const payload = await response.json().catch(() => null);

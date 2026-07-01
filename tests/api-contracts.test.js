@@ -57,6 +57,48 @@ test("fetchJson returns parsed payloads and applies an abort signal", async (t) 
   });
 });
 
+test("fetchJson forwards standard fetch options without leaking timeout settings", async (t) => {
+  const originalFetch = global.fetch;
+
+  t.after(() => {
+    global.fetch = originalFetch;
+  });
+
+  global.fetch = async (url, options) => {
+    assert.equal(String(url), "https://example.test/post.json");
+    assert.equal(options.method, "POST");
+    assert.deepEqual(options.headers, {
+      "content-type": "application/json"
+    });
+    assert.equal(options.body, JSON.stringify({ status: "probe" }));
+    assert.equal("timeoutMs" in options, false);
+    assert.ok(options.signal instanceof AbortSignal);
+
+    return {
+      ok: true,
+      status: 200,
+      async json() {
+        return {
+          accepted: true
+        };
+      }
+    };
+  };
+
+  const { payload } = await fetchJson("https://example.test/post.json", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({ status: "probe" }),
+    timeoutMs: 500
+  });
+
+  assert.deepEqual(payload, {
+    accepted: true
+  });
+});
+
 test("fetchJson preserves responses when JSON parsing fails", async (t) => {
   const originalFetch = global.fetch;
 
