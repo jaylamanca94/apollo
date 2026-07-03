@@ -3122,6 +3122,12 @@ html[data-bs-theme="light"] .data-detail-panel {
   color: var(--apollo-warning);
 }
 
+.source-status-pending .source-status-icon {
+  background: rgba(100, 116, 139, 0.14);
+  border-color: rgba(100, 116, 139, 0.24);
+  color: var(--apollo-muted-strong);
+}
+
 .source-status-error .source-status-icon {
   background: var(--apollo-accent-soft);
   border-color: rgba(255, 64, 86, 0.32);
@@ -3270,6 +3276,12 @@ html[data-bs-theme="light"] .data-detail-panel {
   background: var(--apollo-warning-soft);
   border-color: color-mix(in srgb, var(--apollo-warning) 38%, transparent);
   color: var(--apollo-warning);
+}
+
+.source-status-pending .source-status-pill {
+  background: rgba(100, 116, 139, 0.14);
+  border-color: rgba(100, 116, 139, 0.24);
+  color: var(--apollo-muted-strong);
 }
 
 .source-status-error .source-status-pill {

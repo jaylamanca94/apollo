@@ -6,7 +6,7 @@ const THEME_COLORS = {
 };
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
 const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing data</span>`;
-const ERROR_PREFIX = "Data did not load.";
+const ERROR_PREFIX = "Data unavailable.";
 
 const els = {
   refreshButton: document.querySelector("#launchesRefreshButton"),
@@ -350,7 +350,7 @@ function setLaunchesUpdated(value = formatUpdated()) {
 }
 
 function setError(message) {
-  const text = getText(message, "Launch schedule did not load.");
+  const text = getText(message, "Launch schedule source unavailable.");
   els.launchPageBody.innerHTML = renderLaunchesUnavailable(text.startsWith(ERROR_PREFIX) ? text : `${ERROR_PREFIX} ${text}`);
 }
 
@@ -373,14 +373,14 @@ function renderLaunchesUnavailable(message) {
       <div class="source-unavailable-heading">
         <span class="source-unavailable-icon"><i class="fa-solid fa-circle-exclamation acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="section-kicker mb-1">Source unavailable</p>
-          <h3 class="source-unavailable-title mb-0">Launch schedule did not load</h3>
+          <p class="section-kicker mb-1">Source checked</p>
+          <h3 class="source-unavailable-title mb-0">Data unavailable</h3>
         </div>
       </div>
       <p class="source-unavailable-copy mb-0">${escapeHtml(message)}</p>
       <div class="source-unavailable-recovery">
-        <p class="mb-0"><strong>What to try:</strong> Refresh again shortly or open The Space Devs source to check availability.</p>
-        <p class="mb-0"><strong>Source checked:</strong> The Space Devs launch feed.</p>
+        <p class="mb-0"><strong>Recovery:</strong> Refresh again shortly or open The Space Devs source to check availability.</p>
+        <p class="mb-0"><strong>Source checked:</strong> The Space Devs launch source.</p>
       </div>
       <div class="source-unavailable-actions">
         <a class="source-link" href="https://thespacedevs.com/llapi" target="_blank" rel="noopener noreferrer">
@@ -562,8 +562,8 @@ async function loadLaunches() {
     setLaunchPageStatus("Launch schedule loaded.");
     setLaunchesUpdated();
   } catch (error) {
-    setError("The launch schedule did not load. Try refreshing in a moment.");
-    setLaunchPageStatus("Data did not load. Launch schedule did not arrive.");
+    setError("Launch schedule source unavailable. Try refreshing in a moment.");
+    setLaunchPageStatus("Data unavailable. Launch schedule source unavailable.");
     setLaunchesUpdated(formatLastChecked());
   } finally {
     setBusy(els.launchPageBody, false);

@@ -359,9 +359,10 @@ test("dashboard source state avoids overclaiming during partial loads", () => {
   assert.match(html, /data-source-state="loading"/);
   assert.doesNotMatch(html, /<span>Live data<\/span>/);
   assert.match(js, /function getSourceStateFamily\(statuses\)/);
+  assert.match(js, /pending:\s*"Checking"/);
   assert.match(js, /label:\s*"Partial data"/);
   assert.match(js, /label:\s*"Data unavailable"/);
-  assert.match(js, /setDashboardFreshness\(statuses, checkedAt\)/);
+  assert.match(js, /function updateDynamicRegionsFromStatuses\(statuses, checkedAt = new Date\(\), options = \{\}\)/);
 });
 
 test("detail pages render intentional unavailable source states", () => {
@@ -369,11 +370,15 @@ test("detail pages render intentional unavailable source states", () => {
   const launchesJs = readProjectFile("launches.js");
 
   assert.match(appJs, /function unavailableStateMarkup/);
-  assert.match(appJs, /NASA image did not load/);
-  assert.match(appJs, /Near-Earth asteroid list did not load/);
-  assert.match(appJs, /Space-weather conditions did not load/);
+  assert.match(appJs, /title = "Data unavailable"/);
+  assert.match(appJs, /Apollo cannot reach the current Astronomy Picture of the Day/);
+  assert.match(appJs, /Apollo cannot reach the current NASA NeoWs close-approach list/);
+  assert.match(appJs, /Apollo cannot reach the current NOAA SWPC K-index and notices/);
+  assert.match(appJs, /<p class="section-kicker mb-1">Source checked<\/p>/);
+  assert.match(appJs, /<strong>Recovery:<\/strong>/);
   assert.match(launchesJs, /function renderLaunchesUnavailable/);
-  assert.match(launchesJs, /Launch schedule did not load/);
+  assert.match(launchesJs, /Data unavailable/);
+  assert.match(launchesJs, /The Space Devs launch source/);
   assert.match(launchesJs, /setLaunchesUpdated\(formatLastChecked\(\)\)/);
   assert.doesNotMatch(launchesJs, /Last updated: Signal lost/);
 });
@@ -404,7 +409,7 @@ test("sky anomaly overview reflects connected source readiness", () => {
   assert.match(js, /Loaded connected source/);
   assert.match(js, /Connected source unavailable/);
   assert.match(js, /Unavailable connected sources and planned imports limit this pre-submit check/);
-  assert.match(js, /Connected context did not load; Apollo can only compare visible traits against planned source gaps/);
+  assert.match(js, /Connected context is unavailable; Apollo can only compare visible traits against planned source gaps/);
   assert.doesNotMatch(js, /<h3 class="sky-anomaly-result-title mb-0">Sources ready<\/h3>/);
 });
 
@@ -417,16 +422,19 @@ test("sky anomaly evidence ranks connected source context before planned gaps", 
   assert.match(js, /return 1;/);
   assert.match(js, /const priorityDelta = getSkyCandidatePriority\(left\) - getSkyCandidatePriority\(right\);/);
   assert.match(js, /return priorityDelta \|\| right\.sortScore - left\.sortScore;/);
+  assert.match(js, /const plannedGaps = getSkyConfidenceCandidates\(rows, traits, \{ includeOnlyPlanned: true \}\);/);
+  assert.match(js, /id="skyPlannedGapsTitle">Planned source gaps<\/h4>/);
+  assert.match(js, /Connected sources are unavailable, so Apollo cannot list known-context explanations/);
 });
 
-test("watch items prioritize loaded signals before source limitations", () => {
+test("watch items prioritize loaded signals before source unavailable rows", () => {
   const js = readProjectFile("app.js");
 
   assert.match(js, /const availableRows = \[\];/);
   assert.match(js, /const limitationRows = \[\];/);
   assert.match(js, /label:\s*"ISS track"/);
   assert.match(js, /label:\s*"Orbital presence"/);
-  assert.match(js, /label:\s*"Source limitation"/);
+  assert.match(js, /label:\s*"Source unavailable"/);
   assert.match(js, /return \[\.\.\.availableRows, \.\.\.limitationRows\];/);
 });
 
@@ -435,7 +443,7 @@ test("freshness copy separates successful updates from failed checks", () => {
   const launchesJs = readProjectFile("launches.js");
 
   assert.match(appJs, /function formatLastChecked\(date = new Date\(\)\)/);
-  assert.match(appJs, /formatUpdated\(checkedAt\) : formatLastChecked\(checkedAt\)/);
+  assert.match(appJs, /family === "live" \? formatUpdated\(checkedAt\) : family === "loading" \? "Last checked: Checking sources" : formatLastChecked\(checkedAt\)/);
   assert.match(launchesJs, /function formatLastChecked\(date = new Date\(\)\)/);
   assert.doesNotMatch(appJs, /Signal lost/);
   assert.doesNotMatch(launchesJs, /Signal lost/);
@@ -579,6 +587,7 @@ test("mobile dock stays viewport-bottom anchored", () => {
 
 test("mobile Watch menu opens as navigation above the dock", () => {
   const css = readProjectFile("styles.css");
+  const js = readProjectFile("app.js");
   const mobileBlock = css.match(/@media \(max-width:\s*767\.98px\)\s*\{[\s\S]*?\n\}/)?.[0] || "";
   const mobileMenuRule = mobileBlock.match(/\.apollo-primary-links\.apollo-mobile-dock \.apollo-nav-menu\s*\{[\s\S]*?\n  \}/)?.[0] || "";
 
@@ -586,6 +595,10 @@ test("mobile Watch menu opens as navigation above the dock", () => {
   assert.match(mobileMenuRule, /inset:\s*auto 0 calc\(100% \+ 0\.75rem\) auto !important;/);
   assert.match(mobileMenuRule, /margin:\s*0 !important;/);
   assert.match(mobileMenuRule, /transform:\s*none !important;/);
+  assert.match(js, /function closeMobileWatchMenus\(\)/);
+  assert.match(js, /window\.addEventListener\("scroll", closeMobileWatchMenus, \{ passive: true \}\);/);
+  assert.match(js, /item\.addEventListener\("click", closeMobileWatchMenus\);/);
+  assert.match(js, /initMobileWatchMenuDismissal\(\);/);
 });
 
 test("mobile nav exposes clear names while hiding icon glyphs", () => {
