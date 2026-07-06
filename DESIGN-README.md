@@ -218,6 +218,7 @@ Current icon mapping:
 - Clickable cards and list rows should have clear pointer, hover, and keyboard focus states.
 - Pressed states should feel native and precise: use a small scale/settle effect on controls and interactive rows, keep hover lift to `-1px`, and pair row hover with the shared row-hover border and shadow tokens instead of inventing one-off motion.
 - The global refresh action should read as the primary action, use the red accent fill, and show a compact spinner while data is refreshing.
+- Menus, floating mobile navigation, and compact overlay surfaces should use Apollo's shared overlay material: high-opacity translucent surface, Acadia vibrancy, restrained shadow, and 8px menu item radius so content behind remains context rather than visual noise.
 - Loading, unavailable, and error states should use the shared state-message surface with a small icon so the page feels composed before live data arrives.
 - Loading placeholders may use one restrained sheen animation on row-colored surfaces, and must fall back cleanly under `prefers-reduced-motion`.
 - User navigation should use a compact icon/name control when account actions are needed.

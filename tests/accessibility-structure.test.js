@@ -626,7 +626,7 @@ test("launch timeline exposes urgency context and current asset versions", () =>
   const html = readProjectFile("launches.html");
   const js = readProjectFile("launches.js");
 
-  assert.match(html, /styles\.css\?v=visual-polish-2/);
+  assert.match(html, /styles\.css\?v=visual-polish-3/);
   assert.match(html, /launches\.js\?v=clarity-copy-1/);
   assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
