@@ -317,6 +317,8 @@ test("nonessential interface motion respects reduced motion preferences", () => 
   assert.match(css, /\.apollo-app \.btn:not\(\.apollo-refresh-button\):hover,\s*\n\s*\.apollo-app \.btn:not\(\.apollo-refresh-button\):focus-visible/);
   assert.match(css, /\.launch-card:hover,\s*\n\s*\.launch-show-all:hover/);
   assert.match(css, /transform:\s*none !important;/);
+  assert.match(css, /\.apollo-skip-link\s*\{[\s\S]*?transform: translateY\(-160%\) !important;[\s\S]*?transition: none !important;[\s\S]*?\}/);
+  assert.match(css, /\.apollo-skip-link:focus,[\s\S]*?\.apollo-skip-link:focus-visible\s*\{[\s\S]*?transform: translateY\(0\) !important;[\s\S]*?\}/);
 });
 
 test("web manifest points to the current SVG favicon", () => {
@@ -394,6 +396,10 @@ test("sky anomaly results use qualitative evidence and explicit assumptions", ()
   assert.match(js, /browser-local time/);
   assert.match(js, /Location "\$\{escapeHtml\(location\)\}" is descriptive context/);
   assert.match(js, /not doing location-aware overhead, aircraft, planet, fireball, or UAP matching yet/);
+  assert.match(js, /function getLaunchMatchLevel\(hoursFromObservation\)/);
+  assert.match(js, /if \(hoursFromObservation > 0\) \{\s*return "context";\s*\}/);
+  assert.match(js, /Upcoming launch context/);
+  assert.match(js, /not an explanatory match/);
   assert.match(html, /Time is interpreted in browser-local terms unless you specify otherwise\./);
   assert.match(html, /Typed location is descriptive context; Apollo does not yet do overhead, aircraft, planet, fireball, satellite, or UAP matching from it\./);
 });

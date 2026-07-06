@@ -1,40 +1,39 @@
-# Implementation Report: Apollo July 3 Design Recommendations
+# Implementation Report: Apollo July 6 Design Regression
 
-Date: 2026-07-03
+Date: 2026-07-06
 Automation ID: 03-design
 Input: `automation/review/latest.md`
 Branch: `main`
 
 ## Completed Implementation
 
-- Implemented source-aware first-load and refresh progress from the shared source-state model. Data Sources now starts with `Checking` rows, then updates to `Loaded`, `Needs attention`, or `Source unavailable` as each family resolves without waiting for slower sources.
-- Updated dashboard freshness and status copy so checking, partial, unavailable, and fully loaded states use one vocabulary across the public-data chip, Space Brief, Recent Activity, Watch Items, and Data Sources.
-- Streamlined unavailable detail-page states for Gallery, Launches, Asteroids, and Weather to one primary `Data unavailable` status, one plain explanation, the checked source, and one recovery path using `Last checked`.
-- Reordered submitted Sky Anomalies results so the conclusion and checked connected-source state appear before the observation recap and planned gaps on mobile and desktop.
-- Moved planned satellite, aircraft, planet, fireball, and UAP/reporting categories into a separate `Planned source gaps` section labeled as not checked evidence.
-- Made the mobile Watch menu dismiss on underlying page scroll and menu-item selection while preserving Bootstrap outside-tap and Escape dismissal, focus order, `aria-expanded`, and the existing five mobile destinations.
-- Updated `DESIGN-README.md`, `PRODUCT-README.md`, and `tests/accessibility-structure.test.js` for the new source-state, unavailable-copy, Anomalies hierarchy, and Watch menu contracts.
+- Treated the July 6 review as a regression-focused handoff. R1-R5 and R7 were already represented in the product, design, implementation, and static tests; R8 was used as the validation gate.
+- Fixed the observed Sky Anomalies launch-timing regression: future scheduled launches now render as `Upcoming launch context` and are explicitly described as upcoming context, not explanatory matches for earlier sightings. Close past launches can still produce strong known-context language.
+- Fixed the reduced-motion skip-link regression: the skip link remains hidden until focused when `prefers-reduced-motion: reduce` is active, while still removing nonessential motion.
+- Updated `DESIGN-README.md` and `PRODUCT-README.md` to document that future scheduled launches are context only for earlier Sky Anomalies sightings.
+- Added static regression coverage in `tests/accessibility-structure.test.js` for future-launch context-only behavior and reduced-motion skip-link focus behavior.
 
 ## Validation
 
 - `npm run check` passed.
 - Node test suite passed: 96 tests.
-- Browser verification passed using local mocked source responses and Playwright Chromium:
-  - Dashboard at 390x844 showed a mixed slow/degraded first-load state with `Checking`, `Loaded`, and `Source unavailable` visible together.
-  - Source status `aria-busy` transitioned from `true` during the slow source to `false` after completion.
-  - Mobile Watch menu dismissed on page scroll and after Escape; `aria-expanded` returned to `false`.
+- Browser regression verification passed with local static preview, mocked source responses, and cached Playwright Chromium:
+  - Slow mixed dashboard first-load state showed `Loaded`, `Source unavailable`, and `Checking` together.
+  - Dashboard dynamic regions settled with `aria-busy="false"` and final partial-source status copy.
+  - Reduced-motion skip link stayed hidden until focus, then appeared at the top of the viewport.
   - Phone width exposed 5 mobile dock destinations and 0 visible desktop navigation links.
+  - Mobile Watch menu dismissed on underlying page scroll and returned `aria-expanded` from `true` to `false`.
   - ISS page exposed the map region as `Interactive map showing the current ISS position above Earth`.
-  - Sky Anomalies submitted results at 390x844 and 375x667 ordered checked sources before possible explanations, observation recap, and planned source gaps.
-  - Reduced-motion emulation was active for the browser run.
+  - Sky Anomalies submitted result at 390x844 and 375x667 kept sources checked before evidence context, observation recap, and planned source gaps.
+  - Future launch six hours after the submitted sighting showed `No strong known-space match` and `Upcoming launch context`; a past launch five hours before the sighting still showed `Strong known-context match`.
 
 ## Screenshots
 
-- `automation/implementation/screenshots/dashboard-progressive-source-state-390x844.png`
-- `automation/implementation/screenshots/watch-menu-dismissed-after-scroll-390x844.png`
-- `automation/implementation/screenshots/anomalies-submitted-source-first-390x844.png`
-- `automation/implementation/screenshots/anomalies-submitted-source-first-375x667.png`
+- `automation/implementation/screenshots/2026-07-06/dashboard-regression-390x844.png`
+- `automation/implementation/screenshots/2026-07-06/watch-menu-dismissal-regression-390x844.png`
+- `automation/implementation/screenshots/2026-07-06/anomalies-future-launch-390x844.png`
+- `automation/implementation/screenshots/2026-07-06/anomalies-future-launch-375x667.png`
 
 ## Follow-Up Items
 
-- None for the approved July 3 scope.
+- Local commit `9a5b70c` is complete. Pushing `main` to `origin` is blocked pending explicit user approval after the external GitHub disclosure warning.

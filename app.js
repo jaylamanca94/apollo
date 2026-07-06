@@ -865,6 +865,24 @@ function getNearestLaunchMatch(observedAt) {
     .sort((left, right) => Math.abs(left.hoursFromObservation) - Math.abs(right.hoursFromObservation))[0] || null;
 }
 
+function getLaunchMatchLevel(hoursFromObservation) {
+  const absHours = Math.abs(hoursFromObservation);
+
+  if (hoursFromObservation > 0) {
+    return "context";
+  }
+
+  if (absHours <= 6) {
+    return "strong";
+  }
+
+  if (absHours <= 48) {
+    return "possible";
+  }
+
+  return "context";
+}
+
 function getSkyExplanationRows(observedAt) {
   const rows = [];
   const launchMatch = getNearestLaunchMatch(observedAt);
@@ -874,16 +892,18 @@ function getSkyExplanationRows(observedAt) {
 
   if (launchMatch) {
     const { launch, hoursFromObservation } = launchMatch;
-    const absHours = Math.abs(hoursFromObservation);
     const launchName = splitLaunchName(launch.name);
     const launchLabel = launchName.mission ? `${launchName.vehicle}: ${launchName.mission}` : launchName.vehicle;
-    const matchLevel = absHours <= 6 ? "strong" : absHours <= 48 ? "possible" : "context";
+    const matchLevel = getLaunchMatchLevel(hoursFromObservation);
+    const isFutureLaunch = hoursFromObservation > 0;
 
     rows.push({
       label: "Launch activity",
       state: matchLevel,
-      headline: matchLevel === "strong" ? "Close launch timing match" : matchLevel === "possible" ? "Nearby launch context" : "No close launch timing match",
-      detail: `${launchLabel} is ${formatRelativeHours(hoursFromObservation)} this sighting time.`,
+      headline: isFutureLaunch ? "Upcoming launch context" : matchLevel === "strong" ? "Close launch timing match" : matchLevel === "possible" ? "Nearby launch context" : "No close launch timing match",
+      detail: isFutureLaunch
+        ? `${launchLabel} is scheduled ${formatRelativeHours(hoursFromObservation)} this sighting time; Apollo treats it as upcoming context, not an explanatory match.`
+        : `${launchLabel} is ${formatRelativeHours(hoursFromObservation)} this sighting time.`,
       source: "The Space Devs launch source"
     });
   } else {

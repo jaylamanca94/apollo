@@ -3242,7 +3242,6 @@ html[data-bs-theme="light"] .data-detail-panel {
     animation-iteration-count: 1 !important;
   }
 
-  .apollo-skip-link,
   .apollo-app .btn:not(.apollo-refresh-button):hover,
   .apollo-app .btn:not(.apollo-refresh-button):focus-visible,
   .acadia-button:hover,
@@ -3263,6 +3262,16 @@ html[data-bs-theme="light"] .data-detail-panel {
   .source-status-row:hover,
   .list-group-flush > .list-group-item:hover {
     transform: none !important;
+  }
+
+  .apollo-skip-link {
+    transform: translateY(-160%) !important;
+    transition: none !important;
+  }
+
+  .apollo-skip-link:focus,
+  .apollo-skip-link:focus-visible {
+    transform: translateY(0) !important;
   }
 }
 
