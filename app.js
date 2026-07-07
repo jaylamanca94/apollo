@@ -526,6 +526,14 @@ function getSkyAnomalyLocation() {
   return getText(els.skyAnomalyLocation?.value, "Selected location");
 }
 
+function getSourceStatusState(id) {
+  return latestSourceStatuses.get(id)?.state || "";
+}
+
+function isSourcePending(id) {
+  return getSourceStatusState(id) === "pending";
+}
+
 const SKY_OBSERVATION_LABELS = {
   brightness: {
     bright: "Bright",
@@ -2755,6 +2763,10 @@ function getLaunchBrief(launches) {
   const launch = launches[0];
 
   if (!launch) {
+    if (isSourcePending("launches")) {
+      return "Launch activity is still checking The Space Devs source.";
+    }
+
     return "Launch activity is unavailable from the current source.";
   }
 
@@ -2779,6 +2791,10 @@ function getAsteroidBrief(neoSummary) {
   const asteroids = Array.isArray(neoSummary?.asteroids) ? neoSummary.asteroids : null;
 
   if (!asteroids) {
+    if (isSourcePending("neo")) {
+      return "Asteroid tracking is still checking NASA.";
+    }
+
     return "Asteroid tracking is unavailable from NASA right now.";
   }
 
@@ -2793,6 +2809,10 @@ function getAsteroidBrief(neoSummary) {
 
 function getWeatherBrief(spaceWeather) {
   if (!spaceWeather) {
+    if (isSourcePending("spaceWeather")) {
+      return "Space weather is still checking NOAA.";
+    }
+
     return "Space weather is unavailable from NOAA right now.";
   }
 
@@ -2804,18 +2824,36 @@ function getWeatherBrief(spaceWeather) {
 }
 
 function getOrbitalBrief(peopleState, iss) {
-  if (!peopleState && (!iss || iss.latitude === null || iss.longitude === null)) {
+  const hasIssPosition = Boolean(iss && iss.latitude !== null && iss.longitude !== null);
+  const peoplePending = isSourcePending("people");
+  const issPending = isSourcePending("iss");
+
+  if (!peopleState && !hasIssPosition) {
+    if (peoplePending && issPending) {
+      return "Orbital operations are still checking crew and ISS position sources.";
+    }
+
+    if (peoplePending) {
+      return "Crew status is still checking, and ISS position is unavailable.";
+    }
+
+    if (issPending) {
+      return "ISS position is still checking, and crew status is unavailable.";
+    }
+
     return "Orbital operations are partially unavailable from the current sources.";
   }
 
   if (!peopleState) {
-    return "The ISS is reporting normal orbital position; crew status is unavailable.";
+    return `The ISS is reporting normal orbital position; crew status is ${peoplePending ? "still checking" : "unavailable"}.`;
   }
 
   const crewWord = peopleState.count === 1 ? "person remains" : "people remain";
-  const issStatus = iss && iss.latitude !== null && iss.longitude !== null
+  const issStatus = hasIssPosition
     ? "and the ISS is reporting normal position"
-    : "while ISS position is unavailable";
+    : issPending
+      ? "while ISS position is still checking"
+      : "while ISS position is unavailable";
 
   return `${peopleState.count.toLocaleString()} ${crewWord} in orbit, ${issStatus}.`;
 }
@@ -2875,14 +2913,15 @@ function getIssRegion(latitude, longitude) {
 function getSpaceBriefState() {
   const statuses = Array.from(latestSourceStatuses.values());
   const pendingCount = statuses.filter((status) => status.state === "pending").length;
-  const feedStates = [
-    dashboardData.iss,
-    dashboardData.people,
-    dashboardData.launches.length ? dashboardData.launches : null,
-    dashboardData.neo,
-    dashboardData.spaceWeather
+  const sourceStates = [
+    { id: "iss", data: dashboardData.iss },
+    { id: "people", data: dashboardData.people },
+    { id: "launches", data: dashboardData.launches.length ? dashboardData.launches : null },
+    { id: "neo", data: dashboardData.neo },
+    { id: "spaceWeather", data: dashboardData.spaceWeather }
   ];
-  const unavailableCount = feedStates.filter((item) => !item).length;
+  const pendingDataCount = sourceStates.filter((item) => !item.data && getSourceStatusState(item.id) === "pending").length;
+  const unavailableCount = sourceStates.filter((item) => !item.data && getSourceStatusState(item.id) !== "pending").length;
   const hazardous = dashboardData.neo?.asteroids?.filter((item) => item.hazardous).length || 0;
   const weatherSeverity = dashboardData.spaceWeather?.severity || "unknown";
   const isStorm = ["active", "storm"].includes(weatherSeverity);
@@ -2892,6 +2931,16 @@ function getSpaceBriefState() {
       label: "Loading",
       tone: "pending",
       headline: "Apollo is checking public sources."
+    };
+  }
+
+  if (pendingDataCount > 0) {
+    return {
+      label: unavailableCount > 0 ? "Partial" : "Checking",
+      tone: "pending",
+      headline: unavailableCount > 0
+        ? "Apollo has partial source context."
+        : "Apollo is still checking some public sources."
     };
   }
 

@@ -178,6 +178,54 @@ test("loadPeople flags mismatched source roster counts", async () => {
   assert.match(status.detail, /Source reports 3 people but 2 roster entries loaded/);
 });
 
+test("Space Brief keeps pending sources distinct from unavailable sources", () => {
+  const spaceBriefBody = {
+    innerHTML: ""
+  };
+  const pageSubtitle = {
+    textContent: ""
+  };
+  const context = loadDashboardHelpers({
+    elements: {
+      "#spaceBriefBody": spaceBriefBody,
+      ".apollo-page-subtitle": pageSubtitle
+    }
+  });
+
+  context.document.body = {
+    dataset: {
+      apolloPage: "dashboard"
+    }
+  };
+
+  vm.runInContext(`
+    dashboardData.people = { count: 7, locationCount: 2 };
+    dashboardData.launches = [{
+      name: "Falcon 9 | Demo Mission",
+      dateUtc: new Date(Date.now() + 7200000).toISOString(),
+      status: "Go"
+    }];
+    dashboardData.spaceWeather = {
+      condition: "Quiet conditions",
+      kpIndex: 2,
+      severity: "quiet"
+    };
+    latestSourceStatuses = new Map([
+      ["people", createSourceStatus("people", "ok", "Crew loaded.")],
+      ["launches", createSourceStatus("launches", "ok", "Launches loaded.")],
+      ["spaceWeather", createSourceStatus("spaceWeather", "ok", "Weather loaded.")],
+      ["iss", createSourceStatus("iss", "pending", "Checking source.")],
+      ["neo", createSourceStatus("neo", "error", "Asteroid source unavailable.")]
+    ]);
+    renderSpaceBrief();
+  `, context);
+
+  assert.match(spaceBriefBody.innerHTML, /Apollo has partial source context/);
+  assert.match(spaceBriefBody.innerHTML, /ISS position is still checking/);
+  assert.doesNotMatch(spaceBriefBody.innerHTML, /ISS position is unavailable/);
+  assert.equal(pageSubtitle.textContent, "Space Activity: Partial");
+});
+
 test("loadApod renders embeddable videos with direct media links", async () => {
   const apodBody = {
     innerHTML: ""
