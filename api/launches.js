@@ -1,24 +1,12 @@
 const { getCached, setCached } = require("./_cache");
 const { fetchJson } = require("./_http");
+const { getText, safeHttpUrl } = require("./_normalize");
 const { sendJson } = require("./_nasa");
 
 const LAUNCH_LIBRARY_URL = "https://ll.thespacedevs.com/2.3.0/launches/upcoming/";
 const LAUNCH_CACHE_SECONDS = 60 * 15;
 const LAUNCH_TIMEOUT_MS = 10000;
 const cache = new Map();
-
-function safeHttpUrl(value) {
-  try {
-    const url = new URL(value);
-    return ["http:", "https:"].includes(url.protocol) ? url.toString() : "";
-  } catch (error) {
-    return "";
-  }
-}
-
-function getText(value) {
-  return typeof value === "string" ? value.trim() : "";
-}
 
 function getWindowDurationMinutes(windowStart, windowEnd) {
   const start = new Date(windowStart);

@@ -3,6 +3,7 @@ const test = require("node:test");
 
 const { getCached, setCached } = require("../api/_cache");
 const { fetchJson } = require("../api/_http");
+const { getFiniteNumber, getText, safeHttpUrl } = require("../api/_normalize");
 const {
   getApodEmbedUrl,
   isIsoDate,
@@ -118,6 +119,17 @@ test("fetchJson preserves responses when JSON parsing fails", async (t) => {
 
   assert.equal(response.status, 503);
   assert.equal(payload, null);
+});
+
+test("shared normalizers trim text, parse finite numbers, and keep safe HTTP URLs only", () => {
+  assert.equal(getText("  Apollo  "), "Apollo");
+  assert.equal(getText("   ", "Fallback"), "Fallback");
+  assert.equal(getFiniteNumber("42.5"), 42.5);
+  assert.equal(getFiniteNumber(""), null);
+  assert.equal(getFiniteNumber("not numeric"), null);
+  assert.equal(safeHttpUrl("https://example.test/path?q=1"), "https://example.test/path?q=1");
+  assert.equal(safeHttpUrl("ftp://example.test/path"), "");
+  assert.equal(safeHttpUrl("javascript:alert(1)"), "");
 });
 
 test("isIsoDate accepts Apollo's API date format only", () => {

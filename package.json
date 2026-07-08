@@ -5,7 +5,7 @@
   "scripts": {
     "vercel:dev": "vercel dev",
     "test": "node --test tests/api-contracts.test.js tests/accessibility-structure.test.js tests/people-render.test.js tests/theme.test.js",
-    "check": "node --check app.js && node --check launches.js && node --check api/_cache.js && node --check api/_http.js && node --check api/_nasa.js && node --check api/_space_data.js && node --check api/apod.js && node --check api/neo.js && node --check api/launches.js && node --check api/space-weather.js && node --check api/health.js && node --check tests/api-contracts.test.js && node --check tests/accessibility-structure.test.js && node --check tests/people-render.test.js && node --check tests/theme.test.js && npm test"
+    "check": "node --check app.js && node --check launches.js && node --check api/_cache.js && node --check api/_http.js && node --check api/_nasa.js && node --check api/_normalize.js && node --check api/_space_data.js && node --check api/apod.js && node --check api/neo.js && node --check api/launches.js && node --check api/space-weather.js && node --check api/health.js && node --check tests/api-contracts.test.js && node --check tests/accessibility-structure.test.js && node --check tests/people-render.test.js && node --check tests/theme.test.js && npm test"
   },
   "devDependencies": {
     "vercel": "^34.0.0"

@@ -36,12 +36,13 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `index.html` - dashboard markup
 - `launches.html` - dedicated launches detail page markup
 - `styles.css` - minimal Bootstrap-aligned styling
-- `assets/apollo-app-icon-light.png` and `assets/apollo-app-icon-dark.png` - Apollo 512px satellite app icons for light and dark browser schemes
-- `site.webmanifest` - browser app manifest pointing to the PNG app icons
+- `assets/apollo-app-icon-light.svg` and `assets/apollo-app-icon-dark.svg` - Apollo satellite app icons for light and dark browser schemes
+- `site.webmanifest` - browser app manifest pointing to the SVG app icons
 - `app.js` - frontend data loading and rendering
 - `launches.js` - launches detail page data loading and rendering
 - `api/_cache.js` - shared in-memory cache helpers for serverless API routes
 - `api/_http.js` - shared timeout-wrapped JSON fetch helper for serverless API routes
+- `api/_normalize.js` - shared text, number, and safe URL normalization helpers for serverless API routes
 - `api/_nasa.js` - shared NASA proxy helper and in-memory cache
 - `api/_space_data.js` - shared APOD, Near-Earth Object, and NOAA space weather response normalizers
 - `api/apod.js` - serverless NASA APOD endpoint with a normalized dashboard contract
