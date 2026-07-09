@@ -1,0 +1,208 @@
+{
+  "shotLog": [
+    {
+      "name": "01-dashboard-short-wait-full.png",
+      "bytes": 346212,
+      "url": "http://127.0.0.1:8786/",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "02-dashboard-settled-full.png",
+      "bytes": 327040,
+      "url": "http://127.0.0.1:8786/",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "03-watch-menu-desktop.png",
+      "bytes": 339157,
+      "url": "http://127.0.0.1:8786/",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "04-launches-detail-live.png",
+      "bytes": 671735,
+      "url": "http://127.0.0.1:8786/launches.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "05-weather-detail-live.png",
+      "bytes": 173488,
+      "url": "http://127.0.0.1:8786/weather.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "06-iss-detail.png",
+      "bytes": 240389,
+      "url": "http://127.0.0.1:8786/iss.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "07-asteroids-detail-unavailable.png",
+      "bytes": 85008,
+      "url": "http://127.0.0.1:8786/asteroids.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "08-gallery-detail-unavailable.png",
+      "bytes": 80798,
+      "url": "http://127.0.0.1:8786/gallery.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "09-anomalies-initial.png",
+      "bytes": 158198,
+      "url": "http://127.0.0.1:8786/anomalies.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "10-anomalies-submitted-desktop-full.png",
+      "bytes": 331492,
+      "url": "http://127.0.0.1:8786/anomalies.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "11-anomalies-refresh-after-submit.png",
+      "bytes": 332788,
+      "url": "http://127.0.0.1:8786/anomalies.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      }
+    },
+    {
+      "name": "12-dashboard-mobile-top.png",
+      "bytes": 233735,
+      "url": "http://127.0.0.1:8786/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "name": "13-watch-menu-mobile-open.png",
+      "bytes": 237506,
+      "url": "http://127.0.0.1:8786/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "name": "14-watch-menu-mobile-after-scroll.png",
+      "bytes": 300187,
+      "url": "http://127.0.0.1:8786/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "name": "15-dashboard-mobile-bottom.png",
+      "bytes": 166364,
+      "url": "http://127.0.0.1:8786/",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "name": "16-launches-mobile-live.png",
+      "bytes": 243709,
+      "url": "http://127.0.0.1:8786/launches.html",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "name": "17-anomalies-mobile-initial.png",
+      "bytes": 156815,
+      "url": "http://127.0.0.1:8786/anomalies.html",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "name": "18-anomalies-mobile-submitted-top.png",
+      "bytes": 190726,
+      "url": "http://127.0.0.1:8786/anomalies.html",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "name": "19-anomalies-mobile-submitted-mid.png",
+      "bytes": 180809,
+      "url": "http://127.0.0.1:8786/anomalies.html",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "name": "20-anomalies-mobile-submitted-bottom.png",
+      "bytes": 171478,
+      "url": "http://127.0.0.1:8786/anomalies.html",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  ],
+  "observations": {
+    "dashboardShortStatus": "Checking sources; available data is shown as it loads.",
+    "dashboardShortBrief": "SPACE BRIEF\n\nSpace activity is only partially visible.\n\nFalcon 9 Block 5 Transporter 17 (Dedicated SSO Rideshare) is next on the schedule, t-15h. Asteroid tracking is unavailable from NASA right now. Space weather remains quiet conditions at Kp 0.7. 10 people remain in orbit, while ISS position is unavailable.",
+    "dashboardSettledStatus": "Partial space data refreshed; source status is listed.",
+    "dashboardLiveChip": "Partial data",
+    "dashboardSourceSummary": "3 of 6 sources loaded, 3 need attention",
+    "dashboardRecent": "LAUNCHES\nT-15h\nGo for Launch\nFalcon 9 Block 5 Transporter 17 (Dedicated SSO Rideshare)\nWEATHER\n7 min ago\nQuiet conditions\nCurrent Kp 0.7",
+    "dashboardWatch": "ORBITAL PRESENCE\n10 aboard\n3 crew locations\nNEXT LAUNCH\nFalcon 9 Block 5\nT-15h\nKP FORECAST\n2 Today\nQuiet conditions\nSOURCE UNAVAILABLE\nAsteroid list unavailable\nNASA NeoWs source unavailable",
+    "desktopWatchMenu": "Weather\nAsteroids\nAnomalies",
+    "launchesTitle": "NEXT SPACEX LAUNCH\n\nTransporter 17 (Dedicated SSO Rideshare)\nFalcon 9 Block 5\nGo for Launch\nLiftoff\nJul 7 · 3:10 AM EDT\nCountdown\nT-15h\nWindow\n1h 35m launch window\nLocation\nVandenberg SFB, CA\n\nDedicated rideshare flight to a sun-synchronous orbit with dozens of small microsatellites and nanosatellites for commercial and government customers.\n\nLaunch source\nJul 7, 2026, 3:10 AM EDT to Jul 7, 2026, 4:45 AM EDT\n\nUPCOMING LAUNCHES\n\nNext missions to watch\n\n20 upcoming SpaceX launches\n\nCountdown\nT-15h\n\nJul 7 · 3:10 AM EDT\n\nTransporter 17 (Dedicated SSO Rideshare)\n\nFalcon 9 Block 5\n\nGo for Launch\nVandenberg SFB, CA\n1h 35m launch window\nMission details\nCountdown\nT-2d 17h\n\nJul 9 · 5:05 AM EDT\n\nStarlink Group 10-42\n\nFalcon 9 Block 5\n\nGo for Launch\nCape Canaveral SFS, FL\n4h launch window\nMission details\nCountdown\nT-4d 10h\n\nJul 10 · 10:00 PM EDT\n\nStarlink Group 17-48\n\nFalcon 9 Block 5\n\nGo for Launch\nVandenberg SFB, CA\n4h launch window\nMission details\nCountdown\nT-7d 6h\n\nJul 13 · 6:38 PM EDT\n\nStarlink Group 15-14\n\nFalcon 9 Block 5\n\nGo for Launch\nVandenberg SFB, CA\n4h launch window\nMission details\nCountdown\nT-24d 8h\n\nJul 30 · 8:00 PM EDT\n\nGlobalstar 2-R Mission 1 (x 9)\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-24d 8h\n\nJul 30 · 8:00 PM EDT\n\nMRV-1\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-24d 8h\n\nJul 30 · 8:00 PM EDT\n\nFlight 13\n\nStarship\n\nTo Be Determined\nSpaceX Starbase, TX\nInstantaneous window\nMission details\nCountdown\nT-54d 8h\n\nAug 29 · 8:00 PM EDT\n\nNancy Grace Roman Space Telescope\n\nFalcon Heavy\n\nTo Be Determined\nKennedy Space Center, FL\nInstantaneous window\nMission details\nCountdown\nT-55d 8h\n\nAug 30 · 8:00 PM EDT\n\nBlueBird Block 2 #6-8\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-55d 8h\n\nAug 30 · 8:00 PM EDT\n\nDragon CRS-2 SpX-35\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-55d 8h\n\nAug 30 · 8:00 PM EDT\n\nSDA Tranche 2 Transport Layer A\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nCrew-13\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nO3b mPower 11-13\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\n5x Astranis MicroGEO\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Tracking Layer A\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Tracking Layer C\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Tracking Layer E\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Transport Layer A\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Transport Layer D\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Transport Layer E\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details",
+    "weatherTitle": "Current K-index\n\n0.7\n\nObserved Jul 6, 2026, 11:51 AM EDT\n\nSPACE WEATHER BRIEF\n\nQuiet conditions\n\nGeomagnetic conditions are currently quiet conditions. The next 72 hours remain below NOAA storm thresholds, peaking near Kp 2.\n\n1M\n\nNEXT 72 HOURS\n\nKp Trend\n\nStable outlook: Kp 2 to 2\n\n2\nMon, Jul 6\n1.7\nTue, Jul 7\n1.7\nWed, Jul 8\n\nMon, Jul 6\n\nKp 2\n\nQuiet conditions\n\nTue, Jul 7\n\nKp 1.7\n\nQuiet conditions\n\nWed, Jul 8\n\nKp 1.7\n\nQuiet conditions\n\nQUIET CONDITIONS\n\nGeomagnetic activity is quiet right now.\n\nNOAA geomagnetic scale\n\nBelow G1\n\nNOAA G-scale starts at Kp 5\n\nCurrent geomagnetic activity is below NOAA storm level.\n\nWATCH ITEMS\n\nRecent NOAA Notices\nALERT\nALERT: Electron 2MeV Integral Flux exceeded 1000pfu\n\nSatellite environment watch\nElevated high-energy electron activity can affect the satellite environment; minimal impact is expected for most users.\n\nJul 6, 2026, 7:50 AM EDT\nALERT\nALERT: Type II Radio Emission\n\nAlert context\nNOAA has issued a space-weather notice. Apollo has no additional impact signal from the alert text.\n\nJul 5, 2026, 2:22 PM EDT\nNOAA space weather source",
+    "issBody": "ISS STATUS\n\nNormal Operations\n\nThe International Space Station is operating normally with 10 crew members aboard. The station is currently over the southern Indian Ocean at 423 km and traveling at 27,570 km/h. Crew are distributed across Crew-12 Dragon, Shenzhou 23, and Soyuz MS-28.\n\n423 km altitude\n27,570 km/h\nSunlit\nOver the southern Indian Ocean\n\n+\n−\n Leaflet | © OpenStreetMap contributors\n\nPosition fix Jul 6, 2026, 11:58 AM EDT\n\nCURRENT POSITION\n\nthe southern Indian Ocean\n\nThe station is moving at orbital speed while sunlit.\n\nALTITUDE\n423 km\nVELOCITY\n27,570 km/h\n\nORBITAL SNAPSHOT\n\nOver the southern Indian Ocean\nSunlit\n15.5 orbits/day\n4,524 km footprint\nOne orbit every 93 min\n\nOrbit estimates use current altitude and velocity; sunlight and footprint come from the ISS position source.\n\nLATITUDE\n-17.9819\nLONGITUDE\n24.6530\nISS position source",
+    "peopleBody": "CREW MANIFEST\n\n10 aboard across 3 crew locations\n\nExpedition 74 crew are grouped by spacecraft assignment.\n\nCrew-12 Dragon\n4 aboard\nAndrey Fedyaev\nJack Hathaway\nJessica Meir\nSophie Adenot\nShenzhou 23\n3 aboard\nLai Ka-ying\nZhang Zhiyuan\nZhu Yangzhu\nSoyuz MS-28\n3 aboard\nChristoper Williams\nSergey Kud-Sverchkov\nSergey Mikayev\n\nSource roster count: 10 declared; 10 listed below.",
+    "asteroidsBody": "SOURCE CHECKED\n\nData unavailable\n\nApollo cannot reach the current NASA NeoWs close-approach list, so this page is not showing guessed asteroid activity.\n\nRecovery: Refresh again shortly or open NASA's source to check source availability.\n\nSource checked: NASA NeoWs\n\nOpen source\nDashboard\nISS",
+    "galleryBody": "SOURCE CHECKED\n\nData unavailable\n\nApollo cannot reach the current Astronomy Picture of the Day, so the Gallery is intentionally paused instead of showing sample media.\n\nRecovery: Refresh again shortly or open NASA APOD to check whether the source is responding.\n\nSource checked: NASA APOD\n\nOpen source\nDashboard\nISS",
+    "anomaliesInitial": "KNOWN CONTEXT\n\nPartial source context\nPartial\n\nISS\n\nPosition loaded\n\nLoaded connected source\n\nLAUNCHES\n\n5 upcoming\n\nLoaded connected source\n\nSPACE WEATHER\n\nQuiet conditions\n\nLoaded connected source\n\nASTEROIDS\n\nSource unavailable\n\nConnected source unavailable\n\nUnavailable connected sources and planned imports limit this pre-submit check.",
+    "anomaliesSubmitted": "EXPLAIN\n\nSighting context\n\nJul 6, 2026, 9:35 PM EDT\n\nStrong known-context match\n\nKNOWN SKY ACTIVITY\n\nSources checked\n\n3 connected source checks loaded; 1 source is unavailable.\n\nISS CONTEXT\n\nPosition loaded\n\nWhere the ISS At\n\nLAUNCH SCHEDULE\n\nClose launch timing match\n\nThe Space Devs launch source\n\nSPACE WEATHER\n\nQuiet space-weather signal\n\nNOAA SWPC\n\nNEAR-EARTH OBJECTS\n\nAsteroid source unavailable\n\nNASA NeoWs\n\nMETEOR REPORTS\n\nFireball reports not connected yet\n\nAmerican Meteor Society planned\n\nPOSSIBLE EXPLANATIONS\n\nEvidence context\n1\nRecent launch activity\n\nFalcon 9 Block 5: Transporter 17 (Dedicated SSO Rideshare) is 6 hours after this sighting time.\n\nThe Space Devs launch source\n\nConnected source match\n2\nISS pass\n\nStraight-line movement over minutes can fit an orbital pass; exact overhead matching needs Apollo's planned location-aware pass service.\n\nWhere the ISS At\n\nTrait-only possibility\n\nOBSERVATION RECAP\n\nSubmitted context\nBrooklyn, NY\nStraight line\nBright\nMinutes\n\nApollo interpreted 2026-07-06 at 21:35 as browser-local time (America/New_York).\n\nLocation \"Brooklyn, NY\" is descriptive context; Apollo is not doing location-aware overhead, aircraft, planet, fireball, or UAP matching yet.\n\nNOT CHECKED EVIDENCE\n\nPlanned source gaps\n\nSTARLINK OR SATELLITE TRAIN\n\nNot checked yet\n\nSatellite visibility import planned\n\nMETEOR OR FIREBALL\n\nNot checked yet\n\nAmerican Meteor Society planned\n\nBRIGHT PLANET OR STAR\n\nNot checked yet\n\nPlanet ephemeris import planned\n\nAIRCRAFT OR DRONE\n\nNot checked yet\n\nFlight tracking import planned\n\nUAP OR REPORTED SIGHTINGS\n\nNot checked yet\n\nNUFORC import planned\n\nSource context\n\nApollo uses connected source context and visible traits only; planned source gaps are not checked evidence or identity claims.",
+    "anomaliesAfterRefresh": "EXPLAIN\n\nSighting context\n\nJul 6, 2026, 9:35 PM EDT\n\nStrong known-context match\n\nKNOWN SKY ACTIVITY\n\nSources checked\n\n3 connected source checks loaded; 1 source is unavailable.\n\nISS CONTEXT\n\nPosition loaded\n\nWhere the ISS At\n\nLAUNCH SCHEDULE\n\nClose launch timing match\n\nThe Space Devs launch source\n\nSPACE WEATHER\n\nQuiet space-weather signal\n\nNOAA SWPC\n\nNEAR-EARTH OBJECTS\n\nAsteroid source unavailable\n\nNASA NeoWs\n\nMETEOR REPORTS\n\nFireball reports not connected yet\n\nAmerican Meteor Society planned\n\nPOSSIBLE EXPLANATIONS\n\nEvidence context\n1\nRecent launch activity\n\nFalcon 9 Block 5: Transporter 17 (Dedicated SSO Rideshare) is 6 hours after this sighting time.\n\nThe Space Devs launch source\n\nConnected source match\n2\nISS pass\n\nStraight-line movement over minutes can fit an orbital pass; exact overhead matching needs Apollo's planned location-aware pass service.\n\nWhere the ISS At\n\nTrait-only possibility\n\nOBSERVATION RECAP\n\nSubmitted context\nBrooklyn, NY\nStraight line\nBright\nMinutes\n\nApollo interpreted 2026-07-06 at 21:35 as browser-local time (America/New_York).\n\nLocation \"Brooklyn, NY\" is descriptive context; Apollo is not doing location-aware overhead, aircraft, planet, fireball, or UAP matching yet.\n\nNOT CHECKED EVIDENCE\n\nPlanned source gaps\n\nSTARLINK OR SATELLITE TRAIN\n\nNot checked yet\n\nSatellite visibility import planned\n\nMETEOR OR FIREBALL\n\nNot checked yet\n\nAmerican Meteor Society planned\n\nBRIGHT PLANET OR STAR\n\nNot checked yet\n\nPlanet ephemeris import planned\n\nAIRCRAFT OR DRONE\n\nNot checked yet\n\nFlight tracking import planned\n\nUAP OR REPORTED SIGHTINGS\n\nNot checked yet\n\nNUFORC import planned\n\nSource context\n\nApollo uses connected source context and visible traits only; planned source gaps are not checked evidence or identity claims.",
+    "mobileTopNav": "Dashboard\nISS\nLaunches\nWatch\nGallery",
+    "mobileWatchMenuBeforeScroll": "Weather\nAsteroids\nAnomalies",
+    "mobileWatchExpandedAfterScroll": "false",
+    "mobileLaunches": "NEXT SPACEX LAUNCH\n\nTransporter 17 (Dedicated SSO Rideshare)\nFalcon 9 Block 5\nGo for Launch\nLiftoff\nJul 7 · 3:10 AM EDT\nCountdown\nT-15h\nWindow\n1h 35m launch window\nLocation\nVandenberg SFB, CA\n\nDedicated rideshare flight to a sun-synchronous orbit with dozens of small microsatellites and nanosatellites for commercial and government customers.\n\nLaunch source\nJul 7, 2026, 3:10 AM EDT to Jul 7, 2026, 4:45 AM EDT\n\nUPCOMING LAUNCHES\n\nNext missions to watch\n\n20 upcoming SpaceX launches\n\nCountdown\nT-15h\n\nJul 7 · 3:10 AM EDT\n\nTransporter 17 (Dedicated SSO Rideshare)\n\nFalcon 9 Block 5\n\nGo for Launch\nVandenberg SFB, CA\n1h 35m launch window\nMission details\nCountdown\nT-2d 17h\n\nJul 9 · 5:05 AM EDT\n\nStarlink Group 10-42\n\nFalcon 9 Block 5\n\nGo for Launch\nCape Canaveral SFS, FL\n4h launch window\nMission details\nCountdown\nT-4d 10h\n\nJul 10 · 10:00 PM EDT\n\nStarlink Group 17-48\n\nFalcon 9 Block 5\n\nGo for Launch\nVandenberg SFB, CA\n4h launch window\nMission details\nCountdown\nT-7d 6h\n\nJul 13 · 6:38 PM EDT\n\nStarlink Group 15-14\n\nFalcon 9 Block 5\n\nGo for Launch\nVandenberg SFB, CA\n4h launch window\nMission details\nCountdown\nT-24d 8h\n\nJul 30 · 8:00 PM EDT\n\nGlobalstar 2-R Mission 1 (x 9)\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-24d 8h\n\nJul 30 · 8:00 PM EDT\n\nMRV-1\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-24d 8h\n\nJul 30 · 8:00 PM EDT\n\nFlight 13\n\nStarship\n\nTo Be Determined\nSpaceX Starbase, TX\nInstantaneous window\nMission details\nCountdown\nT-54d 8h\n\nAug 29 · 8:00 PM EDT\n\nNancy Grace Roman Space Telescope\n\nFalcon Heavy\n\nTo Be Determined\nKennedy Space Center, FL\nInstantaneous window\nMission details\nCountdown\nT-55d 8h\n\nAug 30 · 8:00 PM EDT\n\nBlueBird Block 2 #6-8\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-55d 8h\n\nAug 30 · 8:00 PM EDT\n\nDragon CRS-2 SpX-35\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-55d 8h\n\nAug 30 · 8:00 PM EDT\n\nSDA Tranche 2 Transport Layer A\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nCrew-13\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nO3b mPower 11-13\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\n5x Astranis MicroGEO\n\nFalcon 9 Block 5\n\nTo Be Determined\nCape Canaveral SFS, FL\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Tracking Layer A\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Tracking Layer C\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Tracking Layer E\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Transport Layer A\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Transport Layer D\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details\nCountdown\nT-85d 8h\n\nSep 29 · 8:00 PM EDT\n\nSDA Tranche 1 Transport Layer E\n\nFalcon 9 Block 5\n\nTo Be Determined\nVandenberg SFB, CA\nInstantaneous window\nMission details",
+    "mobileAnomaliesSubmitted": "EXPLAIN\n\nSighting context\n\nJul 6, 2026, 9:35 PM EDT\n\nStrong known-context match\n\nKNOWN SKY ACTIVITY\n\nSources checked\n\n3 connected source checks loaded; 1 source is unavailable.\n\nISS CONTEXT\n\nPosition loaded\n\nWhere the ISS At\n\nLAUNCH SCHEDULE\n\nClose launch timing match\n\nThe Space Devs launch source\n\nSPACE WEATHER\n\nQuiet space-weather signal\n\nNOAA SWPC\n\nNEAR-EARTH OBJECTS\n\nAsteroid source unavailable\n\nNASA NeoWs\n\nMETEOR REPORTS\n\nFireball reports not connected yet\n\nAmerican Meteor Society planned\n\nPOSSIBLE EXPLANATIONS\n\nEvidence context\n1\nRecent launch activity\n\nFalcon 9 Block 5: Transporter 17 (Dedicated SSO Rideshare) is 6 hours after this sighting time.\n\nThe Space Devs launch source\n\nConnected source match\n2\nISS pass\n\nStraight-line movement over minutes can fit an orbital pass; exact overhead matching needs Apollo's planned location-aware pass service.\n\nWhere the ISS At\n\nTrait-only possibility\n\nOBSERVATION RECAP\n\nSubmitted context\nBrooklyn, NY\nStraight line\nBright\nMinutes\n\nApollo interpreted 2026-07-06 at 21:35 as browser-local time (America/New_York).\n\nLocation \"Brooklyn, NY\" is descriptive context; Apollo is not doing location-aware overhead, aircraft, planet, fireball, or UAP matching yet.\n\nNOT CHECKED EVIDENCE\n\nPlanned source gaps\n\nSTARLINK OR SATELLITE TRAIN\n\nNot checked yet\n\nSatellite visibility import planned\n\nMETEOR OR FIREBALL\n\nNot checked yet\n\nAmerican Meteor Society planned\n\nBRIGHT PLANET OR STAR\n\nNot checked yet\n\nPlanet ephemeris import planned\n\nAIRCRAFT OR DRONE\n\nNot checked yet\n\nFlight tracking import planned\n\nUAP OR REPORTED SIGHTINGS\n\nNot checked yet\n\nNUFORC import planned\n\nSource context\n\nApollo uses connected source context and visible traits only; planned source gaps are not checked evidence or identity claims."
+  }
+}
