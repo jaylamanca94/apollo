@@ -581,11 +581,12 @@ test("mobile dock stays viewport-bottom anchored", () => {
   assert.match(mobileDockRule, /border:\s*1px solid var\(--acadia-mobile-nav-border\);/);
   assert.match(mobileDockRule, /box-shadow:\s*var\(--acadia-mobile-nav-shadow\);/);
   assert.match(mobileDockRule, /color:\s*var\(--acadia-mobile-nav-color\);/);
-  assert.match(mobileDockRule, /bottom:\s*calc\(var\(--acadia-mobile-tabbar-bottom,\s*1\.25rem\) \+ env\(safe-area-inset-bottom\)\);/);
+  assert.match(mobileDockRule, /bottom:\s*calc\(var\(--acadia-mobile-tabbar-bottom,\s*0\.875rem\) \+ env\(safe-area-inset-bottom\)\);/);
   assert.match(mobileDockRule, /top:\s*auto;/);
-  assert.match(mobileBlock, /\.apollo-shell\s*\{[\s\S]*?padding:\s*28px var\(--acadia-page-margin\) calc\(8\.75rem \+ env\(safe-area-inset-bottom\)\);/);
-  assert.match(mobileBlock, /scroll-padding-bottom:\s*calc\(8\.75rem \+ env\(safe-area-inset-bottom\)\);/);
-  assert.match(mobileBlock, /\.apollo-app :is\(a, button, input, summary, \[tabindex\]\):not\(\[tabindex="-1"\]\)\s*\{[\s\S]*?scroll-margin-bottom:\s*calc\(8\.75rem \+ env\(safe-area-inset-bottom\)\);/);
+  assert.match(mobileBlock, /--apollo-mobile-dock-clearance:\s*10\.75rem;/);
+  assert.match(mobileBlock, /\.apollo-shell\s*\{[\s\S]*?padding:\s*24px var\(--acadia-page-margin\) calc\(var\(--apollo-mobile-dock-clearance\) \+ env\(safe-area-inset-bottom\)\);/);
+  assert.match(mobileBlock, /scroll-padding-bottom:\s*calc\(var\(--apollo-mobile-dock-clearance\) \+ env\(safe-area-inset-bottom\)\);/);
+  assert.match(mobileBlock, /\.apollo-app :is\(a, button, input, summary, \[tabindex\]\):not\(\[tabindex="-1"\]\)\s*\{[\s\S]*?scroll-margin-bottom:\s*calc\(var\(--apollo-mobile-dock-clearance\) \+ env\(safe-area-inset-bottom\)\);/);
   assert.match(css, /html\[data-bs-theme="light"\]\s*\{[\s\S]*?--acadia-mobile-nav-background:\s*rgba\(250, 250, 252, 0\.84\);/);
   assert.match(css, /--acadia-mobile-nav-active-background:\s*rgba\(15, 23, 42, 0\.1\);/);
   assert.match(css, /--acadia-mobile-nav-focus-halo:\s*rgba\(255, 255, 255, 0\.22\);/);
@@ -632,7 +633,7 @@ test("launch timeline exposes urgency context and current asset versions", () =>
   const html = readProjectFile("launches.html");
   const js = readProjectFile("launches.js");
 
-  assert.match(html, /styles\.css\?v=visual-polish-3/);
+  assert.match(html, /styles\.css\?v=visual-polish-4/);
   assert.match(html, /launches\.js\?v=clarity-copy-1/);
   assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
