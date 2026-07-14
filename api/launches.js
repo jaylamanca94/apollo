@@ -6,6 +6,7 @@ const { sendJson } = require("./_nasa");
 const LAUNCH_LIBRARY_URL = "https://ll.thespacedevs.com/2.3.0/launches/upcoming/";
 const LAUNCH_CACHE_SECONDS = 60 * 15;
 const LAUNCH_TIMEOUT_MS = 10000;
+const COMPLETED_LAUNCH_STATUS_PATTERN = /\b(success|successful|failure|failed|partial failure)\b/i;
 const cache = new Map();
 
 function getWindowDurationMinutes(windowStart, windowEnd) {
@@ -51,12 +52,25 @@ function normalizeLaunch(launch) {
   };
 }
 
+function isPastCompletedLaunch(launch, now = new Date()) {
+  const launchDate = new Date(launch?.dateUtc);
+  const currentDate = new Date(now);
+
+  if (!Number.isFinite(launchDate.getTime()) || !Number.isFinite(currentDate.getTime())) {
+    return false;
+  }
+
+  return launchDate < currentDate && COMPLETED_LAUNCH_STATUS_PATTERN.test(getText(launch.status));
+}
+
 function normalizeLaunchLibraryPayload(payload, options = {}) {
   const limit = Number.isInteger(options.limit) ? options.limit : 5;
+  const now = options.now || new Date();
   const results = Array.isArray(payload?.results) ? payload.results : [];
   const launches = results
     .map(normalizeLaunch)
     .filter(Boolean)
+    .filter((launch) => !isPastCompletedLaunch(launch, now))
     .sort((a, b) => new Date(a.dateUtc) - new Date(b.dateUtc))
     .slice(0, limit);
 

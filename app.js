@@ -880,10 +880,6 @@ function getLaunchMatchLevel(hoursFromObservation) {
     return "context";
   }
 
-  if (absHours <= 6) {
-    return "strong";
-  }
-
   if (absHours <= 48) {
     return "possible";
   }
@@ -1008,7 +1004,8 @@ function getSkySourceLimitSummary(evidenceRows) {
   }
 
   if (unavailableCount > 0) {
-    return `${connectedRows.length - unavailableCount} connected source checks loaded; ${unavailableCount} source ${unavailableCount === 1 ? "is" : "are"} unavailable.`;
+    const loadedCount = connectedRows.length - unavailableCount;
+    return `${loadedCount} connected source ${loadedCount === 1 ? "check" : "checks"} loaded; ${unavailableCount} ${unavailableCount === 1 ? "source is" : "sources are"} unavailable.`;
   }
 
   return "Connected launch, ISS, asteroid, and space-weather context loaded for this check.";

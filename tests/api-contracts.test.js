@@ -364,6 +364,28 @@ test("normalizeLaunchLibraryPayload honors a safe display limit", () => {
   assert.deepEqual(payload.launches.map((launch) => launch.name), ["Mission 1", "Mission 2"]);
 });
 
+test("normalizeLaunchLibraryPayload excludes past completed launches from upcoming rows", () => {
+  const payload = normalizeLaunchLibraryPayload({
+    results: [
+      {
+        name: "Completed mission",
+        net: "2026-07-07T07:12:00Z",
+        status: { name: "Launch Successful" }
+      },
+      {
+        name: "Future mission",
+        net: "2026-07-08T12:00:00Z",
+        status: { name: "Go for Launch" }
+      }
+    ]
+  }, {
+    now: "2026-07-07T13:00:00Z",
+    limit: 5
+  });
+
+  assert.deepEqual(payload.launches.map((launch) => launch.name), ["Future mission"]);
+});
+
 test("getLaunchLimit clamps launch request limits", () => {
   assert.equal(getLaunchLimit({ query: { limit: "20" }, url: "/api/launches", headers: {} }), 20);
   assert.equal(getLaunchLimit({ query: { limit: "100" }, url: "/api/launches", headers: {} }), 25);

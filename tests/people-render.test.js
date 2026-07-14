@@ -226,6 +226,52 @@ test("Space Brief keeps pending sources distinct from unavailable sources", () =
   assert.equal(pageSubtitle.textContent, "Space Activity: Partial");
 });
 
+test("Sky Anomalies keeps broad launch timing as context, not a strong match", () => {
+  const { getLaunchMatchLevel, getSkyResultSummary } = loadDashboardHelpers();
+
+  assert.equal(getLaunchMatchLevel(-5.5), "possible");
+  assert.equal(getSkyResultSummary([
+    {
+      state: "possible",
+      source: "The Space Devs launch source"
+    },
+    {
+      state: "context",
+      source: "Where the ISS At"
+    }
+  ]), "Possible known-context match");
+});
+
+test("Sky Anomalies source-limit copy pluralizes unavailable sources", () => {
+  const { getSkySourceLimitSummary } = loadDashboardHelpers();
+
+  assert.equal(getSkySourceLimitSummary([
+    {
+      state: "ok",
+      source: "The Space Devs launch source"
+    },
+    {
+      state: "unknown",
+      source: "Where the ISS At"
+    }
+  ]), "1 connected source check loaded; 1 source is unavailable.");
+
+  assert.equal(getSkySourceLimitSummary([
+    {
+      state: "ok",
+      source: "The Space Devs launch source"
+    },
+    {
+      state: "unknown",
+      source: "Where the ISS At"
+    },
+    {
+      state: "unknown",
+      source: "NOAA SWPC"
+    }
+  ]), "1 connected source check loaded; 2 sources are unavailable.");
+});
+
 test("loadApod renders embeddable videos with direct media links", async () => {
   const apodBody = {
     innerHTML: ""
