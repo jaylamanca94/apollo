@@ -1,4 +1,5 @@
-const { requestNasa, sendJson } = require("./_nasa");
+const { requestNasa } = require("./_nasa");
+const { sendJson, sendMethodNotAllowed } = require("./_response");
 const { normalizeApodPayload } = require("./_space_data");
 
 const APOD_CACHE_SECONDS = 60 * 60 * 6;
@@ -57,12 +58,7 @@ async function requestApodWithFallback(date = new Date()) {
 
 module.exports = async function handler(request, response) {
   if (request.method !== "GET") {
-    sendJson(response, 405, {
-      error: {
-        code: "METHOD_NOT_ALLOWED",
-        message: "Use GET for this endpoint."
-      }
-    });
+    sendMethodNotAllowed(response);
     return;
   }
 

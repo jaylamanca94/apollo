@@ -1,7 +1,7 @@
 const { getCached, setCached } = require("./_cache");
 const { fetchJson } = require("./_http");
 const { getText, safeHttpUrl } = require("./_normalize");
-const { sendJson } = require("./_nasa");
+const { sendJson, sendMethodNotAllowed } = require("./_response");
 
 const LAUNCH_LIBRARY_URL = "https://ll.thespacedevs.com/2.3.0/launches/upcoming/";
 const LAUNCH_CACHE_SECONDS = 60 * 15;
@@ -134,12 +134,7 @@ async function requestLaunches(limit = 5) {
 
 async function handler(request, response) {
   if (request.method !== "GET") {
-    sendJson(response, 405, {
-      error: {
-        code: "METHOD_NOT_ALLOWED",
-        message: "Use GET for this endpoint."
-      }
-    });
+    sendMethodNotAllowed(response);
     return;
   }
 

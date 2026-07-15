@@ -5,19 +5,6 @@ const cache = new Map();
 const NASA_BASE_URL = "https://api.nasa.gov";
 const NASA_TIMEOUT_MS = 10000;
 
-function sendJson(response, statusCode, payload, maxAgeSeconds = 0) {
-  response.statusCode = statusCode;
-  response.setHeader("Content-Type", "application/json");
-
-  if (maxAgeSeconds > 0 && statusCode >= 200 && statusCode < 300) {
-    response.setHeader("Cache-Control", `s-maxage=${maxAgeSeconds}, stale-while-revalidate=${maxAgeSeconds}`);
-  } else {
-    response.setHeader("Cache-Control", "no-store");
-  }
-
-  response.end(JSON.stringify(payload));
-}
-
 function scrubNasaApiKey(value) {
   if (Array.isArray(value)) {
     return value.map(scrubNasaApiKey);
@@ -96,6 +83,5 @@ async function requestNasa(path, params, cacheKey, ttlSeconds) {
 }
 
 module.exports = {
-  requestNasa,
-  sendJson
+  requestNasa
 };

@@ -1,4 +1,4 @@
-const { sendJson } = require("./_nasa");
+const { sendJson, sendMethodNotAllowed } = require("./_response");
 const { version } = require("../package.json");
 
 function buildHealthPayload(date = new Date(), env = process.env) {
@@ -20,12 +20,7 @@ function buildHealthPayload(date = new Date(), env = process.env) {
 
 async function handler(request, response) {
   if (request.method !== "GET") {
-    sendJson(response, 405, {
-      error: {
-        code: "METHOD_NOT_ALLOWED",
-        message: "Use GET for this endpoint."
-      }
-    });
+    sendMethodNotAllowed(response);
     return;
   }
 

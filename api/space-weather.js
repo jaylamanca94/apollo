@@ -1,6 +1,6 @@
 const { getCached, setCached } = require("./_cache");
 const { fetchJson } = require("./_http");
-const { sendJson } = require("./_nasa");
+const { sendJson, sendMethodNotAllowed } = require("./_response");
 const { normalizeSpaceWeatherPayload } = require("./_space_data");
 
 const NOAA_K_INDEX_URL = "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json";
@@ -48,12 +48,7 @@ async function requestSpaceWeather() {
 
 async function handler(request, response) {
   if (request.method !== "GET") {
-    sendJson(response, 405, {
-      error: {
-        code: "METHOD_NOT_ALLOWED",
-        message: "Use GET for this endpoint."
-      }
-    });
+    sendMethodNotAllowed(response);
     return;
   }
 

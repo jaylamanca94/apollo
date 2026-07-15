@@ -4,6 +4,7 @@ const test = require("node:test");
 const { getCached, setCached } = require("../api/_cache");
 const { fetchJson } = require("../api/_http");
 const { getFiniteNumber, getText, safeHttpUrl } = require("../api/_normalize");
+const { sendMethodNotAllowed } = require("../api/_response");
 const {
   getApodEmbedUrl,
   isIsoDate,
@@ -130,6 +131,32 @@ test("shared normalizers trim text, parse finite numbers, and keep safe HTTP URL
   assert.equal(safeHttpUrl("https://example.test/path?q=1"), "https://example.test/path?q=1");
   assert.equal(safeHttpUrl("ftp://example.test/path"), "");
   assert.equal(safeHttpUrl("javascript:alert(1)"), "");
+});
+
+test("shared method guard sends stable JSON 405 responses", () => {
+  const headers = {};
+  const response = {
+    statusCode: 200,
+    body: "",
+    setHeader(name, value) {
+      headers[name] = value;
+    },
+    end(body) {
+      this.body = body;
+    }
+  };
+
+  sendMethodNotAllowed(response);
+
+  assert.equal(response.statusCode, 405);
+  assert.equal(headers["Content-Type"], "application/json");
+  assert.equal(headers["Cache-Control"], "no-store");
+  assert.deepEqual(JSON.parse(response.body), {
+    error: {
+      code: "METHOD_NOT_ALLOWED",
+      message: "Use GET for this endpoint."
+    }
+  });
 });
 
 test("isIsoDate accepts Apollo's API date format only", () => {

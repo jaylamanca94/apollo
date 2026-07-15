@@ -1,4 +1,5 @@
-const { requestNasa, sendJson } = require("./_nasa");
+const { requestNasa } = require("./_nasa");
+const { sendJson, sendMethodNotAllowed } = require("./_response");
 const { isIsoDate, normalizeNeoPayload } = require("./_space_data");
 
 const NEO_CACHE_SECONDS = 60 * 30;
@@ -15,12 +16,7 @@ function getQueryParam(request, name) {
 
 module.exports = async function handler(request, response) {
   if (request.method !== "GET") {
-    sendJson(response, 405, {
-      error: {
-        code: "METHOD_NOT_ALLOWED",
-        message: "Use GET for this endpoint."
-      }
-    });
+    sendMethodNotAllowed(response);
     return;
   }
 
