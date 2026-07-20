@@ -19,6 +19,8 @@ html[data-bs-theme="dark"] {
   --apollo-material-bg-raised: color-mix(in srgb, var(--apollo-surface-raised) 86%, var(--apollo-page-bg));
   --apollo-row-material: color-mix(in srgb, var(--apollo-row-bg) 88%, var(--acadia-color-surface));
   --apollo-row-material-hover: color-mix(in srgb, var(--apollo-row-bg-hover) 92%, var(--acadia-color-surface));
+  --apollo-border-subtle: color-mix(in srgb, var(--apollo-border) 82%, transparent);
+  --apollo-row-border: color-mix(in srgb, var(--apollo-border) 88%, transparent);
   --apollo-shadow-low: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   --apollo-shadow-row: inset 0 1px 0 rgba(255, 255, 255, 0.055), 0 1px 2px rgba(0, 0, 0, 0.16), 0 0.18rem 0.55rem rgba(0, 0, 0, 0.08);
   --apollo-shadow-overlay: 0 0.875rem 2rem rgba(0, 0, 0, 0.26), 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2), var(--apollo-shadow-low);
@@ -251,7 +253,7 @@ body {
 .apollo-app {
   min-height: 100vh;
   background:
-    linear-gradient(180deg, var(--apollo-page-highlight), transparent 24rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--apollo-page-highlight) 84%, transparent), transparent 24rem),
     var(--acadia-color-page);
 }
 
@@ -347,8 +349,8 @@ body {
 .apollo-topbar,
 .acadia-chrome {
   min-height: 4.375rem;
-  background: color-mix(in srgb, var(--acadia-surface-layer-base) 92%, transparent) !important;
-  border-bottom: 1px solid color-mix(in srgb, var(--acadia-color-border) 72%, transparent);
+  background: color-mix(in srgb, var(--apollo-nav-bg) 92%, transparent) !important;
+  border-bottom: 1px solid var(--apollo-border-subtle);
   box-shadow: var(--acadia-elevation-chrome);
   -webkit-backdrop-filter: var(--acadia-vibrancy);
   backdrop-filter: var(--acadia-vibrancy);
@@ -744,8 +746,10 @@ body {
 .apollo-page-header,
 .acadia-page-header {
   align-items: flex-start;
-  background: var(--apollo-material-bg);
-  border: 1px solid var(--acadia-color-border);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--apollo-page-highlight) 22%, transparent), transparent 15rem),
+    var(--apollo-material-bg);
+  border: 1px solid var(--apollo-border-subtle);
   border-radius: var(--acadia-radius-md);
   box-shadow: var(--acadia-shadow-card), var(--apollo-shadow-low);
   display: grid;
@@ -856,7 +860,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   min-height: 44px;
   min-width: 150px;
   padding: 0.5rem 1.35rem;
-  box-shadow: 0 0.1875rem 0.5rem color-mix(in srgb, var(--acadia-color-primary) 12%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0.125rem 0.375rem color-mix(in srgb, var(--acadia-color-primary) 10%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.18);
   transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease, transform 160ms ease;
 }
 
@@ -867,7 +871,7 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
   background: var(--acadia-color-primary-hover) !important;
   border-color: color-mix(in srgb, var(--acadia-color-primary-hover) 76%, var(--acadia-color-border)) !important;
   color: var(--acadia-color-primary-contrast) !important;
-  box-shadow: 0 0.375rem 0.875rem color-mix(in srgb, var(--acadia-color-primary) 15%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0.25rem 0.625rem color-mix(in srgb, var(--acadia-color-primary) 13%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transform: translateY(-1px);
 }
 
@@ -919,8 +923,10 @@ body:not([data-apollo-page="dashboard"]) .apollo-page-subtitle {
 
 .apollo-card,
 .acadia-surface {
-  background: var(--apollo-material-bg);
-  border: 1px solid var(--acadia-color-border);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--apollo-page-highlight) 16%, transparent), transparent 13rem),
+    var(--apollo-material-bg);
+  border: 1px solid var(--apollo-border-subtle);
   border-radius: var(--acadia-radius-md);
   box-shadow: var(--acadia-shadow-card), var(--apollo-shadow-low);
   color: var(--acadia-color-text);
@@ -3378,7 +3384,7 @@ html[data-bs-theme="light"] .data-detail-panel {
 .launch-page-media,
 .launch-timeline-row {
   background: var(--apollo-row-material);
-  border-color: color-mix(in srgb, var(--apollo-border) 88%, transparent);
+  border-color: var(--apollo-row-border);
 }
 
 .apollo-space-brief {
@@ -3534,8 +3540,8 @@ html[data-bs-theme="light"] .data-detail-panel {
 .launch-page-card,
 .launch-page-media,
 .launch-timeline-row {
-  background: var(--apollo-row-bg);
-  border: 1px solid var(--apollo-border);
+  background: var(--apollo-row-material);
+  border: 1px solid var(--apollo-row-border);
   border-radius: var(--acadia-radius-md);
   box-shadow: var(--apollo-shadow-row);
   transition: background-color var(--acadia-motion-fast), border-color var(--acadia-motion-fast), box-shadow var(--acadia-motion-fast), transform var(--acadia-motion-fast);
@@ -3617,8 +3623,8 @@ html[data-bs-theme="light"] .data-detail-panel {
 }
 
 .list-group-flush > .list-group-item {
-  background: var(--apollo-row-bg);
-  border: 1px solid var(--apollo-border);
+  background: var(--apollo-row-material);
+  border: 1px solid var(--apollo-row-border);
   border-radius: 8px;
   box-shadow: var(--apollo-shadow-row);
   margin-bottom: 10px;
@@ -3627,7 +3633,7 @@ html[data-bs-theme="light"] .data-detail-panel {
 }
 
 .list-group-flush > .list-group-item:hover {
-  background: var(--apollo-row-bg-hover);
+  background: var(--apollo-row-material-hover);
   border-color: var(--apollo-row-border-hover);
   box-shadow: var(--apollo-shadow-row-hover);
 }
