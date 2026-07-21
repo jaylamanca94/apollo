@@ -540,7 +540,7 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=clarity-copy-1/, `${file} should load the current shared app script`);
+    assert.match(html, /app\.js\?v=source-state-2/, `${file} should load the current shared app script`);
   }
 
   assert.match(readProjectFile("launches.html"), /launches\.js\?v=clarity-copy-1/);

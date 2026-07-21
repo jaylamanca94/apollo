@@ -12,6 +12,7 @@ function sendJson(response, statusCode, payload, maxAgeSeconds = 0) {
 }
 
 function sendMethodNotAllowed(response) {
+  response.setHeader("Allow", "GET");
   sendJson(response, 405, {
     error: {
       code: "METHOD_NOT_ALLOWED",

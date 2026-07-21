@@ -149,6 +149,7 @@ test("shared method guard sends stable JSON 405 responses", () => {
   sendMethodNotAllowed(response);
 
   assert.equal(response.statusCode, 405);
+  assert.equal(headers.Allow, "GET");
   assert.equal(headers["Content-Type"], "application/json");
   assert.equal(headers["Cache-Control"], "no-store");
   assert.deepEqual(JSON.parse(response.body), {
