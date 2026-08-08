@@ -20,6 +20,7 @@
 | Responsive gaps | Initial audit pending |
 | Accessibility gaps | Initial audit pending |
 | Acadia exceptions | Initial audit pending |
+| Acadia graduation candidates | Initial audit pending |
 | Unvalidated features | Initial audit pending |
 
 ## Next Design Opportunities
