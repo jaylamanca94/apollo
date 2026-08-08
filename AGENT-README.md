@@ -178,3 +178,7 @@ Update:
 - `PRODUCT-README.md` when mission, audience, requirements, scope, goals, roadmap, features, decisions, or known limitations change.
 - `DESIGN-README.md` when reusable UI, styling, interaction, accessibility, responsive, component, or utility standards change.
 - `README.md` when setup, environment variables, local development, deployment, scripts, or file overview change.
+
+## User Flow Registry
+
+Maintain root `FLOW-REGISTRY.md` as Apollo's authoritative canonical-flow record. Before a behavior-changing feature is implemented, identify flows added or changed, major states introduced, and required design and QA coverage. Update the registry whenever behavior changes and report its headline after meaningful work.
