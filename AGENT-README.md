@@ -182,3 +182,7 @@ Update:
 ## User Flow Registry
 
 Maintain root `FLOW-REGISTRY.md` as Apollo's authoritative canonical-flow record. Before a behavior-changing feature is implemented, identify flows added or changed, major states introduced, and required design and QA coverage. Update the registry whenever behavior changes and report its headline after meaningful work.
+
+## Design Status
+
+Maintain root `DESIGN-STATUS.md` as Apollo's concise design telemetry. When asked for design status, report headline signals and exactly three next design opportunities, prioritized by user impact × affected active flows × current friction. Recommend user-facing design work only; keep engineering cleanup separate unless it materially changes the experience.
