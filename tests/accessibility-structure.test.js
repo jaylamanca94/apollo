@@ -343,11 +343,17 @@ test("Apollo brand mark uses the satellite icon on every page", () => {
 
 test("dashboard stops at command-center panels instead of duplicating detail pages", () => {
   const html = readProjectFile("index.html");
+  const js = readProjectFile("app.js");
 
+  assert.match(html, /\bid="commandPanels"/);
+  assert.match(html, /\bid="recentActivityPanel"/);
   assert.match(html, /\bid="recentActivityBody"/);
   assert.match(html, /\bid="watchItemsBody"/);
   assert.match(html, /\bid="sourceStatusBody"/);
   assert.match(html, /Data Sources/);
+  assert.match(js, /hasMeaningfulRecentActivity = rows\.some\(\(row\) => row\.label !== "ISS"\)/);
+  assert.match(js, /recentActivityPanel\.hidden = !hasMeaningfulRecentActivity/);
+  assert.match(js, /apollo-command-grid-single/);
 
   for (const removedRegion of ["issBody", "peopleBody", "launchBody", "neoBody", "spaceWeatherBody", "apodBody", "skyAnomaliesBody"]) {
     assert.doesNotMatch(html, new RegExp(`\\bid="${removedRegion}"`), `dashboard should not include ${removedRegion}`);

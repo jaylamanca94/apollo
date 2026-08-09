@@ -113,6 +113,8 @@ const els = {
   peopleBody: document.querySelector("#peopleBody"),
   quickStatsBody: document.querySelector("#quickStatsBody"),
   spaceBriefBody: document.querySelector("#spaceBriefBody"),
+  commandPanels: document.querySelector("#commandPanels"),
+  recentActivityPanel: document.querySelector("#recentActivityPanel"),
   recentActivityBody: document.querySelector("#recentActivityBody"),
   watchItemsBody: document.querySelector("#watchItemsBody"),
   issBody: document.querySelector("#issBody"),
@@ -3185,6 +3187,16 @@ function getWatchItemRows() {
 function renderCommandPanels() {
   if (els.recentActivityBody) {
     const rows = getRecentActivityRows();
+    const hasMeaningfulRecentActivity = rows.some((row) => row.label !== "ISS");
+
+    if (els.recentActivityPanel) {
+      els.recentActivityPanel.hidden = !hasMeaningfulRecentActivity;
+    }
+
+    if (els.commandPanels) {
+      els.commandPanels.classList.toggle("apollo-command-grid-single", !hasMeaningfulRecentActivity);
+    }
+
     els.recentActivityBody.innerHTML = rows.length
       ? `<div class="command-panel-list">${rows.slice(0, 4).map(commandPanelRow).join("")}</div>`
       : stateMessage("No recent activity is available yet.");

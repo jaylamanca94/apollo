@@ -76,7 +76,7 @@ Use Leaflet for spatial dashboard views. Keep map frames inside the related data
 
 ## Layout Grid
 
-- Dashboard pages should lead with Apollo as the product identity, then a compact state-at-a-glance grid, Space Brief, Recent Activity, and Watch Items. The homepage should avoid duplicating the object pages: no giant maps, giant APOD media, full crew rosters, long report-style sections, or full ISS/Launch/Asteroid/Weather preview cards.
+- Dashboard pages should lead with Apollo as the product identity, then a compact state-at-a-glance grid, Space Brief, meaningful Recent Activity, and Watch Items. The homepage should avoid duplicating the object pages: no giant maps, giant APOD media, full crew rosters, long report-style sections, or full ISS/Launch/Asteroid/Weather preview cards. When the only activity is a steady-state ISS position update already represented in Watch Items, suppress Recent Activity and let Watch Items use the full row.
 
 - Dashboard summary cards: ISS, Crew, Launches, Asteroids, Weather, APOD, and Sky Anomalies should each summarize the most important current state and include a compact detail link.
 - Space Brief: place a narrative synthesis layer after the quick stats and before object cards. It should answer "what is happening in space?" with status language like Calm, Active, Partial, or Needs attention, then explain the launch, asteroid, space-weather, crew, and ISS signals in a compact executive-summary paragraph. This is the product intelligence layer; avoid turning it into another raw metric grid.
