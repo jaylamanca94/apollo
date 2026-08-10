@@ -383,17 +383,13 @@ function renderLaunchesUnavailable(message) {
         <p class="mb-0"><strong>Source checked:</strong> The Space Devs launch source.</p>
       </div>
       <div class="source-unavailable-actions">
-        <a class="source-link" href="https://thespacedevs.com/llapi" target="_blank" rel="noopener noreferrer">
+        <a class="source-link" href="https://thespacedevs.com/llapi" target="_blank" rel="noopener noreferrer" aria-label="Open The Space Devs launch source">
           <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
-          Open source
+          Open The Space Devs launch source
         </a>
         <a class="source-link" href="./index.html">
           <i class="fa-solid fa-gauge-high acadia-icon" aria-hidden="true"></i>
           Dashboard
-        </a>
-        <a class="source-link" href="./iss.html">
-          <i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i>
-          ISS
         </a>
       </div>
     </div>

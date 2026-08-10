@@ -1943,18 +1943,14 @@ function unavailableStateMarkup({ title = "Data unavailable", message, sourceId,
       </div>
       <div class="source-unavailable-actions">
         ${url ? `
-          <a class="source-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">
+          <a class="source-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(label)} source">
             <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
-            Open source
+            Open ${escapeHtml(label)} source
           </a>
         ` : ""}
         <a class="source-link" href="./index.html">
           <i class="fa-solid fa-gauge-high acadia-icon" aria-hidden="true"></i>
           Dashboard
-        </a>
-        <a class="source-link" href="./iss.html">
-          <i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i>
-          ISS
         </a>
       </div>
     </div>

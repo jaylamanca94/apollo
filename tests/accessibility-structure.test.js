@@ -331,6 +331,19 @@ test("web manifest points to the current SVG favicon", () => {
   assert.equal(manifest.icons[0].purpose, "any maskable");
 });
 
+test("Vercel responses include baseline browser hardening headers", () => {
+  const config = JSON.parse(readProjectFile("vercel.json"));
+  const headers = config.headers?.find((entry) => entry.source === "/(.*)")?.headers || [];
+  const valuesByName = Object.fromEntries(headers.map((header) => [header.key, header.value]));
+
+  assert.match(valuesByName["Content-Security-Policy"] || "", /base-uri 'self'/);
+  assert.match(valuesByName["Content-Security-Policy"] || "", /frame-ancestors 'self'/);
+  assert.match(valuesByName["Content-Security-Policy"] || "", /object-src 'none'/);
+  assert.match(valuesByName["Permissions-Policy"] || "", /camera=\(\)/);
+  assert.equal(valuesByName["Referrer-Policy"], "strict-origin-when-cross-origin");
+  assert.equal(valuesByName["X-Content-Type-Options"], "nosniff");
+});
+
 test("Apollo brand mark uses the satellite icon on every page", () => {
   for (const file of allHtmlPages) {
     const html = readProjectFile(file);
@@ -384,9 +397,14 @@ test("detail pages render intentional unavailable source states", () => {
   assert.match(appJs, /Apollo cannot reach the current NOAA SWPC K-index and notices/);
   assert.match(appJs, /<p class="section-kicker mb-1">Source checked<\/p>/);
   assert.match(appJs, /<strong>Recovery:<\/strong>/);
+  assert.match(appJs, /Open \$\{escapeHtml\(label\)\} source/);
+  assert.match(appJs, /aria-label="Open \$\{escapeHtml\(label\)\} source"/);
+  assert.doesNotMatch(appJs, /href="\.\/iss\.html"[\s\S]*?ISS[\s\S]*?<\/a>\n\s*<\/div>\n\s*<\/div>\n\s*`;\n}\n\nfunction setSourceUnavailable/);
   assert.match(launchesJs, /function renderLaunchesUnavailable/);
   assert.match(launchesJs, /Data unavailable/);
   assert.match(launchesJs, /The Space Devs launch source/);
+  assert.match(launchesJs, /Open The Space Devs launch source/);
+  assert.match(launchesJs, /aria-label="Open The Space Devs launch source"/);
   assert.match(launchesJs, /setLaunchesUpdated\(formatLastChecked\(\)\)/);
   assert.doesNotMatch(launchesJs, /Last updated: Signal lost/);
 });
