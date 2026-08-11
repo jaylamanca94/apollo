@@ -436,6 +436,18 @@ test("sky anomaly results use qualitative evidence and explicit assumptions", ()
   assert.match(html, /Typed location is descriptive context; Apollo does not yet do overhead, aircraft, planet, fireball, satellite, or UAP matching from it\./);
 });
 
+test("sky anomaly form keeps native submit semantics", () => {
+  const js = readProjectFile("app.js");
+  const html = readProjectFile("anomalies.html");
+
+  assert.match(html, /<form class="sky-anomaly-form" id="skyAnomalyForm">/);
+  assert.match(html, /<button class="btn sky-anomaly-submit acadia-button" type="submit">/);
+  assert.match(html, /<label><input type="radio" name="movement" value="straight"><span>Straight line<\/span><\/label>/);
+  assert.match(html, /<label><input type="radio" name="brightness" value="bright"><span>Bright<\/span><\/label>/);
+  assert.match(html, /<label><input type="radio" name="duration" value="seconds"><span>Seconds<\/span><\/label>/);
+  assert.match(js, /els\.skyAnomalyForm\?\.addEventListener\("submit", \(event\) => \{\s*event\.preventDefault\(\);\s*renderSkyExplanation\(\);/);
+});
+
 test("sky anomaly overview reflects connected source readiness", () => {
   const js = readProjectFile("app.js");
 

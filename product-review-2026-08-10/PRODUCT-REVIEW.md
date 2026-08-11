@@ -42,6 +42,20 @@ This bounded follow-up covers the experimental **Check a sky sighting against av
 - Browser click submission was verified. Keyboard-only submission, mobile reflow, touch target size, screen-reader announcements, and production serverless source success remain open.
 - This result is context only, not an identity claim. Apollo still has no location-aware overhead, fireball, aircraft, satellite, planet, or reported-sighting matching.
 
+## Sky Anomalies keyboard follow-up
+
+This bounded follow-up used the linked local Vercel preview, where three connected source checks loaded and NeoWs was explicitly unavailable. The start and result states remain visually coherent and preserve the experimental scope boundary. The available browser controller could focus the radios and submit action, but its Enter and Space operations did not activate either, so that behaviour is recorded as an automation limitation—not a user-facing keyboard pass or failure.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 16 | `16-anomalies-keyboard-start.png` | Healthy — the pre-submit form clearly shows partial source context, local-time handling, descriptive-only location scope, and all native inputs. |
+| 17 | `17-anomalies-keyboard-submission-attempt.png` | Healthy pointer result — submitted Cape Canaveral context preserved its local time and default traits, shows three loaded checks, one unavailable source, and plainly marked planned gaps. |
+
+### Follow-up limits
+
+- The form's native radio controls, `type="submit"` action, and form-level submit handler are now guarded by a static regression test.
+- Enter and Space from the current controller focused the Sky controls but did not activate them. A real-browser keyboard pass, mobile/reflow, touch, contrast, and screen-reader checks remain open.
+
 ## Vercel runtime and mobile Watch follow-up
 
 This bounded follow-up ran the linked Vercel development runtime from a temporary copied checkout. Vercel's function worker cannot run directly from the CloudDocs workspace path because it contains spaces. The copied runtime served current launch and NOAA weather data; it had no local NASA key, so health correctly reported degraded and asteroid/APOD success could not be assessed.

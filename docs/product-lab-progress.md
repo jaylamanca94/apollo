@@ -6,7 +6,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 10 — Make the Dashboard's partial state unambiguous.** Completed locally: the linked Vercel runtime showed four usable sources alongside two unavailable NASA sources; the Dashboard now describes that condition as partial at both its header and its Space Brief while preserving the source-qualified calm summary.
+**Milestone 11 — Bound and verify the Sky Anomalies submission path.** Completed locally: the live Vercel preview showed a coherent partial-source starting state and a pointer-submitted result that preserves user-entered location, time, selected default traits, loaded sources, unavailable sources, and planned gaps. Native form semantics are now guarded in the test suite. The available browser controller focused controls but did not dispatch Enter or Space activation, so it cannot close the real-browser keyboard QA gap.
 
 ## Fixed
 
@@ -23,6 +23,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - Extended browser-side source requests from 10 to 15 seconds. The previous client deadline could abort an APOD request before Apollo's serverless route completed its own 10-second upstream timeout and returned an honest result; all shared-page script references now carry the updated cache version.
 - Verified Gallery and Asteroids against current NASA data through the linked local Vercel runtime. Both desktop flows rendered loaded data, and their header Refresh control preserved the loaded state with pointer and Enter activation.
 - Corrected the Dashboard's partial-state hierarchy. When a core source is unavailable, the hero now says `Space Activity: Partial` instead of `Mostly Calm`; the Space Brief still names what is calm only where sources are available.
+- Added a structural regression check for the Sky Anomalies form: it retains a native `<form>`, semantic radio controls, a `type="submit"` action, and a form-level submit handler. This protects the baseline required for keyboard activation while separate real-browser QA remains necessary.
 
 ## Validation evidence
 
@@ -42,6 +43,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-10: a first APOD response took 10.93 seconds, exceeding the former browser 10-second deadline. After extending the browser deadline to 15 seconds and versioning the shared script references, accepted desktop captures show the Gallery loaded state (`12-gallery-loaded.png`) and the Asteroids loaded state (`13-asteroids-loaded.png`). Pointer and Enter activation of each header Refresh completed while retaining loaded data. `npm run check` passed with 107 tests.
 - 2026-08-10: a final direct query with the same public exploration key returned NASA's explicit `OVER_RATE_LIMIT` response. This confirms the local screenshots are valid bounded evidence, while also confirming that `DEMO_KEY` is not suitable for repeatable QA or deployment.
 - 2026-08-10: without a NASA key, the linked local Vercel Dashboard settled at four of six sources loaded: ISS position, crew, Launches, and NOAA weather remained useful while APOD and NeoWs were explicitly unavailable. The pre-fix capture (`14-dashboard-partial-pre-fix.png`) exposed a conflicting `Mostly Calm` hero subtitle; the corrected capture (`15-dashboard-partial-loaded.png`) shows the aligned `Partial` subtitle, source-qualified Space Brief, and explicit source matrix. Enter activation of Refresh returned to the same honest state. `npm run check` passed with 108 tests.
+- 2026-08-11: the live local Vercel preview showed Sky Anomalies' partial context before submission (`16-anomalies-keyboard-start.png`) and, after pointer submission, its source-aware result (`17-anomalies-keyboard-submission-attempt.png`). The result preserved Cape Canaveral, Florida and the browser-local time, and it visibly separated three loaded source checks, one unavailable source, and five planned evidence gaps. The controller focused radio and submit controls but did not dispatch Enter or Space activation, so this is not accepted as keyboard-only QA. `npm run check` now guards the native form/submit semantics alongside the existing 108 tests.
 
 ## Deferred
 
@@ -49,7 +51,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - `npm run dev` now handles the temporary copied checkout required by Vercel's path limitation. The safer static preview still cannot validate Vercel routes or live-source success states.
 - The current local static shell intentionally returns 404 for serverless `/api` routes. Its unavailable-state evidence verifies recovery behaviour, not production source availability.
 - Vercel's function worker cannot run directly from the CloudDocs workspace because its path contains spaces; a temporary copied checkout was required for this local serverless QA. This is a tooling/environment constraint, not a shipped Apollo failure.
-- NASA-dependent Gallery and Asteroids desktop loaded states are now verified locally with the public exploration key, but they still need a dedicated non-production key for repeatable QA. Production and live-source QA, keyboard-only navigation (including Sky Anomalies submission), touch targets, zoom/reflow, contrast, and screen-reader announcements remain open for all eight flows.
+- NASA-dependent Gallery and Asteroids desktop loaded states are now verified locally with the public exploration key, but they still need a dedicated non-production key for repeatable QA. Production and live-source QA, keyboard-only navigation (including Sky Anomalies submission), touch targets, zoom/reflow, contrast, and screen-reader announcements remain open for all eight flows. The current controller's Enter/Space operations focused Sky controls without activating them; do not use it as keyboard-pass evidence.
 - The current browser controller did not open the native mobile Watch disclosure with Enter or Space, so keyboard activation remains unverified rather than assumed broken or working. A real-browser keyboard pass is still required.
 - NASA's public `DEMO_KEY` is suitable only for bounded exploration and has a limited shared quota; it supplied this local evidence but must not become Apollo's configured deployment credential.
 - The current browser viewport override still reported a 1280px layout after a requested 390px size, so this milestone adds no new mobile visual or touch-hardware evidence.
@@ -62,4 +64,4 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Next coherent milestone
 
-Use a dedicated non-production NASA key to repeat the NASA-backed flows without a shared demo quota, then complete real-browser mobile/reflow and assistive-technology checks. Keep deployed production verification and the resilience-policy decision separate.
+Use a dedicated non-production NASA key to repeat the NASA-backed flows without a shared demo quota, then complete a real-browser keyboard, mobile/reflow, and assistive-technology pass—starting with Sky Anomalies' radios and submit action. Keep deployed production verification and the resilience-policy decision separate.
