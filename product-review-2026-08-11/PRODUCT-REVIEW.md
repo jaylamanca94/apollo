@@ -25,9 +25,20 @@ This controlled review used the linked Vercel preview at 390 × 844 CSS pixels. 
 | 28 | `28-asteroids-recovery-mobile-390x844.png` | Context — the NeoWs `Open details` route resolves to Apollo’s source-specific mobile recovery state. |
 | 29 | `29-asteroids-recovery-mobile-bottom.png` | Healthy — at the page’s actual maximum scroll position, retry, upstream-source, and Dashboard actions all sit above the fixed dock. |
 
+## Mobile Sky Anomalies follow-up
+
+This controlled review used the linked Vercel preview at 390 × 844 CSS pixels. The page reported `innerWidth`, `clientWidth`, and `scrollWidth` of 390. It covers the user goal **Check a sky sighting against available context**, from entering a description through an honest source-aware result.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 30 | `30-anomalies-mobile-start-390x844.png` | Healthy — the mobile form opens in the partial-source state with clear location, date, time, and sighting-trait controls. |
+| 31 | `31-anomalies-mobile-submitted-top-390x844.png` | Healthy — pointer submission preserves the supplied traits and leads with the result, its source count, and the checked-source list; the view has no horizontal overflow. |
+| 33 | `33-anomalies-mobile-bottom-390x844.png` | Healthy — the planned source gaps remain explicitly unverified, and the lower Source context disclosure clears the fixed dock at maximum scroll. |
+
 ## Limits
 
-- This is current desktop Vercel-preview and pointer evidence. It does not prove production deployment, real-browser keyboard focus order, mobile/reflow, touch targets, contrast, or screen-reader announcements.
+- Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
 - The 390px follow-up establishes only the Dashboard partial state and Asteroids unavailable recovery state in controlled desktop-browser emulation. It does not prove touch hardware, safe-area, orientation, full-product mobile coverage, or mobile keyboard behaviour.
+- The 390px Sky Anomalies follow-up establishes the initial form and pointer-submitted result only. It does not prove hardware touch ergonomics, safe-area, orientation, keyboard-only form submission, contrast, or assistive-technology behaviour.
 - The no-stale-data policy remains intact. A resilience decision about visibly aged last-known-good data is still a founder decision, not silently introduced behaviour.
 - The current browser controller focused the native retry control, but both its CUA and DOM key channels left Enter and Space inactive. This is a tooling limit, not a claim that keyboard activation succeeds or fails for real users.

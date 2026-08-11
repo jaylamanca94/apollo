@@ -6,7 +6,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 14 — Validate the mobile partial Dashboard and source recovery.** Completed locally: the linked Vercel preview rendered at an actual 390 × 844 CSS viewport (`innerWidth`, `clientWidth`, and `scrollWidth` were all 390). The Dashboard’s partial state stacked cleanly, its NeoWs local route opened the Asteroids recovery state, and the recovery actions were all reachable above the fixed dock at the page’s true scroll limit. This is accepted narrow mobile visual evidence, not device, keyboard, or whole-product mobile QA.
+**Milestone 15 — Validate the Sky Anomalies mobile result.** Completed locally: the linked Vercel preview rendered the start and source-aware submitted result at an actual 390 × 844 CSS viewport (`innerWidth`, `clientWidth`, and `scrollWidth` were all 390). A pointer submission preserved the entered Cape Canaveral observation and rendered its honest conclusion, loaded and unavailable source states, and planned gaps without horizontal overflow; the page’s bottom content also clears the fixed dock. This is accepted narrow mobile visual and pointer evidence, not device, keyboard, or whole-product mobile QA.
 
 ## Fixed
 
@@ -26,6 +26,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - Added a structural regression check for the Sky Anomalies form: it retains a native `<form>`, semantic radio controls, a `type="submit"` action, and a form-level submit handler. This protects the baseline required for keyboard activation while separate real-browser QA remains necessary.
 - Added a local recovery route to every non-loaded Dashboard source card. A user can now open the relevant Apollo detail page for an in-context retry without mistaking the external upstream link for Apollo recovery.
 - Accepted controlled 390px mobile evidence for the Dashboard partial state and the Asteroids unavailable recovery state. Neither view had horizontal overflow, and Asteroids’ retry, source, and Dashboard actions clear the fixed dock at the actual bottom of the page.
+- Accepted controlled 390px mobile evidence for the Sky Anomalies start and submitted-result states. The source-aware conclusion appears after pointer submission, preserves observation traits, and keeps planned evidence gaps visibly separate from checked context.
 
 ## Validation evidence
 
@@ -49,6 +50,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-11: the current Vercel preview's partial Dashboard state exposed clear `Open details` and `Open source` links on unavailable APOD and NeoWs cards (`product-review-2026-08-11/20-dashboard-source-recovery-links.png`). Following NeoWs `Open details` reached the Apollo Asteroids unavailable state (`21-asteroids-recovery-destination.png`); its source-specific retry completed and kept the honest unavailable result (`22-asteroids-retry-complete.png`). `npm run check` passed with 110 tests.
 - 2026-08-11: the live Asteroids unavailable state was captured before focus (`23-asteroids-keyboard-retry-start.png`) and with `Try NASA NeoWs again` focused (`24-asteroids-retry-focus.png`). The browser confirmed that the native retry receives focus and exposes the expected focus ring. Its CUA and DOM key channels did not dispatch Enter or Space, so this cannot establish or contradict real-user activation. The prior pointer retry result remains the accepted action evidence.
 - 2026-08-11: a controlled current Vercel preview at 390 × 844 CSS pixels reported `innerWidth`, `clientWidth`, and `scrollWidth` of 390. The Dashboard partial state is accepted in `25-dashboard-partial-mobile-390x844.png`; its NeoWs local route reached the Asteroids unavailable state (`28-asteroids-recovery-mobile-390x844.png`). At the page’s actual maximum scroll position, Asteroids’ retry, upstream-source, and Dashboard actions all clear the fixed dock (`29-asteroids-recovery-mobile-bottom.png`). This is valid visual/reflow evidence for those two states only.
+- 2026-08-11: a controlled current Vercel preview again reported `innerWidth`, `clientWidth`, and `scrollWidth` of 390 at 390 × 844 CSS pixels. Sky Anomalies' initial form state is accepted in `30-anomalies-mobile-start-390x844.png`. A pointer-submitted Cape Canaveral, straight-line, bright, seconds-long sighting preserved its traits and led with `No strong known-space match`, three loaded source checks, and one unavailable source (`31-anomalies-mobile-submitted-top-390x844.png`). At the actual maximum scroll position, the planned source gaps and Source context disclosure clear the fixed dock (`33-anomalies-mobile-bottom-390x844.png`). This is valid visual/reflow and pointer-submission evidence for these states only.
 
 ## Deferred
 
@@ -61,6 +63,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - The current controller also focused Asteroids' retry control but did not dispatch Enter or Space through either available key channel. Its focus-ring evidence is accepted; activation remains a real-browser QA gate.
 - NASA's public `DEMO_KEY` is suitable only for bounded exploration and has a limited shared quota; it supplied this local evidence but must not become Apollo's configured deployment credential.
 - The accepted 390 × 844 Dashboard and Asteroids recovery review is controlled desktop-browser emulation only. Mobile coverage remains incomplete for the other flows, as do touch hardware, safe-area, orientation, keyboard, zoom/reflow, contrast, and screen-reader checks.
+- The accepted 390 × 844 Sky Anomalies review is likewise controlled desktop-browser emulation. It verifies the initial form and pointer-submitted result, not real-browser keyboard-only submission, touch hardware, safe-area, orientation, contrast, or screen-reader behaviour.
 
 ## Founder decision needed
 
@@ -70,4 +73,4 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Next coherent milestone
 
-Use a dedicated non-production NASA key to repeat the NASA-backed flows without a shared demo quota, then complete a real-browser keyboard, broader mobile/reflow, and assistive-technology pass—starting with Sky Anomalies' radios and submit action. Extend accepted 390px coverage beyond the Dashboard partial and Asteroids recovery states before treating the mobile shell as complete. Keep deployed production verification and the resilience-policy decision separate.
+Use a dedicated non-production NASA key to repeat the NASA-backed flows without a shared demo quota, then complete a real-browser keyboard, broader mobile/reflow, and assistive-technology pass—starting with Sky Anomalies' radios and submit action. Extend accepted 390px coverage beyond the Dashboard partial, Asteroids recovery, and Sky Anomalies states before treating the mobile shell as complete. Keep deployed production verification and the resilience-policy decision separate.
