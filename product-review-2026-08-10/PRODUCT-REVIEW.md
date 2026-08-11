@@ -41,3 +41,20 @@ This bounded follow-up covers the experimental **Check a sky sighting against av
 
 - Browser click submission was verified. Keyboard-only submission, mobile reflow, touch target size, screen-reader announcements, and production serverless source success remain open.
 - This result is context only, not an identity claim. Apollo still has no location-aware overhead, fireball, aircraft, satellite, planet, or reported-sighting matching.
+
+## Vercel runtime and mobile Watch follow-up
+
+This bounded follow-up ran the linked Vercel development runtime from a temporary copied checkout. Vercel's function worker cannot run directly from the CloudDocs workspace path because it contains spaces. The copied runtime served current launch and NOAA weather data; it had no local NASA key, so health correctly reported degraded and asteroid/APOD success could not be assessed.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 7 | `07-launches-loaded.png` | Healthy — current serverless launch data renders a clear next-mission answer with countdown, launch window, location, source, and status. |
+| 8 | `08-launches-details.png` | Healthy — a mission-detail disclosure expands in place and preserves the schedule's context. Header Refresh reloaded current data successfully. |
+| 9 | `09-launches-mobile-loaded.png` | Healthy at 390px — the mobile dock and loaded launch spotlight fit without horizontal clipping in the captured viewport. |
+| 10 | `10-mobile-watch-menu.png` | Healthy — Watch opens above the dock with Weather, Asteroids, and Anomalies as separate destinations. |
+| 11 | `11-weather-mobile-loaded.png` | Healthy — selecting Weather reaches a loaded, legible 390px space-weather summary rather than a generic intermediary page. |
+
+### Runtime limits
+
+- `/api/health` returned `503 degraded` and `/api/neo` returned `NASA_API_KEY_MISSING`; this accurately reflects the local environment and does not establish deployed production configuration.
+- Click interaction and the 390px browser viewport were verified. Keyboard-only, touch hardware, full reflow, screen-reader, and production deployment checks remain open.
