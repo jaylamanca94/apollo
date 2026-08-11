@@ -455,7 +455,10 @@ test("sky anomaly form keeps native submit semantics", () => {
   assert.match(html, /<label><input type="radio" name="movement" value="straight"><span>Straight line<\/span><\/label>/);
   assert.match(html, /<label><input type="radio" name="brightness" value="bright"><span>Bright<\/span><\/label>/);
   assert.match(html, /<label><input type="radio" name="duration" value="seconds"><span>Seconds<\/span><\/label>/);
-  assert.match(js, /els\.skyAnomalyForm\?\.addEventListener\("submit", \(event\) => \{\s*event\.preventDefault\(\);\s*renderSkyExplanation\(\);/);
+  assert.match(js, /function focusSkyAnomalyResult\(\)[\s\S]*?heading\.focus\(\{ preventScroll: true \}\);[\s\S]*?heading\.scrollIntoView\(\{ block: "start", behavior: "auto" \}\);/);
+  assert.match(js, /function renderSkyExplanation\(\{ focus = false \} = \{\}\)/);
+  assert.match(js, /<h3 class="sky-anomaly-result-title mb-0" tabindex="-1">Sighting context<\/h3>/);
+  assert.match(js, /els\.skyAnomalyForm\?\.addEventListener\("submit", \(event\) => \{\s*event\.preventDefault\(\);\s*renderSkyExplanation\(\{ focus: true \}\);/);
 });
 
 test("sky anomaly overview reflects connected source readiness", () => {
@@ -594,7 +597,7 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=source-timeout-2/, `${file} should load the current shared app script`);
+    assert.match(html, /app\.js\?v=source-timeout-3/, `${file} should load the current shared app script`);
   }
 
   assert.match(readProjectFile("launches.html"), /launches\.js\?v=source-retry-1/);

@@ -2952,6 +2952,10 @@ html[data-bs-theme="light"] .data-detail-panel {
   line-height: 1.2;
 }
 
+.sky-anomaly-result-title[tabindex="-1"] {
+  scroll-margin-top: calc(4.375rem + 1rem);
+}
+
 .sky-anomaly-observed-at,
 .sky-anomaly-note,
 .sky-explanation-detail,

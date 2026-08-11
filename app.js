@@ -1067,7 +1067,18 @@ function renderSkyAnomalyOverview() {
   `;
 }
 
-function renderSkyExplanation() {
+function focusSkyAnomalyResult() {
+  const heading = els.skyAnomalyResults?.querySelector(".sky-anomaly-result-title");
+
+  if (!heading) {
+    return;
+  }
+
+  heading.focus({ preventScroll: true });
+  heading.scrollIntoView({ block: "start", behavior: "auto" });
+}
+
+function renderSkyExplanation({ focus = false } = {}) {
   if (!els.skyAnomalyResults) {
     return;
   }
@@ -1089,7 +1100,7 @@ function renderSkyExplanation() {
     <div class="sky-anomaly-result-header">
       <div>
         <p class="section-kicker mb-1">Explain</p>
-        <h3 class="sky-anomaly-result-title mb-0">Sighting context</h3>
+        <h3 class="sky-anomaly-result-title mb-0" tabindex="-1">Sighting context</h3>
         <p class="sky-anomaly-observed-at mb-0">${escapeHtml(formatDateTime(observedAt.toISOString()))}</p>
       </div>
       <span class="sky-explanation-pill sky-explanation-${escapeHtml(resultTone)}">${escapeHtml(resultSummary)}</span>
@@ -1187,6 +1198,10 @@ function renderSkyExplanation() {
     </section>
     <p class="sky-anomaly-note mb-0">Apollo uses connected source context and visible traits only; planned source gaps are not checked evidence or identity claims.</p>
   `;
+
+  if (focus) {
+    focusSkyAnomalyResult();
+  }
 }
 
 function initSkyAnomalyEngine() {
@@ -1202,7 +1217,7 @@ function initSkyAnomalyEngine() {
 
   els.skyAnomalyForm?.addEventListener("submit", (event) => {
     event.preventDefault();
-    renderSkyExplanation();
+    renderSkyExplanation({ focus: true });
   });
 }
 

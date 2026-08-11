@@ -82,6 +82,16 @@ This controlled review used the linked Vercel preview at 390 × 844 CSS pixels. 
 | 48 | `48-weather-mobile-overview-390x844.png` | Healthy — Current K-index, the plain-English Space Weather Brief, and the next-72-hours Kp threshold are readable without horizontal overflow. |
 | 49 | `49-weather-mobile-source-390x844.png` | Healthy — the NOAA scale, recent notices, and visible NOAA source action remain above the fixed dock at the lower source context. |
 
+## Narrow-phone Sky Anomalies result handoff
+
+This controlled review used the linked Vercel preview at 320 × 844 CSS pixels. It covers the narrow-phone Dashboard partial state and the user goal **Check a sky sighting against available context**, from the initial form to a visible, focused submitted result.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 50 | `50-dashboard-partial-mobile-320x844.png` | Healthy — the partial Dashboard hierarchy remains legible at 320px with no horizontal overflow or dock collision. |
+| 51 | `51-anomalies-mobile-start-320x844.png` | Healthy — the Sky Anomalies start form retains its title, source limits, and concise input hierarchy at 320px. |
+| 52 | `52-anomalies-mobile-result-focused-320x844.png` | Healthy after change — pointer submission preserves the observation and lands focus on `Sighting context` 86px below the sticky header; the partial-source result begins immediately, with no horizontal overflow. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
@@ -92,5 +102,6 @@ This controlled review used the linked Vercel preview at 390 × 844 CSS pixels. 
 - The 390px Watch follow-up establishes pointer routes and destination dismissal only. It does not prove hardware touch ergonomics, keyboard activation, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 390px Launches follow-up establishes the loaded overview, pointer disclosure, and source action only. It does not prove mobile source failure, hardware touch, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 390px Weather follow-up establishes the loaded decision view and lower source context only. It does not prove mobile source failure, hardware touch, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
+- The 320px Dashboard and Sky Anomalies follow-up establishes a narrower partial Dashboard, Sky Anomalies start form, and pointer-result focus handoff only. It does not prove hardware touch ergonomics, keyboard-only submission, safe-area, orientation, contrast, or assistive-technology announcement behaviour.
 - The no-stale-data policy remains intact. A resilience decision about visibly aged last-known-good data is still a founder decision, not silently introduced behaviour.
 - The current browser controller focused the native retry control, but both its CUA and DOM key channels left Enter and Space inactive. This is a tooling limit, not a claim that keyboard activation succeeds or fails for real users.
