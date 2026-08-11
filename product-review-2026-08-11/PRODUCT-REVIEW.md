@@ -166,6 +166,12 @@ This controlled review used Apollo's authentication-free local function preview 
 | --- | --- | --- |
 | 67 | `67-launches-mobile-keyboard-refresh-390x844.png` | Healthy — Space completes a fresh loaded-schedule check and preserves the visible mission context. |
 
+## Launches recovery keyboard follow-up
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 68 | `68-launches-mobile-keyboard-retry-focus-390x844.png` | Healthy focus treatment — Space reaches the native recovery control, whose focus ring is visible and clear of the fixed dock. This does not itself prove a complete keyboard-only recovery action. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.

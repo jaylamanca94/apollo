@@ -10,6 +10,8 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 **Milestone 30 — Close the Launches Refresh keyboard gap.** Completed locally: the separate Launches controller now explicitly handles Enter and Space on the same existing Acadia Refresh control. At 390 × 844 CSS pixels, Space refreshed the loaded schedule and retained the page’s clear source context. This is accepted local function-preview keyboard and mobile visual evidence, not hardware, Vercel-platform, or production-deployment QA.
 
+**Milestone 31 — Verify keyboard focus on Launches recovery.** Completed locally: the real source-unavailable state exposes a visibly focused native `Try The Space Devs again` control at 390 × 844 CSS pixels. This confirms focus reachability and a clear focus treatment; it does not by itself establish full keyboard-only, hardware, Vercel-platform, or production QA.
+
 ## Fixed
 
 - Added an explicit, keyboard-reachable retry in Apollo's unavailable-source state. It rechecks the relevant shared dashboard data on Gallery, Weather, and Asteroids, and the launch schedule on Launches.
@@ -85,6 +87,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted Asteroids recovery keyboard activation. Enter on `Try NASA NeoWs again` rechecked the source, refreshed the check time from 6:50 to 6:51 AM, retained the same source-specific unavailable state, and kept the action visible above the dock (`65-asteroids-mobile-keyboard-retry-390x844.png`). This is valid controlled browser keyboard-retry and visual evidence only.
 - 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted shared Refresh keyboard activation. Space on Dashboard Refresh completed a fresh partial-data check and retained the visible source-qualified state (`66-dashboard-mobile-keyboard-refresh-390x844.png`). This is valid controlled browser keyboard-refresh and visual evidence only.
 - 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted Launches Refresh keyboard activation. Space on Launches Refresh completed a fresh loaded-schedule check, preserved the visible mission context, and restored the labelled control (`67-launches-mobile-keyboard-refresh-390x844.png`). This is valid controlled browser keyboard-refresh and visual evidence only.
+- 2026-08-11: Apollo's API-free local static shell at 390 × 844 CSS pixels accepted the Launches unavailable-state focus treatment. Space reached the native `Try The Space Devs again` recovery control, whose visible focus ring remains above the fixed dock (`68-launches-mobile-keyboard-retry-focus-390x844.png`). This is valid controlled browser keyboard-focus and visual evidence only, not a full keyboard activation or production claim.
 
 ## Deferred
 
