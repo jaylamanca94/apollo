@@ -4242,7 +4242,16 @@ async function loadSpaceWeather() {
   }
 }
 
-async function loadDashboard() {
+function restoreSourceRetryFocus(sourceId) {
+  if (!sourceId) {
+    return;
+  }
+
+  const retry = document.querySelector(`[data-source-retry="${sourceId}"]`);
+  retry?.focus();
+}
+
+async function loadDashboard({ focusRetrySourceId = "" } = {}) {
   const loadId = dashboardLoadSequence + 1;
   dashboardLoadSequence = loadId;
   setDashboardStatus("Refreshing live data.");
@@ -4345,6 +4354,8 @@ async function loadDashboard() {
     els.refreshButtonMobile.disabled = false;
     els.refreshButtonMobile.innerHTML = REFRESH_BUTTON_HTML;
   }
+
+  restoreSourceRetryFocus(focusRetrySourceId);
 }
 
 [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
@@ -4358,15 +4369,17 @@ async function loadDashboard() {
 });
 
 document.addEventListener("click", (event) => {
-  if (event.target.closest("[data-source-retry]")) {
-    loadDashboard();
+  const retry = event.target.closest("[data-source-retry]");
+  if (retry) {
+    loadDashboard({ focusRetrySourceId: retry.dataset.sourceRetry });
   }
 });
 
 document.addEventListener("keydown", (event) => {
-  if ((event.key === "Enter" || event.key === " ") && event.target.closest("[data-source-retry]")) {
+  const retry = event.target.closest("[data-source-retry]");
+  if ((event.key === "Enter" || event.key === " ") && retry) {
     event.preventDefault();
-    loadDashboard();
+    loadDashboard({ focusRetrySourceId: retry.dataset.sourceRetry });
   }
 });
 
