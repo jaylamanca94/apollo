@@ -127,6 +127,17 @@ This controlled review used Apollo's authentication-free local function preview 
 | --- | --- | --- |
 | 59 | `59-iss-mobile-proxy-loaded-390x844.png` | Healthy — current ISS status, map, position, and the live crew summary render through Apollo's proxy boundary without horizontal overflow. Pointer Refresh remained on ISS and retained the current loaded state. |
 
+## Mobile Watch keyboard follow-up
+
+This controlled review used Apollo's authentication-free local function preview at 390 × 844 CSS pixels. It covers **Navigate secondary monitoring pages on phone** from keyboard opening through each Watch destination. It validates the product's explicit keyboard handlers and browser result, not physical-device ergonomics or Vercel deployment behaviour.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 60 | `60-mobile-watch-keyboard-enter-open-390x844.png` | Healthy — Enter opens the named Watch menu and moves focus to Weather, exposing all three destinations in a predictable order. |
+| 61 | `61-mobile-watch-keyboard-weather-390x844.png` | Healthy — Enter reaches the Weather detail view and dismisses Watch. |
+| 62 | `62-mobile-watch-keyboard-asteroids-390x844.png` | Healthy — Space reaches Asteroids and preserves the honest NASA NeoWs unavailable state with Watch dismissed. |
+| 63 | `63-mobile-watch-keyboard-anomalies-390x844.png` | Healthy — Enter reaches the Sky Anomalies context form with Watch dismissed. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
@@ -134,7 +145,7 @@ This controlled review used Apollo's authentication-free local function preview 
 - The 390px Gallery follow-up establishes its unavailable APOD branch and pointer retry only. It does not prove loaded image/video media, alternate-media handling, hardware touch ergonomics, keyboard, safe-area, orientation, contrast, or assistive-technology behaviour.
 - The 390px Sky Anomalies follow-up establishes the initial form and pointer-submitted result only. It does not prove hardware touch ergonomics, safe-area, orientation, keyboard-only form submission, contrast, or assistive-technology behaviour.
 - The 390px ISS follow-up establishes its loaded state plus the API-free static-shell simultaneous position-and-crew unavailable branch with pointer retry only. It does not prove live-source availability, deployment, hardware touch ergonomics, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
-- The 390px Watch follow-up establishes pointer routes and destination dismissal only. It does not prove hardware touch ergonomics, keyboard activation, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
+- The 390px Watch follow-up establishes controlled browser Enter/Space opening, focus handoff, routes, and destination dismissal. It does not prove hardware keyboard or touch ergonomics, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 390px Launches follow-up establishes the loaded overview, pointer disclosure, and source action only. It does not prove mobile source failure, hardware touch, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 390px Weather follow-up establishes the loaded decision view, lower source context, and API-free static-shell unavailable branch with pointer retry only. It does not prove live-source availability, deployment, hardware touch ergonomics, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 320px Dashboard and Sky Anomalies follow-up establishes a narrower partial Dashboard, Sky Anomalies start form, and pointer-result focus handoff only. It does not prove hardware touch ergonomics, keyboard-only submission, safe-area, orientation, contrast, or assistive-technology announcement behaviour.

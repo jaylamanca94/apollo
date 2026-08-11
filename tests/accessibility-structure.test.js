@@ -663,6 +663,13 @@ test("mobile Watch menu opens as navigation above the dock", () => {
   assert.match(js, /window\.addEventListener\("scroll", closeMobileWatchMenus, \{ passive: true \}\);/);
   assert.match(js, /item\.addEventListener\("click", closeMobileWatchMenus\);/);
   assert.match(js, /initMobileWatchMenuDismissal\(\);/);
+  assert.match(js, /function initMobileWatchKeyboard\(\)/);
+  assert.match(js, /event\.key !== "Enter" && event\.key !== " "/);
+  assert.match(js, /event\.preventDefault\(\);/);
+  assert.match(js, /window\.bootstrap\.Dropdown\.getOrCreateInstance\(button\)\.toggle\(\);/);
+  assert.match(js, /menu\?\.querySelector\("\.apollo-nav-menu-item"\)\?\.focus\(\);/);
+  assert.match(js, /window\.location\.assign\(item\.href\);/);
+  assert.match(js, /initMobileWatchKeyboard\(\);/);
 });
 
 test("mobile nav exposes clear names while hiding icon glyphs", () => {

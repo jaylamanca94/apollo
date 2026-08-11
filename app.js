@@ -1930,6 +1930,41 @@ function initMobileWatchMenuDismissal() {
   });
 }
 
+function initMobileWatchKeyboard() {
+  document.querySelectorAll(".apollo-mobile-dock .apollo-nav-more-toggle").forEach((button) => {
+    button.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") {
+        return;
+      }
+
+      event.preventDefault();
+      const menu = button.closest(".apollo-nav-more")?.querySelector(".apollo-nav-menu");
+      const shouldOpen = button.getAttribute("aria-expanded") !== "true";
+
+      if (window.bootstrap?.Dropdown) {
+        window.bootstrap.Dropdown.getOrCreateInstance(button).toggle();
+      } else {
+        button.click();
+      }
+
+      if (shouldOpen) {
+        menu?.querySelector(".apollo-nav-menu-item")?.focus();
+      }
+    });
+  });
+
+  document.querySelectorAll(".apollo-mobile-dock .apollo-nav-menu-item").forEach((item) => {
+    item.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") {
+        return;
+      }
+
+      event.preventDefault();
+      window.location.assign(item.href);
+    });
+  });
+}
+
 function getText(value, fallback = "") {
   return typeof value === "string" && value.trim() ? value.trim() : fallback;
 }
@@ -4307,5 +4342,6 @@ document.addEventListener("click", (event) => {
 
 initThemeControl();
 initMobileWatchMenuDismissal();
+initMobileWatchKeyboard();
 initSkyAnomalyEngine();
 loadDashboard();
