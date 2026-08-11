@@ -285,6 +285,53 @@ test("Space Brief keeps pending sources distinct from unavailable sources", () =
   assert.equal(pageSubtitle.textContent, "Space Activity: Partial");
 });
 
+test("Space Brief marks an unavailable core source as partial", () => {
+  const spaceBriefBody = {
+    innerHTML: ""
+  };
+  const pageSubtitle = {
+    textContent: ""
+  };
+  const context = loadDashboardHelpers({
+    elements: {
+      "#spaceBriefBody": spaceBriefBody,
+      ".apollo-page-subtitle": pageSubtitle
+    }
+  });
+
+  context.document.body = {
+    dataset: {
+      apolloPage: "dashboard"
+    }
+  };
+
+  vm.runInContext(`
+    dashboardData.iss = { latitude: 0, longitude: 0, altitude: 420, velocity: 27600 };
+    dashboardData.people = { count: 7, locationCount: 2 };
+    dashboardData.launches = [{
+      name: "Falcon 9 | Demo Mission",
+      dateUtc: new Date(Date.now() + 7200000).toISOString(),
+      status: "Go"
+    }];
+    dashboardData.spaceWeather = {
+      condition: "Quiet conditions",
+      kpIndex: 2,
+      severity: "quiet"
+    };
+    latestSourceStatuses = new Map([
+      ["people", createSourceStatus("people", "ok", "Crew loaded.")],
+      ["launches", createSourceStatus("launches", "ok", "Launches loaded.")],
+      ["spaceWeather", createSourceStatus("spaceWeather", "ok", "Weather loaded.")],
+      ["iss", createSourceStatus("iss", "ok", "Position loaded.")],
+      ["neo", createSourceStatus("neo", "error", "Asteroid source unavailable.")]
+    ]);
+    renderSpaceBrief();
+  `, context);
+
+  assert.match(spaceBriefBody.innerHTML, /Space activity is calm where sources are available/);
+  assert.equal(pageSubtitle.textContent, "Space Activity: Partial");
+});
+
 test("Sky Anomalies keeps broad launch timing as context, not a strong match", () => {
   const { getLaunchMatchLevel, getSkyResultSummary } = loadDashboardHelpers();
 

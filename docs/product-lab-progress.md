@@ -6,7 +6,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 9 — Verify NASA-backed flows and protect their first load.** Completed locally: NASA APOD and NeoWs returned current normalized data through the linked Vercel runtime, Gallery and Asteroids rendered their loaded desktop states, and the browser now allows the serverless source route to finish its own 10-second upstream timeout before it gives up.
+**Milestone 10 — Make the Dashboard's partial state unambiguous.** Completed locally: the linked Vercel runtime showed four usable sources alongside two unavailable NASA sources; the Dashboard now describes that condition as partial at both its header and its Space Brief while preserving the source-qualified calm summary.
 
 ## Fixed
 
@@ -22,6 +22,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - Added the documented `npm run dev` entry point and a project-local Vercel runner. It creates an isolated temporary copy, carries local environment configuration, avoids Vercel's path and recursive-development-command limitations, and cleans up after shutdown.
 - Extended browser-side source requests from 10 to 15 seconds. The previous client deadline could abort an APOD request before Apollo's serverless route completed its own 10-second upstream timeout and returned an honest result; all shared-page script references now carry the updated cache version.
 - Verified Gallery and Asteroids against current NASA data through the linked local Vercel runtime. Both desktop flows rendered loaded data, and their header Refresh control preserved the loaded state with pointer and Enter activation.
+- Corrected the Dashboard's partial-state hierarchy. When a core source is unavailable, the hero now says `Space Activity: Partial` instead of `Mostly Calm`; the Space Brief still names what is calm only where sources are available.
 
 ## Validation evidence
 
@@ -40,6 +41,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-10: with NASA's public, rate-limited `DEMO_KEY` supplied only to the local process, `/api/health` returned `200 ok`; `/api/apod` returned current normalized APOD data and `/api/neo?date=2026-08-10` returned seven normalized asteroid records. No key was written to the workspace.
 - 2026-08-10: a first APOD response took 10.93 seconds, exceeding the former browser 10-second deadline. After extending the browser deadline to 15 seconds and versioning the shared script references, accepted desktop captures show the Gallery loaded state (`12-gallery-loaded.png`) and the Asteroids loaded state (`13-asteroids-loaded.png`). Pointer and Enter activation of each header Refresh completed while retaining loaded data. `npm run check` passed with 107 tests.
 - 2026-08-10: a final direct query with the same public exploration key returned NASA's explicit `OVER_RATE_LIMIT` response. This confirms the local screenshots are valid bounded evidence, while also confirming that `DEMO_KEY` is not suitable for repeatable QA or deployment.
+- 2026-08-10: without a NASA key, the linked local Vercel Dashboard settled at four of six sources loaded: ISS position, crew, Launches, and NOAA weather remained useful while APOD and NeoWs were explicitly unavailable. The pre-fix capture (`14-dashboard-partial-pre-fix.png`) exposed a conflicting `Mostly Calm` hero subtitle; the corrected capture (`15-dashboard-partial-loaded.png`) shows the aligned `Partial` subtitle, source-qualified Space Brief, and explicit source matrix. Enter activation of Refresh returned to the same honest state. `npm run check` passed with 108 tests.
 
 ## Deferred
 

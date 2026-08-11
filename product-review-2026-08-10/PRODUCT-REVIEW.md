@@ -72,3 +72,16 @@ This bounded follow-up used NASA's public, rate-limited `DEMO_KEY` only as a pro
 
 - This proves a bounded local runtime session with NASA's shared exploration key, not a repeatable or deployed production credential configuration. A final direct NASA query returned `OVER_RATE_LIMIT`, confirming the expected limit rather than a product outage.
 - A requested 390px browser viewport still reported a 1280px layout; no new mobile visual, touch-hardware, or reflow conclusion is accepted from this follow-up.
+
+## Dashboard partial-state follow-up
+
+This bounded check ran the linked Vercel development runtime without a NASA key. Four sources still produced a useful current picture—ISS position, crew, Launches, and NOAA weather—while APOD and NeoWs stayed explicitly unavailable. That is the intended partial state, not a claim that all source data is live.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 14 | `14-dashboard-partial-pre-fix.png` | Defect found — the header chip correctly said `Partial data`, but the hero subtitle said `Mostly Calm`; the two level-setting messages conflicted. |
+| 15 | `15-dashboard-partial-loaded.png` | Healthy after fix — hero, status chip, Space Brief, unavailable asteroid metric, and the 4-of-6 source matrix now tell one consistent partial-data story. Enter Refresh retained this state. |
+
+### Follow-up limits
+
+- This is accepted desktop partial-state evidence only; it does not establish a full-live Dashboard, production deployment, mobile/reflow, or assistive-technology result.

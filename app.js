@@ -2981,7 +2981,7 @@ function getSpaceBriefState() {
 
   if (unavailableCount === 1) {
     return {
-      label: "Mostly Calm",
+      label: "Partial",
       tone: "attention",
       headline: "Space activity is calm where sources are available."
     };
