@@ -6,7 +6,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 12 — Carry Dashboard source outages into local recovery.** Completed locally: the Dashboard's unavailable APOD and NeoWs source cards now distinguish Apollo's own `Open details` recovery route from the upstream `Open source` link. The NeoWs route was followed in the live Vercel preview into the detailed unavailable state, where retry completed while preserving source honesty.
+**Milestone 13 — Verify source-recovery focus treatment.** Completed locally: the live Asteroids unavailable state puts a visible focus ring on the source-specific retry. The available browser controller focused the native control successfully, but its physical-key channel did not dispatch Enter or Space activation; keyboard focus visibility is accepted, while full key activation remains unverified rather than assumed.
 
 ## Fixed
 
@@ -46,6 +46,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-10: without a NASA key, the linked local Vercel Dashboard settled at four of six sources loaded: ISS position, crew, Launches, and NOAA weather remained useful while APOD and NeoWs were explicitly unavailable. The pre-fix capture (`14-dashboard-partial-pre-fix.png`) exposed a conflicting `Mostly Calm` hero subtitle; the corrected capture (`15-dashboard-partial-loaded.png`) shows the aligned `Partial` subtitle, source-qualified Space Brief, and explicit source matrix. Enter activation of Refresh returned to the same honest state. `npm run check` passed with 108 tests.
 - 2026-08-11: the live local Vercel preview showed Sky Anomalies' partial context before submission (`16-anomalies-keyboard-start.png`) and, after pointer submission, its source-aware result (`17-anomalies-keyboard-submission-attempt.png`). The result preserved Cape Canaveral, Florida and the browser-local time, and it visibly separated three loaded source checks, one unavailable source, and five planned evidence gaps. The controller focused radio and submit controls but did not dispatch Enter or Space activation, so this is not accepted as keyboard-only QA. `npm run check` now guards the native form/submit semantics alongside the existing 108 tests.
 - 2026-08-11: the current Vercel preview's partial Dashboard state exposed clear `Open details` and `Open source` links on unavailable APOD and NeoWs cards (`product-review-2026-08-11/20-dashboard-source-recovery-links.png`). Following NeoWs `Open details` reached the Apollo Asteroids unavailable state (`21-asteroids-recovery-destination.png`); its source-specific retry completed and kept the honest unavailable result (`22-asteroids-retry-complete.png`). `npm run check` passed with 110 tests.
+- 2026-08-11: the live Asteroids unavailable state was captured before focus (`23-asteroids-keyboard-retry-start.png`) and with `Try NASA NeoWs again` focused (`24-asteroids-retry-focus.png`). The browser confirmed that the native retry receives focus and exposes the expected focus ring. Its CUA and DOM key channels did not dispatch Enter or Space, so this cannot establish or contradict real-user activation. The prior pointer retry result remains the accepted action evidence.
 
 ## Deferred
 
@@ -55,6 +56,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - Vercel's function worker cannot run directly from the CloudDocs workspace because its path contains spaces; a temporary copied checkout was required for this local serverless QA. This is a tooling/environment constraint, not a shipped Apollo failure.
 - NASA-dependent Gallery and Asteroids desktop loaded states are now verified locally with the public exploration key, but they still need a dedicated non-production key for repeatable QA. Production and live-source QA, keyboard-only navigation (including Sky Anomalies submission), touch targets, zoom/reflow, contrast, and screen-reader announcements remain open for all eight flows. The current controller's Enter/Space operations focused Sky controls without activating them; do not use it as keyboard-pass evidence.
 - The current browser controller did not open the native mobile Watch disclosure with Enter or Space, so keyboard activation remains unverified rather than assumed broken or working. A real-browser keyboard pass is still required.
+- The current controller also focused Asteroids' retry control but did not dispatch Enter or Space through either available key channel. Its focus-ring evidence is accepted; activation remains a real-browser QA gate.
 - NASA's public `DEMO_KEY` is suitable only for bounded exploration and has a limited shared quota; it supplied this local evidence but must not become Apollo's configured deployment credential.
 - The current browser viewport override still reported a 1280px layout after a requested 390px size, so this milestone adds no new mobile visual or touch-hardware evidence.
 
