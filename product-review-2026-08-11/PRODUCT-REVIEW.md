@@ -187,6 +187,14 @@ This controlled review used Apollo's authentication-free local function preview 
 | 72 | `72-asteroids-mobile-recovery-actions-320x844.png` | Healthy — Asteroids' honest NeoWs recovery has no horizontal overflow; all actions end 58px above the dock. |
 | 73 | `73-gallery-mobile-recovery-actions-320x844.png` | Healthy — Gallery's honest APOD recovery has no horizontal overflow; all actions end 107px above the dock. |
 
+## ISS-and-crew 320px recovery sweep
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 74 | `74-iss-mobile-recovery-320x844.png` | Healthy — the upper ISS-position state has no horizontal overflow and states its no-stale-data boundary plainly. |
+| 75 | `75-iss-mobile-position-recovery-actions-320x844.png` | Caution — position recovery actions remain visible, but the Dashboard action has only 16px of visual clearance above the dock; hardware/touch confirmation remains open. |
+| 76 | `76-iss-mobile-crew-recovery-actions-320x844.png` | Healthy — the lower crew recovery actions remain visible with 135px of clearance at the true scroll limit. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
