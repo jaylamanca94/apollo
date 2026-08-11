@@ -4,7 +4,7 @@ const path = require("node:path");
 const test = require("node:test");
 const vm = require("node:vm");
 
-function loadDashboardHelpers({ elements = {}, fetchPayload = null } = {}) {
+function loadDashboardHelpers({ elements = {}, fetchPayload = null, fetchError = null } = {}) {
   const source = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
   const helperSource = source.slice(0, source.indexOf("async function loadDashboard"));
   const context = {
@@ -17,13 +17,19 @@ function loadDashboardHelpers({ elements = {}, fetchPayload = null } = {}) {
         return elements[selector] || null;
       }
     },
-    fetch: async () => ({
-      ok: true,
-      status: 200,
-      async json() {
-        return fetchPayload;
+    fetch: async () => {
+      if (fetchError) {
+        throw fetchError;
       }
-    }),
+
+      return {
+        ok: true,
+        status: 200,
+        async json() {
+          return fetchPayload;
+        }
+      };
+    },
     window: {
       localStorage: {
         getItem() {
@@ -176,6 +182,36 @@ test("loadPeople flags mismatched source roster counts", async () => {
   assert.equal(status.id, "people");
   assert.equal(status.state, "attention");
   assert.match(status.detail, /Source reports 3 people but 2 roster entries loaded/);
+});
+
+test("ISS source failures keep recovery with the affected data", async () => {
+  const issBody = { innerHTML: "" };
+  const peopleBody = { innerHTML: "" };
+  const context = loadDashboardHelpers({
+    elements: {
+      "#issBody": issBody,
+      "#peopleBody": peopleBody
+    },
+    fetchError: new Error("Source unavailable")
+  });
+
+  context.document.body = {
+    dataset: {
+      apolloPage: "iss"
+    }
+  };
+
+  const issStatus = await context.loadIss();
+  const peopleStatus = await context.loadPeople();
+
+  assert.equal(issStatus.state, "error");
+  assert.equal(peopleStatus.state, "error");
+  assert.match(issBody.innerHTML, /ISS position unavailable/);
+  assert.match(issBody.innerHTML, /Try Where the ISS At again/);
+  assert.match(issBody.innerHTML, /Open Where the ISS At source/);
+  assert.match(peopleBody.innerHTML, /Crew roster unavailable/);
+  assert.match(peopleBody.innerHTML, /Try People in Space again/);
+  assert.match(peopleBody.innerHTML, /Open People in Space source/);
 });
 
 test("Space Brief keeps pending sources distinct from unavailable sources", () => {

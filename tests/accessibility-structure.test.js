@@ -395,6 +395,8 @@ test("detail pages render intentional unavailable source states", () => {
   assert.match(appJs, /Apollo cannot reach the current Astronomy Picture of the Day/);
   assert.match(appJs, /Apollo cannot reach the current NASA NeoWs close-approach list/);
   assert.match(appJs, /Apollo cannot reach the current NOAA SWPC K-index and notices/);
+  assert.match(appJs, /Apollo cannot reach the current ISS position/);
+  assert.match(appJs, /Apollo cannot reach the current crew roster/);
   assert.match(appJs, /<p class="section-kicker mb-1">Source checked<\/p>/);
   assert.match(appJs, /<strong>Recovery:<\/strong>/);
   assert.match(appJs, /Open \$\{escapeHtml\(label\)\} source/);
@@ -570,7 +572,7 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=source-retry-1/, `${file} should load the current shared app script`);
+    assert.match(html, /app\.js\?v=source-retry-2/, `${file} should load the current shared app script`);
   }
 
   assert.match(readProjectFile("launches.html"), /launches\.js\?v=source-retry-1/);

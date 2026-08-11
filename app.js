@@ -3574,7 +3574,16 @@ async function loadIss() {
   } catch (error) {
     dashboardData.iss = null;
     resetIssMap();
-    setError(els.issBody, "ISS position source unavailable. Try refreshing in a moment.");
+    if (getPageType() === "iss") {
+      setSourceUnavailable(els.issBody, {
+        sourceId: "iss",
+        title: "ISS position unavailable",
+        message: "Apollo cannot reach the current ISS position, so the map and orbital context are intentionally paused instead of showing an old location.",
+        tryNext: "Refresh again shortly or open the ISS position source to check whether it is responding."
+      });
+    } else {
+      setError(els.issBody, "ISS position source unavailable. Try refreshing in a moment.");
+    }
     setQuickStat("iss", {
       value: "Unavailable",
       detail: "Source unavailable",
@@ -3678,7 +3687,16 @@ async function loadPeople() {
     );
   } catch (error) {
     dashboardData.people = null;
-    setError(els.peopleBody, "Crew roster source unavailable. Try refreshing in a moment.");
+    if (getPageType() === "iss") {
+      setSourceUnavailable(els.peopleBody, {
+        sourceId: "people",
+        title: "Crew roster unavailable",
+        message: "Apollo cannot reach the current crew roster, so it is intentionally withholding an old manifest.",
+        tryNext: "Refresh again shortly or open the People in Space source to check whether it is responding."
+      });
+    } else {
+      setError(els.peopleBody, "Crew roster source unavailable. Try refreshing in a moment.");
+    }
     setQuickStat("people", {
       value: "Unavailable",
       detail: "Source unavailable",
