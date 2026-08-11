@@ -45,11 +45,22 @@ This controlled review used the linked Vercel preview at 390 × 844 CSS pixels. 
 | 36 | `36-iss-mobile-crew-detail-390x844.png` | Healthy — the Crew Roster clearly groups 10 people across three spacecraft assignments. |
 | 37 | `37-iss-mobile-crew-bottom-390x844.png` | Healthy — every listed crew member and the source-declared roster count remain readable above the fixed dock. |
 
+## Mobile Watch destination follow-up
+
+This controlled review used the linked Vercel preview at 390 × 844 CSS pixels. It covers the user goal **Navigate secondary monitoring pages on phone**, from the dock menu to each intended monitoring destination.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 38 | `38-mobile-watch-menu-all-destinations-390x844.png` | Healthy — the dock's named Watch menu presents Weather, Asteroids, and Anomalies in one predictable overlay. |
+| 39 | `39-mobile-watch-anomalies-destination-390x844.png` | Healthy — selecting Anomalies dismisses the menu and reaches the Sky Anomalies context form. |
+| 40 | `40-mobile-watch-weather-destination-390x844.png` | Healthy — selection reaches live Weather data with the menu dismissed; the same current interaction also reached Asteroids, where the honest unavailable state remained intact because NASA's public key was rate-limited. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
 - The 390px follow-up establishes only the Dashboard partial state and Asteroids unavailable recovery state in controlled desktop-browser emulation. It does not prove touch hardware, safe-area, orientation, full-product mobile coverage, or mobile keyboard behaviour.
 - The 390px Sky Anomalies follow-up establishes the initial form and pointer-submitted result only. It does not prove hardware touch ergonomics, safe-area, orientation, keyboard-only form submission, contrast, or assistive-technology behaviour.
 - The 390px ISS follow-up establishes only its loaded state in controlled desktop-browser emulation. It does not prove mobile source-failure recovery, touch hardware, safe-area, orientation, keyboard, contrast, or assistive-technology behaviour.
+- The 390px Watch follow-up establishes pointer routes and destination dismissal only. It does not prove hardware touch ergonomics, keyboard activation, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The no-stale-data policy remains intact. A resilience decision about visibly aged last-known-good data is still a founder decision, not silently introduced behaviour.
 - The current browser controller focused the native retry control, but both its CUA and DOM key channels left Enter and Space inactive. This is a tooling limit, not a claim that keyboard activation succeeds or fails for real users.
