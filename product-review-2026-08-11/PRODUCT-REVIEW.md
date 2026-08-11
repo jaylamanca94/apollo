@@ -63,6 +63,16 @@ This controlled review used the linked Vercel preview at 390 × 844 CSS pixels w
 | --- | --- | --- |
 | 41 | `41-gallery-mobile-recovery-390x844.png` | Healthy — Gallery identifies the missing APOD source, explains the no-sample-media policy, and presents retry, source, and Dashboard actions above the dock. Pointer retry retained that honest unavailable state. |
 
+## Mobile Launches follow-up
+
+This controlled review used the linked Vercel preview at 390 × 844 CSS pixels. It covers the loaded branch of the user goal **Check an upcoming launch**, from the next-launch answer into a source-backed schedule detail.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 45 | `45-launches-mobile-overview-improved-390x844.png` | Healthy after change — the 160px phone image keeps the next mission and full Liftoff fact clear of the fixed dock; there is no horizontal overflow. |
+| 46 | `46-launches-mobile-mission-details-390x844.png` | Healthy — pointer opening the first disclosure shows the mission description plus window, pad, and location without losing the selected schedule context. |
+| 47 | `47-launches-mobile-mission-source-390x844.png` | Healthy — the lower disclosure retains vehicle, provider, and a visible upstream source action above the dock. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
@@ -71,5 +81,6 @@ This controlled review used the linked Vercel preview at 390 × 844 CSS pixels w
 - The 390px Sky Anomalies follow-up establishes the initial form and pointer-submitted result only. It does not prove hardware touch ergonomics, safe-area, orientation, keyboard-only form submission, contrast, or assistive-technology behaviour.
 - The 390px ISS follow-up establishes only its loaded state in controlled desktop-browser emulation. It does not prove mobile source-failure recovery, touch hardware, safe-area, orientation, keyboard, contrast, or assistive-technology behaviour.
 - The 390px Watch follow-up establishes pointer routes and destination dismissal only. It does not prove hardware touch ergonomics, keyboard activation, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
+- The 390px Launches follow-up establishes the loaded overview, pointer disclosure, and source action only. It does not prove mobile source failure, hardware touch, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The no-stale-data policy remains intact. A resilience decision about visibly aged last-known-good data is still a founder decision, not silently introduced behaviour.
 - The current browser controller focused the native retry control, but both its CUA and DOM key channels left Enter and Space inactive. This is a tooling limit, not a claim that keyboard activation succeeds or fails for real users.

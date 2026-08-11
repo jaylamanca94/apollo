@@ -4528,3 +4528,9 @@ html[data-bs-theme="light"] .data-detail-panel {
     aspect-ratio: 16 / 9;
   }
 }
+
+@media (max-width: 599.98px) {
+  .next-launch-media {
+    height: 160px;
+  }
+}

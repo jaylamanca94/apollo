@@ -686,10 +686,12 @@ test("mobile nav exposes clear names while hiding icon glyphs", () => {
 test("launch timeline exposes urgency context and current asset versions", () => {
   const html = readProjectFile("launches.html");
   const js = readProjectFile("launches.js");
+  const css = readProjectFile("styles.css");
 
-  assert.match(html, /styles\.css\?v=visual-polish-5/);
+  assert.match(html, /styles\.css\?v=visual-polish-6/);
   assert.match(html, /launches\.js\?v=source-retry-1/);
   assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
   assert.doesNotMatch(js, /class="launch-timeline-rail" aria-hidden="true"/);
+  assert.match(css, /@media \(max-width:\s*599\.98px\)\s*\{\s*\.next-launch-media\s*\{\s*height:\s*160px;/);
 });

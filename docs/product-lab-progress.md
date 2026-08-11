@@ -6,7 +6,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 18 — Validate Gallery mobile source recovery.** Completed locally: the linked Vercel preview rendered Gallery's unavailable APOD state at an actual 390 × 844 CSS viewport (`innerWidth`, `clientWidth`, and `scrollWidth` were all 390). It clearly names the affected source, offers retry, upstream-source, and Dashboard actions, and retains the honest unavailable state after pointer retry rather than fabricating fallback media. This is accepted narrow mobile visual and pointer evidence, not device, keyboard, loaded-media, or whole-product mobile QA.
+**Milestone 19 — Put the next-launch answer above the mobile dock.** Completed locally: the current Vercel preview rendered the loaded Launches overview, first mission disclosure, and its source action at an actual 390 × 844 CSS viewport. The phone-only launch image now measures 160px, leaving the `Liftoff` fact fully above the dock (ending at 739px; dock begins at 772px). The timeline disclosure exposes source-backed context without horizontal overflow. This is accepted narrow mobile visual and pointer evidence, not device, keyboard, source-failure, or whole-product mobile QA.
 
 ## Fixed
 
@@ -30,6 +30,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - Accepted controlled 390px mobile evidence for the Sky Anomalies start and submitted-result states. The source-aware conclusion appears after pointer submission, preserves observation traits, and keeps planned evidence gaps visibly separate from checked context.
 - Accepted controlled 390px mobile evidence for the ISS-and-crew loaded state. Live orbital context, the interactive map, crew groups, each listed crew member, and the source-declared roster count remain readable without horizontal overflow.
 - Accepted controlled 390px mobile pointer coverage for all three Watch destinations. The dock menu presents Weather, Asteroids, and Sky Anomalies as one named group and closes after selection rather than obscuring the destination content.
+- Compacted the next-launch image at phone widths from 220px to 160px so the first source-backed Liftoff fact remains visible above Apollo's fixed dock. The shared stylesheet is versioned for the update, and a regression check guards the 390px rule.
 
 ## Validation evidence
 
@@ -57,6 +58,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-11: a controlled current Vercel preview again reported `innerWidth`, `clientWidth`, and `scrollWidth` of 390 at 390 × 844 CSS pixels. Sky Anomalies' initial form state is accepted in `30-anomalies-mobile-start-390x844.png`. A pointer-submitted Cape Canaveral, straight-line, bright, seconds-long sighting preserved its traits and led with `No strong known-space match`, three loaded source checks, and one unavailable source (`31-anomalies-mobile-submitted-top-390x844.png`). At the actual maximum scroll position, the planned source gaps and Source context disclosure clear the fixed dock (`33-anomalies-mobile-bottom-390x844.png`). This is valid visual/reflow and pointer-submission evidence for these states only.
 - 2026-08-11: a controlled current Vercel preview at 390 × 844 CSS pixels reported `innerWidth`, `clientWidth`, and `scrollWidth` of 390 for the ISS page. The loaded core state, including freshness, operation summary, and map, is accepted in `34-iss-mobile-loaded-390x844.png`; the roster's grouped crew view is accepted in `36-iss-mobile-crew-detail-390x844.png`. The full listed roster and source-declared count clear the fixed dock in `37-iss-mobile-crew-bottom-390x844.png`. This is valid visual/reflow evidence for the loaded ISS-and-crew state only.
 - 2026-08-11: a controlled current Vercel preview at 390 × 844 CSS pixels reported `innerWidth`, `clientWidth`, and `scrollWidth` of 390 while reviewing the mobile Watch flow. The open menu visibly names Weather, Asteroids, and Anomalies (`38-mobile-watch-menu-all-destinations-390x844.png`). Pointer selection dismissed it and reached Sky Anomalies (`39-mobile-watch-anomalies-destination-390x844.png`), then Asteroids, then Weather (`40-mobile-watch-weather-destination-390x844.png`); each resulting DOM showed Watch closed and the intended destination heading. This is valid pointer navigation evidence for all three Watch destinations.
+- 2026-08-11: a controlled current Vercel preview at 390 × 844 CSS pixels reported `innerWidth`, `clientWidth`, and `scrollWidth` of 390 for the loaded Launches flow. Before the change, its 220px image pushed Liftoff behind the dock. With the phone-only 160px image rule, `45-launches-mobile-overview-improved-390x844.png` shows the Liftoff fact ending at 739px while the dock starts at 772px. Pointer-opening `Mission details` retains the source-backed launch window, pad, location, vehicle, provider (`46-launches-mobile-mission-details-390x844.png`), and visible source action (`47-launches-mobile-mission-source-390x844.png`). `npm run check` passed with 110 tests. This is valid visual/reflow and pointer-disclosure evidence for the loaded Launches state only.
 
 ## Deferred
 
@@ -70,6 +72,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - NASA's public `DEMO_KEY` is suitable only for bounded exploration and has a limited shared quota; a current ephemeral local use still returned Apollo's explicit NeoWs unavailable state, so it did not produce new accepted Asteroids loaded-state evidence. It must not become Apollo's configured deployment credential.
 - The accepted 390 × 844 Dashboard and Asteroids recovery review is controlled desktop-browser emulation only. Mobile coverage remains incomplete for the other flows, as do touch hardware, safe-area, orientation, keyboard, zoom/reflow, contrast, and screen-reader checks.
 - The accepted 390 × 844 Sky Anomalies review is likewise controlled desktop-browser emulation. It verifies the initial form and pointer-submitted result, not real-browser keyboard-only submission, touch hardware, safe-area, orientation, contrast, or screen-reader behaviour.
+- The accepted 390 × 844 Launches review is controlled desktop-browser emulation. It verifies only the loaded overview, its first timeline disclosure, and source action; unavailable-source mobile, hardware touch, keyboard, safe-area, orientation, zoom, contrast, and screen-reader behaviour remain open.
 
 ## Founder decision needed
 
@@ -79,4 +82,4 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Next coherent milestone
 
-Use a dedicated non-production NASA key to repeat the NASA-backed flows without a shared demo quota, then complete a real-browser keyboard, broader mobile/reflow, and assistive-technology pass—starting with Sky Anomalies' radios and submit action. Extend accepted 390px coverage beyond the Dashboard partial, Asteroids recovery, Gallery recovery, Sky Anomalies, ISS-and-crew, and Watch destination states before treating the mobile shell as complete. Keep deployed production verification and the resilience-policy decision separate.
+Use a dedicated non-production NASA key to repeat the NASA-backed flows without a shared demo quota, then complete a real-browser keyboard, broader mobile/reflow, and assistive-technology pass—starting with Sky Anomalies' radios and submit action. Extend accepted 390px coverage beyond the Dashboard partial, Launches overview/disclosure, Asteroids recovery, Gallery recovery, Sky Anomalies, ISS-and-crew, and Watch destination states before treating the mobile shell as complete. Keep deployed production verification and the resilience-policy decision separate.
