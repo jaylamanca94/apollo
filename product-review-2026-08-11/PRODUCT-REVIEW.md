@@ -179,6 +179,14 @@ This controlled review used Apollo's authentication-free local function preview 
 | 69 | `69-launches-mobile-recovery-320x844.png` | Healthy — the real unavailable state has no horizontal overflow and wraps the recovery control without truncation. |
 | 70 | `70-launches-mobile-recovery-actions-320x844.png` | Healthy — at the true scroll limit, all recovery actions remain 90px above the fixed dock. |
 
+## Shared 320px recovery sweep
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 71 | `71-weather-mobile-recovery-actions-320x844.png` | Healthy — Weather's honest NOAA recovery has no horizontal overflow; all actions end 54px above the dock. |
+| 72 | `72-asteroids-mobile-recovery-actions-320x844.png` | Healthy — Asteroids' honest NeoWs recovery has no horizontal overflow; all actions end 58px above the dock. |
+| 73 | `73-gallery-mobile-recovery-actions-320x844.png` | Healthy — Gallery's honest APOD recovery has no horizontal overflow; all actions end 107px above the dock. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.

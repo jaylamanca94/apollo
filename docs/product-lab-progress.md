@@ -14,6 +14,8 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 **Milestone 32 — Verify the narrow Launches recovery layout.** Completed locally: at 320 × 844 CSS pixels, Launches’ real unavailable state has no horizontal overflow, wraps the recovery control without truncation, and keeps retry, source, and Dashboard actions 90px clear of the fixed dock at the true scroll limit. This is accepted API-free local-shell visual/reflow evidence, not live-source, hardware, Vercel-platform, or production QA.
 
+**Milestone 33 — Sweep narrow recovery layouts across the remaining source-backed detail flows.** Completed locally: at 320 × 844 CSS pixels, Weather, Asteroids, and Gallery each show their real unavailable state without horizontal overflow and retain every recovery action above the fixed dock at the true scroll limit. This is accepted API-free local-shell visual/reflow evidence, not live-source, hardware, Vercel-platform, or production QA.
+
 ## Fixed
 
 - Added an explicit, keyboard-reachable retry in Apollo's unavailable-source state. It rechecks the relevant shared dashboard data on Gallery, Weather, and Asteroids, and the launch schedule on Launches.
@@ -91,6 +93,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted Launches Refresh keyboard activation. Space on Launches Refresh completed a fresh loaded-schedule check, preserved the visible mission context, and restored the labelled control (`67-launches-mobile-keyboard-refresh-390x844.png`). This is valid controlled browser keyboard-refresh and visual evidence only.
 - 2026-08-11: Apollo's API-free local static shell at 390 × 844 CSS pixels accepted the Launches unavailable-state focus treatment. Space reached the native `Try The Space Devs again` recovery control, whose visible focus ring remains above the fixed dock (`68-launches-mobile-keyboard-retry-focus-390x844.png`). This is valid controlled browser keyboard-focus and visual evidence only, not a full keyboard activation or production claim.
 - 2026-08-11: Apollo's API-free local static shell at 320 × 844 CSS pixels reported matching `innerWidth`, `clientWidth`, and `scrollWidth` of 320 for Launches. Its real unavailable state wraps the recovery control without clipping (`69-launches-mobile-recovery-320x844.png`); at the actual scroll limit, retry, source, and Dashboard actions end at 682px while the dock begins at 772px (`70-launches-mobile-recovery-actions-320x844.png`). This is valid controlled recovery and visual/reflow evidence only.
+- 2026-08-11: Apollo's API-free local static shell at 320 × 844 CSS pixels reported matching `innerWidth`, `clientWidth`, and `scrollWidth` of 320 for Weather, Asteroids, and Gallery. At the actual scroll limit, their real unavailable-state actions end at 718px, 714px, and 665px respectively while the dock begins at 772px (`71-weather-mobile-recovery-actions-320x844.png`, `72-asteroids-mobile-recovery-actions-320x844.png`, `73-gallery-mobile-recovery-actions-320x844.png`). This is valid controlled recovery and visual/reflow evidence only.
 
 ## Deferred
 
