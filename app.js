@@ -1,7 +1,7 @@
 const API = {
   apod: "/api/apod",
-  iss: "https://api.wheretheiss.at/v1/satellites/25544",
-  people: "https://corquaid.github.io/international-space-station-APIs/JSON/people-in-space.json",
+  iss: "/api/iss",
+  people: "/api/people",
   launches: "/api/launches",
   neo: "/api/neo",
   spaceWeather: "/api/space-weather"

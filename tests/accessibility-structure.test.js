@@ -597,7 +597,7 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=source-timeout-3/, `${file} should load the current shared app script`);
+    assert.match(html, /app\.js\?v=source-timeout-4/, `${file} should load the current shared app script`);
   }
 
   assert.match(readProjectFile("launches.html"), /launches\.js\?v=source-retry-1/);

@@ -110,17 +110,27 @@ This controlled review used Apollo's API-free local static shell at 390 × 844 C
 | 55 | `55-weather-mobile-recovery-390x844.png` | Healthy — Apollo names NOAA SWPC, states that it is not showing stale or inferred conditions, and presents retry, source, and Dashboard recovery actions. |
 | 56 | `56-weather-mobile-recovery-actions-390x844.png` | Healthy — at the true scroll limit, all recovery actions remain fully visible above the fixed dock; pointer retry retained the same page and honest unavailable state. |
 
+## Mobile ISS and crew recovery follow-up
+
+This controlled review used Apollo's API-free local static shell at 390 × 844 CSS pixels. It covers the unavailable branch of **Follow the ISS and current crew** when both primary sources fail. `/api/iss` and `/api/people` are intentional local 404s here, so this proves Apollo’s recovery boundary rather than source availability or deployment.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 57 | `57-iss-mobile-recovery-390x844.png` | Healthy — the position card names the affected source, pauses map and orbital context rather than showing an old location, and retains its retry and upstream route. |
+| 58 | `58-iss-mobile-recovery-actions-390x844.png` | Healthy — the crew card withholds an old manifest; its retry, source, and Dashboard actions end at 636px above the dock. Pointer retry retained the ISS page and both honest unavailable states. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
 - The 390px follow-up establishes only the Dashboard partial state and Asteroids unavailable recovery state in controlled desktop-browser emulation. It does not prove touch hardware, safe-area, orientation, full-product mobile coverage, or mobile keyboard behaviour.
 - The 390px Gallery follow-up establishes its unavailable APOD branch and pointer retry only. It does not prove loaded image/video media, alternate-media handling, hardware touch ergonomics, keyboard, safe-area, orientation, contrast, or assistive-technology behaviour.
 - The 390px Sky Anomalies follow-up establishes the initial form and pointer-submitted result only. It does not prove hardware touch ergonomics, safe-area, orientation, keyboard-only form submission, contrast, or assistive-technology behaviour.
-- The 390px ISS follow-up establishes only its loaded state in controlled desktop-browser emulation. It does not prove mobile source-failure recovery, touch hardware, safe-area, orientation, keyboard, contrast, or assistive-technology behaviour.
+- The 390px ISS follow-up establishes its loaded state plus the API-free static-shell simultaneous position-and-crew unavailable branch with pointer retry only. It does not prove live-source availability, deployment, hardware touch ergonomics, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 390px Watch follow-up establishes pointer routes and destination dismissal only. It does not prove hardware touch ergonomics, keyboard activation, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 390px Launches follow-up establishes the loaded overview, pointer disclosure, and source action only. It does not prove mobile source failure, hardware touch, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 390px Weather follow-up establishes the loaded decision view, lower source context, and API-free static-shell unavailable branch with pointer retry only. It does not prove live-source availability, deployment, hardware touch ergonomics, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 320px Dashboard and Sky Anomalies follow-up establishes a narrower partial Dashboard, Sky Anomalies start form, and pointer-result focus handoff only. It does not prove hardware touch ergonomics, keyboard-only submission, safe-area, orientation, contrast, or assistive-technology announcement behaviour.
 - The 390px Launches recovery follow-up establishes the API-free static-shell unavailable branch and pointer retry only. It does not prove live-source availability, deployment, hardware touch ergonomics, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
+- The new ISS and crew proxy routes have contract coverage, but the current local Vercel-compatible preview could not start because its configured token is invalid. Their live serverless source-success branch remains unverified.
 - The no-stale-data policy remains intact. A resilience decision about visibly aged last-known-good data is still a founder decision, not silently introduced behaviour.
 - The current browser controller focused the native retry control, but both its CUA and DOM key channels left Enter and Space inactive. This is a tooling limit, not a claim that keyboard activation succeeds or fails for real users.

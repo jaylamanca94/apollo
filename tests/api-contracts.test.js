@@ -13,7 +13,25 @@ const {
   normalizeSpaceWeatherPayload
 } = require("../api/_space_data");
 const { buildHealthPayload } = require("../api/health");
+const issHandler = require("../api/iss");
 const { getLaunchLimit, normalizeLaunchLibraryPayload } = require("../api/launches");
+const peopleHandler = require("../api/people");
+
+function createResponse() {
+  const headers = {};
+
+  return {
+    body: "",
+    headers,
+    statusCode: 200,
+    end(body) {
+      this.body = body;
+    },
+    setHeader(name, value) {
+      headers[name] = value;
+    }
+  };
+}
 
 test("shared cache returns fresh payloads and drops expired entries", () => {
   const cache = new Map();
@@ -185,6 +203,72 @@ test("buildHealthPayload reports degraded when NASA key is missing", () => {
 
   assert.equal(payload.status, "degraded");
   assert.equal(payload.checks.nasaApiKey, "missing");
+});
+
+test("ISS and crew source proxies return source-specific errors and cache source payloads", async (t) => {
+  const originalFetch = global.fetch;
+
+  t.after(() => {
+    global.fetch = originalFetch;
+  });
+
+  global.fetch = async () => ({
+    ok: false,
+    status: 503,
+    async json() {
+      return null;
+    }
+  });
+
+  const issResponse = createResponse();
+  const peopleResponse = createResponse();
+  await issHandler({ method: "GET" }, issResponse);
+  await peopleHandler({ method: "GET" }, peopleResponse);
+
+  assert.equal(issResponse.statusCode, 503);
+  assert.deepEqual(JSON.parse(issResponse.body), {
+    error: {
+      code: "ISS_POSITION_PROXY_ERROR",
+      message: "Could not load the current ISS position."
+    }
+  });
+  assert.equal(peopleResponse.statusCode, 503);
+  assert.deepEqual(JSON.parse(peopleResponse.body), {
+    error: {
+      code: "PEOPLE_IN_SPACE_PROXY_ERROR",
+      message: "Could not load the current crew roster."
+    }
+  });
+
+  const requests = [];
+  global.fetch = async (url) => {
+    requests.push(String(url));
+
+    return {
+      ok: true,
+      status: 200,
+      async json() {
+        return String(url).includes("wheretheiss")
+          ? { latitude: 12.4, longitude: -4.2 }
+          : { number: 1, people: [{ name: "Maya Chen", craft: "ISS" }] };
+      }
+    };
+  };
+
+  assert.deepEqual(await issHandler.requestIssPosition(), { latitude: 12.4, longitude: -4.2 });
+  assert.deepEqual(await issHandler.requestIssPosition(), { latitude: 12.4, longitude: -4.2 });
+  assert.deepEqual(await peopleHandler.requestPeopleInSpace(), {
+    number: 1,
+    people: [{ name: "Maya Chen", craft: "ISS" }]
+  });
+  assert.deepEqual(await peopleHandler.requestPeopleInSpace(), {
+    number: 1,
+    people: [{ name: "Maya Chen", craft: "ISS" }]
+  });
+  assert.deepEqual(requests, [
+    "https://api.wheretheiss.at/v1/satellites/25544",
+    "https://corquaid.github.io/international-space-station-APIs/JSON/people-in-space.json"
+  ]);
 });
 
 test("normalizeApodPayload returns a stable dashboard contract", () => {
