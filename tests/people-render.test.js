@@ -4,7 +4,13 @@ const path = require("node:path");
 const test = require("node:test");
 const vm = require("node:vm");
 
-function loadDashboardHelpers({ elements = {}, fetchPayload = null, fetchError = null } = {}) {
+function loadDashboardHelpers({
+  elements = {},
+  fetchPayload = null,
+  fetchError = null,
+  setTimeoutImpl = setTimeout,
+  clearTimeoutImpl = clearTimeout
+} = {}) {
   const source = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
   const helperSource = source.slice(0, source.indexOf("async function loadDashboard"));
   const context = {
@@ -37,8 +43,8 @@ function loadDashboardHelpers({ elements = {}, fetchPayload = null, fetchError =
         },
         setItem() {}
       },
-      clearTimeout,
-      setTimeout
+      clearTimeout: clearTimeoutImpl,
+      setTimeout: setTimeoutImpl
     },
     URL
   };
@@ -48,6 +54,23 @@ function loadDashboardHelpers({ elements = {}, fetchPayload = null, fetchError =
 
   return context;
 }
+
+test("frontend requests leave time for a serverless source response", async () => {
+  const delays = [];
+  const { fetchJson } = loadDashboardHelpers({
+    fetchPayload: { ready: true },
+    setTimeoutImpl(callback, delay) {
+      delays.push(delay);
+      return { callback, delay };
+    },
+    clearTimeoutImpl() {}
+  });
+
+  const payload = await fetchJson("/api/apod");
+
+  assert.deepEqual(JSON.parse(JSON.stringify(payload)), { ready: true });
+  assert.deepEqual(delays, [15000]);
+});
 
 test("normalizePeople accepts spacecraft field from the live crew feed", () => {
   const { normalizeCrewRoster, normalizePeople, summarizeCraftOccupancy } = loadDashboardHelpers();

@@ -3294,7 +3294,9 @@ function getApiErrorMessage(error, fallback) {
 
 async function fetchJson(url, options = {}) {
   const controller = new AbortController();
-  const timeoutId = window.setTimeout(() => controller.abort(), 10000);
+  // Leave room for a serverless source route to complete its own 10-second
+  // upstream timeout and return an honest response instead of aborting first.
+  const timeoutId = window.setTimeout(() => controller.abort(), 15000);
 
   const response = await fetch(url, {
     ...options,

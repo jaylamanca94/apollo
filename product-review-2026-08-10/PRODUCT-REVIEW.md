@@ -58,3 +58,17 @@ This bounded follow-up ran the linked Vercel development runtime from a temporar
 
 - `/api/health` returned `503 degraded` and `/api/neo` returned `NASA_API_KEY_MISSING`; this accurately reflects the local environment and does not establish deployed production configuration.
 - Click interaction and the 390px browser viewport were verified. Keyboard-only, touch hardware, full reflow, screen-reader, and production deployment checks remain open.
+
+## NASA-backed flow follow-up
+
+This bounded follow-up used NASA's public, rate-limited `DEMO_KEY` only as a process-local value for the linked Vercel development runtime; no credential was saved to the project. `/api/health` returned `200 ok`, APOD returned current normalized media, and the NeoWs route returned seven current normalized records. A first APOD response took 10.93 seconds, which exposed a product defect: the browser previously aborted at 10 seconds before a serverless route could complete its own 10-second upstream timeout. The browser allowance now has a 15-second ceiling, and every shared page references the updated script version.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 12 | `12-gallery-loaded.png` | Healthy — current APOD image, title, credit, concise context, facts, full-media action, and NASA source form one loaded Gallery answer. Pointer and Enter activation of Refresh kept this loaded state. |
+| 13 | `13-asteroids-loaded.png` | Healthy — current NeoWs data clearly separates the potential-hazard flag from an impact prediction, leads with the closest approach, and keeps supporting objects subordinate. Pointer and Enter activation of Refresh kept this loaded state. |
+
+### Follow-up limits
+
+- This proves a bounded local runtime session with NASA's shared exploration key, not a repeatable or deployed production credential configuration. A final direct NASA query returned `OVER_RATE_LIMIT`, confirming the expected limit rather than a product outage.
+- A requested 390px browser viewport still reported a 1280px layout; no new mobile visual, touch-hardware, or reflow conclusion is accepted from this follow-up.

@@ -6,7 +6,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 8 — Make local Vercel QA reproducible.** Completed locally: the documented `npm run dev` command now starts the linked serverless runtime from this CloudDocs workspace, including the path-with-spaces workaround, and removes its temporary copy on exit.
+**Milestone 9 — Verify NASA-backed flows and protect their first load.** Completed locally: NASA APOD and NeoWs returned current normalized data through the linked Vercel runtime, Gallery and Asteroids rendered their loaded desktop states, and the browser now allows the serverless source route to finish its own 10-second upstream timeout before it gives up.
 
 ## Fixed
 
@@ -20,6 +20,8 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - `npm run check` passed: 105 tests, including source-specific failure fixtures for the ISS position and crew roster and trait-aware anomaly-result copy.
 - Verified the Vercel serverless runtime from a temporary copied checkout without CloudDocs path spaces: Launches and Weather returned current upstream data, Launches refresh worked, and mobile Watch navigation reached Weather at 390px.
 - Added the documented `npm run dev` entry point and a project-local Vercel runner. It creates an isolated temporary copy, carries local environment configuration, avoids Vercel's path and recursive-development-command limitations, and cleans up after shutdown.
+- Extended browser-side source requests from 10 to 15 seconds. The previous client deadline could abort an APOD request before Apollo's serverless route completed its own 10-second upstream timeout and returned an honest result; all shared-page script references now carry the updated cache version.
+- Verified Gallery and Asteroids against current NASA data through the linked local Vercel runtime. Both desktop flows rendered loaded data, and their header Refresh control preserved the loaded state with pointer and Enter activation.
 
 ## Validation evidence
 
@@ -35,6 +37,9 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-10: the linked local Vercel runtime returned `200` for Launches and Space Weather. Accepted captures show the loaded desktop launch overview (`07-launches-loaded.png`), an expanded mission detail (`08-launches-details.png`), the loaded mobile launch overview (`09-launches-mobile-loaded.png`), Watch menu (`10-mobile-watch-menu.png`), and selected loaded Weather destination (`11-weather-mobile-loaded.png`).
 - 2026-08-10: in the same runtime, `/api/health` accurately reported `503 degraded` because `NASA_API_KEY` was absent and `/api/neo` returned the corresponding explicit missing-key error. These are local configuration limits, not evidence that the deployed product lacks its key.
 - 2026-08-10: `npm run dev -- --listen 127.0.0.1:4181` started successfully from the CloudDocs checkout. `/api/health` reported runtime `ok` and the expected missing-key degradation; stopping the command removed its temporary runtime directory. `bash -n scripts/vercel-dev.sh` and `npm run check` passed with 106 tests.
+- 2026-08-10: with NASA's public, rate-limited `DEMO_KEY` supplied only to the local process, `/api/health` returned `200 ok`; `/api/apod` returned current normalized APOD data and `/api/neo?date=2026-08-10` returned seven normalized asteroid records. No key was written to the workspace.
+- 2026-08-10: a first APOD response took 10.93 seconds, exceeding the former browser 10-second deadline. After extending the browser deadline to 15 seconds and versioning the shared script references, accepted desktop captures show the Gallery loaded state (`12-gallery-loaded.png`) and the Asteroids loaded state (`13-asteroids-loaded.png`). Pointer and Enter activation of each header Refresh completed while retaining loaded data. `npm run check` passed with 107 tests.
+- 2026-08-10: a final direct query with the same public exploration key returned NASA's explicit `OVER_RATE_LIMIT` response. This confirms the local screenshots are valid bounded evidence, while also confirming that `DEMO_KEY` is not suitable for repeatable QA or deployment.
 
 ## Deferred
 
@@ -42,8 +47,10 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - `npm run dev` now handles the temporary copied checkout required by Vercel's path limitation. The safer static preview still cannot validate Vercel routes or live-source success states.
 - The current local static shell intentionally returns 404 for serverless `/api` routes. Its unavailable-state evidence verifies recovery behaviour, not production source availability.
 - Vercel's function worker cannot run directly from the CloudDocs workspace because its path contains spaces; a temporary copied checkout was required for this local serverless QA. This is a tooling/environment constraint, not a shipped Apollo failure.
-- NASA-dependent APOD and asteroid loaded states remain unverified in Vercel local development until a non-production `NASA_API_KEY` is configured. Production and live-source QA, keyboard-only navigation (including Sky Anomalies submission), touch targets, zoom/reflow, contrast, and screen-reader announcements remain open for all eight flows.
+- NASA-dependent Gallery and Asteroids desktop loaded states are now verified locally with the public exploration key, but they still need a dedicated non-production key for repeatable QA. Production and live-source QA, keyboard-only navigation (including Sky Anomalies submission), touch targets, zoom/reflow, contrast, and screen-reader announcements remain open for all eight flows.
 - The current browser controller did not open the native mobile Watch disclosure with Enter or Space, so keyboard activation remains unverified rather than assumed broken or working. A real-browser keyboard pass is still required.
+- NASA's public `DEMO_KEY` is suitable only for bounded exploration and has a limited shared quota; it supplied this local evidence but must not become Apollo's configured deployment credential.
+- The current browser viewport override still reported a 1280px layout after a requested 390px size, so this milestone adds no new mobile visual or touch-hardware evidence.
 
 ## Founder decision needed
 
@@ -53,4 +60,4 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Next coherent milestone
 
-Configure a non-production NASA key for local Vercel development, then capture the Asteroids and Gallery loaded states and test their in-state recovery with keyboard and touch. Keep deployed production verification, assistive-technology checks, and the resilience-policy decision separate.
+Use a dedicated non-production NASA key to repeat the NASA-backed flows without a shared demo quota, then complete real-browser mobile/reflow and assistive-technology checks. Keep deployed production verification and the resilience-policy decision separate.
