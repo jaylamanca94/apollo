@@ -192,8 +192,14 @@ This controlled review used Apollo's authentication-free local function preview 
 | Step | Evidence | Health |
 | --- | --- | --- |
 | 74 | `74-iss-mobile-recovery-320x844.png` | Healthy — the upper ISS-position state has no horizontal overflow and states its no-stale-data boundary plainly. |
-| 75 | `75-iss-mobile-position-recovery-actions-320x844.png` | Caution — position recovery actions remain visible, but the Dashboard action has only 16px of visual clearance above the dock; hardware/touch confirmation remains open. |
+| 75 | `75-iss-mobile-position-recovery-actions-320x844.png` | Context — manual scroll places the Dashboard action 16px above the dock; this does not represent the keyboard-focus path. |
 | 76 | `76-iss-mobile-crew-recovery-actions-320x844.png` | Healthy — the lower crew recovery actions remain visible with 135px of clearance at the true scroll limit. |
+
+## ISS recovery keyboard-safe follow-up
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 77 | `77-iss-mobile-keyboard-retry-clearance-320x844.png` | Healthy — Space rechecks the ISS source, keeps the honest unavailable state, and uses the existing safe-scroll rule to place retry 465px above the dock. |
 
 ## Limits
 
