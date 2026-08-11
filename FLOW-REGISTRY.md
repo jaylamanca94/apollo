@@ -1,6 +1,6 @@
 # Apollo Flow Registry
 
-**Registry status:** Seven canonical user goals verified in code. Every affected detail flow now keeps source-specific recovery with the unavailable data, and current local interaction checks prove each retry reissues its request without navigation; fresh production loaded-state, visual, keyboard, zoom, and assistive-technology QA remain incomplete.
+**Registry status:** Seven canonical user goals verified in code. Every affected detail flow now keeps source-specific recovery with the unavailable data, current local interaction checks prove each retry reissues its request without navigation, and Sky Anomalies has accepted desktop start/submitted-state evidence; fresh production loaded-state, keyboard, zoom, and assistive-technology QA remain incomplete.
 **Last reviewed:** 2026-08-10
 
 ## Active-flow headline
@@ -15,14 +15,14 @@
 | Monitor weather or near-Earth objects | Core, recovery improved | Watch menu or Watch Items → Weather/Asteroids detail → understand current weather or closest approach | Loading; calm/elevated or no-hazard; source unavailable with retry, upstream source, and Dashboard recovery | Shared Acadia state pattern reviewed in code; unavailable-state visual capture pending | Contract/static tests pass; current local retries reissued both source routes without navigation; production loaded-state and visual QA pending | Medium | `weather.html`, `asteroids.html`, `app.js`, `api/space-weather.js`, `api/neo.js`, `docs/product-lab-progress.md` |
 | Explore NASA's daily image | Supporting, recovery improved | Gallery navigation → APOD media and explanation → view the day's image or video | Image; video; preview fallback; source unavailable with retry, upstream source, and Dashboard recovery | Shared Acadia state pattern reviewed in code; unavailable-state visual capture pending | Contract/static tests pass; current local retry reissued the APOD route without navigation; production media-state and visual QA pending | Low | `gallery.html`, `app.js`, `api/apod.js`, `docs/product-lab-progress.md` |
 | Navigate secondary monitoring pages on phone | Supporting, incomplete | Mobile dock → Watch menu → selected Weather, Asteroids, or Anomalies destination → reach the selected monitoring task | Menu opened; current destination; dismissal | Existing mobile dock reviewed; no fresh 390px capture in this milestone | Static navigation/accessibility checks pass; touch target, keyboard, and reflow QA pending | Low | `index.html`, `styles.css`, `app.js` |
-| Check a sky sighting against available context | Experimental, incomplete | Watch → Anomalies form → submitted source-aware context → understand available evidence and limits | Partial context; connected source unavailable; submitted result; planned-source gap | Trust-first content and state separation reviewed in code; fresh result-state capture pending | Static structure tests pass; live browser, keyboard, and mobile QA pending | High | `anomalies.html`, `app.js`, `tests/accessibility-structure.test.js` |
+| Check a sky sighting against available context | Experimental, incomplete | Watch → Anomalies form → submitted source-aware context → understand available evidence and limits | Partial context; connected source unavailable; submitted result; planned-source gap | Trust-first content and state separation reviewed in code; accepted desktop start and submitted-result captures confirm explicit source limits and trait-aware ISS copy | Static structure and trait-aware copy tests pass; current desktop browser form submission pass, while keyboard-only, mobile, live-serverless, and reader QA remain pending | High | `anomalies.html`, `app.js`, `tests/people-render.test.js`, `product-review-2026-08-10/PRODUCT-REVIEW.md` |
 
 ## Incomplete flows and missing states
 
 - All flows still need complete browser-backed keyboard-only, zoom/reflow, and screen-reader evidence. ISS has accepted desktop loaded-state evidence and a 390px keyboard-refresh check, but no accepted mobile visual capture.
 - Launches, Weather/Asteroids, and Gallery still lack current loaded-state evidence from their production serverless routes; local retry behaviour is verified, but it does not establish upstream availability or replace a resilience policy.
 - The Dashboard intentionally has no retained-data state. Whether to add clearly aged last-known-good data is a founder decision, not an implementation gap to guess at.
-- Sky Anomalies remains intentionally limited: it has no location-aware visibility, fireball, aircraft, planetary, satellite, or reported-sighting matching.
+- Sky Anomalies remains intentionally limited: it has no location-aware visibility, fireball, aircraft, planetary, satellite, or reported-sighting matching; keyboard-only submission and mobile/reflow evidence are still missing.
 
 ## Update rule
 

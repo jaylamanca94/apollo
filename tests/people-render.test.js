@@ -278,6 +278,15 @@ test("Sky Anomalies keeps broad launch timing as context, not a strong match", (
   ]), "Possible known-context match");
 });
 
+test("Sky Anomalies ISS copy reflects the submitted sighting duration", () => {
+  const { getSkyIssPassDetail } = loadDashboardHelpers();
+  const loadedIss = { state: "context" };
+
+  assert.match(getSkyIssPassDetail({ movement: "straight", duration: "minutes" }, loadedIss), /over minutes can fit an orbital pass/);
+  assert.match(getSkyIssPassDetail({ movement: "straight", duration: "seconds" }, loadedIss), /cannot link a seconds-long sighting to the ISS/);
+  assert.doesNotMatch(getSkyIssPassDetail({ movement: "straight", duration: "seconds" }, loadedIss), /over minutes/);
+});
+
 test("Sky Anomalies source-limit copy pluralizes unavailable sources", () => {
   const { getSkySourceLimitSummary } = loadDashboardHelpers();
 

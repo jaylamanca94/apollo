@@ -14,9 +14,9 @@ Apollo's dashboard is the clearest expression of its purpose—plain-English und
 | Canonical flows | 7 distinct user-goal flows retained; 4 core, 2 supporting, 1 experimental |
 | Recovery coverage | ISS/Crew, Launches, Weather, Asteroids, and Gallery show source-specific unavailable states; each affected detail page now offers an in-context retry plus source and Dashboard routes, and current local retries reissue their requests without navigation |
 | Design-system alignment | The recovery control reuses Acadia button and state anatomy; Apollo-specific red identity and source semantics remain local |
-| Incomplete flows | ISS/Crew has an accepted desktop loaded-state capture and 390px keyboard-refresh check; all flows still need complete visual, keyboard, zoom/reflow, and screen-reader QA, while live loaded states remain unverified for Launches, Weather, Asteroids, and Gallery |
-| Missing states | No adopted aged-data/last-known-good state; source outages stay honest rather than appearing live. Sky Anomalies has explicit planned-source gaps, not fabricated matching. |
-| Evidence limit | The local static shell confirms recovery behaviour but returns 404 for serverless routes, so it cannot establish production source availability. Unavailable-state screenshot output did not match the visible DOM and was rejected as visual evidence. |
+| Incomplete flows | ISS/Crew has an accepted desktop loaded-state capture and 390px keyboard-refresh check; Sky Anomalies now has accepted desktop start and submitted-result captures. All flows still need complete keyboard, zoom/reflow, and screen-reader QA, while live loaded states remain unverified for Launches, Weather, Asteroids, and Gallery |
+| Missing states | No adopted aged-data/last-known-good state; source outages stay honest rather than appearing live. Sky Anomalies has explicit planned-source gaps rather than fabricated matching, and its submitted explanation now reflects the selected observation duration. |
+| Evidence limit | The local static shell confirms recovery behaviour but returns 404 for serverless routes, so it cannot establish production source availability. It can still expose the browser-side ISS source; this is partial context, not an end-to-end production claim. Unavailable-state screenshot output that did not match the visible DOM remains rejected as visual evidence. |
 
 ## Highest-leverage design opportunities
 

@@ -590,6 +590,26 @@ function getSkyRowStateScore(row) {
   return scores[row?.state] || 8;
 }
 
+function getSkyIssPassDetail(traits, issRow) {
+  if (issRow?.state === "unknown") {
+    return "Apollo could not load station position context for this check.";
+  }
+
+  if (traits.movement === "straight" && traits.duration === "minutes") {
+    return "Straight-line movement over minutes can fit an orbital pass; exact overhead matching needs Apollo's planned location-aware pass service.";
+  }
+
+  if (traits.movement === "straight" && traits.duration === "seconds") {
+    return "Straight-line movement alone cannot link a seconds-long sighting to the ISS. Apollo has only the current position; exact overhead matching needs its planned location-aware pass service.";
+  }
+
+  if (traits.duration === "minutes") {
+    return "A minutes-long sighting provides timing context, but the entered movement does not establish an ISS pass. Exact overhead matching needs Apollo's planned location-aware pass service.";
+  }
+
+  return "Apollo has the station's current position, but the entered traits are not enough to establish an ISS pass. Exact overhead matching needs its planned location-aware pass service.";
+}
+
 function getSkyConfidenceCandidates(rows, traits, options = {}) {
   const findRow = (label) => rows.find((row) => row.label === label);
   const launchRow = findRow("Launch activity");
@@ -622,9 +642,7 @@ function getSkyConfidenceCandidates(rows, traits, options = {}) {
     label: "ISS pass",
     state: issRow?.state || "unknown",
     score: getSkyRowStateScore(issRow) + (traits.movement === "straight" ? 16 : 0) + (traits.duration === "minutes" ? 7 : 0),
-    detail: issRow?.state === "unknown"
-      ? "Apollo could not load station position context for this check."
-      : "Straight-line movement over minutes can fit an orbital pass; exact overhead matching needs Apollo's planned location-aware pass service.",
+    detail: getSkyIssPassDetail(traits, issRow),
     source: issRow?.source || "Where the ISS At"
   });
 

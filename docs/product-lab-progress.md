@@ -6,7 +6,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 5 — Verify source-unavailable recovery across the remaining detail flows.** Completed locally: the current recovery controls preserve page context and issue a fresh request for Launches, Weather, Asteroids, and Gallery.
+**Milestone 6 — Verify the Sky Anomalies submitted-context flow.** Completed locally: the form preserves submitted traits and clear source limits; the ISS explanation now changes with the submitted duration instead of using misleading generic copy.
 
 ## Fixed
 
@@ -16,7 +16,8 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - Preserved source honesty: users still see the checked source, a source-specific upstream link, and a route back to the Dashboard. No stale data is presented as live.
 - Versioned the page script references so browsers receive the new recovery behaviour rather than an older cached script.
 - Updated `FLOW-REGISTRY.md` and `DESIGN-STATUS.md` with the verified seven-flow inventory, affected states, QA limits, and ranked design opportunities.
-- `npm run check` passed: 104 tests, including source-specific failure fixtures for the ISS position and crew roster.
+- Corrected Sky Anomalies so a seconds-long sighting no longer receives an ISS explanation that says “over minutes”; the result now says that current position alone cannot link that observation to the ISS.
+- `npm run check` passed: 105 tests, including source-specific failure fixtures for the ISS position and crew roster and trait-aware anomaly-result copy.
 
 ## Validation evidence
 
@@ -27,13 +28,15 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-10: fixture coverage confirms ISS position and crew-source failures render their source-specific recovery controls.
 - 2026-08-10: accepted desktop evidence in `product-review-2026-08-10/03-iss-live-loaded.png` shows current ISS position, map, freshness, and crew roster together; keyboard Refresh also completed at a 390px viewport.
 - 2026-08-10: current browser DOM verified the source-specific unavailable states and retry controls for Launches, Weather, Asteroids, and Gallery. Click activation issued a fresh local request for each source route and preserved the user on the same page.
+- 2026-08-10: accepted desktop captures show Sky Anomalies before submission with one connected source and three unavailable sources (`04-sky-anomalies-start.png`), plus the submitted result with source limits and planned gaps (`06-sky-anomalies-submitted.png`).
+- 2026-08-10: browser interaction confirmed a Cape Canaveral, straight-line, bright, seconds-long sighting preserves each submitted trait and renders the corrected ISS limitation; `npm run check` passed with 105 tests.
 
 ## Deferred
 
 - A 390px browser screenshot did not match its visible DOM and was discarded. Do not treat mobile visual QA as complete; desktop ISS evidence is accepted.
 - A Vercel local preview could not start because it needed network access; the safer static preview cannot validate Vercel routes or live-source success states.
 - The current local static shell intentionally returns 404 for serverless `/api` routes. Its unavailable-state evidence verifies recovery behaviour, not production source availability.
-- Production and live-source QA, keyboard-only navigation, touch targets, zoom/reflow, contrast, and screen-reader announcements remain open for all seven flows.
+- Production and live-source QA, keyboard-only navigation (including Sky Anomalies submission), touch targets, zoom/reflow, contrast, and screen-reader announcements remain open for all seven flows.
 
 ## Founder decision needed
 
