@@ -22,6 +22,8 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 **Milestone 36 — Revalidate NASA-backed QA readiness.** Blocked externally: the current local function preview’s non-sensitive `/api/health` response is `503 degraded` with runtime `ok` and `nasaApiKey: missing`. NASA-backed Gallery and Asteroids loaded-mobile QA cannot progress until a dedicated non-production NASA key is supplied to the local environment. No key was searched for, changed, or persisted.
 
+**Milestone 37 — Conduct the completion-gate audit.** Completed locally: the canonical registry and design status retain all eight user-goal flows, the active-flow headline, the intentionally absent aged-data state, and exactly three ranked design opportunities. `npm run check` passes with 114 tests. Local visual and keyboard evidence is substantial but does not establish deployed production, full assistive-technology, zoom/reflow, or hardware QA. Completion now requires founder decisions on resilience, the Dashboard’s primary role, and Sky Anomalies scope; a dedicated non-production NASA key for repeatable Gallery/Asteroids loaded-mobile QA; restored Vercel authentication for platform parity; and real-device/assistive-technology validation.
+
 ## Fixed
 
 - Added an explicit, keyboard-reachable retry in Apollo's unavailable-source state. It rechecks the relevant shared dashboard data on Gallery, Weather, and Asteroids, and the launch schedule on Launches.
@@ -131,4 +133,6 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Next coherent milestone
 
-Use a dedicated non-production NASA key to repeat the NASA-backed flows without a shared demo quota, then complete broader mobile/reflow and assistive-technology QA. Extend accepted 390px coverage beyond the Dashboard partial, Launches overview/disclosure/recovery, Weather loaded/source/recovery, Asteroids recovery, Gallery recovery, Sky Anomalies, ISS-and-crew local loaded/recovery, and Watch destination states before treating the mobile shell as complete. Keep Vercel-platform/deployed-production verification and the resilience-policy decision separate.
+**External prerequisite:** supply a dedicated non-production NASA key through the local environment, without committing it, before repeating Gallery and Asteroids loaded-mobile QA.
+
+Then restore Vercel authentication for platform-parity checks and complete broader mobile/reflow, hardware, and assistive-technology QA. Extend accepted 390px coverage beyond the Dashboard partial, Launches overview/disclosure/recovery, Weather loaded/source/recovery, Asteroids recovery, Gallery recovery, Sky Anomalies, ISS-and-crew local loaded/recovery, and Watch destination states before treating the mobile shell as complete. Keep the founder resilience-policy decision separate.
