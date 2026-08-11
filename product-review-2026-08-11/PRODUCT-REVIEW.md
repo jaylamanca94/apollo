@@ -172,6 +172,13 @@ This controlled review used Apollo's authentication-free local function preview 
 | --- | --- | --- |
 | 68 | `68-launches-mobile-keyboard-retry-focus-390x844.png` | Healthy focus treatment — Space reaches the native recovery control, whose focus ring is visible and clear of the fixed dock. This does not itself prove a complete keyboard-only recovery action. |
 
+## Launches 320px recovery follow-up
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 69 | `69-launches-mobile-recovery-320x844.png` | Healthy — the real unavailable state has no horizontal overflow and wraps the recovery control without truncation. |
+| 70 | `70-launches-mobile-recovery-actions-320x844.png` | Healthy — at the true scroll limit, all recovery actions remain 90px above the fixed dock. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
