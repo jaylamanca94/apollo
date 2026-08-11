@@ -6,7 +6,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 7 — Verify serverless loaded states and mobile Watch navigation.** Completed locally: the linked Vercel runtime served current Launches and Weather data, and the 390px Watch menu opened and reached Weather without losing the selected task.
+**Milestone 8 — Make local Vercel QA reproducible.** Completed locally: the documented `npm run dev` command now starts the linked serverless runtime from this CloudDocs workspace, including the path-with-spaces workaround, and removes its temporary copy on exit.
 
 ## Fixed
 
@@ -19,6 +19,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - Corrected Sky Anomalies so a seconds-long sighting no longer receives an ISS explanation that says “over minutes”; the result now says that current position alone cannot link that observation to the ISS.
 - `npm run check` passed: 105 tests, including source-specific failure fixtures for the ISS position and crew roster and trait-aware anomaly-result copy.
 - Verified the Vercel serverless runtime from a temporary copied checkout without CloudDocs path spaces: Launches and Weather returned current upstream data, Launches refresh worked, and mobile Watch navigation reached Weather at 390px.
+- Added the documented `npm run dev` entry point and a project-local Vercel runner. It creates an isolated temporary copy, carries local environment configuration, avoids Vercel's path and recursive-development-command limitations, and cleans up after shutdown.
 
 ## Validation evidence
 
@@ -33,14 +34,16 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-10: browser interaction confirmed a Cape Canaveral, straight-line, bright, seconds-long sighting preserves each submitted trait and renders the corrected ISS limitation; `npm run check` passed with 105 tests.
 - 2026-08-10: the linked local Vercel runtime returned `200` for Launches and Space Weather. Accepted captures show the loaded desktop launch overview (`07-launches-loaded.png`), an expanded mission detail (`08-launches-details.png`), the loaded mobile launch overview (`09-launches-mobile-loaded.png`), Watch menu (`10-mobile-watch-menu.png`), and selected loaded Weather destination (`11-weather-mobile-loaded.png`).
 - 2026-08-10: in the same runtime, `/api/health` accurately reported `503 degraded` because `NASA_API_KEY` was absent and `/api/neo` returned the corresponding explicit missing-key error. These are local configuration limits, not evidence that the deployed product lacks its key.
+- 2026-08-10: `npm run dev -- --listen 127.0.0.1:4181` started successfully from the CloudDocs checkout. `/api/health` reported runtime `ok` and the expected missing-key degradation; stopping the command removed its temporary runtime directory. `bash -n scripts/vercel-dev.sh` and `npm run check` passed with 106 tests.
 
 ## Deferred
 
 - A 390px browser screenshot did not match its visible DOM and was discarded. Do not treat mobile visual QA as complete; desktop ISS evidence is accepted.
-- A Vercel local preview works only from a temporary copied checkout because the direct CloudDocs workspace path contains spaces; the safer static preview still cannot validate Vercel routes or live-source success states.
+- `npm run dev` now handles the temporary copied checkout required by Vercel's path limitation. The safer static preview still cannot validate Vercel routes or live-source success states.
 - The current local static shell intentionally returns 404 for serverless `/api` routes. Its unavailable-state evidence verifies recovery behaviour, not production source availability.
 - Vercel's function worker cannot run directly from the CloudDocs workspace because its path contains spaces; a temporary copied checkout was required for this local serverless QA. This is a tooling/environment constraint, not a shipped Apollo failure.
 - NASA-dependent APOD and asteroid loaded states remain unverified in Vercel local development until a non-production `NASA_API_KEY` is configured. Production and live-source QA, keyboard-only navigation (including Sky Anomalies submission), touch targets, zoom/reflow, contrast, and screen-reader announcements remain open for all eight flows.
+- The current browser controller did not open the native mobile Watch disclosure with Enter or Space, so keyboard activation remains unverified rather than assumed broken or working. A real-browser keyboard pass is still required.
 
 ## Founder decision needed
 

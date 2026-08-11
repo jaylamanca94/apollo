@@ -99,6 +99,8 @@ Start the Vercel local dev server:
 npm run dev
 ```
 
+This uses the project-local Vercel CLI from an isolated temporary local copy, carries `.env.local` with it, and removes that copy when the server stops. This avoids Vercel's function-worker path limitation in CloudDocs workspaces and its recursive development-command guard without changing the deployed runtime.
+
 If the Vercel CLI prompts for authentication on a new machine, sign in with:
 
 ```bash
