@@ -12,11 +12,11 @@ Apollo's dashboard is the clearest expression of its purpose—plain-English und
 | Signal | Verified status |
 | --- | --- |
 | Canonical flows | 7 distinct user-goal flows retained; 4 core, 2 supporting, 1 experimental |
-| Recovery coverage | ISS/Crew, Launches, Weather, Asteroids, and Gallery show source-specific unavailable states; each affected detail page now offers an in-context retry plus source and Dashboard routes |
+| Recovery coverage | ISS/Crew, Launches, Weather, Asteroids, and Gallery show source-specific unavailable states; each affected detail page now offers an in-context retry plus source and Dashboard routes, and current local retries reissue their requests without navigation |
 | Design-system alignment | The recovery control reuses Acadia button and state anatomy; Apollo-specific red identity and source semantics remain local |
 | Incomplete flows | ISS/Crew has an accepted desktop loaded-state capture and 390px keyboard-refresh check; all flows still need complete visual, keyboard, zoom/reflow, and screen-reader QA, while live loaded states remain unverified for Launches, Weather, Asteroids, and Gallery |
 | Missing states | No adopted aged-data/last-known-good state; source outages stay honest rather than appearing live. Sky Anomalies has explicit planned-source gaps, not fabricated matching. |
-| Evidence limit | Local static preview proved the Launches unavailable-state retry triggers a fresh request, but its screenshot output did not match the visible DOM and was rejected as visual evidence. Production Vercel routes were not started because the local preview required unavailable network access. |
+| Evidence limit | The local static shell confirms recovery behaviour but returns 404 for serverless routes, so it cannot establish production source availability. Unavailable-state screenshot output did not match the visible DOM and was rejected as visual evidence. |
 
 ## Highest-leverage design opportunities
 

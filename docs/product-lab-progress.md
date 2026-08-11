@@ -6,12 +6,13 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 4 — Complete source-specific recovery on the ISS core flow.** Completed locally: an unavailable ISS position or crew roster no longer leaves its affected region as a bare alert.
+**Milestone 5 — Verify source-unavailable recovery across the remaining detail flows.** Completed locally: the current recovery controls preserve page context and issue a fresh request for Launches, Weather, Asteroids, and Gallery.
 
 ## Fixed
 
 - Added an explicit, keyboard-reachable retry in Apollo's unavailable-source state. It rechecks the relevant shared dashboard data on Gallery, Weather, and Asteroids, and the launch schedule on Launches.
 - Extended that recovery state to the core ISS flow: position and crew failures now name the affected source, avoid stale orbital or roster data, and provide the same retry, upstream-source, and Dashboard options.
+- Verified the remaining recovery paths against the current local shell: Launches, Weather, Asteroids, and Gallery each retain the affected page, accessible source context, and an enabled retry after an unsuccessful recheck.
 - Preserved source honesty: users still see the checked source, a source-specific upstream link, and a route back to the Dashboard. No stale data is presented as live.
 - Versioned the page script references so browsers receive the new recovery behaviour rather than an older cached script.
 - Updated `FLOW-REGISTRY.md` and `DESIGN-STATUS.md` with the verified seven-flow inventory, affected states, QA limits, and ranked design opportunities.
@@ -25,11 +26,13 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-10: `npm run check` completed successfully with 104 passing tests.
 - 2026-08-10: fixture coverage confirms ISS position and crew-source failures render their source-specific recovery controls.
 - 2026-08-10: accepted desktop evidence in `product-review-2026-08-10/03-iss-live-loaded.png` shows current ISS position, map, freshness, and crew roster together; keyboard Refresh also completed at a 390px viewport.
+- 2026-08-10: current browser DOM verified the source-specific unavailable states and retry controls for Launches, Weather, Asteroids, and Gallery. Click activation issued a fresh local request for each source route and preserved the user on the same page.
 
 ## Deferred
 
 - A 390px browser screenshot did not match its visible DOM and was discarded. Do not treat mobile visual QA as complete; desktop ISS evidence is accepted.
 - A Vercel local preview could not start because it needed network access; the safer static preview cannot validate Vercel routes or live-source success states.
+- The current local static shell intentionally returns 404 for serverless `/api` routes. Its unavailable-state evidence verifies recovery behaviour, not production source availability.
 - Production and live-source QA, keyboard-only navigation, touch targets, zoom/reflow, contrast, and screen-reader announcements remain open for all seven flows.
 
 ## Founder decision needed
