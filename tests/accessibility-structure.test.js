@@ -459,6 +459,10 @@ test("sky anomaly form keeps native submit semantics", () => {
   assert.match(js, /function renderSkyExplanation\(\{ focus = false \} = \{\}\)/);
   assert.match(js, /<h3 class="sky-anomaly-result-title mb-0" tabindex="-1">Sighting context<\/h3>/);
   assert.match(js, /els\.skyAnomalyForm\?\.addEventListener\("submit", \(event\) => \{\s*event\.preventDefault\(\);\s*renderSkyExplanation\(\{ focus: true \}\);/);
+  assert.match(js, /els\.skyAnomalyForm\?\.addEventListener\("keydown", \(event\) => \{/);
+  assert.match(js, /const radio = event\.target\.closest\("input\[type='radio'\]"\);/);
+  assert.match(js, /radio\.click\(\);/);
+  assert.match(js, /els\.skyAnomalyForm\.requestSubmit\(\);/);
 });
 
 test("sky anomaly overview reflects connected source readiness", () => {

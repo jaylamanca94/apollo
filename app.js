@@ -1219,6 +1219,23 @@ function initSkyAnomalyEngine() {
     event.preventDefault();
     renderSkyExplanation({ focus: true });
   });
+
+  els.skyAnomalyForm?.addEventListener("keydown", (event) => {
+    const radio = event.target.closest("input[type='radio']");
+    const submitButton = event.target.closest(".sky-anomaly-submit");
+
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    if (radio) {
+      event.preventDefault();
+      radio.click();
+    } else if (submitButton) {
+      event.preventDefault();
+      els.skyAnomalyForm.requestSubmit();
+    }
+  });
 }
 
 function formatLaunchWindow(launch) {
