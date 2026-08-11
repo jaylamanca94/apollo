@@ -55,10 +55,19 @@ This controlled review used the linked Vercel preview at 390 × 844 CSS pixels. 
 | 39 | `39-mobile-watch-anomalies-destination-390x844.png` | Healthy — selecting Anomalies dismisses the menu and reaches the Sky Anomalies context form. |
 | 40 | `40-mobile-watch-weather-destination-390x844.png` | Healthy — selection reaches live Weather data with the menu dismissed; the same current interaction also reached Asteroids, where the honest unavailable state remained intact because NASA's public key was rate-limited. |
 
+## Mobile Gallery recovery follow-up
+
+This controlled review used the linked Vercel preview at 390 × 844 CSS pixels without a NASA key. It covers the unavailable branch of the user goal **Explore NASA's daily image**.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 41 | `41-gallery-mobile-recovery-390x844.png` | Healthy — Gallery identifies the missing APOD source, explains the no-sample-media policy, and presents retry, source, and Dashboard actions above the dock. Pointer retry retained that honest unavailable state. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
 - The 390px follow-up establishes only the Dashboard partial state and Asteroids unavailable recovery state in controlled desktop-browser emulation. It does not prove touch hardware, safe-area, orientation, full-product mobile coverage, or mobile keyboard behaviour.
+- The 390px Gallery follow-up establishes its unavailable APOD branch and pointer retry only. It does not prove loaded image/video media, alternate-media handling, hardware touch ergonomics, keyboard, safe-area, orientation, contrast, or assistive-technology behaviour.
 - The 390px Sky Anomalies follow-up establishes the initial form and pointer-submitted result only. It does not prove hardware touch ergonomics, safe-area, orientation, keyboard-only form submission, contrast, or assistive-technology behaviour.
 - The 390px ISS follow-up establishes only its loaded state in controlled desktop-browser emulation. It does not prove mobile source-failure recovery, touch hardware, safe-area, orientation, keyboard, contrast, or assistive-technology behaviour.
 - The 390px Watch follow-up establishes pointer routes and destination dismissal only. It does not prove hardware touch ergonomics, keyboard activation, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
