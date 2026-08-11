@@ -92,6 +92,15 @@ This controlled review used the linked Vercel preview at 320 × 844 CSS pixels. 
 | 51 | `51-anomalies-mobile-start-320x844.png` | Healthy — the Sky Anomalies start form retains its title, source limits, and concise input hierarchy at 320px. |
 | 52 | `52-anomalies-mobile-result-focused-320x844.png` | Healthy after change — pointer submission preserves the observation and lands focus on `Sighting context` 86px below the sticky header; the partial-source result begins immediately, with no horizontal overflow. |
 
+## Mobile Launches recovery follow-up
+
+This controlled review used Apollo's API-free local static shell at 390 × 844 CSS pixels. It covers the unavailable branch of the user goal **Check an upcoming launch**. The missing local API route is a controlled recovery trigger, not evidence about upstream availability or deployment.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 53 | `53-launches-mobile-recovery-390x844.png` | Healthy — Apollo names the unavailable The Space Devs schedule, explains the no-stale-data consequence, and presents retry, source, and Dashboard recovery actions. |
+| 54 | `54-launches-mobile-recovery-actions-390x844.png` | Healthy — at the true scroll limit, all recovery actions remain fully visible above the fixed dock; pointer retry retained the same page and honest unavailable state. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
@@ -103,5 +112,6 @@ This controlled review used the linked Vercel preview at 320 × 844 CSS pixels. 
 - The 390px Launches follow-up establishes the loaded overview, pointer disclosure, and source action only. It does not prove mobile source failure, hardware touch, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 390px Weather follow-up establishes the loaded decision view and lower source context only. It does not prove mobile source failure, hardware touch, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The 320px Dashboard and Sky Anomalies follow-up establishes a narrower partial Dashboard, Sky Anomalies start form, and pointer-result focus handoff only. It does not prove hardware touch ergonomics, keyboard-only submission, safe-area, orientation, contrast, or assistive-technology announcement behaviour.
+- The 390px Launches recovery follow-up establishes the API-free static-shell unavailable branch and pointer retry only. It does not prove live-source availability, deployment, hardware touch ergonomics, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The no-stale-data policy remains intact. A resilience decision about visibly aged last-known-good data is still a founder decision, not silently introduced behaviour.
 - The current browser controller focused the native retry control, but both its CUA and DOM key channels left Enter and Space inactive. This is a tooling limit, not a claim that keyboard activation succeeds or fails for real users.
