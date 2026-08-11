@@ -4357,6 +4357,13 @@ document.addEventListener("click", (event) => {
   }
 });
 
+document.addEventListener("keydown", (event) => {
+  if ((event.key === "Enter" || event.key === " ") && event.target.closest("[data-source-retry]")) {
+    event.preventDefault();
+    loadDashboard();
+  }
+});
+
 initThemeControl();
 initMobileWatchMenuDismissal();
 initMobileWatchKeyboard();

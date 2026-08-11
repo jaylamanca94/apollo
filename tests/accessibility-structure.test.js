@@ -414,6 +414,7 @@ test("detail pages render intentional unavailable source states", () => {
   assert.match(appJs, /data-source-retry="\$\{escapeHtml\(sourceId \|\| ""\)\}"/);
   assert.match(appJs, /Try \$\{escapeHtml\(label\)\} again/);
   assert.match(appJs, /event\.target\.closest\("\[data-source-retry\]"\)[\s\S]*?loadDashboard\(\)/);
+  assert.match(appJs, /document\.addEventListener\("keydown", \(event\) => \{[\s\S]*?event\.key === "Enter" \|\| event\.key === " "[\s\S]*?event\.preventDefault\(\);[\s\S]*?loadDashboard\(\);/);
   assert.doesNotMatch(appJs, /href="\.\/iss\.html"[\s\S]*?ISS[\s\S]*?<\/a>\n\s*<\/div>\n\s*<\/div>\n\s*`;\n}\n\nfunction setSourceUnavailable/);
   assert.match(launchesJs, /function renderLaunchesUnavailable/);
   assert.match(launchesJs, /Data unavailable/);

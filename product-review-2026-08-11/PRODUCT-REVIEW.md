@@ -146,6 +146,14 @@ This controlled review used Apollo's authentication-free local function preview 
 | --- | --- | --- |
 | 64 | `64-anomalies-mobile-keyboard-result-390x844.png` | Healthy — Space/Enter selection preserves Straight line, Bright, and Seconds; Enter submits and moves focus to Sighting context with the source limits visible. |
 
+## Asteroids recovery keyboard follow-up
+
+This controlled review used Apollo's authentication-free local function preview at 390 × 844 CSS pixels. It covers **Track near-Earth objects** when NASA NeoWs is unavailable.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 65 | `65-asteroids-mobile-keyboard-retry-390x844.png` | Healthy — Enter rechecks NeoWs, refreshes the check time, and retains the honest source-specific recovery state above the dock. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
