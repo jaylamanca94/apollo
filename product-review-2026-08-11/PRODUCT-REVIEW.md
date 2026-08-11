@@ -154,6 +154,12 @@ This controlled review used Apollo's authentication-free local function preview 
 | --- | --- | --- |
 | 65 | `65-asteroids-mobile-keyboard-retry-390x844.png` | Healthy — Enter rechecks NeoWs, refreshes the check time, and retains the honest source-specific recovery state above the dock. |
 
+## Dashboard Refresh keyboard follow-up
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 66 | `66-dashboard-mobile-keyboard-refresh-390x844.png` | Healthy — Space completes a fresh Dashboard check and preserves the clear partial-data state. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.

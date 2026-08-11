@@ -4349,6 +4349,12 @@ async function loadDashboard() {
 
 [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
   button.addEventListener("click", loadDashboard);
+  button.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      loadDashboard();
+    }
+  });
 });
 
 document.addEventListener("click", (event) => {

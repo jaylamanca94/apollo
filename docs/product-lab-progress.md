@@ -6,7 +6,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 28 — Make unavailable-source recovery keyboard-operable.** Completed locally: Apollo’s shared retry control now explicitly handles Enter and Space without changing its source-specific recovery state. At 390 × 844 CSS pixels, Enter rechecked the Asteroids NeoWs source, refreshed the check time, and retained the honest unavailable state. This is accepted local function-preview keyboard and mobile visual evidence, not hardware, Vercel-platform, or production-deployment QA.
+**Milestone 29 — Make the shared Refresh control keyboard-operable.** Completed locally: the Dashboard and app.js-driven detail pages now explicitly handle Enter and Space on their existing Acadia Refresh control. At 390 × 844 CSS pixels, Space refreshed the Dashboard and preserved its honest partial state. This is accepted local function-preview keyboard and mobile visual evidence, not hardware, Vercel-platform, or production-deployment QA.
 
 ## Fixed
 
@@ -43,6 +43,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - Made the mobile Watch disclosure explicitly keyboard-operable using its existing Bootstrap dropdown: Enter and Space open it, move focus to Weather, and activate each Watch destination without relying on an automation-specific default action. A structural regression test protects the handler.
 - Made Sky Anomalies’ existing native radio and submit controls explicitly keyboard-operable with Enter and Space, preserving its trait-aware result and established focus handoff. A structural regression test protects that activation path.
 - Made Apollo’s shared unavailable-source retry keyboard-operable with Enter and Space, covering the common recovery path used by Asteroids, Gallery, Weather, and ISS.
+- Made the shared Refresh control keyboard-operable with Enter and Space across the Dashboard, ISS, Asteroids, Weather, Gallery, and Sky Anomalies.
 
 ## Validation evidence
 
@@ -80,6 +81,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted explicit keyboard coverage for the mobile Watch flow. Enter opened the named Watch menu and moved focus to Weather (`60-mobile-watch-keyboard-enter-open-390x844.png`); Enter reached Weather (`61-mobile-watch-keyboard-weather-390x844.png`), Space reached Asteroids' honest unavailable state (`62-mobile-watch-keyboard-asteroids-390x844.png`), and Enter reached Sky Anomalies (`63-mobile-watch-keyboard-anomalies-390x844.png`). Each destination had Watch closed. This is valid controlled browser keyboard navigation and visual evidence only.
 - 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted Sky Anomalies keyboard selection and submission. Space selected `Straight line`, Enter selected `Bright`, Space selected `Seconds`, and Enter submitted the form; the result preserved those traits, rendered the evidence limits, and moved focus to `Sighting context` (`64-anomalies-mobile-keyboard-result-390x844.png`). This is valid controlled browser keyboard navigation, form submission, focus-handoff, and visual evidence only.
 - 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted Asteroids recovery keyboard activation. Enter on `Try NASA NeoWs again` rechecked the source, refreshed the check time from 6:50 to 6:51 AM, retained the same source-specific unavailable state, and kept the action visible above the dock (`65-asteroids-mobile-keyboard-retry-390x844.png`). This is valid controlled browser keyboard-retry and visual evidence only.
+- 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted shared Refresh keyboard activation. Space on Dashboard Refresh completed a fresh partial-data check and retained the visible source-qualified state (`66-dashboard-mobile-keyboard-refresh-390x844.png`). This is valid controlled browser keyboard-refresh and visual evidence only.
 
 ## Deferred
 

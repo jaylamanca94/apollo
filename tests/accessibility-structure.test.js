@@ -517,6 +517,12 @@ test("freshness copy separates successful updates from failed checks", () => {
   assert.doesNotMatch(launchesJs, /Signal lost/);
 });
 
+test("shared refresh controls support explicit keyboard activation", () => {
+  const js = readProjectFile("app.js");
+
+  assert.match(js, /\[els\.refreshButton, els\.refreshButtonMobile\]\.filter\(Boolean\)\.forEach\(\(button\) => \{[\s\S]*?button\.addEventListener\("keydown", \(event\) => \{[\s\S]*?event\.key === "Enter" \|\| event\.key === " "[\s\S]*?event\.preventDefault\(\);[\s\S]*?loadDashboard\(\);/);
+});
+
 test("header primary nav exposes five named destinations without a generic overflow", () => {
   for (const file of allHtmlPages) {
     const html = readProjectFile(file);
