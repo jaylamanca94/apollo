@@ -20,6 +20,8 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 **Milestone 35 — Verify the ISS position recovery focus-safe path.** Completed locally: Apollo’s existing mobile focus-safe scroll rule is effective. At 320 × 844 CSS pixels, Space on `Try Where the ISS At again` retained the honest unavailable state and placed the retry at 307px—465px above the fixed dock—after the controlled check. No new CSS was required. This is accepted API-free local-shell keyboard and visual evidence, not hardware, Vercel-platform, or production QA.
 
+**Milestone 36 — Revalidate NASA-backed QA readiness.** Blocked externally: the current local function preview’s non-sensitive `/api/health` response is `503 degraded` with runtime `ok` and `nasaApiKey: missing`. NASA-backed Gallery and Asteroids loaded-mobile QA cannot progress until a dedicated non-production NASA key is supplied to the local environment. No key was searched for, changed, or persisted.
+
 ## Fixed
 
 - Added an explicit, keyboard-reachable retry in Apollo's unavailable-source state. It rechecks the relevant shared dashboard data on Gallery, Weather, and Asteroids, and the launch schedule on Launches.
@@ -100,6 +102,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-11: Apollo's API-free local static shell at 320 × 844 CSS pixels reported matching `innerWidth`, `clientWidth`, and `scrollWidth` of 320 for Weather, Asteroids, and Gallery. At the actual scroll limit, their real unavailable-state actions end at 718px, 714px, and 665px respectively while the dock begins at 772px (`71-weather-mobile-recovery-actions-320x844.png`, `72-asteroids-mobile-recovery-actions-320x844.png`, `73-gallery-mobile-recovery-actions-320x844.png`). This is valid controlled recovery and visual/reflow evidence only.
 - 2026-08-11: Apollo's API-free local static shell at 320 × 844 CSS pixels reported matching `innerWidth`, `clientWidth`, and `scrollWidth` of 320 for the combined ISS-and-crew unavailable state. The ISS position group keeps retry, source, and Dashboard actions visible above the dock, ending at 756px while the dock begins at 772px (`74-iss-mobile-recovery-320x844.png`, `75-iss-mobile-position-recovery-actions-320x844.png`); the crew-roster group ends at 637px at the true scroll limit (`76-iss-mobile-crew-recovery-actions-320x844.png`). This is valid controlled recovery and visual/reflow evidence only, with the 16px upper-group margin still needing hardware/touch confirmation.
 - 2026-08-11: Apollo's existing mobile focus-safe scroll rule was verified on the upper ISS recovery action at 320 × 844 CSS pixels. Space on `Try Where the ISS At again` retained the honest unavailable state and positioned retry from below the dock to 253–307px, leaving 465px before the dock starts at 772px (`77-iss-mobile-keyboard-retry-clearance-320x844.png`). This is valid controlled browser keyboard and visual evidence only, not hardware or production proof.
+- 2026-08-11: the current local function preview returned `/api/health` as `503 degraded` with runtime `ok` and `nasaApiKey: missing`. This revalidates the external gate for NASA-backed Gallery and Asteroids loaded-mobile QA; no credential was exposed, saved, or modified.
 
 ## Deferred
 
