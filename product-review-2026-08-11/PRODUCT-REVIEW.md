@@ -119,6 +119,14 @@ This controlled review used Apollo's API-free local static shell at 390 × 844 C
 | 57 | `57-iss-mobile-recovery-390x844.png` | Healthy — the position card names the affected source, pauses map and orbital context rather than showing an old location, and retains its retry and upstream route. |
 | 58 | `58-iss-mobile-recovery-actions-390x844.png` | Healthy — the crew card withholds an old manifest; its retry, source, and Dashboard actions end at 636px above the dock. Pointer retry retained the ISS page and both honest unavailable states. |
 
+## Local function-preview ISS proxy follow-up
+
+This controlled review used Apollo's authentication-free local function preview at 390 × 844 CSS pixels. It covers the loaded branch of **Follow the ISS and current crew** through the new `/api/iss` and `/api/people` routes. It validates Apollo's own handlers against the live public sources, not Vercel deployment behaviour.
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 59 | `59-iss-mobile-proxy-loaded-390x844.png` | Healthy — current ISS status, map, position, and the live crew summary render through Apollo's proxy boundary without horizontal overflow. Pointer Refresh remained on ISS and retained the current loaded state. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.
@@ -132,5 +140,6 @@ This controlled review used Apollo's API-free local static shell at 390 × 844 C
 - The 320px Dashboard and Sky Anomalies follow-up establishes a narrower partial Dashboard, Sky Anomalies start form, and pointer-result focus handoff only. It does not prove hardware touch ergonomics, keyboard-only submission, safe-area, orientation, contrast, or assistive-technology announcement behaviour.
 - The 390px Launches recovery follow-up establishes the API-free static-shell unavailable branch and pointer retry only. It does not prove live-source availability, deployment, hardware touch ergonomics, keyboard, safe-area, orientation, zoom, contrast, or assistive-technology behaviour.
 - The new ISS and crew proxy routes have contract coverage, but the current local Vercel-compatible preview could not start because its configured token is invalid. Their live serverless source-success branch remains unverified.
+- `npm run preview` now validates the same ISS and crew handlers against live public sources without Vercel authentication. It is not a Vercel-platform or deployed-production substitute.
 - The no-stale-data policy remains intact. A resilience decision about visibly aged last-known-good data is still a founder decision, not silently introduced behaviour.
 - The current browser controller focused the native retry control, but both its CUA and DOM key channels left Enter and Space inactive. This is a tooling limit, not a claim that keyboard activation succeeds or fails for real users.

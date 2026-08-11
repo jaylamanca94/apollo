@@ -93,13 +93,21 @@ Add your NASA key to `.env.local`:
 NASA_API_KEY=your_key_here
 ```
 
-Start the Vercel local dev server:
+Start the Vercel local dev server (requires a valid local Vercel login):
 
 ```bash
 npm run dev
 ```
 
 This uses the project-local Vercel CLI from an isolated temporary local copy, carries `.env.local` with it, and removes that copy when the server stops. This avoids Vercel's function-worker path limitation in CloudDocs workspaces and its recursive development-command guard without changing the deployed runtime.
+
+For an authentication-free local preview that serves Apollo's static files and invokes the same local API handlers, use:
+
+```bash
+npm run preview -- --port 4173
+```
+
+This preview is for local function and browser verification only; it does not prove Vercel deployment behaviour.
 
 If the Vercel CLI prompts for authentication on a new machine, sign in with:
 
