@@ -1942,6 +1942,10 @@ function unavailableStateMarkup({ title = "Data unavailable", message, sourceId,
         <p class="mb-0"><strong>Source checked:</strong> ${escapeHtml(label)}</p>
       </div>
       <div class="source-unavailable-actions">
+        <button class="acadia-button acadia-button-secondary source-unavailable-retry" type="button" data-source-retry="${escapeHtml(sourceId || "")}">
+          <i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i>
+          Try ${escapeHtml(label)} again
+        </button>
         ${url ? `
           <a class="source-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(label)} source">
             <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
@@ -4227,6 +4231,13 @@ async function loadDashboard() {
 [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
   button.addEventListener("click", loadDashboard);
 });
+
+document.addEventListener("click", (event) => {
+  if (event.target.closest("[data-source-retry]")) {
+    loadDashboard();
+  }
+});
+
 initThemeControl();
 initMobileWatchMenuDismissal();
 initSkyAnomalyEngine();

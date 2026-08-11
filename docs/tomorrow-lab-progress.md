@@ -1,5 +1,7 @@
 # Product Overhaul Progress
 
+> Current durable delivery record: [`product-lab-progress.md`](product-lab-progress.md). This historical Tomorrow Lab record remains for prior milestone evidence.
+
 ## Goal
 
 Bring Apollo to a verified, cohesive, maintainable, release-ready state while preserving its focused role: a trustworthy, plain-English view of what is happening in space now.

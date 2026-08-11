@@ -1,28 +1,25 @@
 # Apollo — Design Status
 
-**Last reviewed:** 2026-08-08
-**Canonical sources:** `FLOW-REGISTRY.md`, `PRODUCT-README.md`, `DESIGN-README.md`, `product-review-2026-08-08/PRODUCT-REVIEW.md`
+**Last reviewed:** 2026-08-10
+**Canonical sources:** `FLOW-REGISTRY.md`, `PRODUCT-README.md`, `DESIGN-README.md`, `docs/product-lab-progress.md`
+
+## Active-flow headline
+
+Apollo's dashboard is the clearest expression of its purpose—plain-English understanding of space activity now—but the experience is incomplete whenever an upstream source does not answer.
 
 ## Signals
 
-| Signal | Current status |
+| Signal | Verified status |
 | --- | --- |
-| User flows | 7 canonical flows inventoried; 2 core, 3 supporting/core information paths, 1 experimental flow |
-| Screens / views | 7 public routes reviewed across desktop; dashboard, Watch menu, and anomaly results reviewed on a 390px phone viewport |
-| Flow gaps | Reliable content is inconsistent across the live-data paths; an unavailable source can consume an entire destination |
-| Design debt | Dashboard still supports two similar activity panels, now conditionally consolidated for a steady-state ISS-only condition |
-| Complexity hotspots | Sky Anomalies combines a form, multiple source families, explanation logic, and planned-data disclaimers |
-| Dead ends | Launches, Weather, Asteroids, and Gallery become source-unavailable endpoints when their only feed fails |
-| Duplicate patterns | ISS status appeared in both Recent Activity and Watch Items; refined in the reviewed partial-data state |
-| Empty / error / loading gaps | Error states are honest and readable; they need a deliberate freshness/resilience strategy, not more UI treatment |
-| Responsive gaps | Primary mobile dock and Watch menu are sound; full-height captured review must be repeated with live source content before declaring full responsive coverage |
-| Accessibility gaps | Static landmark/live-region/navigation coverage exists; keyboard-only, contrast, screen-reader, and zoom testing remain unverified |
-| Acadia exceptions | No material exception identified in reviewed surfaces |
-| Acadia graduation candidates | Conditional command-panel consolidation could be a shared dashboard pattern after a second product validates it |
-| Unvalidated features | Real-data launch, weather, asteroid, and gallery states were not available in this run; anomaly matching remains intentionally limited |
+| Canonical flows | 7 distinct user-goal flows retained; 4 core, 2 supporting, 1 experimental |
+| Recovery coverage | Launches, Weather, Asteroids, and Gallery show source-specific unavailable states; each affected detail page now offers an in-context retry plus source and Dashboard routes |
+| Design-system alignment | The recovery control reuses Acadia button and state anatomy; Apollo-specific red identity and source semantics remain local |
+| Incomplete flows | All flows await current browser-backed visual, keyboard, zoom/reflow, and screen-reader QA; live loaded states remain unverified for Launches, Weather, Asteroids, and Gallery |
+| Missing states | No adopted aged-data/last-known-good state; source outages stay honest rather than appearing live. Sky Anomalies has explicit planned-source gaps, not fabricated matching. |
+| Evidence limit | Local static preview proved the Launches unavailable-state retry triggers a fresh request, but its screenshot output did not match the visible DOM and was rejected as visual evidence. Production Vercel routes were not started because the local preview required unavailable network access. |
 
-## Next Design Opportunities
+## Highest-leverage design opportunities
 
-1. **P1 — Make partial availability feel useful, not broken.** Decide on a transparent stale-data/resilience approach for the four primary external data families.
-2. **P1 — Decide Apollo’s primary moment.** Choose whether the dashboard is chiefly a concise “what matters now” brief or a collection of browseable feeds, then remove the secondary structure that does not serve that choice.
-3. **P2 — Reposition Sky Anomalies.** Keep it as a clearly bounded experiment or separate pilot until location-aware and reported-sighting evidence is connected.
+1. **P1 — Decide an explicit resilience policy for unavailable sources.** Either retain validated, visibly aged data with a maximum age or commit to the current no-stale-data experience; this affects the Dashboard, Launches, Weather, Asteroids, and Gallery flows.
+2. **P1 — Make the Dashboard's Space Brief the unambiguous primary moment.** Resolve whether it is a concise decision surface or a broad feed browser, then remove secondary structure that does not serve that choice; this affects the Dashboard, ISS, Launches, Weather/Asteroids, and Gallery flows.
+3. **P2 — Keep Sky Anomalies deliberately bounded until its evidence improves.** Lower its prominence or define a focused pilot only after a small location-aware source set is ready; this affects the Anomalies flow and the Dashboard/Watch entry paths.

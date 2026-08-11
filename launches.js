@@ -383,6 +383,10 @@ function renderLaunchesUnavailable(message) {
         <p class="mb-0"><strong>Source checked:</strong> The Space Devs launch source.</p>
       </div>
       <div class="source-unavailable-actions">
+        <button class="acadia-button acadia-button-secondary source-unavailable-retry" type="button" data-launches-retry>
+          <i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i>
+          Try The Space Devs again
+        </button>
         <a class="source-link" href="https://thespacedevs.com/llapi" target="_blank" rel="noopener noreferrer" aria-label="Open The Space Devs launch source">
           <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
           Open The Space Devs launch source
@@ -574,6 +578,12 @@ async function loadLaunches() {
 if (els.refreshButton) {
   els.refreshButton.addEventListener("click", loadLaunches);
 }
+
+document.addEventListener("click", (event) => {
+  if (event.target.closest("[data-launches-retry]")) {
+    loadLaunches();
+  }
+});
 
 initThemeControl();
 loadLaunches();

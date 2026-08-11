@@ -399,12 +399,18 @@ test("detail pages render intentional unavailable source states", () => {
   assert.match(appJs, /<strong>Recovery:<\/strong>/);
   assert.match(appJs, /Open \$\{escapeHtml\(label\)\} source/);
   assert.match(appJs, /aria-label="Open \$\{escapeHtml\(label\)\} source"/);
+  assert.match(appJs, /data-source-retry="\$\{escapeHtml\(sourceId \|\| ""\)\}"/);
+  assert.match(appJs, /Try \$\{escapeHtml\(label\)\} again/);
+  assert.match(appJs, /event\.target\.closest\("\[data-source-retry\]"\)[\s\S]*?loadDashboard\(\)/);
   assert.doesNotMatch(appJs, /href="\.\/iss\.html"[\s\S]*?ISS[\s\S]*?<\/a>\n\s*<\/div>\n\s*<\/div>\n\s*`;\n}\n\nfunction setSourceUnavailable/);
   assert.match(launchesJs, /function renderLaunchesUnavailable/);
   assert.match(launchesJs, /Data unavailable/);
   assert.match(launchesJs, /The Space Devs launch source/);
   assert.match(launchesJs, /Open The Space Devs launch source/);
   assert.match(launchesJs, /aria-label="Open The Space Devs launch source"/);
+  assert.match(launchesJs, /data-launches-retry/);
+  assert.match(launchesJs, /Try The Space Devs again/);
+  assert.match(launchesJs, /event\.target\.closest\("\[data-launches-retry\]"\)[\s\S]*?loadLaunches\(\)/);
   assert.match(launchesJs, /setLaunchesUpdated\(formatLastChecked\(\)\)/);
   assert.doesNotMatch(launchesJs, /Last updated: Signal lost/);
 });
@@ -564,10 +570,10 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=source-state-2/, `${file} should load the current shared app script`);
+    assert.match(html, /app\.js\?v=source-retry-1/, `${file} should load the current shared app script`);
   }
 
-  assert.match(readProjectFile("launches.html"), /launches\.js\?v=clarity-copy-1/);
+  assert.match(readProjectFile("launches.html"), /launches\.js\?v=source-retry-1/);
 });
 
 test("internal pages use compact headers instead of dashboard-scale heroes", () => {
@@ -658,7 +664,7 @@ test("launch timeline exposes urgency context and current asset versions", () =>
   const js = readProjectFile("launches.js");
 
   assert.match(html, /styles\.css\?v=visual-polish-5/);
-  assert.match(html, /launches\.js\?v=clarity-copy-1/);
+  assert.match(html, /launches\.js\?v=source-retry-1/);
   assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
   assert.doesNotMatch(js, /class="launch-timeline-rail" aria-hidden="true"/);
