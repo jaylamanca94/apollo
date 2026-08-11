@@ -160,6 +160,12 @@ This controlled review used Apollo's authentication-free local function preview 
 | --- | --- | --- |
 | 66 | `66-dashboard-mobile-keyboard-refresh-390x844.png` | Healthy — Space completes a fresh Dashboard check and preserves the clear partial-data state. |
 
+## Launches Refresh keyboard follow-up
+
+| Step | Evidence | Health |
+| --- | --- | --- |
+| 67 | `67-launches-mobile-keyboard-refresh-390x844.png` | Healthy — Space completes a fresh loaded-schedule check and preserves the visible mission context. |
+
 ## Limits
 
 - Original recovery steps 18–24 are current desktop Vercel-preview and pointer evidence. They do not prove production deployment, real-browser keyboard focus order, touch targets, contrast, or screen-reader announcements.

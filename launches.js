@@ -577,6 +577,12 @@ async function loadLaunches() {
 
 if (els.refreshButton) {
   els.refreshButton.addEventListener("click", loadLaunches);
+  els.refreshButton.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      loadLaunches();
+    }
+  });
 }
 
 document.addEventListener("click", (event) => {

@@ -8,6 +8,8 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 **Milestone 29 — Make the shared Refresh control keyboard-operable.** Completed locally: the Dashboard and app.js-driven detail pages now explicitly handle Enter and Space on their existing Acadia Refresh control. At 390 × 844 CSS pixels, Space refreshed the Dashboard and preserved its honest partial state. This is accepted local function-preview keyboard and mobile visual evidence, not hardware, Vercel-platform, or production-deployment QA.
 
+**Milestone 30 — Close the Launches Refresh keyboard gap.** Completed locally: the separate Launches controller now explicitly handles Enter and Space on the same existing Acadia Refresh control. At 390 × 844 CSS pixels, Space refreshed the loaded schedule and retained the page’s clear source context. This is accepted local function-preview keyboard and mobile visual evidence, not hardware, Vercel-platform, or production-deployment QA.
+
 ## Fixed
 
 - Added an explicit, keyboard-reachable retry in Apollo's unavailable-source state. It rechecks the relevant shared dashboard data on Gallery, Weather, and Asteroids, and the launch schedule on Launches.
@@ -43,7 +45,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - Made the mobile Watch disclosure explicitly keyboard-operable using its existing Bootstrap dropdown: Enter and Space open it, move focus to Weather, and activate each Watch destination without relying on an automation-specific default action. A structural regression test protects the handler.
 - Made Sky Anomalies’ existing native radio and submit controls explicitly keyboard-operable with Enter and Space, preserving its trait-aware result and established focus handoff. A structural regression test protects that activation path.
 - Made Apollo’s shared unavailable-source retry keyboard-operable with Enter and Space, covering the common recovery path used by Asteroids, Gallery, Weather, and ISS.
-- Made the shared Refresh control keyboard-operable with Enter and Space across the Dashboard, ISS, Asteroids, Weather, Gallery, and Sky Anomalies.
+- Made every header Refresh control keyboard-operable with Enter and Space across the Dashboard, ISS, Launches, Asteroids, Weather, Gallery, and Sky Anomalies.
 
 ## Validation evidence
 
@@ -82,6 +84,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted Sky Anomalies keyboard selection and submission. Space selected `Straight line`, Enter selected `Bright`, Space selected `Seconds`, and Enter submitted the form; the result preserved those traits, rendered the evidence limits, and moved focus to `Sighting context` (`64-anomalies-mobile-keyboard-result-390x844.png`). This is valid controlled browser keyboard navigation, form submission, focus-handoff, and visual evidence only.
 - 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted Asteroids recovery keyboard activation. Enter on `Try NASA NeoWs again` rechecked the source, refreshed the check time from 6:50 to 6:51 AM, retained the same source-specific unavailable state, and kept the action visible above the dock (`65-asteroids-mobile-keyboard-retry-390x844.png`). This is valid controlled browser keyboard-retry and visual evidence only.
 - 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted shared Refresh keyboard activation. Space on Dashboard Refresh completed a fresh partial-data check and retained the visible source-qualified state (`66-dashboard-mobile-keyboard-refresh-390x844.png`). This is valid controlled browser keyboard-refresh and visual evidence only.
+- 2026-08-11: Apollo's authentication-free local function preview at 390 × 844 CSS pixels accepted Launches Refresh keyboard activation. Space on Launches Refresh completed a fresh loaded-schedule check, preserved the visible mission context, and restored the labelled control (`67-launches-mobile-keyboard-refresh-390x844.png`). This is valid controlled browser keyboard-refresh and visual evidence only.
 
 ## Deferred
 
