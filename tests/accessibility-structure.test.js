@@ -386,6 +386,16 @@ test("dashboard source state avoids overclaiming during partial loads", () => {
   assert.match(js, /function updateDynamicRegionsFromStatuses\(statuses, checkedAt = new Date\(\), options = \{\}\)/);
 });
 
+test("dashboard source status routes an unavailable source into Apollo recovery", () => {
+  const js = readProjectFile("app.js");
+
+  assert.match(js, /id: "apod",[\s\S]*?detailHref: "\.\/gallery\.html"/);
+  assert.match(js, /id: "neo",[\s\S]*?detailHref: "\.\/asteroids\.html"/);
+  assert.match(js, /feed\.state !== "ok" && feed\.detailHref/);
+  assert.match(js, /aria-label="Open \$\{escapeHtml\(feed\.label\)\} details in Apollo"/);
+  assert.match(js, /Open details/);
+});
+
 test("detail pages render intentional unavailable source states", () => {
   const appJs = readProjectFile("app.js");
   const launchesJs = readProjectFile("launches.js");

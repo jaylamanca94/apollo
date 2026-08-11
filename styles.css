@@ -3316,6 +3316,13 @@ html[data-bs-theme="light"] .data-detail-panel {
   margin-top: 0.25rem;
 }
 
+.source-status-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+}
+
 .source-status-link {
   align-items: center;
   color: var(--apollo-muted-strong);
@@ -3328,6 +3335,14 @@ html[data-bs-theme="light"] .data-detail-panel {
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
   transition: color var(--acadia-motion-fast), text-decoration-color var(--acadia-motion-fast);
+}
+
+.source-status-actions .source-status-link {
+  margin-top: 0.45rem;
+}
+
+.source-status-recovery {
+  font-weight: 700;
 }
 
 .source-status-link i {

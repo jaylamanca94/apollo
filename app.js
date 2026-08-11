@@ -12,6 +12,7 @@ const SOURCE_FEEDS = [
     id: "apod",
     label: "NASA APOD",
     description: "Astronomy image",
+    detailHref: "./gallery.html",
     icon: "fa-solid fa-image",
     sourceUrl: "https://apod.nasa.gov/apod/"
   },
@@ -19,6 +20,7 @@ const SOURCE_FEEDS = [
     id: "iss",
     label: "Where the ISS At",
     description: "Station coordinates",
+    detailHref: "./iss.html",
     icon: "fa-solid fa-satellite",
     sourceUrl: "https://wheretheiss.at/"
   },
@@ -26,6 +28,7 @@ const SOURCE_FEEDS = [
     id: "people",
     label: "People in Space",
     description: "Current crew",
+    detailHref: "./iss.html",
     icon: "fa-solid fa-user-astronaut",
     sourceUrl: "https://github.com/corquaid/international-space-station-APIs"
   },
@@ -33,6 +36,7 @@ const SOURCE_FEEDS = [
     id: "launches",
     label: "The Space Devs",
     description: "SpaceX launches",
+    detailHref: "./launches.html",
     icon: "fa-solid fa-rocket",
     sourceUrl: "https://thespacedevs.com/llapi"
   },
@@ -40,6 +44,7 @@ const SOURCE_FEEDS = [
     id: "neo",
     label: "NASA NeoWs",
     description: "Asteroid approaches",
+    detailHref: "./asteroids.html",
     icon: "fa-solid fa-meteor",
     sourceUrl: "https://api.nasa.gov/"
   },
@@ -47,6 +52,7 @@ const SOURCE_FEEDS = [
     id: "spaceWeather",
     label: "NOAA SWPC",
     description: "K-index and alerts",
+    detailHref: "./weather.html",
     icon: "fa-solid fa-sun",
     sourceUrl: "https://www.swpc.noaa.gov/products-and-data"
   }
@@ -2560,10 +2566,18 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
               <h3 class="source-status-title mb-0">${escapeHtml(feed.label)}</h3>
               <p class="source-status-source mb-0">${escapeHtml(feed.description)}</p>
               <p class="source-status-detail mb-0">${escapeHtml(feed.detail)}</p>
-              <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(feed.label)} source">
-                <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
-                Open source
-              </a>
+              <div class="source-status-actions">
+                ${feed.state !== "ok" && feed.detailHref ? `
+                  <a class="source-status-link source-status-recovery" href="${escapeHtml(feed.detailHref)}" aria-label="Open ${escapeHtml(feed.label)} details in Apollo">
+                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    Open details
+                  </a>
+                ` : ""}
+                <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(feed.label)} source">
+                  <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                  Open source
+                </a>
+              </div>
             </div>
             <span class="source-status-pill">${escapeHtml(stateLabel)}</span>
           </article>

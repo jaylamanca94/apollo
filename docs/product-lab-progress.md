@@ -6,7 +6,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 
 ## Current milestone
 
-**Milestone 11 — Bound and verify the Sky Anomalies submission path.** Completed locally: the live Vercel preview showed a coherent partial-source starting state and a pointer-submitted result that preserves user-entered location, time, selected default traits, loaded sources, unavailable sources, and planned gaps. Native form semantics are now guarded in the test suite. The available browser controller focused controls but did not dispatch Enter or Space activation, so it cannot close the real-browser keyboard QA gap.
+**Milestone 12 — Carry Dashboard source outages into local recovery.** Completed locally: the Dashboard's unavailable APOD and NeoWs source cards now distinguish Apollo's own `Open details` recovery route from the upstream `Open source` link. The NeoWs route was followed in the live Vercel preview into the detailed unavailable state, where retry completed while preserving source honesty.
 
 ## Fixed
 
@@ -24,6 +24,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - Verified Gallery and Asteroids against current NASA data through the linked local Vercel runtime. Both desktop flows rendered loaded data, and their header Refresh control preserved the loaded state with pointer and Enter activation.
 - Corrected the Dashboard's partial-state hierarchy. When a core source is unavailable, the hero now says `Space Activity: Partial` instead of `Mostly Calm`; the Space Brief still names what is calm only where sources are available.
 - Added a structural regression check for the Sky Anomalies form: it retains a native `<form>`, semantic radio controls, a `type="submit"` action, and a form-level submit handler. This protects the baseline required for keyboard activation while separate real-browser QA remains necessary.
+- Added a local recovery route to every non-loaded Dashboard source card. A user can now open the relevant Apollo detail page for an in-context retry without mistaking the external upstream link for Apollo recovery.
 
 ## Validation evidence
 
@@ -44,6 +45,7 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 - 2026-08-10: a final direct query with the same public exploration key returned NASA's explicit `OVER_RATE_LIMIT` response. This confirms the local screenshots are valid bounded evidence, while also confirming that `DEMO_KEY` is not suitable for repeatable QA or deployment.
 - 2026-08-10: without a NASA key, the linked local Vercel Dashboard settled at four of six sources loaded: ISS position, crew, Launches, and NOAA weather remained useful while APOD and NeoWs were explicitly unavailable. The pre-fix capture (`14-dashboard-partial-pre-fix.png`) exposed a conflicting `Mostly Calm` hero subtitle; the corrected capture (`15-dashboard-partial-loaded.png`) shows the aligned `Partial` subtitle, source-qualified Space Brief, and explicit source matrix. Enter activation of Refresh returned to the same honest state. `npm run check` passed with 108 tests.
 - 2026-08-11: the live local Vercel preview showed Sky Anomalies' partial context before submission (`16-anomalies-keyboard-start.png`) and, after pointer submission, its source-aware result (`17-anomalies-keyboard-submission-attempt.png`). The result preserved Cape Canaveral, Florida and the browser-local time, and it visibly separated three loaded source checks, one unavailable source, and five planned evidence gaps. The controller focused radio and submit controls but did not dispatch Enter or Space activation, so this is not accepted as keyboard-only QA. `npm run check` now guards the native form/submit semantics alongside the existing 108 tests.
+- 2026-08-11: the current Vercel preview's partial Dashboard state exposed clear `Open details` and `Open source` links on unavailable APOD and NeoWs cards (`product-review-2026-08-11/20-dashboard-source-recovery-links.png`). Following NeoWs `Open details` reached the Apollo Asteroids unavailable state (`21-asteroids-recovery-destination.png`); its source-specific retry completed and kept the honest unavailable result (`22-asteroids-retry-complete.png`). `npm run check` passed with 110 tests.
 
 ## Deferred
 
