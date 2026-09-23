@@ -2,11 +2,13 @@
 
 Apollo is a focused space-activity web app for understanding what is happening in space right now. It leads with a plain-English Space Brief, recent activity, watch items, and focused pages for ISS operations, launches, space weather, asteroids, and NASA imagery.
 
-The app is designed to be easy to demo: each card favors source-backed context, plain labels, source timing, APOD image/video media actions, and quick links to the original sources.
+The current app uses source-backed context, plain labels, source timing, APOD image/video media actions, and quick links to original sources.
 
-## Recommended Architecture
+Apollo's agent is authorised to evolve the audience, positioning, feature scope, journeys, and architecture within a coherent space-related purpose. The current implementation and historical MVP exclusions are a starting point. See `PRODUCT-README.md` for product decisions and `AGENT-README.md` for autonomous development and delivery boundaries.
 
-Use a static frontend with serverless API routes.
+## Current Architecture
+
+The product currently uses a static frontend with serverless API routes.
 
 - Frontend: vanilla HTML, CSS, and JavaScript
 - UI: pinned Acadia 0.4.10 CSS/fonts/assets, Font Awesome Free, Leaflet and OpenStreetMap tiles
@@ -15,7 +17,7 @@ Use a static frontend with serverless API routes.
 - Hosting: Vercel
 - Secrets: `NASA_API_KEY` stored as a server-side environment variable
 
-The app should stay vanilla/static for now. A framework such as Next.js is not needed unless the product later needs routing, server-rendered pages, authenticated user flows, persistent settings, or a larger component system.
+Retain the vanilla/static architecture while it serves the product well. Evolve it when a concrete user journey or operating requirement justifies the migration and maintenance cost; architecture decisions fall within the product-development remit.
 
 ## APIs Used
 

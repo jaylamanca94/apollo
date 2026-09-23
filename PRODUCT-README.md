@@ -2,29 +2,31 @@
 
 ## Product Identity
 
-Apollo helps people understand what is happening in space right now.
+Apollo's starting purpose is to help people understand what is happening in space. Its current implementation emphasises live and near-live activity. The intended audience, positioning, and strongest use cases should be researched and refined rather than inferred from the available APIs.
 
 ## Goals
 
-- Create a public space-intelligence dashboard that is simple to understand and easy to demo.
+- Develop a coherent space-related product with a clear audience, useful connected journeys, and credible reasons to adopt and return.
 - Keep the product deployable, maintainable, and portable across machines.
 - Use managed services and environment variables for public deployment.
-- Preserve a tight MVP scope while making the app feel polished.
+- Balance meaningful capability with focus, source trust, accessible Acadia experiences, and sustainable solo operation.
 
 ## Product Discipline
 
-Apollo must stay focused on its core job: making live and near-live space activity simple to understand and easy to demo.
+The founder delegates product refinement, positioning, feature scope, prioritisation, UX, and architecture decisions within Apollo's coherent space-related purpose. The existing dashboard and historical MVP boundaries are a starting point, not permanent constraints.
 
-- Do not broaden Apollo into a general science, education, simulation, productivity, or account-based platform unless the founder explicitly changes the product direction.
-- Prefer focused dashboard clarity over feature volume.
-- Say no or defer when a feature is interesting but does not strengthen the current space-data dashboard mission.
-- Keep scope decisions grounded in user value, source quality, maintainability, and demo clarity.
+- Research who Apollo should serve, the problem it can solve, relevant competitors and alternatives, and why users would choose and return to it. Label assumptions and validation gaps honestly.
+- Add useful features, data sources, integrations, and workflows; redesign, consolidate, or remove weak capabilities; and evolve the architecture when the user benefit justifies the operating and migration costs. Individual feature or routine scope approval is not required within this remit.
+- Keep one clear audience and primary purpose with a connected set of journeys. Interesting but unrelated capabilities should be deferred rather than accumulated.
+- For substantial initiatives, briefly record the intended outcome, evidence or hypothesis, fit with the product, operating burden, and success criteria. Use small experiments where evidence is limited, then carry useful work through implementation and verification.
+- Preserve source accuracy, accessibility, privacy, and maintainability. Assess API quotas, data rights, costs, and support needs before depending on new services.
+- Update this brief, agent guidance, and affected design and flow records as decisions evolve. Existing service, production, spending, and destructive-action permissions remain unchanged; a fundamental departure from Apollo's space-related purpose remains a founder decision.
 
 ## Scope
 
 Apollo is currently a public dashboard for live and near-live space data.
 
-In scope:
+Current implemented scope (to be evolved through the product-development remit):
 
 - NASA Astronomy Picture of the Day
 - ISS current position
@@ -38,7 +40,7 @@ In scope:
 - Responsive Acadia dashboard UI
 - Vercel deployment with serverless NASA proxy routes
 
-Out of scope for the MVP:
+Historically deferred MVP capabilities (research candidates, not prohibitions or commitments):
 
 - Location-based ISS pass times
 - Charts
@@ -105,13 +107,15 @@ Out of scope for the MVP:
 - Dashboard source families resolve independently during first load and refresh, so loaded cards, Watch Items, Recent Activity, Space Brief, and Data Sources can update while slower sources remain visibly checking.
 - Dashboard data families use neutral cards, sparse icons, red action accents, and positive green styling for safe/good status messages.
 - Theme choice is stored locally in the browser; first-time visitors start from the operating system theme.
-- Unsupported controls such as export, search, notifications, settings, and new observations are omitted until those workflows are requested.
+- Controls such as export, search, notifications, settings, and new observations should appear only when their underlying workflows are implemented and verified. The agent may prioritise these capabilities under the product-development remit when user value and feasibility justify them.
 - UAP and fireball sources are not yet connected. Until NUFORC, American Meteor Society, AARO, FAA, planet-position, or satellite-visibility sources are imported, Apollo should label those checks as planned source gaps rather than fabricating report data, and order them after connected evidence or connected-source unavailability.
 - The mobile Watch menu remains a compact five-destination dock group. It dismisses on destination selection, outside tap, Escape, and underlying page scroll so source rows and main content remain readable.
 
 ## Roadmap
 
-Recommended next steps:
+Next product-development priority: reassess the intended audience, strongest use cases, competitive alternatives, and reasons to adopt and return. Record the resulting direction here, select a coherent initiative, and continue through Acadia design, implementation, and verification. Reassess later when evidence warrants it rather than restarting discovery on every run.
+
+Existing technical review candidates below must be checked against current implementation and delivery evidence before acting; they are not a claim that each issue remains open:
 
 1. Rotate the NASA API key in Vercel after the early key exposure issue.
 2. Run final production QA after key rotation.
@@ -119,7 +123,7 @@ Recommended next steps:
 4. Expand browser-level interaction coverage before a broader public launch.
 5. Decide whether APOD or asteroid details deserve dedicated URLs after the launches page pattern is tested.
 
-Future enhancements only if requested:
+Potential enhancements to evaluate under the product-development remit (no commitment to implement):
 
 - Location-based ISS pass times
 - Location-aware sky sighting checks with ISS pass, satellite visibility, Starlink, fireball, aurora, and reported-sighting matching
