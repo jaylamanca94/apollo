@@ -67,7 +67,9 @@ async function requestNasa(path, params, cacheKey, ttlSeconds) {
   if (!response.ok) {
     const error = new Error(`NASA request failed with status ${response.status}`);
     error.status = response.status;
-    error.payload = payload || {
+    // Upstream errors can echo the credential-bearing request URL or other
+    // sensitive diagnostics. Only Apollo-owned error content may leave this boundary.
+    error.payload = {
       error: {
         code: "NASA_REQUEST_FAILED",
         message: "NASA request failed."

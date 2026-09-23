@@ -16,6 +16,120 @@ const { buildHealthPayload } = require("../api/health");
 const issHandler = require("../api/iss");
 const { getLaunchLimit, normalizeLaunchLibraryPayload } = require("../api/launches");
 const peopleHandler = require("../api/people");
+const apodHandler = require("../api/apod");
+const neoHandler = require("../api/neo");
+
+test("NASA routes never forward upstream error content or credentials", async (t) => {
+  const originalFetch = global.fetch;
+  const originalKey = process.env.NASA_API_KEY;
+  const fixtureKey = "apollo-disposable-fixture-key";
+  process.env.NASA_API_KEY = fixtureKey;
+  t.after(() => {
+    global.fetch = originalFetch;
+    if (originalKey === undefined) delete process.env.NASA_API_KEY;
+    else process.env.NASA_API_KEY = originalKey;
+  });
+
+  for (const status of [400, 403, 429, 500, 503]) {
+    global.fetch = async (url) => {
+      assert.equal(new URL(url).searchParams.get("api_key"), fixtureKey);
+      return {
+        ok: false,
+        status,
+        async json() {
+          return {
+            error: { message: `Rejected credential ${fixtureKey}`, code: "UPSTREAM_DETAIL" },
+            request: { url: String(url), api_key: fixtureKey },
+            trace: [encodeURIComponent(String(url))]
+          };
+        }
+      };
+    };
+
+    for (const handler of [apodHandler, neoHandler]) {
+      const response = createResponse();
+      await handler({ method: "GET", url: "/api/neo?date=2026-09-23" }, response);
+      assert.equal(response.statusCode, status);
+      assert.equal(response.headers["Cache-Control"], "no-store");
+      assert.deepEqual(JSON.parse(response.body), {
+        error: { code: "NASA_REQUEST_FAILED", message: "NASA request failed." }
+      });
+      assert.ok(!response.body.includes(fixtureKey));
+      assert.ok(!response.body.includes("UPSTREAM_DETAIL"));
+    }
+  }
+});
+
+test("NASA routes keep malformed and transport failures safe and non-cacheable", async (t) => {
+  const originalFetch = global.fetch;
+  const originalKey = process.env.NASA_API_KEY;
+  process.env.NASA_API_KEY = "apollo-disposable-fixture-key";
+  t.after(() => {
+    global.fetch = originalFetch;
+    if (originalKey === undefined) delete process.env.NASA_API_KEY;
+    else process.env.NASA_API_KEY = originalKey;
+  });
+
+  for (const failure of ["malformed", "timeout", "network"]) {
+    global.fetch = async () => {
+      if (failure !== "malformed") {
+        const error = new Error("Transport diagnostics with apollo-disposable-fixture-key");
+        error.name = failure === "timeout" ? "AbortError" : "TypeError";
+        throw error;
+      }
+      return { ok: false, status: 502, async json() { throw new SyntaxError("Invalid JSON"); } };
+    };
+    for (const handler of [apodHandler, neoHandler]) {
+      const response = createResponse();
+      await handler({ method: "GET", url: "/api/neo?date=2026-09-24" }, response);
+      assert.equal(response.statusCode, failure === "malformed" ? 502 : 500);
+      assert.equal(response.headers["Cache-Control"], "no-store");
+      const payload = JSON.parse(response.body);
+      assert.equal(payload.error.code, failure === "malformed" ? "NASA_REQUEST_FAILED" : "NASA_PROXY_ERROR");
+      assert.ok(!response.body.includes("apollo-disposable-fixture-key"));
+    }
+  }
+
+  delete process.env.NASA_API_KEY;
+  for (const handler of [apodHandler, neoHandler]) {
+    const response = createResponse();
+    await handler({ method: "GET", url: "/api/neo?date=2026-09-24" }, response);
+    assert.equal(response.statusCode, 500);
+    assert.equal(JSON.parse(response.body).error.code, "NASA_API_KEY_MISSING");
+    assert.equal(response.headers["Cache-Control"], "no-store");
+  }
+});
+
+test("NASA request recovers after failure and caches only the scrubbed success", async (t) => {
+  const { requestNasa } = require("../api/_nasa");
+  const originalFetch = global.fetch;
+  const originalKey = process.env.NASA_API_KEY;
+  process.env.NASA_API_KEY = "apollo-disposable-fixture-key";
+  t.after(() => {
+    global.fetch = originalFetch;
+    if (originalKey === undefined) delete process.env.NASA_API_KEY;
+    else process.env.NASA_API_KEY = originalKey;
+  });
+  let requests = 0;
+  global.fetch = async () => {
+    requests += 1;
+    return {
+      ok: requests > 1,
+      status: requests > 1 ? 200 : 503,
+      async json() {
+        return requests === 1
+          ? { error: { message: "apollo-disposable-fixture-key" } }
+          : { links: { self: "https://api.nasa.gov/example?api_key=apollo-disposable-fixture-key&date=2026-09-23" } };
+      }
+    };
+  };
+  const request = () => requestNasa("/example", {}, "test:recovery", 60);
+  await assert.rejects(request, { status: 503 });
+  const recovered = await request();
+  assert.deepEqual(recovered, { links: { self: "https://api.nasa.gov/example?date=2026-09-23" } });
+  assert.deepEqual(await request(), recovered);
+  assert.equal(requests, 2);
+});
 
 function createResponse() {
   const headers = {};

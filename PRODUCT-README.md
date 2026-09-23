@@ -81,6 +81,7 @@ Out of scope for the MVP:
 - NASA API keys stay server-side via `NASA_API_KEY`.
 - APOD tries NASA's default response first, then Eastern-date fallbacks to avoid UTC publish-window failures.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
+- NASA upstream failures expose only Apollo-owned error content, preserve the failure HTTP status, and are not cached. Upstream diagnostics must never be forwarded because they can contain credentials or request URLs.
 - SpaceX launch listings use The Space Devs launch data through `/api/launches`, with a normalized response shape before data reaches the dashboard and launches page.
 - Launch listings should summarize the launch window length from the existing launch-data feed when start/end times are available, while preserving exact source window times in details.
 - NOAA SWPC space weather uses `/api/space-weather`, with current K-index, forecast, and alert/watch/warning notice data normalized before rendering.

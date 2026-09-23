@@ -28,4 +28,8 @@
 
 ## Update rule
 
+### 2026-09-23 NASA error-boundary hardening
+
+Affected flows: Dashboard, Gallery, Asteroids, and their existing NASA-source recovery states. No new journey or visual state: upstream failures must retain their HTTP failure status and non-cacheable response while exposing only Apollo-owned error content. Required QA: credential-bearing upstream error fixtures through both API handlers; malformed-response and transport-failure coverage; successful retry/cache regression; controlled browser checks of Gallery and Asteroids recovery. Live NASA, production, hardware, and assistive-technology acceptance remain separate.
+
 Before implementation, record flows added or changed, major states introduced, and required design and QA coverage. Keep each row as a distinct user goal from a meaningful entry point to a successful outcome; do not collapse flows merely to make the registry shorter.
