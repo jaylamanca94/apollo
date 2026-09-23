@@ -253,3 +253,8 @@ This file should remain the source of truth for baseline UX/UI decisions and reu
 See `docs/acadia-audit/README.md` for the route/state matrix, source pin and explicit exceptions. Acadia owns buttons, badges, panels, typography, fields, compact native choices, accordion disclosures, loading indicators, navigation presentations, thumbnails, focus and appearance preferences. Apollo owns source interpretation, data layout, imagery proportions, route grouping, disclosure dismissal and the Leaflet integration.
 
 Header slots wrap when their content needs room. Tablet navigation wraps so its Watch disclosure cannot be clipped by an overflow rail. On the narrowest phones, nested data panels use the shared compact spacing token; native date/time controls keep browser segment editing. Shared library CSS must remain unchanged. Any reusable upstream gap needs concrete product evidence and its own Acadia review; product fixes do not imply upstream publication.
+
+
+### NeoWs source completeness and recovery (2026-09-23)
+
+Classification: reuse of the pinned Acadia unavailable/retry, panel and button patterns; interpretation remains Apollo-owned. Missing or invalid daily coverage enters source-unavailable, never a reassuring empty result. A validated empty day says no approaches are listed and explains the daily-feed limit. Tracking status describes flags in that list, not a calculated impact risk or the full Sentry catalogue. Successful source retry restores the persistent Refresh control when the retry disappears; repeated failure restores its replacement. Neither may steal focus after the user moves elsewhere. No shared component or stylesheet change is required.

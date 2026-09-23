@@ -29,7 +29,7 @@ function scrubNasaApiKey(value) {
   return value;
 }
 
-async function requestNasa(path, params, cacheKey, ttlSeconds) {
+async function requestNasa(path, params, cacheKey, ttlSeconds, normalize = value => value) {
   const cached = getCached(cache, cacheKey);
 
   if (cached) {
@@ -78,7 +78,8 @@ async function requestNasa(path, params, cacheKey, ttlSeconds) {
     throw error;
   }
 
-  const sanitizedPayload = scrubNasaApiKey(payload);
+  // Validate/normalize before caching so an invalid HTTP 200 cannot poison retries.
+  const sanitizedPayload = normalize(scrubNasaApiKey(payload));
 
   setCached(cache, cacheKey, sanitizedPayload, ttlSeconds);
   return sanitizedPayload;

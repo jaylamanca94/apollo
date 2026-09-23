@@ -33,16 +33,16 @@ module.exports = async function handler(request, response) {
   }
 
   try {
-    const nasaPayload = await requestNasa(
+    const payload = await requestNasa(
       "/neo/rest/v1/feed",
       {
         start_date: date,
         end_date: date
       },
       `neo:${date}`,
-      NEO_CACHE_SECONDS
+      NEO_CACHE_SECONDS,
+      nasaPayload => normalizeNeoPayload(nasaPayload, date)
     );
-    const payload = normalizeNeoPayload(nasaPayload, date);
     sendJson(response, 200, payload, NEO_CACHE_SECONDS);
   } catch (error) {
     sendJson(response, error.status || 500, error.payload || {

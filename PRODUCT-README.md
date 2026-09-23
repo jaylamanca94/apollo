@@ -2,7 +2,42 @@
 
 ## Product Identity
 
-Apollo's starting purpose is to help people understand what is happening in space. Its current implementation emphasises live and near-live activity. The intended audience, positioning, and strongest use cases should be researched and refined rather than inferred from the available APIs.
+Apollo is a concise, source-backed space briefing for curious non-specialists who want to understand what is happening and what is worth following next. The primary job is a two-minute check-in: read the brief, understand the source's timing and limits, then open one event or topic for detail. This is the chosen product hypothesis as of 2026-09-23, not validated demand.
+
+The connected journey is **brief → relevant detail → original source → return for the next meaningful event**. Launches, crew/ISS, space weather and near-Earth approaches support that briefing; APOD provides a daily exploration moment. Current coverage is narrower than all space activity: launches are SpaceX-only. A source check time is not an observation time, a launch is scheduled rather than guaranteed, and a tracking flag is not a predicted impact.
+
+Keep the existing static/serverless architecture and free, accountless core while testing this purpose. Do not expand the sighting checker into an identification product without location/time-matched evidence. Anomalies remains an explicitly limited experiment and is not the acquisition promise.
+
+### Evidence and alternatives — reviewed 2026-09-23
+
+These are current published capabilities and vendor claims, not comparative hands-on acceptance or proof of Apollo demand.
+
+| Alternative | Workflow and price evidence | Implication for Apollo |
+| --- | --- | --- |
+| [Next Spaceflight](https://nextspaceflight.com/) | Multi-provider launch schedules, watch links and free native apps advertising launch/event notifications and widgets | A stronger launch-only alternative than Apollo's SpaceX list; basic alerts are not a credible paid differentiator. |
+| [NASA Spot the Station](https://www.nasa.gov/missions/station/spot-the-station-frequently-asked-questions/) | Official location-based visible-pass predictions and notifications; NASA says free with no subscriptions or in-app purchases | Do not confuse the current ISS map with a sighting tool. Prefer a source hand-off before maintaining another prediction engine. |
+| [SpaceWeatherLive](https://www.spaceweatherlive.com/en/app.html) | Solar/auroral data, charts, explanations, archives and free notifications; advertising funds the free app, with optional subscription removal (regional prices vary) | Depth and alerts already exist. Apollo should explain relevant context briefly and link onward; it cannot promise local aurora visibility from Kp alone. |
+| Manual alternative: bookmarked NASA/NOAA pages and launch schedules | Direct source reading and browser bookmarks require no Apollo account; users can put an event in their existing calendar | Apollo must demonstrably save interpretation and navigation effort. Aggregating tiles alone may offer too little reason to return. |
+
+Weak counter-evidence to a frictionless experience: a search-index excerpt from an [individual August 2025 comparison of ISS apps](https://www.reddit.com/r/ISS/comments/1mqtprt) mentions manual location setup and missing notifications in some alternatives. The full thread could not be reopened. This is dated, self-selected anecdote, not recurring-frustration prevalence or a case for building alerts. NASA's current official app already addresses much of that job. No interviews, retention data, market-size estimate or willingness-to-pay evidence exists here; recurring user frustrations remain a research gap.
+
+### Adoption, retention and viability
+
+Hypothesis: a calm, quickly understood briefing earns repeat use from occasional space followers who find specialist tools more detailed than they need. Test distribution through a shareable dashboard and existing topic URLs before adding accounts, outbound messaging or acquisition spend. Recruitment and public sharing have not happened in this run.
+
+Keep baseline reading free. A future paid convenience such as a personalised digest or curated alerts is an option only after repeated-use and willingness-to-pay evidence; free specialist tools make a subscription for raw public data a weak proposition. No paid plan or new service is being launched.
+
+Use deterministic interpretation of existing feeds: no model calls, database, geolocation history or editorial publishing obligation. [NASA's published default limits](https://api.nasa.gov/) are 1,000 requests/hour per key across services; DEMO_KEY is limited to 30/hour per IP and 50/day. Existing in-memory caches are per function instance, so they do not guarantee a global quota ceiling. Before wider distribution, measure cold-instance/request volume and check all existing provider terms and hosting allowances. This run introduces no new provider or licence dependency; API availability does not grant blanket reuse rights for credited APOD imagery. Preserve source links and credits and review specific image rights before promotional reuse.
+
+### Active initiative: a briefing people can trust and return to
+
+Benefit: a short check-in that clearly separates noteworthy activity, routine context and missing information. Success criteria: (1) missing or uncertain source coverage never becomes zero/quiet reassurance, (2) the brief identifies one useful next action with date and source context, (3) a small real-user trial can establish whether it saves effort and earns a return visit. Operating burden: existing providers, static Acadia composition and bounded contract tests; no new recurring service cost.
+
+First delivery: validate the complete single-day NeoWs response before caching or summarising. A count-verified explicit empty bucket is valid; absent coverage, count mismatch, duplicate identities, malformed records, unknown tracking flags, or missing requested-date Earth approach/distance is unavailable. Optional unavailable measurements remain null. Do not publish a partial count as the day's total. Reuse the Acadia unavailable/retry state across Dashboard, Asteroids and sighting context.
+
+Next outcome: review the Dashboard brief's hierarchy and source timing against this purpose, then implement a bounded improvement that makes the next useful action obvious. Prepare a five-person trial using the current dashboard and their usual alternative: ask what matters, what is uncertain, and what they would open next without coaching; record completion time and errors; offer an optional return visit a week later. Proposed directional thresholds: four of five distinguish unavailable from quiet and find a relevant next action within two minutes; three independently choose to return. These are experiment criteria, not statistical proof or simulated results. No participants have been contacted.
+
+Time-bound provider dependency discovered during research: [NASA's current API catalogue](https://api.nasa.gov/assets/json/apis.json) announces migration of APOD to WordPress and retirement of the legacy API on **1 December 2026**. Apollo still calls the legacy endpoint. Recheck the new contract and image/video/link semantics and deliver migration before that deadline; preserve provenance and image rights. This is a documented provider notice, not live endpoint acceptance.
 
 ## Goals
 
@@ -113,7 +148,7 @@ Historically deferred MVP capabilities (research candidates, not prohibitions or
 
 ## Roadmap
 
-Next product-development priority: reassess the intended audience, strongest use cases, competitive alternatives, and reasons to adopt and return. Record the resulting direction here, select a coherent initiative, and continue through Acadia design, implementation, and verification. Reassess later when evidence warrants it rather than restarting discovery on every run.
+Continue the active trustworthy-briefing initiative above. Prioritise the APOD migration before its announced 1 December deadline, then the brief-to-next-action experiment. Revisit audience or positioning when user evidence warrants it; do not restart desk discovery each run.
 
 Existing technical review candidates below must be checked against current implementation and delivery evidence before acting; they are not a claim that each issue remains open:
 
@@ -121,7 +156,7 @@ Existing technical review candidates below must be checked against current imple
 2. Run final production QA after key rotation.
 3. Wire external monitoring/error logging to `/api/health` if Apollo gets shared more broadly.
 4. Expand browser-level interaction coverage before a broader public launch.
-5. Decide whether APOD or asteroid details deserve dedicated URLs after the launches page pattern is tested.
+5. Gallery and Asteroids already have dedicated pages; retain their connected detail/source journeys.
 
 Potential enhancements to evaluate under the product-development remit (no commitment to implement):
 

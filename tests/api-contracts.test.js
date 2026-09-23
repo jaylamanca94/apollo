@@ -442,11 +442,11 @@ test("getApodEmbedUrl supports known APOD video hosts only", () => {
   assert.equal(getApodEmbedUrl("https://example.com/watch/123456789"), "");
 });
 
-test("normalizeNeoPayload returns asteroid context and filters malformed records", () => {
+test("normalizeNeoPayload returns complete asteroid context", () => {
   const payload = normalizeNeoPayload({
+    element_count: 1,
     near_earth_objects: {
       "2026-06-10": [
-        null,
         {
           id: "3655761",
           name: " (2014 AE29) ",
@@ -461,6 +461,8 @@ test("normalizeNeoPayload returns asteroid context and filters malformed records
           },
           close_approach_data: [
             {
+              close_approach_date: "2026-06-10",
+              orbiting_body: "Earth",
               close_approach_date_full: "2026-Jun-10 15:41",
               relative_velocity: {
                 kilometers_per_hour: "26999.6"
@@ -502,9 +504,10 @@ test("normalizeNeoPayload returns asteroid context and filters malformed records
   });
 });
 
-test("normalizeNeoPayload returns an empty list for missing date buckets", () => {
+test("normalizeNeoPayload accepts an explicit count-verified empty day", () => {
   const payload = normalizeNeoPayload({
-    near_earth_objects: {}
+    element_count: 0,
+    near_earth_objects: { "2026-06-10": [] }
   }, "2026-06-10");
 
   assert.deepEqual(payload, {
@@ -815,4 +818,88 @@ test("normalizeSpaceWeatherPayload extracts radio blackout scale ranges from not
     label: "R1-R2 Radio blackout",
     summary: "Moderate NOAA radio blackout level"
   });
+});
+
+function neoFixture(date = "2026-10-01") {
+  return {
+    element_count: 1,
+    near_earth_objects: { [date]: [{
+      id: "fixture-1", name: "Synthetic object", is_potentially_hazardous_asteroid: false,
+      is_sentry_object: false,
+      close_approach_data: [{ close_approach_date: date, orbiting_body: "Earth",
+        miss_distance: { kilometers: "1000000", lunar: "2.6" } }]
+    }] }
+  };
+}
+
+test("NeoWs rejects incomplete coverage and uncertain records instead of reporting zero", () => {
+  const date = "2026-10-01";
+  const invalid = [null, [], {}, { near_earth_objects: {} },
+    { element_count: 0, near_earth_objects: { "2026-10-02": [] } }];
+  const mutate = (fn) => { const payload = neoFixture(date); fn(payload, payload.near_earth_objects[date][0]); invalid.push(payload); };
+  for (const count of [undefined, null, "1", -1, 0, 2, 1.5]) mutate(p => p.element_count = count);
+  for (const bucket of [null, {}, "", [null], [{}], [false]]) mutate(p => p.near_earth_objects[date] = bucket);
+  mutate(p => { p.near_earth_objects["2026-10-02"] = []; });
+  mutate(p => { p.near_earth_objects[date].push(p.near_earth_objects[date][0]); p.element_count = 2; });
+  for (const flag of [undefined, null, 0, "false", "true"]) {
+    mutate((p, item) => item.is_potentially_hazardous_asteroid = flag);
+    mutate((p, item) => item.is_sentry_object = flag);
+  }
+  mutate((p, item) => item.id = "");
+  mutate((p, item) => item.name = "");
+  mutate(p => { p.near_earth_objects[date].push(null); p.element_count = 2; });
+  mutate((p, item) => item.close_approach_data.push(item.close_approach_data[0]));
+  mutate((p, item) => item.close_approach_data = []);
+  mutate((p, item) => item.close_approach_data[0].close_approach_date = "2026-10-02");
+  mutate((p, item) => item.close_approach_data[0].orbiting_body = "Mars");
+  for (const distance of [undefined, null, "", " ", false, [], {}, "NaN", -1]) {
+    mutate((p, item) => item.close_approach_data[0].miss_distance.kilometers = distance);
+  }
+  for (const payload of invalid) {
+    assert.throws(() => normalizeNeoPayload(payload, date), { status: 502,
+      payload: { error: { code: "NASA_NEO_INVALID_RESPONSE", message: "NASA asteroid data is incomplete or invalid. Try again shortly." } } });
+  }
+});
+
+test("NeoWs selects the requested Earth approach and preserves unavailable optional measurements", () => {
+  const payload = neoFixture();
+  const item = payload.near_earth_objects["2026-10-01"][0];
+  item.close_approach_data.unshift({ close_approach_date: "2026-09-30", orbiting_body: "Earth", miss_distance: { kilometers: "1" } });
+  item.close_approach_data[1].relative_velocity = { kilometers_per_hour: false };
+  const result = normalizeNeoPayload(payload, "2026-10-01").asteroids[0];
+  assert.equal(result.closestKilometers, 1000000);
+  assert.equal(result.closeApproach, "2026-10-01");
+  assert.equal(result.velocityKph, null);
+  assert.equal(result.minDiameterMeters, null);
+  assert.equal(result.hazardous, false);
+});
+
+test("NeoWs handler rejects invalid successes without caching them and recovers on retry", async (t) => {
+  const originalFetch = global.fetch;
+  const originalKey = process.env.NASA_API_KEY;
+  process.env.NASA_API_KEY = "apollo-disposable-fixture-key";
+  t.after(() => { global.fetch = originalFetch; if (originalKey === undefined) delete process.env.NASA_API_KEY; else process.env.NASA_API_KEY = originalKey; });
+  for (const empty of [false, true]) {
+    const date = empty ? "2026-10-03" : "2026-10-02";
+    let calls = 0;
+    global.fetch = async () => ({ ok: true, status: 200, json: async () => {
+      calls += 1;
+      return calls === 1 ? { element_count: 0, near_earth_objects: {}, diagnostic: "apollo-disposable-fixture-key" }
+        : empty ? { element_count: 0, near_earth_objects: { [date]: [] } } : neoFixture(date);
+    } });
+    for (const expected of [502, 200, 200]) {
+      const response = createResponse();
+      await neoHandler({ method: "GET", url: `/api/neo?date=${date}` }, response);
+      assert.equal(response.statusCode, expected);
+      assert.ok(!response.body.includes("apollo-disposable-fixture-key"));
+      if (expected === 502) {
+        assert.equal(response.headers["Cache-Control"], "no-store");
+        assert.equal(JSON.parse(response.body).error.code, "NASA_NEO_INVALID_RESPONSE");
+      } else {
+        assert.match(response.headers["Cache-Control"], /s-maxage=1800/);
+        assert.equal(JSON.parse(response.body).elementCount, empty ? 0 : 1);
+      }
+    }
+    assert.equal(calls, 2);
+  }
 });

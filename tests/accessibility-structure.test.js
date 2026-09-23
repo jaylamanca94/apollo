@@ -403,7 +403,7 @@ test("detail pages render intentional unavailable source states", () => {
   assert.match(appJs, /aria-label="Open \$\{escapeHtml\(label\)\} source"/);
   assert.match(appJs, /data-source-retry="\$\{escapeHtml\(sourceId \|\| ""\)\}"/);
   assert.match(appJs, /Try \$\{escapeHtml\(label\)\} again/);
-  assert.match(appJs, /function restoreSourceRetryFocus\(sourceId\)[\s\S]*?document\.querySelector\(`\[data-source-retry="\$\{sourceId\}"\]`\)[\s\S]*?retry\?\.focus\(\);/);
+  assert.match(appJs, /function restoreSourceRetryFocus\(sourceId\)[\s\S]*?document\.querySelector\(`\[data-source-retry="\$\{sourceId\}"\]`\)[\s\S]*?\(retry \|\| els\.refreshButton\)\?\.focus\(\);/);
   assert.match(appJs, /const retry = event\.target\.closest\("\[data-source-retry\]"\);[\s\S]*?loadDashboard\(\{ focusRetrySourceId: retry\.dataset\.sourceRetry \}\);/);
   assert.match(appJs, /document\.addEventListener\("keydown", \(event\) => \{[\s\S]*?const retry = event\.target\.closest\("\[data-source-retry\]"\);[\s\S]*?event\.key === "Enter" \|\| event\.key === " "[\s\S]*?event\.preventDefault\(\);[\s\S]*?loadDashboard\(\{ focusRetrySourceId: retry\.dataset\.sourceRetry \}\);/);
   assert.doesNotMatch(appJs, /href="\.\/iss\.html"[\s\S]*?ISS[\s\S]*?<\/a>\n\s*<\/div>\n\s*<\/div>\n\s*`;\n}\n\nfunction setSourceUnavailable/);
@@ -569,7 +569,7 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=1.1.0/, `${file} should load the current shared app script`);
+    assert.match(html, /app\.js\?v=1.1.1/, `${file} should load the current shared app script`);
   }
 
   assert.match(readProjectFile("launches.html"), /launches\.js\?v=1.1.0/);

@@ -79,24 +79,53 @@ function normalizeApodPayload(payload) {
   };
 }
 
-function normalizeNeoObject(item) {
-  if (!item || typeof item !== "object") {
-    return null;
+function invalidNeoResponse() {
+  const error = new Error("Invalid NASA NeoWs response");
+  error.status = 502;
+  error.payload = {
+    error: {
+      code: "NASA_NEO_INVALID_RESPONSE",
+      message: "NASA asteroid data is incomplete or invalid. Try again shortly."
+    }
+  };
+  return error;
+}
+
+function neoMeasurement(value) {
+  if ((typeof value !== "number" && typeof value !== "string") ||
+      (typeof value === "string" && !value.trim())) return null;
+  const number = Number(value);
+  return Number.isFinite(number) && number >= 0 ? number : null;
+}
+
+function normalizeNeoObject(item, date) {
+  if (!item || typeof item !== "object" || Array.isArray(item) ||
+      !getText(item.id || item.neo_reference_id) || !getText(item.name) ||
+      typeof item.is_potentially_hazardous_asteroid !== "boolean" ||
+      typeof item.is_sentry_object !== "boolean") {
+    throw invalidNeoResponse();
   }
 
-  const approach = Array.isArray(item.close_approach_data) ? item.close_approach_data[0] || {} : {};
-  const minDiameterKilometers = getFiniteNumber(item?.estimated_diameter?.kilometers?.estimated_diameter_min);
-  const maxDiameterKilometers = getFiniteNumber(item?.estimated_diameter?.kilometers?.estimated_diameter_max);
+  const approaches = Array.isArray(item.close_approach_data)
+    ? item.close_approach_data.filter(value => value?.close_approach_date === date && value?.orbiting_body === "Earth")
+    : [];
+  // Do not substitute another date/body or silently choose between ambiguous records.
+  if (approaches.length !== 1) throw invalidNeoResponse();
+  const approach = approaches[0];
+  const closestKilometers = neoMeasurement(approach?.miss_distance?.kilometers);
+  if (closestKilometers === null) throw invalidNeoResponse();
+  const minDiameterKilometers = neoMeasurement(item?.estimated_diameter?.kilometers?.estimated_diameter_min);
+  const maxDiameterKilometers = neoMeasurement(item?.estimated_diameter?.kilometers?.estimated_diameter_max);
 
   return {
     id: getText(item.id || item.neo_reference_id),
-    name: getText(item.name, "Unnamed object"),
-    hazardous: Boolean(item.is_potentially_hazardous_asteroid),
-    sentryObject: Boolean(item.is_sentry_object),
+    name: getText(item.name),
+    hazardous: item.is_potentially_hazardous_asteroid,
+    sentryObject: item.is_sentry_object,
     closeApproach: getText(approach.close_approach_date_full || approach.close_approach_date),
-    closestKilometers: getFiniteNumber(approach?.miss_distance?.kilometers),
-    lunarDistance: getFiniteNumber(approach?.miss_distance?.lunar),
-    velocityKph: getFiniteNumber(approach?.relative_velocity?.kilometers_per_hour),
+    closestKilometers,
+    lunarDistance: neoMeasurement(approach?.miss_distance?.lunar),
+    velocityKph: neoMeasurement(approach?.relative_velocity?.kilometers_per_hour),
     minDiameterMeters: minDiameterKilometers === null ? null : minDiameterKilometers * 1000,
     maxDiameterMeters: maxDiameterKilometers === null ? null : maxDiameterKilometers * 1000,
     sourceUrl: safeHttpUrl(item.nasa_jpl_url)
@@ -104,12 +133,17 @@ function normalizeNeoObject(item) {
 }
 
 function normalizeNeoPayload(payload, date) {
-  const rawAsteroids = Array.isArray(payload?.near_earth_objects?.[date])
-    ? payload.near_earth_objects[date]
-    : [];
-  const asteroids = rawAsteroids
-    .map(normalizeNeoObject)
-    .filter(Boolean);
+  const buckets = payload?.near_earth_objects;
+  // This endpoint requests exactly one day. Zero is only trustworthy when the
+  // provider explicitly covers that day and its declared count agrees.
+  if (!isIsoDate(date) || !buckets || typeof buckets !== "object" || Array.isArray(buckets) ||
+      Object.keys(buckets).length !== 1 || !Object.hasOwn(buckets, date) ||
+      !Array.isArray(buckets[date]) || !Number.isSafeInteger(payload.element_count) ||
+      payload.element_count !== buckets[date].length) {
+    throw invalidNeoResponse();
+  }
+  const asteroids = buckets[date].map(item => normalizeNeoObject(item, date));
+  if (new Set(asteroids.map(item => item.id)).size !== asteroids.length) throw invalidNeoResponse();
 
   return {
     date,

@@ -491,3 +491,53 @@ test("loadNeo uses the featured object's approach time when distance is unavaila
   assert.equal(status.id, "neo");
   assert.equal(status.state, "ok");
 });
+
+
+test("asteroid summaries scope Sentry flags to the daily feed and do not assign impact risk", () => {
+  const { getNeoBriefLines, getNeoRiskLevel } = loadDashboardHelpers();
+  const empty = getNeoBriefLines({ asteroids: [], hazardous: 0, sentryObjects: 0 });
+  assert.match(empty.join(" "), /not a complete inventory/);
+  assert.equal(getNeoRiskLevel({ objectCount: 0 }).headline, "No approaches listed today");
+  for (const sentryObjects of [0, 1, 2]) {
+    const lines = getNeoBriefLines({ asteroids: [{}, {}], hazardous: 0, sentryObjects });
+    assert.match(lines.at(-1), /today's listed objects/);
+    assert.doesNotMatch(lines.at(-1), /currently on NASA's Sentry monitoring list/);
+  }
+  assert.equal(getNeoRiskLevel({ hazardous: 0, sentryObjects: 0, objectCount: 1 }).label, "No flags listed");
+  assert.equal(getNeoRiskLevel({ hazardous: 1, sentryObjects: 0, objectCount: 1 }).label, "Flagged");
+});
+
+test("source retry focus survives success and failure without stealing moved focus", () => {
+  let focused = "";
+  const retry = { focus() { focused = "retry"; } };
+  const refresh = { focus() { focused = "refresh"; } };
+  for (const failed of [false, true]) {
+    const context = loadDashboardHelpers({ elements: {
+      '#refreshButton': refresh, '[data-source-retry="neo"]': failed ? retry : null
+    } });
+    context.document.body = {};
+    context.document.activeElement = context.document.body;
+    context.restoreSourceRetryFocus("neo");
+    assert.equal(focused, failed ? "retry" : "refresh");
+    focused = "";
+    context.document.activeElement = {};
+    context.restoreSourceRetryFocus("neo");
+    assert.equal(focused, "");
+    context.document.activeElement = context.document.body;
+    context.restoreSourceRetryFocus("");
+    assert.equal(focused, "");
+  }
+});
+
+
+test("date-only asteroid approaches do not invent a midnight time", async () => {
+  const neoBody = { innerHTML: "" };
+  const { loadNeo, getNeoApproachDate } = loadDashboardHelpers({
+    elements: { "#neoBody": neoBody },
+    fetchPayload: { asteroids: [{ name: "Date-only object", closeApproach: "2026-09-23", closestKilometers: 1000000 }] }
+  });
+  assert.equal(Number.isFinite(getNeoApproachDate("2026-09-23").getTime()), false);
+  await loadNeo();
+  assert.match(neoBody.innerHTML, /2026-09-23 · Time unavailable/);
+  assert.doesNotMatch(neoBody.innerHTML, /T00:00:00|12:00 AM/);
+});

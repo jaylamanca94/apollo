@@ -204,6 +204,8 @@ function formatDateTime(value) {
 
 function getNeoApproachDate(value) {
   const text = getText(value);
+  // A calendar day does not establish a midnight observation/approach time.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return new Date(NaN);
   const nasaDate = text.match(/^(\d{4})-([A-Za-z]{3})-(\d{2})\s+(\d{2}):(\d{2})$/);
 
   if (nasaDate) {
@@ -219,6 +221,8 @@ function getNeoApproachDate(value) {
 }
 
 function formatNeoApproachTime(value) {
+  const text = getText(value);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return `${text} · Time unavailable`;
   const date = getNeoApproachDate(value);
 
   if (!Number.isFinite(date.getTime())) {
@@ -1683,7 +1687,10 @@ function getNeoFeaturedNarrative(item) {
   return `${escapeHtml(item.name)} is a ${escapeHtml(sizeLabel)}, ${escapeHtml(diameter)}, passing Earth at ${escapeHtml(distance)}. Apollo classifies this as a ${escapeHtml(passLabel)}. ${escapeHtml(getNeoIndicatorSentence(item))}`;
 }
 
-function getNeoRiskLevel({ hazardous, sentryObjects, closestObject }) {
+function getNeoRiskLevel({ hazardous, sentryObjects, closestObject, objectCount }) {
+  if (objectCount === 0) {
+    return { label: "No objects listed", tone: "clear", headline: "No approaches listed today" };
+  }
   const closestLunarDistance = closestObject?.lunarDistance;
 
   if (sentryObjects > 0) {
@@ -1696,7 +1703,7 @@ function getNeoRiskLevel({ hazardous, sentryObjects, closestObject }) {
 
   if (hazardous > 0) {
     return {
-      label: "Elevated",
+      label: "Flagged",
       tone: "attention",
       headline: "Potential-hazard flag present"
     };
@@ -1711,9 +1718,9 @@ function getNeoRiskLevel({ hazardous, sentryObjects, closestObject }) {
   }
 
   return {
-    label: "Minimal",
+    label: "No flags listed",
     tone: "clear",
-    headline: "No hazard indicators today"
+    headline: "No tracking flags in today's list"
   };
 }
 
@@ -1729,6 +1736,10 @@ function capitalizeSentence(value) {
 
 function getNeoBriefLines({ asteroids, hazardous, sentryObjects, closestObject }) {
   const objectCount = asteroids.length;
+  if (objectCount === 0) {
+    return ["NASA lists no near-Earth approaches for today's source check.",
+      "This daily feed is not a complete inventory of near-Earth objects or NASA's Sentry monitoring list."];
+  }
   const objectCountText = capitalizeSentence(formatCountWord(objectCount));
   const objectNoun = objectCount === 1 ? "object is" : "objects are";
   const hazardLine = hazardous === 0
@@ -1741,8 +1752,8 @@ function getNeoBriefLines({ asteroids, hazardous, sentryObjects, closestObject }
     ? `The closest object will remain ${formatLunarDistance(closestObject.lunarDistance)} away.`
     : "Closest-approach distance is unavailable.";
   const sentryLine = sentryObjects === 0
-    ? "No objects are currently on NASA's Sentry monitoring list."
-    : `${capitalizeSentence(formatCountWord(sentryObjects))} ${sentryObjects === 1 ? "object is" : "objects are"} currently on NASA's Sentry monitoring list.`;
+    ? "None of today's listed objects are flagged for Sentry monitoring."
+    : `${capitalizeSentence(formatCountWord(sentryObjects))} of today's listed ${sentryObjects === 1 ? "objects is" : "objects are"} flagged for Sentry monitoring.`;
 
   return [hazardLine, objectLine, closestLine, sentryLine];
 }
@@ -3869,7 +3880,7 @@ async function loadNeo() {
     const hazardous = asteroids.filter((item) => item.hazardous).length;
     const sentryObjects = asteroids.filter((item) => item.sentryObject).length;
     const closestObject = sortedAsteroids.find((item) => Number.isFinite(item.closestKilometers));
-    const riskStatus = getNeoRiskLevel({ hazardous, sentryObjects, closestObject });
+    const riskStatus = getNeoRiskLevel({ hazardous, sentryObjects, closestObject, objectCount: asteroids.length });
     const briefLines = getNeoBriefLines({ asteroids, hazardous, sentryObjects, closestObject });
     const featuredObject = closestObject || sortedAsteroids[0] || null;
     const additionalObjects = sortedAsteroids.filter((item) => item !== featuredObject).slice(0, 4);
@@ -3917,7 +3928,7 @@ async function loadNeo() {
         <div class="space-weather-section-heading">
           <div>
             <p class="section-kicker acadia-kicker">Watch Status</p>
-            <h3 class="neo-section-title acadia-heading-small" id="neoWatchStatusTitle">Risk level: ${escapeHtml(riskStatus.label)}</h3>
+            <h3 class="neo-section-title acadia-heading-small" id="neoWatchStatusTitle">Tracking status: ${escapeHtml(riskStatus.label)}</h3>
           </div>
         </div>
         <ul class="neo-watch-list">
@@ -4191,7 +4202,11 @@ function restoreSourceRetryFocus(sourceId) {
   }
 
   const retry = document.querySelector(`[data-source-retry="${sourceId}"]`);
-  retry?.focus();
+  // A successful retry removes its control. Restore a persistent target only
+  // when focus fell back to the page; do not steal focus from another control.
+  const active = document.activeElement;
+  if (active && active !== document.body && active !== retry) return;
+  (retry || els.refreshButton)?.focus();
 }
 
 async function loadDashboard({ focusRetrySourceId = "" } = {}) {
