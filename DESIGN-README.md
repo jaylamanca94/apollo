@@ -4,6 +4,14 @@ Use this file as the visual and interaction source of truth for Apollo. Keep thi
 
 This file is intentionally separate because design standards and utilities will grow over time.
 
+## Design Ownership and Evolution
+
+The Apollo agent is authorised to evolve the frontend UX, interactions, and visual composition within Acadia. Current product layouts and screen decisions are maintained design choices, not permanent restrictions. Identify opportunities in complete journeys, navigation, information hierarchy, content density, typography, spacing, interaction, motion, and visual coherence. Add, remove, combine, or redesign capabilities and screens when they strengthen Apollo's purpose and offer a credible user benefit; do not wait for a technical defect or individual feature request.
+
+Preserve effective decisions across runs. Substantial changes should address observed friction, a credible opportunity, or changed requirements. Use informed design judgement and clearly labelled hypotheses when direct evidence is limited. Record the reason, intended benefit, and evaluation criteria; compare before/after states and supported viewports, test the interactions, then update this document to the chosen direction. Do not redesign the product each run, alternate between preferences, or reverse a recent decision before evaluating it without new evidence.
+
+Acadia's shared foundations and component contracts remain authoritative. Recompose its primitives and evolve Apollo's journeys; route reusable gaps through Acadia's ownership process rather than duplicating shared styles or patterns locally. Keep accessibility, source trust, and existing release permissions intact.
+
 ## Product Feel
 
 The interface should feel quiet, practical, and easy to scan. Apollo should follow Acadia's Apple-like product system: calm gray app background, translucent elevated surfaces, compact controls, 8px repeated surfaces, and responsive spacing. Apollo's primary differentiator is its warm red accent for brand, primary action, and live space-data context.
