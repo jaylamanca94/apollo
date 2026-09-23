@@ -4,8 +4,8 @@
   "description": "A public space-data dashboard.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#8A1021",
-  "theme_color": "#1F2427",
+  "background_color": "#F5F5F5",
+  "theme_color": "#181A1E",
   "icons": [
     {
       "src": "assets/favicon.svg",

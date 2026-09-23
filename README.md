@@ -1,6 +1,6 @@
 # Apollo
 
-Apollo is a small Bootstrap MVP for understanding what is happening in space right now. It leads with a plain-English Space Brief, recent activity, watch items, and focused pages for ISS operations, launches, space weather, asteroids, and NASA imagery.
+Apollo is a focused space-activity web app for understanding what is happening in space right now. It leads with a plain-English Space Brief, recent activity, watch items, and focused pages for ISS operations, launches, space weather, asteroids, and NASA imagery.
 
 The app is designed to be easy to demo: each card favors source-backed context, plain labels, source timing, APOD image/video media actions, and quick links to the original sources.
 
@@ -9,7 +9,7 @@ The app is designed to be easy to demo: each card favors source-backed context, 
 Use a static frontend with serverless API routes.
 
 - Frontend: vanilla HTML, CSS, and JavaScript
-- UI: Bootstrap CDN, Leaflet, OpenStreetMap tiles, and an Acadia adapter layer
+- UI: pinned Acadia 0.4.10 CSS/fonts/assets, Font Awesome Free, Leaflet and OpenStreetMap tiles
 - Theme: defaults to the user's operating system setting with a Light/Dark mode toggle
 - API proxies: Vercel serverless functions in `/api`
 - Hosting: Vercel
@@ -35,7 +35,7 @@ The app should stay vanilla/static for now. A framework such as Next.js is not n
 - `DESIGN-README.md` - Apollo design standards, UI utilities, and interaction guidance
 - `index.html` - dashboard markup
 - `launches.html` - dedicated launches detail page markup
-- `styles.css` - minimal Bootstrap-aligned styling
+- `styles.css` - Apollo identity and domain-layout adapter over the unchanged Acadia snapshot
 - `assets/apollo-app-icon-light.svg` and `assets/apollo-app-icon-dark.svg` - Apollo satellite app icons for light and dark browser schemes
 - `site.webmanifest` - browser app manifest pointing to the SVG app icons
 - `app.js` - frontend data loading and rendering
@@ -185,3 +185,11 @@ For a larger public launch, consider:
 - External monitoring and error logging wired to `/api/health`
 - Accessibility audit
 - CSP/security header review
+
+## Acadia consumption and UI verification
+
+Apollo uses Acadia's documented static consumption path. `vendor/acadia/source.json` pins the reviewed source commit and SHA-256 of every shared file. CSS, fonts, relative assets and bundled licence notices are copied unchanged. Production never reads a sibling checkout and does not load Bootstrap.
+
+For a deliberate upgrade, review the source changes and run `npm run sync:acadia -- /path/to/reviewed/Acadia` from a clean Acadia checkout. Review the vendor diff, update the stylesheet cache version, run `npm run check`, and repeat the affected product journeys. Upstream publication alone is not adoption evidence.
+
+`npm run preview:fixtures -- 4183` starts an explicitly labelled synthetic-data preview at localhost. Use `?fixture=loaded|empty|partial|failure|loading`; add `&text=200` to test enlarged text. These fixtures exercise existing UI states without NASA credentials. They do not verify live provider accuracy, production or assistive technology. See `docs/acadia-audit/README.md` for ownership, coverage and release evidence.

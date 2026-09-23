@@ -161,10 +161,7 @@ function getElementByClass(html, tagName, className) {
 }
 
 function getHeaderPrimaryNav(html) {
-  const start = html.search(/<div class="apollo-primary-links acadia-nav" aria-label="Apollo pages">/);
-  const end = html.search(/<div class="apollo-navbar-actions/);
-
-  return start >= 0 && end > start ? html.slice(start, end) : "";
+  return getElementByClass(html, "nav", "acadia-navbar");
 }
 
 function hasClass(tag, className) {
@@ -180,7 +177,7 @@ for (const page of pages) {
   test(`${page.name} has named landmarks and skip navigation`, () => {
     const html = readProjectFile(page.file);
     const skipLink = getTagByAttribute(html, "a", "class", "apollo-skip-link");
-    const nav = getTagByAttribute(html, "nav", "class", "apollo-topbar");
+    const nav = getTagByAttribute(html, "nav", "class", "acadia-navbar");
     const main = getTagByAttribute(html, "main", "id", page.skipTarget);
     const heading = getTagByAttribute(html, "h1", "id", page.headingId);
 
@@ -209,19 +206,19 @@ for (const page of pages) {
   test(`${page.name} composes Acadia primitives before Apollo adapters`, () => {
     const html = readProjectFile(page.file);
     const app = getTagByAttribute(html, "div", "class", "apollo-app");
-    const nav = getTagByAttribute(html, "nav", "class", "apollo-topbar");
-    const navGroup = getTagByAttribute(html, "div", "class", "apollo-primary-links");
+    const nav = getTagByAttribute(html, "nav", "class", "acadia-navbar");
+    const navGroup = getTagByAttribute(html, "div", "class", "acadia-navbar-links");
     const main = getTagByAttribute(html, "main", "id", page.skipTarget);
     const pageHeader = getTagByAttribute(html, "header", "class", "apollo-page-header");
     const refreshButton = getTagByAttribute(html, "button", "id", page.refreshButtonId);
 
     assert.ok(hasClass(app, "acadia-app"));
-    assert.ok(hasClass(nav, "acadia-chrome"));
-    assert.ok(hasClass(navGroup, "acadia-nav"));
+    assert.ok(hasClass(nav, "acadia-navbar"));
+    assert.ok(hasClass(navGroup, "acadia-navbar-links"));
     assert.ok(hasClass(main, "acadia-shell"));
     assert.ok(hasClass(pageHeader, "acadia-page-header"));
     assert.ok(hasClass(pageHeader, "acadia-surface"));
-    assert.ok(hasClass(pageHeader, "acadia-panel"));
+    assert.ok(hasClass(pageHeader, page.file === "index.html" ? "acadia-panel" : "acadia-panel-dense"));
     assert.ok(hasClass(refreshButton, "acadia-button"));
     assert.ok(hasClass(refreshButton, "acadia-button-primary"));
 
@@ -231,7 +228,7 @@ for (const page of pages) {
     ];
 
     for (const navItem of topLevelNavItems) {
-      assert.ok(hasClass(navItem, "acadia-nav-item"), "Top-level nav items should use Acadia nav anatomy");
+      assert.ok(["acadia-navbar-link", "acadia-tablet-navigation-link", "acadia-mobile-tab"].some((name) => hasClass(navItem, name)), "Top-level nav items should use Acadia nav anatomy");
     }
   });
 
@@ -267,17 +264,15 @@ for (const page of pages) {
 }
 
 test("skip link has a visible focus treatment", () => {
-  const css = readProjectFile("styles.css");
-
-  assert.match(css, /\.apollo-skip-link\s*\{/);
-  assert.match(css, /\.apollo-skip-link:focus/);
+  const css = readProjectFile("vendor/acadia/acadia.css");
+  assert.match(css, /\.acadia-skip-link:focus-visible/);
   assert.match(css, /transform:\s*translateY\(0\);/);
 });
 
 test("ISS map is exposed as a named interactive region", () => {
   const js = readProjectFile("app.js");
 
-  assert.match(js, /class="iss-status-summary"/);
+  assert.match(js, /class="iss-status-summary acadia-muted-panel"/);
   assert.match(js, /id="issOrbitalBriefText"/);
   assert.match(js, /Normal Operations/);
   assert.match(js, /Current Position/);
@@ -310,15 +305,10 @@ test("repeated disclosure controls receive item-specific accessible names", () =
 });
 
 test("nonessential interface motion respects reduced motion preferences", () => {
-  const css = readProjectFile("styles.css");
-
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(css, /transition-duration:\s*0\.01ms !important;/);
-  assert.match(css, /\.apollo-app \.btn:not\(\.apollo-refresh-button\):hover,\s*\n\s*\.apollo-app \.btn:not\(\.apollo-refresh-button\):focus-visible/);
-  assert.match(css, /\.launch-card:hover,\s*\n\s*\.launch-show-all:hover/);
-  assert.match(css, /transform:\s*none !important;/);
-  assert.match(css, /\.apollo-skip-link\s*\{[\s\S]*?transform: translateY\(-160%\) !important;[\s\S]*?transition: none !important;[\s\S]*?\}/);
-  assert.match(css, /\.apollo-skip-link:focus,[\s\S]*?\.apollo-skip-link:focus-visible\s*\{[\s\S]*?transform: translateY\(0\) !important;[\s\S]*?\}/);
+  const shared = readProjectFile("vendor/acadia/acadia.css");
+  const local = readProjectFile("styles.css");
+  assert.match(shared, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.doesNotMatch(local, /@keyframes|animation:|transition:/, "Product must not fork shared motion");
 });
 
 test("web manifest points to the current SVG favicon", () => {
@@ -407,7 +397,7 @@ test("detail pages render intentional unavailable source states", () => {
   assert.match(appJs, /Apollo cannot reach the current NOAA SWPC K-index and notices/);
   assert.match(appJs, /Apollo cannot reach the current ISS position/);
   assert.match(appJs, /Apollo cannot reach the current crew roster/);
-  assert.match(appJs, /<p class="section-kicker mb-1">Source checked<\/p>/);
+  assert.match(appJs, /<p class="section-kicker acadia-kicker">Source checked<\/p>/);
   assert.match(appJs, /<strong>Recovery:<\/strong>/);
   assert.match(appJs, /Open \$\{escapeHtml\(label\)\} source/);
   assert.match(appJs, /aria-label="Open \$\{escapeHtml\(label\)\} source"/);
@@ -453,13 +443,13 @@ test("sky anomaly form keeps native submit semantics", () => {
   const html = readProjectFile("anomalies.html");
 
   assert.match(html, /<form class="sky-anomaly-form" id="skyAnomalyForm">/);
-  assert.match(html, /<button class="btn sky-anomaly-submit acadia-button" type="submit">/);
-  assert.match(html, /<label><input type="radio" name="movement" value="straight"><span>Straight line<\/span><\/label>/);
-  assert.match(html, /<label><input type="radio" name="brightness" value="bright"><span>Bright<\/span><\/label>/);
-  assert.match(html, /<label><input type="radio" name="duration" value="seconds"><span>Seconds<\/span><\/label>/);
+  assert.match(html, /<button class="sky-anomaly-submit acadia-button acadia-button-brand" type="submit">/);
+  assert.match(html, /<label class="acadia-choice(?: is-compact)?"><input type="radio" name="movement" value="straight"><span>Straight line<\/span><\/label>/);
+  assert.match(html, /<label class="acadia-choice(?: is-compact)?"><input type="radio" name="brightness" value="bright"><span>Bright<\/span><\/label>/);
+  assert.match(html, /<label class="acadia-choice(?: is-compact)?"><input type="radio" name="duration" value="seconds"><span>Seconds<\/span><\/label>/);
   assert.match(js, /function focusSkyAnomalyResult\(\)[\s\S]*?heading\.focus\(\{ preventScroll: true \}\);[\s\S]*?heading\.scrollIntoView\(\{ block: "start", behavior: "auto" \}\);/);
   assert.match(js, /function renderSkyExplanation\(\{ focus = false \} = \{\}\)/);
-  assert.match(js, /<h3 class="sky-anomaly-result-title mb-0" tabindex="-1">Sighting context<\/h3>/);
+  assert.match(js, /<h3 class="sky-anomaly-result-title acadia-heading-small" tabindex="-1">Sighting context<\/h3>/);
   assert.match(js, /els\.skyAnomalyForm\?\.addEventListener\("submit", \(event\) => \{\s*event\.preventDefault\(\);\s*renderSkyExplanation\(\{ focus: true \}\);/);
   assert.match(js, /els\.skyAnomalyForm\?\.addEventListener\("keydown", \(event\) => \{/);
   assert.match(js, /const radio = event\.target\.closest\("input\[type='radio'\]"\);/);
@@ -479,7 +469,7 @@ test("sky anomaly overview reflects connected source readiness", () => {
   assert.match(js, /Connected source unavailable/);
   assert.match(js, /Unavailable connected sources and planned imports limit this pre-submit check/);
   assert.match(js, /Connected context is unavailable; Apollo can only compare visible traits against planned source gaps/);
-  assert.doesNotMatch(js, /<h3 class="sky-anomaly-result-title mb-0">Sources ready<\/h3>/);
+  assert.doesNotMatch(js, /<h3 class="sky-anomaly-result-title acadia-heading-small">Sources ready<\/h3>/);
 });
 
 test("sky anomaly evidence ranks connected source context before planned gaps", () => {
@@ -529,37 +519,13 @@ test("shared refresh controls support explicit keyboard activation", () => {
 test("header primary nav exposes five named destinations without a generic overflow", () => {
   for (const file of allHtmlPages) {
     const html = readProjectFile(file);
-    const headerNav = getHeaderPrimaryNav(html);
-    const topLevelNavItems = [
-      ...getTags(headerNav, "a").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))),
-      ...getTags(headerNav, "button").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class")))
-    ];
-    const watchToggle = topLevelNavItems.find((tag) => /\bapollo-nav-more-toggle\b/.test(getAttribute(tag, "class")));
-    const watchToggleHtml = getElementByClass(headerNav, "button", "apollo-nav-more-toggle");
-
-    assert.equal(topLevelNavItems.length, 5, `${file} should expose exactly five top-level primary nav items`);
-    assert.ok(watchToggle, `${file} should expose Watch as the grouped navigation item`);
-    assert.equal(getAttribute(watchToggle, "data-bs-toggle"), "dropdown");
-    assert.match(watchToggleHtml, /<span>Watch<\/span>/);
-    assert.match(watchToggleHtml, /\bfa-binoculars\b/);
-    assert.doesNotMatch(headerNav, /<span>More<\/span>/);
-    assert.doesNotMatch(headerNav, /\bfa-ellipsis\b/);
-
-    for (const link of v1NavLinks) {
-      const expectedHref = file === "index.html" && link.label === "Dashboard" ? "#dashboard" : link.href;
-      const navItem = topLevelNavItems.find((tag) => (
-        getAttribute(tag, "href") === expectedHref && /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))
-      ));
-
-      assert.ok(navItem, `${file} should include ${link.label} as a v1 nav destination`);
-    }
-
-    for (const link of watchNavLinks) {
-      const menuItem = getTags(html, "a").find((tag) => (
-        getAttribute(tag, "href") === link.href && /\bapollo-nav-menu-item\b/.test(getAttribute(tag, "class"))
-      ));
-
-      assert.ok(menuItem, `${file} should include ${link.label} in the Watch group`);
+    for (const presentation of ["acadia-navbar", "acadia-tablet-navigation", "acadia-mobile-tabbar"]) {
+      const nav = getElementByClass(html, "nav", presentation);
+      assert.equal(getTags(nav, "a").filter((tag) => hasClass(tag, "apollo-nav-link")).length, 4);
+      assert.equal(getTags(nav, "summary").length, 1);
+      assert.match(nav, /aria-label="Watch"/);
+      for (const link of watchNavLinks) assert.ok(nav.includes(`href="${link.href}"`));
+      assert.doesNotMatch(nav, /data-bs-toggle|>More</);
     }
   }
 });
@@ -567,25 +533,17 @@ test("header primary nav exposes five named destinations without a generic overf
 test("watch pages keep the grouped destination active without becoming More", () => {
   for (const link of watchNavLinks) {
     const html = readProjectFile(link.page);
-    const watchToggle = getElementByClass(html, "button", "apollo-nav-more-toggle");
-    const watchToggleTag = watchToggle.match(/<button\b[^>]*>/i)?.[0] || "";
-
-    assert.ok(watchToggle, `${link.page} should expose the Watch navigation group`);
-    assert.equal(getAttribute(watchToggleTag, "aria-current"), "page");
-    assert.match(watchToggle, /<span>Watch<\/span>/);
-    assert.match(watchToggle, /\bfa-binoculars\b/);
-    assert.doesNotMatch(watchToggle, /<span>More<\/span>/);
-    assert.doesNotMatch(watchToggle, /\bfa-ellipsis\b/);
+    assert.equal((html.match(/data-current-group="true"/g) || []).length, 3);
+    for (const navClass of ["acadia-navbar", "acadia-tablet-navigation", "acadia-mobile-tabbar"]) {
+      const nav = getElementByClass(html, "nav", navClass);
+      const current = getTags(nav, "a").filter((tag) => getAttribute(tag, "aria-current") === "page");
+      assert.equal(current.length, 1);
+      assert.equal(getAttribute(current[0], "href"), link.href);
+    }
   }
 });
 
 test("theme toggles use Acadia icon action anatomy on every page", () => {
-  const css = readProjectFile("styles.css");
-
-  assert.match(css, /\.apollo-theme-toggle,\s*\n\.acadia-icon-action\s*\{[\s\S]*?height:\s*2\.5rem;/);
-  assert.match(css, /\.apollo-theme-toggle\.is-dark,\s*\n\.acadia-theme-toggle\.is-dark\s*\{[\s\S]*?color:\s*var\(--acadia-color-primary\);/);
-  assert.match(css, /\.apollo-theme-toggle \.acadia-icon,\s*\n\.acadia-theme-toggle \.acadia-icon\s*\{[\s\S]*?font-size:\s*1\.25rem;/);
-
   for (const file of allHtmlPages) {
     const html = readProjectFile(file);
     const toggle = getElementByClass(html, "button", "apollo-theme-toggle");
@@ -604,86 +562,51 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
   const appJs = readProjectFile("app.js");
   const launchesJs = readProjectFile("launches.js");
 
-  assert.match(appJs, /const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"><\/span><span>Refreshing data<\/span>`;/);
-  assert.match(launchesJs, /const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"><\/span><span>Refreshing data<\/span>`;/);
+  assert.match(appJs, /const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner acadia-activity-indicator is-small" aria-hidden="true"><\/span><span>Refreshing data<\/span>`;/);
+  assert.match(launchesJs, /const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner acadia-activity-indicator is-small" aria-hidden="true"><\/span><span>Refreshing data<\/span>`;/);
   assert.doesNotMatch(appJs, /Preparing launch/);
   assert.doesNotMatch(launchesJs, /<span>Preparing launch<\/span>/);
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=source-timeout-4/, `${file} should load the current shared app script`);
+    assert.match(html, /app\.js\?v=1.1.0/, `${file} should load the current shared app script`);
   }
 
-  assert.match(readProjectFile("launches.html"), /launches\.js\?v=source-retry-1/);
+  assert.match(readProjectFile("launches.html"), /launches\.js\?v=1.1.0/);
 });
 
 test("internal pages use compact headers instead of dashboard-scale heroes", () => {
-  const css = readProjectFile("styles.css");
-
-  assert.match(css, /body:not\(\[data-apollo-page="dashboard"\]\) \.apollo-page-header\s*\{[\s\S]*?padding:\s*clamp\(1rem,\s*2vw,\s*1\.25rem\);/);
-  assert.match(css, /body:not\(\[data-apollo-page="dashboard"\]\) \.apollo-page-title\s*\{[\s\S]*?font-size:\s*clamp\(1\.8rem,\s*2\.4vw,\s*2\.25rem\);/);
-  assert.doesNotMatch(css, /\.launch-page-shell \.apollo-page-title\s*\{[\s\S]*?font-size:\s*3\.85rem;/);
+  for (const file of allHtmlPages.filter((file) => file !== "index.html")) {
+    const html = readProjectFile(file);
+    assert.match(html, /apollo-page-title acadia-title/);
+    assert.match(html, /acadia-page-header acadia-surface acadia-panel-dense/);
+  }
 });
 
 test("primary nav row does not clip compact destinations", () => {
-  const css = readProjectFile("styles.css");
-  const primaryLinksRule = css.match(/\.apollo-primary-links,\s*\n\.acadia-nav\s*\{[\s\S]*?\n\}/)?.[0] || "";
-  const navMoreRule = css.match(/\.apollo-nav-more\s*\{[\s\S]*?\n\}/)?.[0] || "";
-
-  assert.match(primaryLinksRule, /overflow:\s*visible;/);
-  assert.doesNotMatch(primaryLinksRule, /overflow-x:\s*auto;/);
-  assert.match(navMoreRule, /position:\s*relative;/);
+  const css = readProjectFile("vendor/acadia/acadia.css");
+  assert.match(css, /\.acadia-navbar\s*\{[\s\S]*?overflow:\s*visible;/);
+  assert.match(css, /\.acadia-action-menu/);
 });
 
 test("mobile dock stays viewport-bottom anchored", () => {
-  const css = readProjectFile("styles.css");
-  const html = readProjectFile("index.html");
-  const mobileBlock = css.match(/@media \(max-width:\s*767\.98px\)\s*\{[\s\S]*?\n\}/)?.[0] || "";
-  const topbarRule = mobileBlock.match(/\.apollo-topbar\s*\{[\s\S]*?\n  \}/)?.[0] || "";
-  const mobileDockRule = mobileBlock.match(/\.apollo-primary-links\.apollo-mobile-dock\s*\{[\s\S]*?\n  \}/)?.[0] || "";
-
-  assert.match(html, /<\/nav>\s*<div class="apollo-primary-links acadia-nav apollo-mobile-dock" aria-label="Apollo pages">/);
-  assert.match(css, /\.apollo-primary-links\.apollo-mobile-dock\s*\{[\s\S]*?display:\s*none;/);
-  assert.match(mobileBlock, /\.apollo-topbar \.apollo-primary-links:not\(\.apollo-mobile-dock\)\s*\{[\s\S]*?display:\s*none;/);
-  assert.match(topbarRule, /-webkit-backdrop-filter:\s*none;/);
-  assert.match(topbarRule, /backdrop-filter:\s*none;/);
-  assert.match(mobileDockRule, /position:\s*fixed;/);
-  assert.match(mobileDockRule, /background:\s*var\(--acadia-mobile-nav-background\);/);
-  assert.match(mobileDockRule, /border:\s*1px solid var\(--acadia-mobile-nav-border\);/);
-  assert.match(mobileDockRule, /box-shadow:\s*var\(--acadia-mobile-nav-shadow\);/);
-  assert.match(mobileDockRule, /color:\s*var\(--acadia-mobile-nav-color\);/);
-  assert.match(mobileDockRule, /bottom:\s*calc\(var\(--acadia-mobile-tabbar-bottom,\s*0\.875rem\) \+ env\(safe-area-inset-bottom\)\);/);
-  assert.match(mobileDockRule, /top:\s*auto;/);
-  assert.match(mobileBlock, /--apollo-mobile-dock-clearance:\s*10\.75rem;/);
-  assert.match(mobileBlock, /\.apollo-shell\s*\{[\s\S]*?padding:\s*24px var\(--acadia-page-margin\) calc\(var\(--apollo-mobile-dock-clearance\) \+ env\(safe-area-inset-bottom\)\);/);
-  assert.match(mobileBlock, /scroll-padding-bottom:\s*calc\(var\(--apollo-mobile-dock-clearance\) \+ env\(safe-area-inset-bottom\)\);/);
-  assert.match(mobileBlock, /\.apollo-app :is\(a, button, input, summary, \[tabindex\]\):not\(\[tabindex="-1"\]\)\s*\{[\s\S]*?scroll-margin-bottom:\s*calc\(var\(--apollo-mobile-dock-clearance\) \+ env\(safe-area-inset-bottom\)\);/);
-  assert.match(css, /html\[data-bs-theme="light"\]\s*\{[\s\S]*?--acadia-mobile-nav-background:\s*rgba\(250, 250, 252, 0\.84\);/);
-  assert.match(css, /--acadia-mobile-nav-active-background:\s*rgba\(15, 23, 42, 0\.1\);/);
-  assert.match(css, /--acadia-mobile-nav-focus-halo:\s*rgba\(255, 255, 255, 0\.22\);/);
+  const css = readProjectFile("vendor/acadia/acadia.css");
+  assert.match(css, /\.acadia-mobile-tabbar\.is-fixed\s*\{[\s\S]*?position:\s*fixed;/);
+  assert.match(css, /env\(safe-area-inset-bottom\)/);
+  for (const file of allHtmlPages) {
+    const html = readProjectFile(file);
+    assert.match(html, /apollo-mobile-dock acadia-mobile-tabbar is-fixed/);
+    assert.match(html, /acadia-mobile-dock-safe-area/);
+  }
 });
 
 test("mobile Watch menu opens as navigation above the dock", () => {
   const css = readProjectFile("styles.css");
-  const js = readProjectFile("app.js");
-  const mobileBlock = css.match(/@media \(max-width:\s*767\.98px\)\s*\{[\s\S]*?\n\}/)?.[0] || "";
-  const mobileMenuRule = mobileBlock.match(/\.apollo-primary-links\.apollo-mobile-dock \.apollo-nav-menu\s*\{[\s\S]*?\n  \}/)?.[0] || "";
-
-  assert.match(mobileBlock, /\.apollo-primary-links\.apollo-mobile-dock \.apollo-nav-more\s*\{[\s\S]*?position:\s*relative;/);
-  assert.match(mobileMenuRule, /inset:\s*auto 0 calc\(100% \+ 0\.75rem\) auto !important;/);
-  assert.match(mobileMenuRule, /margin:\s*0 !important;/);
-  assert.match(mobileMenuRule, /transform:\s*none !important;/);
-  assert.match(js, /function closeMobileWatchMenus\(\)/);
-  assert.match(js, /window\.addEventListener\("scroll", closeMobileWatchMenus, \{ passive: true \}\);/);
-  assert.match(js, /item\.addEventListener\("click", closeMobileWatchMenus\);/);
-  assert.match(js, /initMobileWatchMenuDismissal\(\);/);
-  assert.match(js, /function initMobileWatchKeyboard\(\)/);
-  assert.match(js, /event\.key !== "Enter" && event\.key !== " "/);
-  assert.match(js, /event\.preventDefault\(\);/);
-  assert.match(js, /window\.bootstrap\.Dropdown\.getOrCreateInstance\(button\)\.toggle\(\);/);
-  assert.match(js, /menu\?\.querySelector\("\.apollo-nav-menu-item"\)\?\.focus\(\);/);
-  assert.match(js, /window\.location\.assign\(item\.href\);/);
-  assert.match(js, /initMobileWatchKeyboard\(\);/);
+  const js = readProjectFile("app-shell.js");
+  assert.match(css, /\.apollo-mobile-dock \.apollo-nav-menu\s*\{[^}]*bottom:/);
+  assert.match(js, /event.key === "Escape"/);
+  assert.match(js, /window.addEventListener\("scroll"/);
+  assert.doesNotMatch(js, /bootstrap/);
 });
 
 test("mobile nav exposes clear names while hiding icon glyphs", () => {
@@ -691,7 +614,7 @@ test("mobile nav exposes clear names while hiding icon glyphs", () => {
 
   for (const file of allHtmlPages) {
     const html = readProjectFile(file);
-    const dockStart = html.search(/<div class="apollo-primary-links acadia-nav apollo-mobile-dock"/);
+    const dockStart = html.search(/<nav class="apollo-mobile-dock acadia-mobile-tabbar is-fixed"/);
     const mainStart = html.search(/<main\b/);
     const mobileDock = dockStart >= 0 && mainStart > dockStart ? html.slice(dockStart, mainStart) : "";
 
@@ -712,10 +635,10 @@ test("launch timeline exposes urgency context and current asset versions", () =>
   const js = readProjectFile("launches.js");
   const css = readProjectFile("styles.css");
 
-  assert.match(html, /styles\.css\?v=visual-polish-6/);
-  assert.match(html, /launches\.js\?v=source-retry-1/);
-  assert.match(js, /class="launch-timeline-row\$\{index === 0 \? " launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
-  assert.match(js, /<span class="visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
+  assert.match(html, /styles\.css\?v=1.1.0/);
+  assert.match(html, /launches\.js\?v=1.1.0/);
+  assert.match(js, /class="acadia-muted-panel launch-timeline-row\$\{index === 0 \?\s*" launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
+  assert.match(js, /<span class="acadia-visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
   assert.doesNotMatch(js, /class="launch-timeline-rail" aria-hidden="true"/);
   assert.match(css, /@media \(max-width:\s*599\.98px\)\s*\{\s*\.next-launch-media\s*\{\s*height:\s*160px;/);
 });

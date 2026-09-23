@@ -1,0 +1,43 @@
+{
+  "date": "2026-09-23",
+  "environment": "Codex in-app Chromium browser; synthetic local API fixtures",
+  "checks": 154,
+  "failures": [],
+  "routes": [
+    "index",
+    "iss",
+    "launches",
+    "weather",
+    "asteroids",
+    "gallery",
+    "anomalies"
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "normalTextWidths": [
+    1728,
+    1512,
+    1280,
+    1032,
+    834,
+    744,
+    393,
+    320
+  ],
+  "doubledTextWidths": [
+    1280,
+    834,
+    320
+  ],
+  "assertions": [
+    "No page overflow",
+    "No visible nested content overflow, excluding map tile panes and native input editing",
+    "Exactly one navigation presentation"
+  ],
+  "limitations": [
+    "Native date/time controls retain internal segment scrolling at 320px/200% text",
+    "No physical device, VoiceOver, forced-colour or OS preference certification"
+  ]
+}

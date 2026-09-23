@@ -158,3 +158,10 @@ Deliver Apollo as a focused, trustworthy space-activity dashboard through bounde
 **External prerequisite:** supply a dedicated non-production NASA key through the local environment, without committing it, before repeating Gallery and Asteroids loaded-mobile QA.
 
 Then restore Vercel authentication for platform-parity checks and complete broader mobile/reflow, hardware, and assistive-technology QA. Extend accepted 390px coverage beyond the Dashboard partial, Launches overview/disclosure/recovery, Weather loaded/source/recovery, Asteroids recovery, Gallery recovery, Sky Anomalies, ISS-and-crew local loaded/recovery, and Watch destination states before treating the mobile shell as complete. Keep the founder resilience-policy decision separate.
+
+
+## 2026-09-23 — Direct Acadia adoption
+
+Replaced the product-local primitive copies and Bootstrap runtime with a pinned Acadia 0.4.10 static snapshot. Migrated all seven pages and generated content, retained source semantics, and corrected nested enlarged-text overflow, header overlap and Watch-menu clipping. The source manifest, class ownership map, reproducible fixtures, controlled results and delivery receipt live in `docs/acadia-audit/`. These fixtures supersede the NASA-key prerequisite for repeatable UI QA only; live provider and physical-device verification remain separate.
+
+Next useful product work: validate NeoWs malformed/partial responses and review the existing evidence-to-hazard interpretation separately from this design-system migration. Do not restart a broad visual audit unless upstream or product behaviour changes.

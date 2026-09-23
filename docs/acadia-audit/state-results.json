@@ -1,0 +1,145 @@
+{
+  "date": "2026-09-23",
+  "fixtureOnly": true,
+  "checks": [
+    {
+      "route": "/index.html",
+      "state": "empty",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/iss.html",
+      "state": "empty",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/launches.html",
+      "state": "empty",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/weather.html",
+      "state": "empty",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/asteroids.html",
+      "state": "empty",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/gallery.html",
+      "state": "empty",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/anomalies.html",
+      "state": "empty",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/index.html",
+      "state": "partial",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/iss.html",
+      "state": "partial",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/launches.html",
+      "state": "partial",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/weather.html",
+      "state": "partial",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/asteroids.html",
+      "state": "partial",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/gallery.html",
+      "state": "partial",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/anomalies.html",
+      "state": "partial",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/index.html",
+      "state": "failure",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/iss.html",
+      "state": "failure",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/launches.html",
+      "state": "failure",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/weather.html",
+      "state": "failure",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/asteroids.html",
+      "state": "failure",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/gallery.html",
+      "state": "failure",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    },
+    {
+      "route": "/anomalies.html",
+      "state": "failure",
+      "busyAfterLoad": 0,
+      "pageOverflow": false
+    }
+  ],
+  "interactions": [
+    "Dashboard delayed loading disables refresh then completes",
+    "Watch Enter hands focus to Weather; Escape closes and restores Watch, at phone/tablet/desktop",
+    "ISS source keyboard retry preserves focus and finishes unavailable",
+    "Launch source keyboard retry preserves focus and finishes unavailable",
+    "Native launch disclosure opens with Enter and reveals source details",
+    "Sighting native choice and submit focus the result heading with no nested overflow at 320px/200%",
+    "APOD video frame, media fallback and long-description keyboard disclosure verified at 320px; frame/description also checked at doubled text. Local SVG stands in for video playback."
+  ],
+  "limits": [
+    "Empty data is exercised only for meaningful collection branches; APOD and ISS retain loaded fixtures in empty mode",
+    "Retry verifies repeated failure; live provider recovery is not claimed"
+  ]
+}

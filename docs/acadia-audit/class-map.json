@@ -1,0 +1,509 @@
+{
+  "apollo-quick-stat": [
+    "acadia-muted-panel"
+  ],
+  "apod-why-matters": [
+    "acadia-muted-panel"
+  ],
+  "source-unavailable-state": [
+    "acadia-muted-panel"
+  ],
+  "source-unavailable-recovery": [
+    "acadia-body",
+    "acadia-text-measure-wide"
+  ],
+  "summary-metric": [
+    "acadia-muted-panel"
+  ],
+  "crew-brief": [
+    "acadia-muted-panel"
+  ],
+  "crew-location-summary": [
+    "acadia-muted-panel"
+  ],
+  "crew-person": [
+    "acadia-muted-panel"
+  ],
+  "iss-status-summary": [
+    "acadia-muted-panel"
+  ],
+  "iss-current-position": [
+    "acadia-muted-panel"
+  ],
+  "iss-orbit-context": [
+    "acadia-muted-panel"
+  ],
+  "launch-card": [
+    "acadia-muted-panel"
+  ],
+  "neo-featured-card": [
+    "acadia-muted-panel"
+  ],
+  "neo-object-card": [
+    "acadia-muted-panel"
+  ],
+  "neo-watch-status": [
+    "acadia-muted-panel"
+  ],
+  "space-weather-status": [
+    "acadia-muted-panel"
+  ],
+  "space-weather-brief": [
+    "acadia-muted-panel"
+  ],
+  "space-weather-scale-context": [
+    "acadia-muted-panel"
+  ],
+  "space-weather-trend-step": [
+    "acadia-muted-panel"
+  ],
+  "space-weather-forecast-day": [
+    "acadia-muted-panel"
+  ],
+  "sky-context-cell": [
+    "acadia-muted-panel"
+  ],
+  "sky-explanation-row": [
+    "acadia-muted-panel"
+  ],
+  "sky-confidence-row": [
+    "acadia-muted-panel"
+  ],
+  "sky-evidence-card": [
+    "acadia-muted-panel"
+  ],
+  "sky-assumption-list": [
+    "acadia-muted-panel"
+  ],
+  "source-status-summary": [
+    "acadia-muted-panel"
+  ],
+  "source-status-row": [
+    "acadia-muted-panel"
+  ],
+  "next-launch-spotlight": [
+    "acadia-muted-panel"
+  ],
+  "launch-page-card": [
+    "acadia-muted-panel"
+  ],
+  "launch-timeline-row": [
+    "acadia-muted-panel"
+  ],
+  "apollo-card": [
+    "acadia-card"
+  ],
+  "apod-info-card": [
+    "acadia-panel-dense"
+  ],
+  "apollo-space-brief-body": [
+    "acadia-panel-dense"
+  ],
+  "section-card-body": [
+    "acadia-panel-dense"
+  ],
+  "section-card-header": [
+    "acadia-panel-dense"
+  ],
+  "launch-detail-body": [
+    "acadia-panel-dense"
+  ],
+  "apollo-title-block": [
+    "acadia-copy-stack"
+  ],
+  "dashboard-card-heading": [
+    "acadia-copy-stack"
+  ],
+  "command-panel-copy": [
+    "acadia-copy-stack"
+  ],
+  "iss-status-headline": [
+    "acadia-copy-stack"
+  ],
+  "sky-anomaly-section-heading": [
+    "acadia-copy-stack"
+  ],
+  "section-title": [
+    "acadia-heading-small"
+  ],
+  "apollo-space-brief-title": [
+    "acadia-heading-small"
+  ],
+  "crew-brief-title": [
+    "acadia-heading-small"
+  ],
+  "iss-status-title": [
+    "acadia-heading-small"
+  ],
+  "iss-position-title": [
+    "acadia-heading-small"
+  ],
+  "neo-section-title": [
+    "acadia-heading-small"
+  ],
+  "space-weather-brief-title": [
+    "acadia-heading-small"
+  ],
+  "space-weather-section-title": [
+    "acadia-heading-small"
+  ],
+  "sky-anomaly-result-title": [
+    "acadia-heading-small"
+  ],
+  "apod-title": [
+    "acadia-heading-small"
+  ],
+  "next-launch-title": [
+    "acadia-heading-small"
+  ],
+  "apod-info-title": [
+    "acadia-lead"
+  ],
+  "source-unavailable-title": [
+    "acadia-lead"
+  ],
+  "launch-vehicle": [
+    "acadia-lead"
+  ],
+  "launch-mission": [
+    "acadia-lead"
+  ],
+  "launch-timeline-title": [
+    "acadia-lead"
+  ],
+  "launch-page-title": [
+    "acadia-lead"
+  ],
+  "sky-anomaly-subtitle": [
+    "acadia-lead"
+  ],
+  "neo-distance-value": [
+    "acadia-lead"
+  ],
+  "space-weather-forecast-kp": [
+    "acadia-lead"
+  ],
+  "crew-location-count": [
+    "acadia-lead"
+  ],
+  "section-kicker": [
+    "acadia-kicker"
+  ],
+  "apollo-quick-stat-label": [
+    "acadia-kicker"
+  ],
+  "command-panel-label": [
+    "acadia-kicker"
+  ],
+  "sky-context-label": [
+    "acadia-kicker"
+  ],
+  "sky-explanation-label": [
+    "acadia-kicker"
+  ],
+  "apollo-quick-stat-detail": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "command-panel-time": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "command-panel-detail": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "crew-source-note": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "crew-craft": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "iss-position-fix": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "orbit-context-note": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "launch-meta": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "launch-window-summary": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "neo-object-role": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "neo-section-note": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "neo-object-detail": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "space-weather-observed": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "space-weather-scale-range": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "space-weather-scale-summary": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "space-weather-trend-label": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "space-weather-forecast-date": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "space-weather-forecast-condition": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "space-weather-alert-impact": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "sky-anomaly-observed-at": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "sky-anomaly-note": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "sky-explanation-detail": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "sky-explanation-source": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "source-status-source": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "source-status-detail": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "launch-timeline-when": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "launch-timeline-vehicle": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "launch-timeline-facts": [
+    "acadia-small",
+    "acadia-text-muted"
+  ],
+  "apollo-quick-stat-value": [
+    "acadia-body"
+  ],
+  "command-panel-title": [
+    "acadia-body"
+  ],
+  "apod-panel-title": [
+    "acadia-body"
+  ],
+  "crew-manifest-title": [
+    "acadia-body"
+  ],
+  "crew-name": [
+    "acadia-body"
+  ],
+  "neo-object-title": [
+    "acadia-body"
+  ],
+  "neo-object-interpretation": [
+    "acadia-body"
+  ],
+  "space-weather-scale-label": [
+    "acadia-body"
+  ],
+  "sky-context-value": [
+    "acadia-body"
+  ],
+  "sky-explanation-headline": [
+    "acadia-body"
+  ],
+  "source-status-title": [
+    "acadia-body"
+  ],
+  "source-status-headline": [
+    "acadia-body"
+  ],
+  "apollo-space-brief-summary": [
+    "acadia-body",
+    "acadia-text-measure-wide"
+  ],
+  "apod-credit": [
+    "acadia-body",
+    "acadia-text-measure-wide"
+  ],
+  "apod-summary": [
+    "acadia-body",
+    "acadia-text-measure-wide"
+  ],
+  "source-unavailable-copy": [
+    "acadia-body",
+    "acadia-text-measure-wide"
+  ],
+  "iss-orbital-brief": [
+    "acadia-body",
+    "acadia-text-measure-wide"
+  ],
+  "neo-featured-summary": [
+    "acadia-body",
+    "acadia-text-measure-wide"
+  ],
+  "space-weather-brief-copy": [
+    "acadia-body",
+    "acadia-text-measure-wide"
+  ],
+  "apollo-update-pill": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "apollo-live-chip": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "launch-count": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "launch-status-pill": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "space-weather-kp": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "space-weather-alert-pill": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "sky-confidence-rank": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "sky-confidence-score": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "sky-explanation-pill": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "source-status-time": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "source-status-pill": [
+    "acadia-badge",
+    "acadia-badge-grey",
+    "acadia-badge-round"
+  ],
+  "source-link": [
+    "acadia-button",
+    "acadia-button-secondary"
+  ],
+  "source-status-link": [
+    "acadia-button",
+    "acadia-button-secondary"
+  ],
+  "sky-anomaly-submit": [
+    "acadia-button",
+    "acadia-button-brand"
+  ],
+  "launch-show-all": [
+    "acadia-button",
+    "acadia-button-brand"
+  ],
+  "apollo-button-spinner": [
+    "acadia-activity-indicator",
+    "is-small"
+  ],
+  "apod-placeholder": [
+    "acadia-skeleton",
+    "acadia-skeleton-block"
+  ],
+  "apod-copy-placeholder": [
+    "acadia-skeleton",
+    "acadia-skeleton-block"
+  ],
+  "next-launch-media": [
+    "acadia-thumbnail"
+  ],
+  "launch-page-media": [
+    "acadia-thumbnail"
+  ],
+  "launch-thumb": [
+    "acadia-thumbnail"
+  ],
+  "sky-anomaly-field": [
+    "acadia-field"
+  ],
+  "sky-anomaly-choice-row": [
+    "acadia-cluster"
+  ],
+  "source-unavailable-actions": [
+    "acadia-cluster"
+  ],
+  "detail-action-row": [
+    "acadia-cluster"
+  ],
+  "apod-action-row": [
+    "acadia-cluster"
+  ],
+  "data-details": [
+    "acadia-accordion-item"
+  ],
+  "apod-details": [
+    "acadia-accordion-item"
+  ],
+  "data-detail-panel": [
+    "acadia-accordion-panel"
+  ],
+  "apollo-skip-link": [
+    "acadia-skip-link"
+  ],
+  "command-panel-row-link": [
+    "acadia-muted-panel",
+    "acadia-link-card"
+  ],
+  "neo-brief": [
+    "acadia-muted-panel"
+  ],
+  "apod-media-link": [
+    "acadia-link-card"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "package": "@acadia/design-system",
+  "version": "0.4.10",
+  "commit": "4801afc0d1106fb1497946c8ca7db23114cee03b",
+  "source": "src/acadia.css, src/fonts, src/assets",
+  "guide": "utilities/implementation/README.md",
+  "files": {
+    "acadia.css": "fa9dd552e438840f02db3055d2b31df90e7dc51d04098ae5ba2abe9c9be456b9",
+    "assets/accordion-minus.svg": "587006b203446002a6c628de93214f3b77605f86507362dadae3f43a24d221cb",
+    "assets/accordion-plus.svg": "bb038194adaab565428aed5ffa8fb850f54b87e54605d92f4c9ade9431e48375",
+    "assets/auth-divider.svg": "1b0af7a694de4dc52666aaed9e0351bb8e7f99199fcf13ec4c34415fae7e4940",
+    "assets/card-travel-map.png": "75f0aa4de3157d63b4018c58af39512940073f1cc49716c5306ef8679c1f4c75",
+    "assets/icons/README.md": "46ae78fba244a04f208dfbb008b035150311fd5e9cd2ab2fd47eaad5d53ebea8",
+    "assets/icons/house-solid.svg": "379fe9f56a3ece34226fb9728b8b76cfbaa8255fba3421a2cdd53616f41c612a",
+    "assets/thumbnail-alien-earth.png": "cf05bffef5022ebc4f3ded0837f5e1179b24fb72b3be12d2724842f93f700259",
+    "assets/thumbnail-beef.png": "0a5b4ea733b229618cea9d5307fdb34a48c1e807ee89e49154fec905d4d099ed",
+    "assets/thumbnail-currents.png": "5721bd2a35669a35db9a5b67f31287d794736907318b4cfbc4402263ee334623",
+    "assets/thumbnail-dark-matter.jpeg": "1e78b8769fa44f50b58add84a18af5fd22948e3b5182e6173f69c23c517a24e6",
+    "assets/thumbnail-orbit.png": "7c4f57ddb0e2ed4ce4d58e5b382658938a0ce213904c414e7521075f86fb22cc",
+    "assets/thumbnail-prism.png": "e3c1086b80f3b7f865730cedb404f68b5ed762230269113413e95f90b2831e58",
+    "assets/thumbnail-silo.jpeg": "634189b168fb5f57660b386b51dc6e8060e027443746007a63b6f57da36105d7",
+    "assets/thumbnail-stranger-things.jpeg": "2b7cb8636882b7513256001d2d528d26b1fa75c2a9024416088f1c8faea08860",
+    "assets/thumbnail-tenet.jpeg": "eb35ea37dc5649d621ebc4be091d259bf80dee21504d75d2be43202916111458",
+    "assets/thumbnail-widows-bay.jpeg": "9cf173936066dfac152f228a8de82810db9e3279893c0bad72b8353802b50363",
+    "fonts/Geist-Italic-Variable.woff2": "3780dca0ebbde4276d9bddec81c1d6f97b2795d5bc7d5d20cede71221bdebc14",
+    "fonts/Geist-Variable.woff2": "e24cec106619c03f0b3519e31b9bc55e0d5e926b6a95b8d798cd8cef215b1505",
+    "fonts/GeistMono-Italic-Variable.woff2": "1c5134ba2a75039ee12c1aacc8bce550111bc8298034a8149a541c20fc838217",
+    "fonts/GeistMono-Variable.woff2": "5f687a5dd4c87da13deaff9f6b9503d5e62249ff501265a96b134565f9aa8c87",
+    "fonts/LICENSE-Geist.txt": "930853ee1daa68554d9e35c8a9175affb74f699fad9a5da6ee5ebe76379d9137",
+    "fonts/Syncopate-Bold.ttf": "17d45e01c6b8389c22313f6a03d4af93742e074c8f75b17baf75b1903efbb800",
+    "fonts/Syncopate-Regular.ttf": "c15e610bacc736494e2dcdb9907b200e1e2ae9e6c22effb0db6ff3bc7e412860"
+  }
+}

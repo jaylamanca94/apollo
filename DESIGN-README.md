@@ -8,7 +8,7 @@ This file is intentionally separate because design standards and utilities will 
 
 The interface should feel quiet, practical, and easy to scan. Apollo should follow Acadia's Apple-like product system: calm gray app background, translucent elevated surfaces, compact controls, 8px repeated surfaces, and responsive spacing. Apollo's primary differentiator is its warm red accent for brand, primary action, and live space-data context.
 
-- Prefer Bootstrap conventions before custom UI patterns.
+- Prefer current Acadia component and pattern contracts before custom UI.
 - Keep visual decisions simple enough for a solo product builder to maintain.
 - Prefer evergreen design patterns and utilities that can scale with the product without becoming fragile or overly custom.
 - Use familiar, predictable interface patterns.
@@ -26,9 +26,9 @@ Apollo now treats `../Acadia` as the shared design-system baseline. Before addin
 
 - Use Acadia primitives for shared product language: controls, card padding, raised rows, focus rings, state surfaces, motion, table/form patterns, and Font Awesome Free icon sizing.
 - Keep Apollo-specific choices local when they express space-data semantics, live-source context, map behavior, media behavior, or the red product accent.
-- Map Apollo variables onto Acadia-style adapter variables in `styles.css` before creating a new one-off component rule.
-- Apollo markup should compose Acadia primitive classes first (`acadia-app`, `acadia-chrome`, `acadia-nav`, `acadia-shell`, `acadia-surface`, `acadia-panel`, `acadia-button`, `acadia-icon`) and keep `apollo-*` classes as product adapters for data, media, map, and layout semantics.
-- Keep the adapter self-contained until Acadia is published as a shared package. Do not use a fragile local `../Acadia` stylesheet link in deployed Apollo pages.
+- Use Acadia semantic tokens directly in `styles.css`; local values are limited to Apollo identity and documented domain geometry.
+- Apollo markup should compose Acadia primitive classes first (`acadia-app`, `acadia-responsive-navbar`, `acadia-navbar`, `acadia-shell`, `acadia-surface`, `acadia-panel`, `acadia-button`, `acadia-icon`) and keep `apollo-*` classes as product adapters for data, media, map, and layout semantics.
+- Consume the pinned, unchanged static snapshot in `vendor/acadia/`, with its fonts, assets and integrity manifest. Update only through `scripts/sync-acadia.js` after reviewing the Acadia source. Do not use a sibling stylesheet link or duplicate shared primitives.
 - Repeated surfaces should use Acadia anatomy first: page header panel, chrome, card, row, state message, pill, control, and focus ring. Avoid decorative local accent bars or custom elevation when color, icon, copy, or data semantics can carry Apollo identity.
 - Keep adapter-owned hover and focus motion covered by Apollo's `prefers-reduced-motion` override.
 - If an Apollo pattern becomes useful for another product, graduate the neutral part into Acadia and keep Apollo's wording/data treatment here.
@@ -45,21 +45,11 @@ Relay is the current Acadia reference for mobile product judgment. Apollo should
 
 ## Color
 
-### Light Mode
+### Appearance and identity
 
-- Page background: `#E8EAED`
-- Content surface: translucent `#FCFCFD`
-- Raised surface: translucent `#FFFFFF`
-- Accent: `#D9233B`
+Neutral surfaces, text, borders, elevations, glass, focus and preference adaptations come from the pinned Acadia stylesheet. Browser chrome follows its light `#F5F5F5` and dark `#181A1E` page backgrounds.
 
-### Dark Mode
-
-- Page background: `#1F2427`
-- Top navigation: translucent `#1F2427` material
-- Content surface: translucent `#1F2327`
-- Raised surface: translucent `#2B3035`
-- Border: translucent white at Acadia strength
-- Accent: `#FF4056`
+Apollo overrides only brand/action roles: solid action `#C92138`, hover `#B71C31`, white action text, light-mode ink `#BA1D33`, and dark-mode ink `#FF9BAA`. Status semantics use Acadia success/warning/danger tokens, not brand colour as a substitute for severity. Body and expression typography use Acadia's supplied Geist family; its shared wordmark role supplies the product name.
 
 Default first-time visitors to the user's operating system theme setting and provide Acadia's compact light/dark icon toggle for switching between Light and Dark.
 Browser theme chrome should follow Apollo's active Light or Dark theme, including manual theme toggles, so installed and mobile browser surfaces do not retain the wrong chrome color.
@@ -112,18 +102,18 @@ Use compact raised notice rows for source and space-weather status details. Stat
 ### Desktop
 
 - 12-column grid
-- Page margin: `128px`
+- Page margin: `128px` at wide desktop, `64px` at small desktop
 - Content spans the available viewport inside the Acadia margin contract unless a specific data surface needs a local width cap
 - Column gap: `24px`
 - Content padding: `24px`
 - Spacious sections: `48px` padding
-- Dense cards and operational sections: `24px` padding
+- Dense cards and operational sections: Acadia dense padding (`16px` at default text size)
 - Form field rows span the section and use 4 columns with `24px` gaps
 
 ### Tablet
 
 - 8-column grid
-- Page margin: `32px`
+- Page margin: `24px`
 - Column gap: `16px`
 - Content padding: `24px` where space allows, collapsing to `16px` for dense or narrow surfaces
 
@@ -148,28 +138,11 @@ Use 8px spacing increments whenever possible.
 
 ## Typography
 
-Typography values are defined as font size and line height.
-
-| Style | Font Size | Line Height |
-| --- | ---: | ---: |
-| Display | `76px` | `73px` |
-| Page Title | `40px` | `48px` |
-| Large Heading | `32px` | `40px` |
-| Heading | `24px` | `32px` |
-| Lead | `20px` | `24px` |
-| Body | `16px` | `24px` |
-| Small | `14px` | `16px` |
-| Caption | `12px` | `16px` |
+Use the pinned Acadia type classes and unitless line heights; do not maintain a second local scale. Default sizes are Display 48px, Title 40px, Large heading 32px, Small heading 24px, Lead 20px, Body 16px, Small 14px and Caption 12px. They scale with the user's text settings.
 
 ## Radius
 
-- XS: `2px`
-- SM: `4px`
-- MD: `8px`
-- LG: `16px`
-- XL: `24px`
-
-Use `8px` or less for repeated list items. Main dashboard and feature cards may use `10px` radius when they are acting as broad material surfaces.
+Use the component's Acadia radius token. Panels and controls use the shared 8px role; pills, navigation and thumbnails retain their published component roles. Do not add product-local radius overrides to neutral surfaces.
 
 ## Icons
 
@@ -261,7 +234,7 @@ Avoid utilities for:
 - One-off product-specific components
 - Temporary workarounds
 - Visual treatments that only make sense for one product
-- Custom patterns that Bootstrap already handles well
+- Custom patterns that Acadia already handles well
 
 ## Maintenance Rule
 
@@ -274,3 +247,9 @@ Keep making this file more relevant to the product as design choices, utilities,
 Do not update it just for the sake of changing it. Update it when there is meaningful new design context, a confirmed convention, a recurring UI pattern, or a clearer way to preserve product design intent.
 
 This file should remain the source of truth for baseline UX/UI decisions and reusable design utilities.
+
+## Verified adoption contract — 2026-09-23
+
+See `docs/acadia-audit/README.md` for the route/state matrix, source pin and explicit exceptions. Acadia owns buttons, badges, panels, typography, fields, compact native choices, accordion disclosures, loading indicators, navigation presentations, thumbnails, focus and appearance preferences. Apollo owns source interpretation, data layout, imagery proportions, route grouping, disclosure dismissal and the Leaflet integration.
+
+Header slots wrap when their content needs room. Tablet navigation wraps so its Watch disclosure cannot be clipped by an overflow rail. On the narrowest phones, nested data panels use the shared compact spacing token; native date/time controls keep browser segment editing. Shared library CSS must remain unchanged. Any reusable upstream gap needs concrete product evidence and its own Acadia review; product fixes do not imply upstream publication.

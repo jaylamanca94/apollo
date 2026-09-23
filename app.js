@@ -77,14 +77,14 @@ const NEO_SENTRY_CONTEXT = {
 };
 const THEME_STORAGE_KEY = "apollo-theme";
 const THEME_COLORS = {
-  dark: "#1F2427",
-  light: "#E8EAED"
+  dark: "#181A1E",
+  light: "#F5F5F5"
 };
 const EARTH_RADIUS_KM = 6371;
 const MINUTES_PER_HOUR = 60;
 const HOURS_PER_DAY = 24;
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
-const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing data</span>`;
+const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner acadia-activity-indicator is-small" aria-hidden="true"></span><span>Refreshing data</span>`;
 const NASA_MONTH_INDEX = {
   jan: 0,
   feb: 1,
@@ -872,7 +872,7 @@ function isDashboardPage() {
 
 function detailLink(href, label = "View details") {
   return `
-    <a class="source-link dashboard-detail-link" href="${escapeHtml(href)}">
+    <a class="source-link acadia-button acadia-button-secondary dashboard-detail-link" href="${escapeHtml(href)}">
       <i class="fa-solid fa-arrow-right acadia-icon" aria-hidden="true"></i>
       ${escapeHtml(label)}
     </a>
@@ -1049,21 +1049,21 @@ function renderSkyAnomalyOverview() {
   els.skyAnomalyResults.innerHTML = `
     <div class="sky-anomaly-result-header">
       <div>
-        <p class="section-kicker mb-1">Known context</p>
-        <h3 class="sky-anomaly-result-title mb-0">${escapeHtml(overviewState.headline)}</h3>
+        <p class="section-kicker acadia-kicker">Known context</p>
+        <h3 class="sky-anomaly-result-title acadia-heading-small">${escapeHtml(overviewState.headline)}</h3>
       </div>
-      <span class="sky-explanation-pill sky-explanation-${escapeHtml(overviewState.tone)}">${escapeHtml(overviewState.badge)}</span>
+      <span class="sky-explanation-pill acadia-badge acadia-badge-grey acadia-badge-round sky-explanation-${escapeHtml(overviewState.tone)}">${escapeHtml(overviewState.badge)}</span>
     </div>
     <div class="sky-context-grid">
       ${contextRows.map((row) => `
-        <article class="sky-context-cell sky-explanation-${escapeHtml(row.state === "ok" ? "context" : "unknown")}">
-          <p class="sky-context-label mb-1">${escapeHtml(row.label)}</p>
-          <p class="sky-context-value mb-0">${escapeHtml(row.value)}</p>
-          <p class="sky-context-source-state mb-0">${escapeHtml(row.state === "ok" ? "Loaded connected source" : "Connected source unavailable")}</p>
+        <article class="sky-context-cell acadia-muted-panel sky-explanation-${escapeHtml(row.state === "ok" ? "context" : "unknown")}">
+          <p class="sky-context-label acadia-kicker">${escapeHtml(row.label)}</p>
+          <p class="sky-context-value acadia-body">${escapeHtml(row.value)}</p>
+          <p class="acadia-body sky-context-source-state">${escapeHtml(row.state === "ok" ? "Loaded connected source" : "Connected source unavailable")}</p>
         </article>
       `).join("")}
     </div>
-    <p class="sky-anomaly-note mb-0">${escapeHtml(overviewState.note)}</p>
+    <p class="sky-anomaly-note acadia-small acadia-text-muted">${escapeHtml(overviewState.note)}</p>
   `;
 }
 
@@ -1099,56 +1099,56 @@ function renderSkyExplanation({ focus = false } = {}) {
   els.skyAnomalyResults.innerHTML = `
     <div class="sky-anomaly-result-header">
       <div>
-        <p class="section-kicker mb-1">Explain</p>
-        <h3 class="sky-anomaly-result-title mb-0" tabindex="-1">Sighting context</h3>
-        <p class="sky-anomaly-observed-at mb-0">${escapeHtml(formatDateTime(observedAt.toISOString()))}</p>
+        <p class="section-kicker acadia-kicker">Explain</p>
+        <h3 class="sky-anomaly-result-title acadia-heading-small" tabindex="-1">Sighting context</h3>
+        <p class="sky-anomaly-observed-at acadia-small acadia-text-muted">${escapeHtml(formatDateTime(observedAt.toISOString()))}</p>
       </div>
-      <span class="sky-explanation-pill sky-explanation-${escapeHtml(resultTone)}">${escapeHtml(resultSummary)}</span>
+      <span class="sky-explanation-pill acadia-badge acadia-badge-grey acadia-badge-round sky-explanation-${escapeHtml(resultTone)}">${escapeHtml(resultSummary)}</span>
     </div>
     <section class="sky-evidence-section" aria-labelledby="skyEvidenceTitle">
-      <div class="sky-anomaly-section-heading">
-        <p class="section-kicker mb-1">Known sky activity</p>
-        <h4 class="sky-anomaly-subtitle mb-0" id="skyEvidenceTitle">Sources checked</h4>
+      <div class="sky-anomaly-section-heading acadia-copy-stack">
+        <p class="section-kicker acadia-kicker">Known sky activity</p>
+        <h4 class="sky-anomaly-subtitle acadia-lead" id="skyEvidenceTitle">Sources checked</h4>
       </div>
-      <p class="sky-anomaly-note mb-0">${escapeHtml(sourceLimitSummary)}</p>
+      <p class="sky-anomaly-note acadia-small acadia-text-muted">${escapeHtml(sourceLimitSummary)}</p>
       <div class="sky-evidence-grid">
         ${evidenceRows.map((row) => `
-          <article class="sky-evidence-card sky-explanation-${escapeHtml(row.state)}">
+          <article class="sky-evidence-card acadia-muted-panel sky-explanation-${escapeHtml(row.state)}">
             <span class="sky-evidence-icon"><i class="fa-solid ${row.state === "unknown" ? "fa-circle-info" : "fa-check"} acadia-icon" aria-hidden="true"></i></span>
             <div>
-              <p class="sky-context-label mb-1">${escapeHtml(row.label)}</p>
-              <p class="sky-context-value mb-0">${escapeHtml(row.value)}</p>
-              <p class="sky-explanation-source mb-0">${escapeHtml(row.source)}</p>
+              <p class="sky-context-label acadia-kicker">${escapeHtml(row.label)}</p>
+              <p class="sky-context-value acadia-body">${escapeHtml(row.value)}</p>
+              <p class="sky-explanation-source acadia-small acadia-text-muted">${escapeHtml(row.source)}</p>
             </div>
           </article>
         `).join("")}
       </div>
     </section>
     <section class="sky-analysis-section" aria-labelledby="skyAnalysisTitle">
-      <div class="sky-anomaly-section-heading">
-        <p class="section-kicker mb-1">Possible explanations</p>
-        <h4 class="sky-anomaly-subtitle mb-0" id="skyAnalysisTitle">Evidence context</h4>
+      <div class="sky-anomaly-section-heading acadia-copy-stack">
+        <p class="section-kicker acadia-kicker">Possible explanations</p>
+        <h4 class="sky-anomaly-subtitle acadia-lead" id="skyAnalysisTitle">Evidence context</h4>
       </div>
       ${candidates.length ? `
-        <ol class="sky-confidence-list mb-0">
+        <ol class="sky-confidence-list">
           ${candidates.map((candidate, index) => `
-            <li class="sky-confidence-row sky-explanation-${escapeHtml(candidate.state)}">
-              <span class="sky-confidence-rank">${index + 1}</span>
+            <li class="sky-confidence-row acadia-muted-panel sky-explanation-${escapeHtml(candidate.state)}">
+              <span class="sky-confidence-rank acadia-badge acadia-badge-grey acadia-badge-round">${index + 1}</span>
               <div class="sky-confidence-copy">
-                <h5 class="sky-explanation-headline mb-1">${escapeHtml(candidate.label)}</h5>
-                <p class="sky-explanation-detail mb-0">${escapeHtml(candidate.detail)}</p>
-                <p class="sky-explanation-source mb-0">${escapeHtml(candidate.source)}</p>
+                <h5 class="sky-explanation-headline acadia-body">${escapeHtml(candidate.label)}</h5>
+                <p class="sky-explanation-detail acadia-small acadia-text-muted">${escapeHtml(candidate.detail)}</p>
+                <p class="sky-explanation-source acadia-small acadia-text-muted">${escapeHtml(candidate.source)}</p>
               </div>
-              <span class="sky-confidence-score">${escapeHtml(candidate.evidenceLabel)}</span>
+              <span class="sky-confidence-score acadia-badge acadia-badge-grey acadia-badge-round">${escapeHtml(candidate.evidenceLabel)}</span>
             </li>
           `).join("")}
         </ol>
       ` : stateMessage("Connected sources are unavailable, so Apollo cannot list known-context explanations for this sighting.")}
     </section>
     <section class="sky-analysis-section" aria-labelledby="skyObservationRecapTitle">
-      <div class="sky-anomaly-section-heading">
-        <p class="section-kicker mb-1">Observation recap</p>
-        <h4 class="sky-anomaly-subtitle mb-0" id="skyObservationRecapTitle">Submitted context</h4>
+      <div class="sky-anomaly-section-heading acadia-copy-stack">
+        <p class="section-kicker acadia-kicker">Observation recap</p>
+        <h4 class="sky-anomaly-subtitle acadia-lead" id="skyObservationRecapTitle">Submitted context</h4>
       </div>
       <div class="sky-observation-recap">
         <span>${escapeHtml(location)}</span>
@@ -1156,47 +1156,47 @@ function renderSkyExplanation({ focus = false } = {}) {
         <span>${escapeHtml(traits.brightnessLabel)}</span>
         <span>${escapeHtml(traits.durationLabel)}</span>
       </div>
-      <div class="sky-assumption-list">
-        <p class="mb-0">${escapeHtml(observationContext.timeSummary)}</p>
-        <p class="mb-0">Location "${escapeHtml(location)}" is descriptive context; Apollo is not doing location-aware overhead, aircraft, planet, fireball, or UAP matching yet.</p>
+      <div class="sky-assumption-list acadia-muted-panel">
+        <p class="acadia-body ">${escapeHtml(observationContext.timeSummary)}</p>
+        <p class="acadia-body ">Location "${escapeHtml(location)}" is descriptive context; Apollo is not doing location-aware overhead, aircraft, planet, fireball, or UAP matching yet.</p>
       </div>
     </section>
     <section class="sky-analysis-section" aria-labelledby="skyPlannedGapsTitle">
-      <div class="sky-anomaly-section-heading">
-        <p class="section-kicker mb-1">Not checked evidence</p>
-        <h4 class="sky-anomaly-subtitle mb-0" id="skyPlannedGapsTitle">Planned source gaps</h4>
+      <div class="sky-anomaly-section-heading acadia-copy-stack">
+        <p class="section-kicker acadia-kicker">Not checked evidence</p>
+        <h4 class="sky-anomaly-subtitle acadia-lead" id="skyPlannedGapsTitle">Planned source gaps</h4>
       </div>
       <div class="sky-evidence-grid">
         ${plannedGaps.map((candidate) => `
-          <article class="sky-evidence-card sky-explanation-context">
+          <article class="sky-evidence-card acadia-muted-panel sky-explanation-context">
             <span class="sky-evidence-icon"><i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i></span>
             <div>
-              <p class="sky-context-label mb-1">${escapeHtml(candidate.label)}</p>
-              <p class="sky-context-value mb-0">Not checked yet</p>
-              <p class="sky-explanation-source mb-0">${escapeHtml(candidate.source)}</p>
+              <p class="sky-context-label acadia-kicker">${escapeHtml(candidate.label)}</p>
+              <p class="sky-context-value acadia-body">Not checked yet</p>
+              <p class="sky-explanation-source acadia-small acadia-text-muted">${escapeHtml(candidate.source)}</p>
             </div>
           </article>
         `).join("")}
       </div>
     </section>
     <section class="sky-explanation-raw" aria-labelledby="skyRawContextTitle">
-      <details class="data-details">
-        <summary id="skyRawContextTitle"><i class="fa-solid fa-chevron-down acadia-icon" aria-hidden="true"></i>Source context</summary>
-        <div class="sky-explanation-list data-detail-panel">
+      <details class="data-details acadia-accordion-item">
+        <summary id="skyRawContextTitle">Source context</summary>
+        <div class="sky-explanation-list data-detail-panel acadia-accordion-panel">
           ${rows.map((row) => `
-            <article class="sky-explanation-row sky-explanation-${escapeHtml(row.state)}">
+            <article class="sky-explanation-row acadia-muted-panel sky-explanation-${escapeHtml(row.state)}">
               <div class="sky-explanation-row-copy">
-                <p class="sky-explanation-label mb-1">${escapeHtml(row.label)}</p>
-                <h4 class="sky-explanation-headline mb-1">${escapeHtml(row.headline)}</h4>
-                <p class="sky-explanation-detail mb-0">${escapeHtml(row.detail)}</p>
-                <p class="sky-explanation-source mb-0">${escapeHtml(row.source)}</p>
+                <p class="sky-explanation-label acadia-kicker">${escapeHtml(row.label)}</p>
+                <h4 class="sky-explanation-headline acadia-body">${escapeHtml(row.headline)}</h4>
+                <p class="sky-explanation-detail acadia-small acadia-text-muted">${escapeHtml(row.detail)}</p>
+                <p class="sky-explanation-source acadia-small acadia-text-muted">${escapeHtml(row.source)}</p>
               </div>
             </article>
           `).join("")}
         </div>
       </details>
     </section>
-    <p class="sky-anomaly-note mb-0">Apollo uses connected source context and visible traits only; planned source gaps are not checked evidence or identity claims.</p>
+    <p class="sky-anomaly-note acadia-small acadia-text-muted">Apollo uses connected source context and visible traits only; planned source gaps are not checked evidence or identity claims.</p>
   `;
 
   if (focus) {
@@ -1749,10 +1749,10 @@ function getNeoBriefLines({ asteroids, hazardous, sentryObjects, closestObject }
 
 function renderNeoDetails(item) {
   return `
-    <details class="data-details asteroid-details mt-3">
-      <summary aria-label="Show approach details for ${escapeHtml(item.name)}"><i class="fa-solid fa-chevron-down acadia-icon" aria-hidden="true"></i>Approach details</summary>
-      <div class="data-detail-panel">
-        <dl class="detail-list mb-3">
+    <details class="data-details acadia-accordion-item asteroid-details">
+      <summary class="acadia-accordion-summary" aria-label="Show approach details for ${escapeHtml(item.name)}">Approach details</summary>
+      <div class="data-detail-panel acadia-accordion-panel">
+        <dl class="detail-list">
           <div>
             <dt>Close approach</dt>
             <dd>${escapeHtml(item.closeApproach || "Time unavailable")}</dd>
@@ -1779,7 +1779,7 @@ function renderNeoDetails(item) {
           </div>
         </dl>
         ${item.sourceUrl ? `
-          <a class="source-link" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open NASA object source for ${escapeHtml(item.name)}">
+          <a class="source-link acadia-button acadia-button-secondary" href="${escapeHtml(item.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open NASA object source for ${escapeHtml(item.name)}">
             <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
             NASA object source
           </a>
@@ -1900,7 +1900,6 @@ function updateThemeColorMeta(theme) {
 }
 
 function applyTheme(theme) {
-  document.documentElement.setAttribute("data-bs-theme", theme);
   document.documentElement.setAttribute("data-acadia-theme", theme);
   updateThemeColorMeta(theme);
   updateThemeToggle(theme);
@@ -1915,7 +1914,7 @@ function initThemeControl() {
   }
 
   els.themeToggle.addEventListener("click", () => {
-    const currentTheme = document.documentElement.getAttribute("data-bs-theme") === "light" ? "light" : "dark";
+    const currentTheme = document.documentElement.getAttribute("data-acadia-theme") === "light" ? "light" : "dark";
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
@@ -1923,62 +1922,6 @@ function initThemeControl() {
       // Theme still applies for the current page when storage is unavailable.
     }
     applyTheme(nextTheme);
-  });
-}
-
-function closeMobileWatchMenus() {
-  document.querySelectorAll(".apollo-mobile-dock .apollo-nav-more-toggle[aria-expanded='true']").forEach((button) => {
-    if (window.bootstrap?.Dropdown) {
-      window.bootstrap.Dropdown.getOrCreateInstance(button).hide();
-    } else {
-      button.click();
-    }
-  });
-}
-
-function initMobileWatchMenuDismissal() {
-  if (!document.querySelector(".apollo-mobile-dock .apollo-nav-more-toggle")) {
-    return;
-  }
-
-  window.addEventListener("scroll", closeMobileWatchMenus, { passive: true });
-  document.querySelectorAll(".apollo-mobile-dock .apollo-nav-menu-item").forEach((item) => {
-    item.addEventListener("click", closeMobileWatchMenus);
-  });
-}
-
-function initMobileWatchKeyboard() {
-  document.querySelectorAll(".apollo-mobile-dock .apollo-nav-more-toggle").forEach((button) => {
-    button.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") {
-        return;
-      }
-
-      event.preventDefault();
-      const menu = button.closest(".apollo-nav-more")?.querySelector(".apollo-nav-menu");
-      const shouldOpen = button.getAttribute("aria-expanded") !== "true";
-
-      if (window.bootstrap?.Dropdown) {
-        window.bootstrap.Dropdown.getOrCreateInstance(button).toggle();
-      } else {
-        button.click();
-      }
-
-      if (shouldOpen) {
-        menu?.querySelector(".apollo-nav-menu-item")?.focus();
-      }
-    });
-  });
-
-  document.querySelectorAll(".apollo-mobile-dock .apollo-nav-menu-item").forEach((item) => {
-    item.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") {
-        return;
-      }
-
-      event.preventDefault();
-      window.location.assign(item.href);
-    });
   });
 }
 
@@ -2019,31 +1962,31 @@ function unavailableStateMarkup({ title = "Data unavailable", message, sourceId,
   const url = sourceUrl || feed?.sourceUrl || "";
 
   return `
-    <div class="source-unavailable-state" role="alert">
+    <div class="source-unavailable-state acadia-muted-panel" role="alert">
       <div class="source-unavailable-heading">
         <span class="source-unavailable-icon"><i class="fa-solid fa-circle-exclamation acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="section-kicker mb-1">Source checked</p>
-          <h3 class="source-unavailable-title mb-0">${escapeHtml(title)}</h3>
+          <p class="section-kicker acadia-kicker">Source checked</p>
+          <h3 class="source-unavailable-title acadia-lead">${escapeHtml(title)}</h3>
         </div>
       </div>
-      <p class="source-unavailable-copy mb-0">${escapeHtml(message)}</p>
-      <div class="source-unavailable-recovery">
-        <p class="mb-0"><strong>Recovery:</strong> ${escapeHtml(tryNext)}</p>
-        <p class="mb-0"><strong>Source checked:</strong> ${escapeHtml(label)}</p>
+      <p class="source-unavailable-copy acadia-body acadia-text-measure-wide">${escapeHtml(message)}</p>
+      <div class="source-unavailable-recovery acadia-body acadia-text-measure-wide">
+        <p class="acadia-body "><strong>Recovery:</strong> ${escapeHtml(tryNext)}</p>
+        <p class="acadia-body "><strong>Source checked:</strong> ${escapeHtml(label)}</p>
       </div>
-      <div class="source-unavailable-actions">
+      <div class="source-unavailable-actions acadia-cluster">
         <button class="acadia-button acadia-button-secondary source-unavailable-retry" type="button" data-source-retry="${escapeHtml(sourceId || "")}">
           <i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i>
           Try ${escapeHtml(label)} again
         </button>
         ${url ? `
-          <a class="source-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(label)} source">
+          <a class="source-link acadia-button acadia-button-secondary" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(label)} source">
             <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
             Open ${escapeHtml(label)} source
           </a>
         ` : ""}
-        <a class="source-link" href="./index.html">
+        <a class="source-link acadia-button acadia-button-secondary" href="./index.html">
           <i class="fa-solid fa-gauge-high acadia-icon" aria-hidden="true"></i>
           Dashboard
         </a>
@@ -2407,7 +2350,7 @@ function stateMessage(message, options = {}) {
   const role = options.role ? ` role="${escapeHtml(options.role)}"` : "";
 
   return `
-    <div class="state-message acadia-alert${tone} mb-0"${role}>
+    <div class="state-message acadia-alert${tone}"${role}>
       <i class="fa-solid ${icon} acadia-icon" aria-hidden="true"></i>
       <span>${escapeHtml(message)}</span>
     </div>
@@ -2434,9 +2377,9 @@ function renderNeoRiskAlert({
     <div class="neo-risk-alert acadia-alert acadia-alert-${tone}" role="${role}">
       <i class="fa-solid ${icon} acadia-icon" aria-hidden="true"></i>
       <div>
-        <p class="mb-1"><strong>${escapeHtml(hazardSummary)}</strong></p>
-        <p class="neo-risk-context mb-0">${escapeHtml(hazardFlagContext.summary)}</p>
-        <p class="neo-risk-context mb-0">${escapeHtml(sentrySummary)} ${escapeHtml(sentryContext.summary)}</p>
+        <p class="acadia-body "><strong>${escapeHtml(hazardSummary)}</strong></p>
+        <p class="acadia-body neo-risk-context">${escapeHtml(hazardFlagContext.summary)}</p>
+        <p class="acadia-body neo-risk-context">${escapeHtml(sentrySummary)} ${escapeHtml(sentryContext.summary)}</p>
       </div>
     </div>
   `;
@@ -2613,40 +2556,40 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
       : `${updatedCount} of ${feedStatuses.length} sources loaded, ${attentionCount} need attention`;
 
   els.sourceStatusBody.innerHTML = `
-    <div class="source-status-summary">
+    <div class="source-status-summary acadia-muted-panel">
       <div>
-        <p class="section-kicker mb-1">Source check</p>
-        <p class="source-status-headline mb-0">${escapeHtml(summary)}</p>
+        <p class="section-kicker acadia-kicker">Source check</p>
+        <p class="source-status-headline acadia-body">${escapeHtml(summary)}</p>
       </div>
-      <span class="source-status-time">${escapeHtml(formatCheckedAt(checkedAt))}</span>
+      <span class="source-status-time acadia-badge acadia-badge-grey acadia-badge-round">${escapeHtml(formatCheckedAt(checkedAt))}</span>
     </div>
     <div class="source-status-list">
       ${feedStatuses.map((feed) => {
         const stateLabel = SOURCE_STATUS_LABELS[feed.state] || SOURCE_STATUS_LABELS.error;
 
         return `
-          <article class="source-status-row source-status-${escapeHtml(feed.state)}">
+          <article class="source-status-row acadia-muted-panel source-status-${escapeHtml(feed.state)}">
             <span class="source-status-icon">
               <i class="${escapeHtml(feed.icon)} acadia-icon" aria-hidden="true"></i>
             </span>
             <div class="source-status-copy">
-              <h3 class="source-status-title mb-0">${escapeHtml(feed.label)}</h3>
-              <p class="source-status-source mb-0">${escapeHtml(feed.description)}</p>
-              <p class="source-status-detail mb-0">${escapeHtml(feed.detail)}</p>
+              <h3 class="source-status-title acadia-body">${escapeHtml(feed.label)}</h3>
+              <p class="source-status-source acadia-small acadia-text-muted">${escapeHtml(feed.description)}</p>
+              <p class="source-status-detail acadia-small acadia-text-muted">${escapeHtml(feed.detail)}</p>
               <div class="source-status-actions">
                 ${feed.state !== "ok" && feed.detailHref ? `
-                  <a class="source-status-link source-status-recovery" href="${escapeHtml(feed.detailHref)}" aria-label="Open ${escapeHtml(feed.label)} details in Apollo">
+                  <a class="source-status-link acadia-button acadia-button-secondary source-status-recovery" href="${escapeHtml(feed.detailHref)}" aria-label="Open ${escapeHtml(feed.label)} details in Apollo">
                     <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                     Open details
                   </a>
                 ` : ""}
-                <a class="source-status-link" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(feed.label)} source">
+                <a class="source-status-link acadia-button acadia-button-secondary" href="${escapeHtml(feed.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(feed.label)} source">
                   <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
                   Open source
                 </a>
               </div>
             </div>
-            <span class="source-status-pill">${escapeHtml(stateLabel)}</span>
+            <span class="source-status-pill acadia-badge acadia-badge-grey acadia-badge-round">${escapeHtml(stateLabel)}</span>
           </article>
         `;
       }).join("")}
@@ -2670,9 +2613,9 @@ function renderDashboardApodSummary(data) {
         <span class="stat-chip"><i class="fa-solid fa-image acadia-icon" aria-hidden="true"></i></span>
       `}
       <div class="dashboard-summary-copy">
-        <p class="section-kicker mb-1">NASA APOD</p>
-        <h3 class="dashboard-summary-title mb-1">${title}</h3>
-        <p class="dashboard-summary-detail mb-0">${data.date ? formatDate(data.date) : "Today"}</p>
+        <p class="section-kicker acadia-kicker">NASA APOD</p>
+        <h3 class="dashboard-summary-title">${title}</h3>
+        <p class="acadia-body dashboard-summary-detail">${data.date ? formatDate(data.date) : "Today"}</p>
       </div>
       ${detailLink("./gallery.html", "Open gallery")}
     </div>
@@ -2686,21 +2629,21 @@ function renderDashboardIssSummary(data) {
 
   els.issBody.innerHTML = `
     <div class="dashboard-summary-card">
-      <div class="summary-metric mb-3">
+      <div class="summary-metric acadia-muted-panel">
         <span class="stat-chip"><i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="text-secondary small mb-1">Current ISS location</p>
-          <p class="h3 fw-semibold mb-0">${formatNumber(data.latitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}, ${formatNumber(data.longitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</p>
+          <p class="acadia-text-muted acadia-small">Current ISS location</p>
+          <p class="acadia-heading-small">${formatNumber(data.latitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}, ${formatNumber(data.longitude, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</p>
         </div>
       </div>
-      <div class="metadata-grid mb-3">
+      <div class="metadata-grid">
         <div>
-          <p class="text-secondary small mb-1">Altitude</p>
-          <p class="fw-semibold mb-0">${formatNumber(data.altitude, { suffix: " km" })}</p>
+          <p class="acadia-text-muted acadia-small">Altitude</p>
+          <p class="acadia-body ">${formatNumber(data.altitude, { suffix: " km" })}</p>
         </div>
         <div>
-          <p class="text-secondary small mb-1">Velocity</p>
-          <p class="fw-semibold mb-0">${formatNumber(data.velocity, { suffix: " km/h" })}</p>
+          <p class="acadia-text-muted acadia-small">Velocity</p>
+          <p class="acadia-body ">${formatNumber(data.velocity, { suffix: " km/h" })}</p>
         </div>
       </div>
       ${detailLink("./iss.html", "Open ISS")}
@@ -2715,21 +2658,21 @@ function renderDashboardPeopleSummary(roster, craftGroups, countMatches) {
 
   els.peopleBody.innerHTML = `
     <div class="dashboard-summary-card">
-      <div class="summary-metric mb-3">
+      <div class="summary-metric acadia-muted-panel">
         <span class="stat-chip"><i class="fa-solid fa-user-astronaut acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="text-secondary small mb-1">Crew in orbit</p>
-          <p class="h3 fw-semibold mb-0">${roster.people.length.toLocaleString()} aboard</p>
+          <p class="acadia-text-muted acadia-small">Crew in orbit</p>
+          <p class="acadia-heading-small">${roster.people.length.toLocaleString()} aboard</p>
         </div>
       </div>
-      <div class="metadata-grid mb-3">
+      <div class="metadata-grid">
         <div>
-          <p class="text-secondary small mb-1">Crew locations</p>
-          <p class="fw-semibold mb-0">${craftGroups.length.toLocaleString()}</p>
+          <p class="acadia-text-muted acadia-small">Crew locations</p>
+          <p class="acadia-body ">${craftGroups.length.toLocaleString()}</p>
         </div>
         <div>
-          <p class="text-secondary small mb-1">Source status</p>
-          <p class="fw-semibold mb-0">${countMatches ? "Matched" : "Check source"}</p>
+          <p class="acadia-text-muted acadia-small">Source status</p>
+          <p class="acadia-body ">${countMatches ? "Matched" : "Check source"}</p>
         </div>
       </div>
       ${detailLink("./iss.html", "Open crew")}
@@ -2747,23 +2690,23 @@ function renderDashboardLaunchSummary(launches) {
 
   els.launchBody.innerHTML = `
     <div class="dashboard-summary-card">
-      <p class="launch-count mb-3">${launches.length.toLocaleString()} upcoming launches</p>
-      <div class="summary-metric mb-3">
-        ${nextLaunch.imageUrl ? `<img src="${escapeHtml(nextLaunch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(nextLaunch, launchName))}" class="launch-thumb">` : `<span class="stat-chip"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></span>`}
+      <p class="launch-count acadia-badge acadia-badge-grey acadia-badge-round">${launches.length.toLocaleString()} upcoming launches</p>
+      <div class="summary-metric acadia-muted-panel">
+        ${nextLaunch.imageUrl ? `<img src="${escapeHtml(nextLaunch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(nextLaunch, launchName))}" class="launch-thumb acadia-thumbnail">` : `<span class="stat-chip"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></span>`}
         <div>
-          <p class="text-secondary small mb-1">Next launch</p>
-          <p class="h3 fw-semibold mb-0">${escapeHtml(launchName.vehicle)}</p>
-          ${launchName.mission ? `<p class="dashboard-summary-detail mb-0">${escapeHtml(launchName.mission)}</p>` : ""}
+          <p class="acadia-text-muted acadia-small">Next launch</p>
+          <p class="acadia-heading-small">${escapeHtml(launchName.vehicle)}</p>
+          ${launchName.mission ? `<p class="acadia-body dashboard-summary-detail">${escapeHtml(launchName.mission)}</p>` : ""}
         </div>
       </div>
-      <div class="metadata-grid mb-3">
+      <div class="metadata-grid">
         <div>
-          <p class="text-secondary small mb-1">Countdown</p>
-          <p class="fw-semibold mb-0">${formatCountdown(nextLaunch.dateUtc)}</p>
+          <p class="acadia-text-muted acadia-small">Countdown</p>
+          <p class="acadia-body ">${formatCountdown(nextLaunch.dateUtc)}</p>
         </div>
         <div>
-          <p class="text-secondary small mb-1">Status</p>
-          <p class="fw-semibold mb-0">${escapeHtml(nextLaunch.status)}</p>
+          <p class="acadia-text-muted acadia-small">Status</p>
+          <p class="acadia-body ">${escapeHtml(nextLaunch.status)}</p>
         </div>
       </div>
       ${detailLink("./launches.html", "Open launches")}
@@ -2786,21 +2729,21 @@ function renderDashboardNeoSummary(neoSummary) {
 
   els.neoBody.innerHTML = `
     <div class="dashboard-summary-card">
-      <div class="summary-metric mb-3">
+      <div class="summary-metric acadia-muted-panel">
         <span class="stat-chip ${hazardous === 0 ? "space-weather-quiet" : "space-weather-active"}"><i class="fa-solid fa-meteor acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="text-secondary small mb-1">Near-Earth objects today</p>
-          <p class="h3 fw-semibold mb-0">${asteroids.length.toLocaleString()}</p>
+          <p class="acadia-text-muted acadia-small">Near-Earth objects today</p>
+          <p class="acadia-heading-small">${asteroids.length.toLocaleString()}</p>
         </div>
       </div>
-      <div class="metadata-grid mb-3">
+      <div class="metadata-grid">
         <div>
-          <p class="text-secondary small mb-1">Closest approach</p>
-          <p class="fw-semibold mb-0">${formatLunarDistance(closestObject?.lunarDistance)}</p>
+          <p class="acadia-text-muted acadia-small">Closest approach</p>
+          <p class="acadia-body ">${formatLunarDistance(closestObject?.lunarDistance)}</p>
         </div>
         <div>
-          <p class="text-secondary small mb-1">Hazard status</p>
-          <p class="fw-semibold mb-0">${hazardous === 0 ? "None flagged" : `${hazardous} flagged`}</p>
+          <p class="acadia-text-muted acadia-small">Hazard status</p>
+          <p class="acadia-body ">${hazardous === 0 ? "None flagged" : `${hazardous} flagged`}</p>
         </div>
       </div>
       ${detailLink("./asteroids.html", "Open asteroids")}
@@ -2815,21 +2758,21 @@ function renderDashboardWeatherSummary(data) {
 
   els.spaceWeatherBody.innerHTML = `
     <div class="dashboard-summary-card">
-      <div class="summary-metric mb-3">
+      <div class="summary-metric acadia-muted-panel">
         <span class="stat-chip space-weather-${escapeHtml(data.severity)}"><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="text-secondary small mb-1">Current K-index</p>
-          <p class="h3 fw-semibold mb-0">${formatKpIndex(data.kpIndex)}</p>
+          <p class="acadia-text-muted acadia-small">Current K-index</p>
+          <p class="acadia-heading-small">${formatKpIndex(data.kpIndex)}</p>
         </div>
       </div>
-      <div class="metadata-grid mb-3">
+      <div class="metadata-grid">
         <div>
-          <p class="text-secondary small mb-1">Severity</p>
-          <p class="fw-semibold mb-0">${escapeHtml(data.condition)}</p>
+          <p class="acadia-text-muted acadia-small">Severity</p>
+          <p class="acadia-body ">${escapeHtml(data.condition)}</p>
         </div>
         <div>
-          <p class="text-secondary small mb-1">Trend</p>
-          <p class="fw-semibold mb-0">${data.forecast[0]?.condition ? escapeHtml(data.forecast[0].condition) : "Outlook unavailable"}</p>
+          <p class="acadia-text-muted acadia-small">Trend</p>
+          <p class="acadia-body ">${data.forecast[0]?.condition ? escapeHtml(data.forecast[0].condition) : "Outlook unavailable"}</p>
         </div>
       </div>
       ${detailLink("./weather.html", "Open weather")}
@@ -2844,14 +2787,14 @@ function renderDashboardAnomalySummary() {
 
   els.skyAnomaliesBody.innerHTML = `
     <div class="dashboard-summary-card">
-      <div class="summary-metric mb-3">
+      <div class="summary-metric acadia-muted-panel">
         <span class="stat-chip"><i class="fa-solid fa-magnifying-glass-location acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="text-secondary small mb-1">Sighting context check</p>
-          <p class="h3 fw-semibold mb-0">What did I see?</p>
+          <p class="acadia-text-muted acadia-small">Sighting context check</p>
+          <p class="acadia-heading-small">What did I see?</p>
         </div>
       </div>
-      <p class="dashboard-summary-detail mb-3">Check a sighting against launches, ISS position, space weather, asteroid context, and planned report-source gaps.</p>
+      <p class="acadia-body dashboard-summary-detail">Check a sighting against launches, ISS position, space weather, asteroid context, and planned report-source gaps.</p>
       ${detailLink("./anomalies.html", "Check sighting")}
     </div>
   `;
@@ -3098,11 +3041,11 @@ function renderSpaceBrief() {
   els.spaceBriefBody.innerHTML = `
     <div class="apollo-space-brief-header">
       <div>
-        <p class="section-kicker mb-1">Space Brief</p>
-        <h2 class="apollo-space-brief-title mb-0">${escapeHtml(state.headline)}</h2>
+        <p class="section-kicker acadia-kicker">Space Brief</p>
+        <h2 class="apollo-space-brief-title acadia-heading-small">${escapeHtml(state.headline)}</h2>
       </div>
     </div>
-    <p class="apollo-space-brief-summary mb-0">${escapeHtml(summary)}</p>
+    <p class="apollo-space-brief-summary acadia-body acadia-text-measure-wide">${escapeHtml(summary)}</p>
   `;
 }
 
@@ -3121,21 +3064,21 @@ function resetSpaceBrief() {
 function commandPanelRow({ icon, label, title, detail, time, href }) {
   const content = `
     <span class="command-panel-icon"><i class="fa-solid ${escapeHtml(icon)} acadia-icon" aria-hidden="true"></i></span>
-    <span class="command-panel-copy">
+    <span class="command-panel-copy acadia-copy-stack">
       <span class="command-panel-meta">
-        <span class="command-panel-label">${escapeHtml(label)}</span>
-        ${time ? `<span class="command-panel-time">${escapeHtml(time)}</span>` : ""}
+        <span class="command-panel-label acadia-kicker">${escapeHtml(label)}</span>
+        ${time ? `<span class="command-panel-time acadia-small acadia-text-muted">${escapeHtml(time)}</span>` : ""}
       </span>
-      <span class="command-panel-title">${escapeHtml(title)}</span>
-      <span class="command-panel-detail">${escapeHtml(detail)}</span>
+      <span class="command-panel-title acadia-body">${escapeHtml(title)}</span>
+      <span class="command-panel-detail acadia-small acadia-text-muted">${escapeHtml(detail)}</span>
     </span>
   `;
 
   if (href) {
-    return `<a class="command-panel-row command-panel-row-link" href="${escapeHtml(href)}">${content}</a>`;
+    return `<a class="command-panel-row acadia-muted-panel acadia-link-card command-panel-row-link" href="${escapeHtml(href)}">${content}</a>`;
   }
 
-  return `<article class="command-panel-row">${content}</article>`;
+  return `<article class="command-panel-row acadia-muted-panel">${content}</article>`;
 }
 
 function getRecentActivityRows() {
@@ -3422,7 +3365,7 @@ async function loadApod() {
     ];
     const whyItMatters = getApodWhyItMatters(data);
     let media = `
-      <div class="state-message apod-media-fallback">
+      <div class="state-message acadia-alert apod-media-fallback">
         <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
         <span>NASA media is unavailable right now.</span>
       </div>
@@ -3430,22 +3373,22 @@ async function loadApod() {
 
     if (data.mediaUrl && data.mediaType === "image") {
       media = `
-        <a class="apod-media-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open full-size APOD image: ${title}">
+        <a class="acadia-link-card apod-media-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open full-size APOD image: ${title}">
           <img class="apod-media" src="${mediaUrl}" alt="${title}">
         </a>
       `;
     } else if (data.mediaType === "video" && data.mediaEmbedUrl) {
-      media = `<div class="ratio ratio-16x9 apod-embed"><iframe src="${mediaEmbedUrl}" title="${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;
+      media = `<div class="apod-embed acadia-thumbnail"><iframe src="${mediaEmbedUrl}" title="${title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;
     } else if (data.mediaType === "video" && data.mediaUrl) {
       media = `
-        <div class="state-message apod-media-fallback">
+        <div class="state-message acadia-alert apod-media-fallback">
           <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
           <span>NASA video preview is unavailable here. Use the video link for the source media.</span>
         </div>
       `;
     } else if (data.mediaUrl) {
       media = `
-        <div class="state-message apod-media-fallback">
+        <div class="state-message acadia-alert apod-media-fallback">
           <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
           <span>NASA media preview is unavailable here. Open the media link or NASA source for the original.</span>
         </div>
@@ -3459,30 +3402,30 @@ async function loadApod() {
     }
 
     els.apodBody.innerHTML = `
-      <div class="apollo-card acadia-surface apod-showcase">
+      <div class="apollo-card acadia-card acadia-surface apod-showcase">
         ${media}
-        <aside class="apod-info-card" aria-label="NASA astronomy picture context">
+        <aside class="apod-info-card acadia-panel-dense" aria-label="NASA astronomy picture context">
           <div class="apod-info-header">
             <i class="fa-solid fa-image acadia-icon apod-info-icon" aria-hidden="true"></i>
             <div>
-              <p class="section-kicker apod-kicker mb-0">NASA APOD</p>
-              <h2 class="apod-info-title mb-0">Astronomy Picture of the Day</h2>
+              <p class="section-kicker acadia-kicker apod-kicker">NASA APOD</p>
+              <h2 class="apod-info-title acadia-lead">Astronomy Picture of the Day</h2>
             </div>
           </div>
           <p class="apod-date acadia-badge">${data.date ? formatDate(data.date) : "Today"}</p>
-          <h3 class="apod-title">${title}</h3>
-          ${data.copyright ? `<p class="apod-credit">Credit: ${escapeHtml(data.copyright)}</p>` : ""}
-          <p class="apod-summary">${summary}</p>
+          <h3 class="apod-title acadia-heading-small">${title}</h3>
+          ${data.copyright ? `<p class="apod-credit acadia-body acadia-text-measure-wide">Credit: ${escapeHtml(data.copyright)}</p>` : ""}
+          <p class="apod-summary acadia-body acadia-text-measure-wide">${summary}</p>
           ${hasLongExplanation ? `
-            <details class="apod-details mt-3">
-              <summary aria-label="Read full description for ${title}">Read full description</summary>
-              <p class="mb-0 mt-2">${explanation}</p>
+            <details class="apod-details acadia-accordion-item">
+              <summary class="acadia-accordion-summary" aria-label="Read full description for ${title}">Read full description</summary>
+              <p class="acadia-body ">${explanation}</p>
             </details>
           ` : ""}
           <div class="apod-context-stack">
             <section class="apod-quick-facts" aria-labelledby="apodQuickFactsTitle">
-              <h4 class="apod-panel-title" id="apodQuickFactsTitle">Quick Facts</h4>
-              <dl class="apod-fact-grid mb-0">
+              <h4 class="apod-panel-title acadia-body" id="apodQuickFactsTitle">Quick Facts</h4>
+              <dl class="apod-fact-grid">
                 ${apodFacts.map(([label, value]) => `
                   <div>
                     <dt>${escapeHtml(label)}</dt>
@@ -3491,31 +3434,31 @@ async function loadApod() {
                 `).join("")}
               </dl>
             </section>
-            <section class="apod-why-matters" aria-labelledby="apodWhyMattersTitle">
-              <h4 class="apod-panel-title" id="apodWhyMattersTitle">Why It Matters</h4>
-              <p class="mb-0">${escapeHtml(whyItMatters)}</p>
+            <section class="apod-why-matters acadia-muted-panel" aria-labelledby="apodWhyMattersTitle">
+              <h4 class="apod-panel-title acadia-body" id="apodWhyMattersTitle">Why It Matters</h4>
+              <p class="acadia-body ">${escapeHtml(whyItMatters)}</p>
             </section>
           </div>
-          <div class="detail-action-row apod-action-row">
+          <div class="detail-action-row acadia-cluster apod-action-row">
             ${data.mediaType === "image" && fullImageUrl ? `
-              <a class="source-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
+              <a class="source-link acadia-button acadia-button-secondary" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
                 <i class="fa-regular fa-image" aria-hidden="true"></i>
                 View image
               </a>
             ` : ""}
             ${data.mediaType === "video" && mediaUrl ? `
-              <a class="source-link" href="${mediaUrl}" target="_blank" rel="noopener noreferrer">
+              <a class="source-link acadia-button acadia-button-secondary" href="${mediaUrl}" target="_blank" rel="noopener noreferrer">
                 <i class="fa-regular fa-circle-play" aria-hidden="true"></i>
                 View video
               </a>
             ` : ""}
             ${data.mediaType !== "image" && data.mediaType !== "video" && mediaUrl ? `
-              <a class="source-link" href="${mediaUrl}" target="_blank" rel="noopener noreferrer">
+              <a class="source-link acadia-button acadia-button-secondary" href="${mediaUrl}" target="_blank" rel="noopener noreferrer">
                 <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
                 Open media
               </a>
             ` : ""}
-            <a class="source-link" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
+            <a class="source-link acadia-button acadia-button-secondary" href="${sourceUrl}" target="_blank" rel="noopener noreferrer">
               <i class="fa-solid fa-earth-americas acadia-icon" aria-hidden="true"></i>
               NASA source
             </a>
@@ -3549,7 +3492,7 @@ async function loadIss() {
     const issRegion = getIssRegion(data.latitude, data.longitude);
     const observedAtLabel = data.observedAt ? formatDateTime(data.observedAt) : "";
     const observedAtMarkup = observedAtLabel && observedAtLabel !== "Unavailable"
-      ? `<p class="iss-position-fix mb-3">Position fix <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
+      ? `<p class="iss-position-fix acadia-small acadia-text-muted">Position fix <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
       : "";
 
     if (isDashboardPage()) {
@@ -3581,13 +3524,13 @@ async function loadIss() {
     }
 
     els.issBody.innerHTML = `
-      <div class="iss-status-summary">
-        <div class="iss-status-headline">
-          <p class="section-kicker mb-1">ISS Status</p>
-          <h2 class="iss-status-title mb-0">Normal Operations</h2>
-          <p class="iss-orbital-brief mb-0" id="issOrbitalBriefText">${escapeHtml(getIssOrbitalBriefText(data, dashboardData.people))}</p>
+      <div class="iss-status-summary acadia-muted-panel">
+        <div class="iss-status-headline acadia-copy-stack">
+          <p class="section-kicker acadia-kicker">ISS Status</p>
+          <h2 class="iss-status-title acadia-heading-small">Normal Operations</h2>
+          <p class="iss-orbital-brief acadia-body acadia-text-measure-wide" id="issOrbitalBriefText">${escapeHtml(getIssOrbitalBriefText(data, dashboardData.people))}</p>
         </div>
-        <p class="iss-status-line mb-0">
+        <p class="acadia-body iss-status-line">
           <span>${formatNumber(data.altitude, { suffix: " km" })} altitude</span>
           <span>${formatNumber(data.velocity, { suffix: " km/h" })}</span>
           <span>${escapeHtml(formatIssVisibility(data.visibility))}</span>
@@ -3596,11 +3539,11 @@ async function loadIss() {
       </div>
       <div class="iss-map" id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"></div>
       ${observedAtMarkup}
-      <div class="iss-current-position">
+      <div class="iss-current-position acadia-muted-panel">
         <div class="iss-position-copy">
-          <p class="section-kicker mb-1">Current Position</p>
-          <h3 class="iss-position-title mb-0">${escapeHtml(issRegion)}</h3>
-          <p class="iss-position-summary mb-0">The station is moving at orbital speed while ${escapeHtml(formatIssVisibility(data.visibility).toLowerCase())}.</p>
+          <p class="section-kicker acadia-kicker">Current Position</p>
+          <h3 class="iss-position-title acadia-heading-small">${escapeHtml(issRegion)}</h3>
+          <p class="acadia-body iss-position-summary">The station is moving at orbital speed while ${escapeHtml(formatIssVisibility(data.visibility).toLowerCase())}.</p>
         </div>
         <div class="iss-position-stats">
           <div>
@@ -3613,8 +3556,8 @@ async function loadIss() {
           </div>
         </div>
       </div>
-      <div class="iss-orbit-context">
-        <p class="section-kicker mb-2">Orbital Snapshot</p>
+      <div class="iss-orbit-context acadia-muted-panel">
+        <p class="section-kicker acadia-kicker">Orbital Snapshot</p>
         <div class="orbit-snapshot-list">
           <article class="orbit-snapshot-item">
             <span><i class="fa-solid fa-earth-americas acadia-icon" aria-hidden="true"></i></span>
@@ -3637,7 +3580,7 @@ async function loadIss() {
             <strong>One orbit every ${formatOrbitMinutes(data.orbitPeriodMinutes)}</strong>
           </article>
         </div>
-        <p class="orbit-context-note mb-0">Orbit estimates use current altitude and velocity; sunlight and footprint come from the ISS position source.</p>
+        <p class="orbit-context-note acadia-small acadia-text-muted">Orbit estimates use current altitude and velocity; sunlight and footprint come from the ISS position source.</p>
       </div>
       <div class="iss-coordinate-strip" aria-label="ISS coordinates">
         <div>
@@ -3649,8 +3592,8 @@ async function loadIss() {
           <strong>${formatNumber(data.longitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</strong>
         </div>
       </div>
-      <div class="detail-action-row iss-source-row">
-        <a class="source-link" href="https://wheretheiss.at/" target="_blank" rel="noopener noreferrer">
+      <div class="detail-action-row acadia-cluster iss-source-row">
+        <a class="source-link acadia-button acadia-button-secondary" href="https://wheretheiss.at/" target="_blank" rel="noopener noreferrer">
           <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
           ISS position source
         </a>
@@ -3748,19 +3691,19 @@ async function loadPeople() {
     }
 
     els.peopleBody.innerHTML = `
-      <div class="crew-brief">
+      <div class="crew-brief acadia-muted-panel">
         <span class="stat-chip"><i class="fa-solid fa-user-astronaut acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="section-kicker mb-1">Crew Manifest</p>
-          <h3 class="crew-brief-title mb-0">${people.length.toLocaleString()} aboard across ${craftGroups.length.toLocaleString()} ${crewLocationLabel}</h3>
-          <p class="crew-brief-summary mb-0">${escapeHtml(crewBriefDetail)}</p>
+          <p class="section-kicker acadia-kicker">Crew Manifest</p>
+          <h3 class="crew-brief-title acadia-heading-small">${people.length.toLocaleString()} aboard across ${craftGroups.length.toLocaleString()} ${crewLocationLabel}</h3>
+          <p class="acadia-body crew-brief-summary">${escapeHtml(crewBriefDetail)}</p>
         </div>
       </div>
       <div class="crew-manifest-grid">
         ${craftManifest.map((group) => `
           <article class="crew-manifest-card">
             <header class="crew-manifest-header">
-              <h3 class="crew-manifest-title mb-0">${escapeHtml(group.craft)}</h3>
+              <h3 class="crew-manifest-title acadia-body">${escapeHtml(group.craft)}</h3>
               <span>${group.count.toLocaleString()} ${group.count === 1 ? "person" : "aboard"}</span>
             </header>
             <ul class="crew-manifest-list">
@@ -3769,8 +3712,8 @@ async function loadPeople() {
           </article>
         `).join("")}
       </div>
-      <div class="crew-source-note">
-        <p class="mb-0"><strong>Source roster count:</strong> ${escapeHtml(formatCrewSourceCount(roster.sourceCount))}; ${escapeHtml(rosterCheck)}.</p>
+      <div class="crew-source-note acadia-small acadia-text-muted">
+        <p class="acadia-body "><strong>Source roster count:</strong> ${escapeHtml(formatCrewSourceCount(roster.sourceCount))}; ${escapeHtml(rosterCheck)}.</p>
       </div>
     `;
     updateIssOrbitalBrief();
@@ -3828,7 +3771,7 @@ async function loadLaunches() {
       const visibleLaunches = launches.slice(0, 3);
 
       els.launchBody.innerHTML = `
-        <p class="launch-count">${launches.length} upcoming SpaceX launches</p>
+        <p class="launch-count acadia-badge acadia-badge-grey acadia-badge-round">${launches.length} upcoming SpaceX launches</p>
         <div class="launch-list">
           ${visibleLaunches.map((launch) => {
           const launchName = splitLaunchName(launch.name);
@@ -3853,37 +3796,37 @@ async function loadLaunches() {
             .join("");
 
           return `
-            <article class="launch-card">
-              ${launch.imageUrl ? `<img src="${escapeHtml(launch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(launch, launchName))}" class="launch-thumb">` : `<span class="stat-chip"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></span>`}
+            <article class="launch-card acadia-muted-panel">
+              ${launch.imageUrl ? `<img src="${escapeHtml(launch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(launch, launchName))}" class="launch-thumb acadia-thumbnail">` : `<span class="stat-chip"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></span>`}
               <div class="launch-main">
-                <p class="launch-meta">${formatDateTime(launch.dateUtc)} · ${formatCountdown(launch.dateUtc)}</p>
+                <p class="launch-meta acadia-small acadia-text-muted">${formatDateTime(launch.dateUtc)} · ${formatCountdown(launch.dateUtc)}</p>
                 <div class="launch-title-row">
-                  <h3 class="launch-vehicle mb-0">${escapeHtml(launchName.vehicle)}</h3>
-                  ${launchName.mission ? `<span class="launch-mission">${escapeHtml(launchName.mission)}</span>` : ""}
+                  <h3 class="launch-vehicle acadia-lead">${escapeHtml(launchName.vehicle)}</h3>
+                  ${launchName.mission ? `<span class="launch-mission acadia-lead">${escapeHtml(launchName.mission)}</span>` : ""}
                 </div>
-                <p class="launch-window-summary mb-0">${escapeHtml(launchWindowSummary)}</p>
+                <p class="launch-window-summary acadia-small acadia-text-muted">${escapeHtml(launchWindowSummary)}</p>
                 <div class="launch-footer">
-                  <details class="data-details launch-details">
-                    <summary aria-label="Show mission details for ${escapeHtml(launch.name)}"><i class="fa-solid fa-chevron-down acadia-icon" aria-hidden="true"></i>Mission details</summary>
-                    <div class="data-detail-panel">
-                      <p class="mb-3">${fullDetails}</p>
-                      ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
+                  <details class="data-details acadia-accordion-item launch-details">
+                    <summary class="acadia-accordion-summary" aria-label="Show mission details for ${escapeHtml(launch.name)}">Mission details</summary>
+                    <div class="data-detail-panel acadia-accordion-panel">
+                      <p class="acadia-body ">${fullDetails}</p>
+                      ${detailRows ? `<dl class="detail-list">${detailRows}</dl>` : ""}
                       ${launch.sourceUrl ? `
-                        <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">
+                        <a class="source-link acadia-button acadia-button-secondary" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">
                           <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
                           Launch source
                         </a>
                       ` : ""}
                     </div>
                   </details>
-                  <span class="launch-status-pill">${escapeHtml(launch.status)}</span>
+                  <span class="launch-status-pill acadia-badge acadia-badge-grey acadia-badge-round">${escapeHtml(launch.status)}</span>
                 </div>
               </div>
             </article>
           `;
         }).join("")}
         </div>
-        <a class="btn launch-show-all mt-4" href="./launches.html">View all SpaceX launches</a>
+        <a class="launch-show-all acadia-button acadia-button-brand" href="./launches.html">View all SpaceX launches</a>
       `;
     };
 
@@ -3957,27 +3900,27 @@ async function loadNeo() {
         <div class="neo-brief-heading">
           <span class="stat-chip neo-risk-chip neo-risk-${escapeHtml(riskStatus.tone)}"><i class="fa-solid fa-shield-halved acadia-icon" aria-hidden="true"></i></span>
           <div>
-            <p class="section-kicker mb-1">Near-Earth Brief</p>
-            <h3 class="neo-section-title mb-0" id="neoBriefTitle">${escapeHtml(riskStatus.headline)}</h3>
+            <p class="section-kicker acadia-kicker">Near-Earth Brief</p>
+            <h3 class="neo-section-title acadia-heading-small" id="neoBriefTitle">${escapeHtml(riskStatus.headline)}</h3>
           </div>
         </div>
-        <ul class="neo-brief-list mb-0">
+        <ul class="neo-brief-list">
           ${briefLines.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}
         </ul>
         <div class="neo-source-context">
-          <p class="mb-1"><strong>${escapeHtml(hazardFlagContext.label)}</strong>: ${escapeHtml(hazardFlagContext.summary)}</p>
-          <p class="mb-0"><strong>${escapeHtml(sentryContext.label)}</strong>: ${escapeHtml(sentryContext.summary)}</p>
+          <p class="acadia-body "><strong>${escapeHtml(hazardFlagContext.label)}</strong>: ${escapeHtml(hazardFlagContext.summary)}</p>
+          <p class="acadia-body "><strong>${escapeHtml(sentryContext.label)}</strong>: ${escapeHtml(sentryContext.summary)}</p>
         </div>
       </section>
 
-      <section class="neo-watch-status" aria-labelledby="neoWatchStatusTitle">
+      <section class="neo-watch-status acadia-muted-panel" aria-labelledby="neoWatchStatusTitle">
         <div class="space-weather-section-heading">
           <div>
-            <p class="section-kicker mb-1">Watch Status</p>
-            <h3 class="neo-section-title mb-0" id="neoWatchStatusTitle">Risk level: ${escapeHtml(riskStatus.label)}</h3>
+            <p class="section-kicker acadia-kicker">Watch Status</p>
+            <h3 class="neo-section-title acadia-heading-small" id="neoWatchStatusTitle">Risk level: ${escapeHtml(riskStatus.label)}</h3>
           </div>
         </div>
-        <ul class="neo-watch-list list-unstyled mb-0">
+        <ul class="neo-watch-list">
           <li><span>Hazardous objects</span><strong>${hazardous.toLocaleString()}</strong></li>
           <li><span>Sentry objects</span><strong>${sentryObjects.toLocaleString()}</strong></li>
           <li><span>Closest approach</span><strong>${formatCompactLunarDistance(closestObject?.lunarDistance)}</strong></li>
@@ -3988,27 +3931,27 @@ async function loadNeo() {
         <section class="neo-featured-section" aria-labelledby="neoFeaturedTitle">
           <div class="space-weather-section-heading">
             <div>
-              <p class="section-kicker mb-1">Closest Approach</p>
-              <h3 class="neo-section-title mb-0" id="neoFeaturedTitle">Featured Approach</h3>
+              <p class="section-kicker acadia-kicker">Closest Approach</p>
+              <h3 class="neo-section-title acadia-heading-small" id="neoFeaturedTitle">Featured Approach</h3>
             </div>
-            <p class="neo-section-note mb-0">
+            <p class="neo-section-note acadia-small acadia-text-muted">
               ${featuredApproachIso
                 ? `<time datetime="${escapeHtml(featuredApproachIso)}">${escapeHtml(featuredApproachLabel)}</time>`
                 : escapeHtml(featuredApproachLabel)}
             </p>
           </div>
-          <article class="neo-featured-card">
+          <article class="neo-featured-card acadia-muted-panel">
             <div class="neo-object-copy">
-              <p class="neo-object-role mb-1">Closest object today</p>
-              <h4 class="neo-object-title mb-2">${escapeHtml(featuredObject.name)}</h4>
-              <p class="neo-object-interpretation mb-1">${escapeHtml(getNeoSizeLabel(featuredObject))}</p>
-              <p class="neo-object-detail mb-0">${escapeHtml(formatApproxDiameterRange(featuredObject.minDiameterMeters, featuredObject.maxDiameterMeters))}</p>
-              <p class="neo-featured-summary mb-0">${getNeoFeaturedNarrative(featuredObject)}</p>
+              <p class="neo-object-role acadia-small acadia-text-muted">Closest object today</p>
+              <h4 class="neo-object-title acadia-body">${escapeHtml(featuredObject.name)}</h4>
+              <p class="neo-object-interpretation acadia-body">${escapeHtml(getNeoSizeLabel(featuredObject))}</p>
+              <p class="neo-object-detail acadia-small acadia-text-muted">${escapeHtml(formatApproxDiameterRange(featuredObject.minDiameterMeters, featuredObject.maxDiameterMeters))}</p>
+              <p class="neo-featured-summary acadia-body acadia-text-measure-wide">${getNeoFeaturedNarrative(featuredObject)}</p>
             </div>
             <div class="neo-featured-metrics">
-              <p class="neo-distance-value mb-1">${formatLunarDistance(featuredObject.lunarDistance)}</p>
-              <p class="neo-object-interpretation mb-1">${escapeHtml(getNeoPassLabel(featuredObject.lunarDistance))}</p>
-              <p class="neo-object-detail mb-0">${escapeHtml(getNeoIndicatorText(featuredObject))}</p>
+              <p class="neo-distance-value acadia-lead">${formatLunarDistance(featuredObject.lunarDistance)}</p>
+              <p class="neo-object-interpretation acadia-body">${escapeHtml(getNeoPassLabel(featuredObject.lunarDistance))}</p>
+              <p class="neo-object-detail acadia-small acadia-text-muted">${escapeHtml(getNeoIndicatorText(featuredObject))}</p>
             </div>
             ${renderNeoDetails(featuredObject)}
           </article>
@@ -4019,22 +3962,22 @@ async function loadNeo() {
         <section class="neo-additional-section" aria-labelledby="neoAdditionalTitle">
           <div class="space-weather-section-heading">
             <div>
-              <p class="section-kicker mb-1">Additional Objects</p>
-              <h3 class="neo-section-title mb-0" id="neoAdditionalTitle">Other passes today</h3>
+              <p class="section-kicker acadia-kicker">Additional Objects</p>
+              <h3 class="neo-section-title acadia-heading-small" id="neoAdditionalTitle">Other passes today</h3>
             </div>
           </div>
-          <ul class="neo-object-list list-unstyled mb-0">
+          <ul class="neo-object-list">
             ${additionalObjects.map((item) => `
-              <li class="neo-object-card">
+              <li class="neo-object-card acadia-muted-panel">
                 <div class="neo-object-copy">
-                  <h4 class="neo-object-title mb-2">${escapeHtml(item.name)}</h4>
-                  <p class="neo-object-interpretation mb-1">${escapeHtml(getNeoSizeLabel(item))}</p>
-                  <p class="neo-object-detail mb-0">${escapeHtml(formatApproxDiameterRange(item.minDiameterMeters, item.maxDiameterMeters))}</p>
+                  <h4 class="neo-object-title acadia-body">${escapeHtml(item.name)}</h4>
+                  <p class="neo-object-interpretation acadia-body">${escapeHtml(getNeoSizeLabel(item))}</p>
+                  <p class="neo-object-detail acadia-small acadia-text-muted">${escapeHtml(formatApproxDiameterRange(item.minDiameterMeters, item.maxDiameterMeters))}</p>
                 </div>
                 <div class="neo-object-pass">
-                  <p class="neo-object-interpretation mb-1">${escapeHtml(getNeoPassLabel(item.lunarDistance))}</p>
-                  <p class="neo-distance-value mb-1">${formatLunarDistance(item.lunarDistance)}</p>
-                  <p class="neo-object-detail mb-0">${escapeHtml(getNeoIndicatorText(item))}</p>
+                  <p class="neo-object-interpretation acadia-body">${escapeHtml(getNeoPassLabel(item.lunarDistance))}</p>
+                  <p class="neo-distance-value acadia-lead">${formatLunarDistance(item.lunarDistance)}</p>
+                  <p class="neo-object-detail acadia-small acadia-text-muted">${escapeHtml(getNeoIndicatorText(item))}</p>
                 </div>
                 ${renderNeoDetails(item)}
               </li>
@@ -4085,7 +4028,7 @@ async function loadSpaceWeather() {
     const trendLabel = getSpaceWeatherTrendLabel(forecastRows);
     const observedAtLabel = data.observedAt ? formatDateTime(data.observedAt) : "";
     const observedAtMarkup = observedAtLabel && observedAtLabel !== "Unavailable"
-      ? `<p class="space-weather-observed mb-0">Observed <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
+      ? `<p class="space-weather-observed acadia-small acadia-text-muted">Observed <time datetime="${escapeHtml(data.observedAt)}">${escapeHtml(observedAtLabel)}</time></p>`
       : "";
 
     if (isDashboardPage()) {
@@ -4115,34 +4058,34 @@ async function loadSpaceWeather() {
     }
 
     els.spaceWeatherBody.innerHTML = `
-      <div class="summary-metric">
+      <div class="summary-metric acadia-muted-panel">
         <span class="stat-chip ${severityClass}"><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="text-secondary small mb-1">Current K-index</p>
-          <p class="h3 fw-semibold mb-0">${formatKpIndex(data.kpIndex)}</p>
+          <p class="acadia-text-muted acadia-small">Current K-index</p>
+          <p class="acadia-heading-small">${formatKpIndex(data.kpIndex)}</p>
           ${observedAtMarkup}
         </div>
       </div>
-      <section class="space-weather-brief ${severityClass}" aria-labelledby="spaceWeatherBriefTitle">
+      <section class="space-weather-brief acadia-muted-panel ${severityClass}" aria-labelledby="spaceWeatherBriefTitle">
         <div>
-          <p class="section-kicker mb-1">Space Weather Brief</p>
-          <h3 class="space-weather-brief-title mb-0" id="spaceWeatherBriefTitle">${escapeHtml(data.condition)}</h3>
-          <p class="space-weather-brief-copy mb-0">${escapeHtml(weatherBrief)}</p>
+          <p class="section-kicker acadia-kicker">Space Weather Brief</p>
+          <h3 class="space-weather-brief-title acadia-heading-small" id="spaceWeatherBriefTitle">${escapeHtml(data.condition)}</h3>
+          <p class="space-weather-brief-copy acadia-body acadia-text-measure-wide">${escapeHtml(weatherBrief)}</p>
         </div>
-        ${data.kpLabel ? `<span class="space-weather-kp">${escapeHtml(data.kpLabel)}</span>` : ""}
+        ${data.kpLabel ? `<span class="space-weather-kp acadia-badge acadia-badge-grey acadia-badge-round">${escapeHtml(data.kpLabel)}</span>` : ""}
       </section>
       ${forecastRows.length ? `
         <section class="space-weather-forecast" aria-labelledby="spaceWeatherForecastTitle">
           <div class="space-weather-section-heading">
             <div>
-              <p class="section-kicker mb-1">Next 72 hours</p>
-              <h3 class="space-weather-section-title mb-0" id="spaceWeatherForecastTitle">Kp Trend</h3>
+              <p class="section-kicker acadia-kicker">Next 72 hours</p>
+              <h3 class="space-weather-section-title acadia-heading-small" id="spaceWeatherForecastTitle">Kp Trend</h3>
             </div>
-            <p class="space-weather-trend-label mb-0">${escapeHtml(trendLabel)}</p>
+            <p class="space-weather-trend-label acadia-small acadia-text-muted">${escapeHtml(trendLabel)}</p>
           </div>
           <div class="space-weather-trend-line" aria-label="K-index trend">
             ${forecastRows.map((item) => `
-              <span class="space-weather-trend-step space-weather-${escapeHtml(item.severity)}">
+              <span class="space-weather-trend-step acadia-muted-panel space-weather-${escapeHtml(item.severity)}">
                 <strong>${formatKpIndex(item.maxKp)}</strong>
                 <small>${formatShortDate(item.date)}</small>
               </span>
@@ -4150,10 +4093,10 @@ async function loadSpaceWeather() {
           </div>
           <div class="space-weather-forecast-grid">
             ${forecastRows.map((item) => `
-              <article class="space-weather-forecast-day space-weather-${escapeHtml(item.severity)}">
-                <p class="space-weather-forecast-date mb-1">${formatShortDate(item.date)}</p>
-                <p class="space-weather-forecast-kp mb-1">Kp ${formatKpIndex(item.maxKp)}</p>
-                <p class="space-weather-forecast-condition mb-0">
+              <article class="space-weather-forecast-day acadia-muted-panel space-weather-${escapeHtml(item.severity)}">
+                <p class="space-weather-forecast-date acadia-small acadia-text-muted">${formatShortDate(item.date)}</p>
+                <p class="space-weather-forecast-kp acadia-lead">Kp ${formatKpIndex(item.maxKp)}</p>
+                <p class="space-weather-forecast-condition acadia-small acadia-text-muted">
                   ${escapeHtml(item.noaaScale || item.condition)}
                 </p>
               </article>
@@ -4161,38 +4104,38 @@ async function loadSpaceWeather() {
           </div>
         </section>
       ` : ""}
-      <div class="space-weather-status ${severityClass}">
+      <div class="space-weather-status acadia-muted-panel ${severityClass}">
         <div>
-          <p class="section-kicker mb-1">${escapeHtml(data.condition)}</p>
-          <p class="mb-0">${escapeHtml(data.summary)}</p>
+          <p class="section-kicker acadia-kicker">${escapeHtml(data.condition)}</p>
+          <p class="acadia-body ">${escapeHtml(data.summary)}</p>
         </div>
       </div>
-      <div class="space-weather-scale-context">
+      <div class="space-weather-scale-context acadia-muted-panel">
         <div>
-          <p class="text-secondary small mb-1">NOAA geomagnetic scale</p>
-          <p class="space-weather-scale-label mb-0">${escapeHtml(noaaScaleContext.label)}</p>
-          <p class="space-weather-scale-range mb-0">${escapeHtml(noaaScaleContext.range)}</p>
+          <p class="acadia-text-muted acadia-small">NOAA geomagnetic scale</p>
+          <p class="space-weather-scale-label acadia-body">${escapeHtml(noaaScaleContext.label)}</p>
+          <p class="space-weather-scale-range acadia-small acadia-text-muted">${escapeHtml(noaaScaleContext.range)}</p>
         </div>
-        <p class="space-weather-scale-summary mb-0">${escapeHtml(noaaScaleContext.summary)}</p>
+        <p class="space-weather-scale-summary acadia-small acadia-text-muted">${escapeHtml(noaaScaleContext.summary)}</p>
       </div>
       ${recentAlerts.length ? `
         <section class="space-weather-alerts" aria-labelledby="spaceWeatherAlertsTitle">
           <div class="space-weather-section-heading">
             <div>
-              <p class="section-kicker mb-1">Watch Items</p>
-              <h3 class="space-weather-section-title mb-0" id="spaceWeatherAlertsTitle">Recent NOAA Notices</h3>
+              <p class="section-kicker acadia-kicker">Watch Items</p>
+              <h3 class="space-weather-section-title acadia-heading-small" id="spaceWeatherAlertsTitle">Recent NOAA Notices</h3>
             </div>
           </div>
-          <ul class="list-unstyled mb-0">
+          <ul class="">
             ${recentAlerts.map((alert) => {
               const interpretation = getSpaceWeatherAlertInterpretation(alert);
               return `
               <li>
                 <div class="space-weather-alert-heading">
-                  <span class="space-weather-alert-pill">${escapeHtml(alert.type)}</span>
+                  <span class="space-weather-alert-pill acadia-badge acadia-badge-grey acadia-badge-round">${escapeHtml(alert.type)}</span>
                   <span>${escapeHtml(alert.headline)}</span>
                 </div>
-                <p class="space-weather-alert-impact mb-0">
+                <p class="space-weather-alert-impact acadia-small acadia-text-muted">
                   <span>${escapeHtml(interpretation.title)}</span>
                   <span>${escapeHtml(interpretation.summary)}</span>
                 </p>
@@ -4202,7 +4145,7 @@ async function loadSpaceWeather() {
           </ul>
         </section>
       ` : stateMessage("No recent NOAA alerts are listed.")}
-      <a class="source-link" href="${escapeHtml(data.sourceUrl)}" target="_blank" rel="noopener noreferrer">
+      <a class="source-link acadia-button acadia-button-secondary" href="${escapeHtml(data.sourceUrl)}" target="_blank" rel="noopener noreferrer">
         <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
         NOAA space weather source
       </a>
@@ -4384,7 +4327,5 @@ document.addEventListener("keydown", (event) => {
 });
 
 initThemeControl();
-initMobileWatchMenuDismissal();
-initMobileWatchKeyboard();
 initSkyAnomalyEngine();
 loadDashboard();

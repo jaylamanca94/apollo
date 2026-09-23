@@ -1,11 +1,11 @@
 const LAUNCHES_API = "/api/launches?limit=20";
 const THEME_STORAGE_KEY = "apollo-theme";
 const THEME_COLORS = {
-  dark: "#1F2427",
-  light: "#E8EAED"
+  dark: "#181A1E",
+  light: "#F5F5F5"
 };
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
-const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner" aria-hidden="true"></span><span>Refreshing data</span>`;
+const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner acadia-activity-indicator is-small" aria-hidden="true"></span><span>Refreshing data</span>`;
 const ERROR_PREFIX = "Data unavailable.";
 
 const els = {
@@ -305,7 +305,6 @@ function updateThemeColorMeta(theme) {
 }
 
 function applyTheme(theme) {
-  document.documentElement.setAttribute("data-bs-theme", theme);
   document.documentElement.setAttribute("data-acadia-theme", theme);
   updateThemeColorMeta(theme);
   updateThemeToggle(theme);
@@ -320,7 +319,7 @@ function initThemeControl() {
   }
 
   els.themeToggle.addEventListener("click", () => {
-    const currentTheme = document.documentElement.getAttribute("data-bs-theme") === "light" ? "light" : "dark";
+    const currentTheme = document.documentElement.getAttribute("data-acadia-theme") === "light" ? "light" : "dark";
     const nextTheme = currentTheme === "dark" ? "light" : "dark";
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
@@ -360,7 +359,7 @@ function stateMessage(message, options = {}) {
   const role = options.role ? ` role="${escapeHtml(options.role)}"` : "";
 
   return `
-    <div class="state-message acadia-alert${tone} mb-0"${role}>
+    <div class="state-message acadia-alert${tone}"${role}>
       <i class="fa-solid ${icon} acadia-icon" aria-hidden="true"></i>
       <span>${escapeHtml(message)}</span>
     </div>
@@ -369,29 +368,29 @@ function stateMessage(message, options = {}) {
 
 function renderLaunchesUnavailable(message) {
   return `
-    <div class="source-unavailable-state" role="alert">
+    <div class="source-unavailable-state acadia-muted-panel" role="alert">
       <div class="source-unavailable-heading">
         <span class="source-unavailable-icon"><i class="fa-solid fa-circle-exclamation acadia-icon" aria-hidden="true"></i></span>
         <div>
-          <p class="section-kicker mb-1">Source checked</p>
-          <h3 class="source-unavailable-title mb-0">Data unavailable</h3>
+          <p class="section-kicker acadia-kicker">Source checked</p>
+          <h3 class="source-unavailable-title acadia-lead">Data unavailable</h3>
         </div>
       </div>
-      <p class="source-unavailable-copy mb-0">${escapeHtml(message)}</p>
-      <div class="source-unavailable-recovery">
-        <p class="mb-0"><strong>Recovery:</strong> Refresh again shortly or open The Space Devs source to check availability.</p>
-        <p class="mb-0"><strong>Source checked:</strong> The Space Devs launch source.</p>
+      <p class="source-unavailable-copy acadia-body acadia-text-measure-wide">${escapeHtml(message)}</p>
+      <div class="source-unavailable-recovery acadia-body acadia-text-measure-wide">
+        <p class="acadia-body "><strong>Recovery:</strong> Refresh again shortly or open The Space Devs source to check availability.</p>
+        <p class="acadia-body "><strong>Source checked:</strong> The Space Devs launch source.</p>
       </div>
-      <div class="source-unavailable-actions">
+      <div class="source-unavailable-actions acadia-cluster">
         <button class="acadia-button acadia-button-secondary source-unavailable-retry" type="button" data-launches-retry>
           <i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i>
           Try The Space Devs again
         </button>
-        <a class="source-link" href="https://thespacedevs.com/llapi" target="_blank" rel="noopener noreferrer" aria-label="Open The Space Devs launch source">
+        <a class="source-link acadia-button acadia-button-secondary" href="https://thespacedevs.com/llapi" target="_blank" rel="noopener noreferrer" aria-label="Open The Space Devs launch source">
           <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
           Open The Space Devs launch source
         </a>
-        <a class="source-link" href="./index.html">
+        <a class="source-link acadia-button acadia-button-secondary" href="./index.html">
           <i class="fa-solid fa-gauge-high acadia-icon" aria-hidden="true"></i>
           Dashboard
         </a>
@@ -454,30 +453,30 @@ function renderLaunches(launches) {
       .join("");
 
     return `
-      <article class="launch-timeline-row${index === 0 ? " launch-timeline-row-next" : ""}" aria-labelledby="${rowTitleId}">
+      <article class="acadia-muted-panel launch-timeline-row${index === 0 ? " launch-timeline-row-next" : ""}" aria-labelledby="${rowTitleId}">
         <div class="launch-timeline-rail">
-          <span><span class="visually-hidden">Countdown </span>${escapeHtml(countdownLabel)}</span>
+          <span><span class="acadia-visually-hidden">Countdown </span>${escapeHtml(countdownLabel)}</span>
         </div>
         <div class="launch-timeline-main">
           <div class="launch-timeline-header">
             <div>
-              <p class="launch-timeline-when mb-1">${escapeHtml(formatDateShort(launch.dateUtc))} · ${escapeHtml(formatLaunchTime(launch.dateUtc))}</p>
-              <h3 class="launch-timeline-title mb-0" id="${rowTitleId}">${escapeHtml(missionLabel)}</h3>
-              ${launchName.mission && missionLabel !== launchName.vehicle ? `<p class="launch-timeline-vehicle mb-0">${escapeHtml(launchName.vehicle)}</p>` : ""}
+              <p class="launch-timeline-when acadia-small acadia-text-muted">${escapeHtml(formatDateShort(launch.dateUtc))} · ${escapeHtml(formatLaunchTime(launch.dateUtc))}</p>
+              <h3 class="launch-timeline-title acadia-lead" id="${rowTitleId}">${escapeHtml(missionLabel)}</h3>
+              ${launchName.mission && missionLabel !== launchName.vehicle ? `<p class="launch-timeline-vehicle acadia-small acadia-text-muted">${escapeHtml(launchName.vehicle)}</p>` : ""}
             </div>
-            <span class="launch-status-pill">${escapeHtml(launch.status)}</span>
+            <span class="launch-status-pill acadia-badge acadia-badge-grey acadia-badge-round">${escapeHtml(launch.status)}</span>
           </div>
-          <div class="launch-timeline-facts">
+          <div class="launch-timeline-facts acadia-small acadia-text-muted">
             <span><i class="fa-solid fa-location-dot acadia-icon" aria-hidden="true"></i>${escapeHtml(launchLocation)}</span>
             <span><i class="fa-regular fa-clock acadia-icon" aria-hidden="true"></i>${escapeHtml(launchWindowSummary)}</span>
           </div>
-          <details class="data-details launch-details launch-timeline-details">
-            <summary aria-label="Show mission details for ${escapeHtml(launch.name)}"><i class="fa-solid fa-chevron-down acadia-icon" aria-hidden="true"></i>Mission details</summary>
-            <div class="data-detail-panel">
-              <p class="mb-3">${escapeHtml(truncateText(launch.details, 360))}</p>
-              ${detailRows ? `<dl class="detail-list mb-3">${detailRows}</dl>` : ""}
+          <details class="data-details acadia-accordion-item launch-details launch-timeline-details">
+            <summary class="acadia-accordion-summary" aria-label="Show mission details for ${escapeHtml(launch.name)}">Mission details</summary>
+            <div class="data-detail-panel acadia-accordion-panel">
+              <p class="acadia-body ">${escapeHtml(truncateText(launch.details, 360))}</p>
+              ${detailRows ? `<dl class="detail-list">${detailRows}</dl>` : ""}
               ${launch.sourceUrl ? `
-                <a class="source-link" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">
+                <a class="source-link acadia-button acadia-button-secondary" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">
                   <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
                   Launch source
                 </a>
@@ -504,7 +503,7 @@ function renderLaunches(launches) {
     .join("");
   const nextLaunchActionItems = [
     nextLaunch.sourceUrl ? `
-      <a class="source-link" href="${escapeHtml(nextLaunch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(nextLaunch.name)}">
+      <a class="source-link acadia-button acadia-button-secondary" href="${escapeHtml(nextLaunch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(nextLaunch.name)}">
         <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
         Launch source
       </a>
@@ -513,8 +512,8 @@ function renderLaunches(launches) {
   ].filter(Boolean).join("");
 
   els.launchPageBody.innerHTML = `
-    <section class="next-launch-spotlight" aria-labelledby="nextLaunchTitle">
-      <div class="next-launch-media">
+    <section class="next-launch-spotlight acadia-muted-panel" aria-labelledby="nextLaunchTitle">
+      <div class="next-launch-media acadia-thumbnail">
         ${nextLaunch.imageUrl
           ? `<img src="${escapeHtml(nextLaunch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(nextLaunch, nextLaunchName))}">`
           : `<div class="launch-page-media-placeholder"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></div>`}
@@ -522,33 +521,35 @@ function renderLaunches(launches) {
       <div class="next-launch-content">
         <div class="next-launch-heading">
           <div>
-            <p class="section-kicker mb-2">Next SpaceX launch</p>
-            <h2 class="next-launch-title mb-0" id="nextLaunchTitle">
+            <p class="section-kicker acadia-kicker">Next SpaceX launch</p>
+            <h2 class="next-launch-title acadia-heading-small" id="nextLaunchTitle">
               ${escapeHtml(getLaunchMissionLabel(nextLaunchName))}
               ${nextLaunchName.mission ? `<span>${escapeHtml(nextLaunchName.vehicle)}</span>` : ""}
             </h2>
           </div>
-          <span class="launch-status-pill">${escapeHtml(nextLaunch.status)}</span>
+          <span class="launch-status-pill acadia-badge acadia-badge-grey acadia-badge-round">${escapeHtml(nextLaunch.status)}</span>
         </div>
         <div class="next-launch-keyfacts">${nextLaunchFacts}</div>
-        <p class="launch-page-summary">${escapeHtml(truncateText(nextLaunch.details, 300))}</p>
+        <p class="acadia-body launch-page-summary">${escapeHtml(truncateText(nextLaunch.details, 300))}</p>
         ${nextLaunchActionItems ? `<div class="next-launch-actions">${nextLaunchActionItems}</div>` : ""}
       </div>
     </section>
     <section class="launch-timeline-section" aria-labelledby="upcomingLaunchesTitle">
       <div class="launch-timeline-section-header">
         <div>
-          <p class="section-kicker mb-1">Upcoming launches</p>
-          <h2 class="section-title mb-0" id="upcomingLaunchesTitle">Next missions to watch</h2>
+          <p class="section-kicker acadia-kicker">Upcoming launches</p>
+          <h2 class="section-title acadia-heading-small" id="upcomingLaunchesTitle">Next missions to watch</h2>
         </div>
-        <p class="launch-count mb-0">${launches.length} upcoming SpaceX launches</p>
+        <p class="launch-count acadia-badge acadia-badge-grey acadia-badge-round">${launches.length} upcoming SpaceX launches</p>
       </div>
       <div class="launch-timeline-list">${scheduleRows}</div>
     </section>
   `;
 }
 
-async function loadLaunches() {
+async function loadLaunches({ restoreRetryFocus = false } = {}) {
+  const retryTrigger = restoreRetryFocus ? document.querySelector("[data-launches-retry]") : null;
+  const retryHadFocus = retryTrigger && document.activeElement === retryTrigger;
   setLaunchPageStatus("Loading launch schedule.");
   setBusy(els.launchPageBody, true);
 
@@ -572,6 +573,11 @@ async function loadLaunches() {
       els.refreshButton.disabled = false;
       els.refreshButton.innerHTML = REFRESH_BUTTON_HTML;
     }
+    // Replacing the result panel removes its focused retry button. Restore the
+    // equivalent control, unless the user has moved elsewhere while waiting.
+    if (retryHadFocus && (document.activeElement === document.body || document.activeElement === retryTrigger)) {
+      (document.querySelector("[data-launches-retry]") || els.refreshButton)?.focus();
+    }
   }
 }
 
@@ -587,7 +593,7 @@ if (els.refreshButton) {
 
 document.addEventListener("click", (event) => {
   if (event.target.closest("[data-launches-retry]")) {
-    loadLaunches();
+    loadLaunches({ restoreRetryFocus: true });
   }
 });
 

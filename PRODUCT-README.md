@@ -35,7 +35,7 @@ In scope:
 - Sky Anomalies sighting context check beta
 - Dedicated launches detail page
 - Dedicated ISS, asteroid, weather, gallery, and anomaly pages
-- Responsive Bootstrap dashboard UI
+- Responsive Acadia dashboard UI
 - Vercel deployment with serverless NASA proxy routes
 
 Out of scope for the MVP:
@@ -74,7 +74,7 @@ Out of scope for the MVP:
 ## Design Decisions
 
 - Vanilla HTML, CSS, and JavaScript instead of a framework.
-- Bootstrap and Font Awesome Free for UI conventions and icons.
+- Pinned Acadia foundations and components, with Font Awesome Free icons.
 - Leaflet and OpenStreetMap tiles provide the ISS map without adding another API key.
 - Vercel for deployment and serverless API routes.
 - NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`, then normalized into dashboard-ready response contracts. APOD video links should keep the original source media URL while exposing an embeddable preview URL only for known video hosts.

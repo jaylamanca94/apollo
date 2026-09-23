@@ -33,3 +33,9 @@
 Affected flows: Dashboard, Gallery, Asteroids, and their existing NASA-source recovery states. No new journey or visual state: upstream failures must retain their HTTP failure status and non-cacheable response while exposing only Apollo-owned error content. Required QA: credential-bearing upstream error fixtures through both API handlers; malformed-response and transport-failure coverage; successful retry/cache regression; controlled browser checks of Gallery and Asteroids recovery. Live NASA, production, hardware, and assistive-technology acceptance remain separate.
 
 Before implementation, record flows added or changed, major states introduced, and required design and QA coverage. Keep each row as a distinct user goal from a meaningful entry point to a successful outcome; do not collapse flows merely to make the registry shorter.
+
+## 2026-09-23 — Acadia consumption migration
+
+All eight existing goals are affected by shared shell/component adoption; no new user flow, feed or persistence is introduced. Coverage includes Dashboard summary/source status; ISS position and crew; launch overview/disclosure; weather observation/forecast/source; asteroid interpretation/details; APOD image/source; and experimental sighting form/result. Appearance and the grouped Watch navigation are shared support interactions.
+
+Acceptance requires unchanged provenance and recovery semantics, all seven routes in light/dark, source loading/loaded/empty/partial/failure states where applicable, keyboard Watch opening/Escape, native disclosures, sighting result focus, responsive layout and enlarged text. Current controlled evidence and limits are maintained in `docs/acadia-audit/README.md`; physical accessibility and live production source acceptance remain separate.
