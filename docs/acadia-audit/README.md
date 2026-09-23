@@ -28,7 +28,7 @@ Composition exceptions are explicit: header slots wrap by content width; desktop
 | Source states | 21 route/state observations covering empty collections, partial NASA failure and all-source failure; labelled delayed loading | Passed; `state-results.json` |
 | Recovery/details | ISS and launch keyboard retry complete repeated failure with focus retained; native mission/APOD disclosure exposes details/source; APOD video frame/fallback reflows; sighting choices/submit focus results | Passed controlled fixtures |
 | Checks | `npm run check`: 124 tests; JavaScript syntax checks; `git diff --check` | Passed |
-| Delivery | Main commit, remote, CI and deployment | See release receipt below |
+| Delivery | Main commit, remote, CI and deployment | Successful; protected runtime remains unverified |
 
 Normal-text widths: 1728, 1512, 1280, 1032, 834, 744, 393 and 320px. Doubled root text: 1280, 834 and 320px. Measurements include visible nested scroll widths, not only document width. Map tile panes and native input editing are excluded from generic nested-overflow assertions. Native date/time fields retain internal segment scrolling at the smallest enlarged setting; their values are preserved and keyboard editable. This is not a claim that every date segment remains simultaneously visible.
 
@@ -46,4 +46,6 @@ Physical touch/safe-area/orientation, VoiceOver, forced colours and OS preferenc
 
 Apollo 1.1.0 is a minor release for the complete shared-component adoption and navigation improvement. Provider API contracts remain unchanged. Recovery is to revert the focused migration commit through normal Git delivery; no database migration or service change is involved.
 
-Local validation passed. A reproduced launch-retry focus loss was fixed and covered for repeated failure, success, background loads and user-moved focus. Remote and deployment receipt will be verified against the exact pushed revision and reported with the delivery result.
+Local validation passed. A reproduced launch-retry focus loss was fixed and covered for repeated failure, success, background loads and user-moved focus. Application revision `d1e7e272ee832fa6e7c8d5557f766b9877d818ea` was pushed to `origin/main`. [GitHub checks](https://github.com/jaylamanca94/apollo/actions/runs/35921584289) completed successfully. GitHub deployment **6624661220** reports Vercel **Production success** for that exact SHA at 2026-09-23 21:18:27 UTC: [deployment](https://apollo-lpvrlkrpn-jayson-lamanca-s-projects.vercel.app).
+
+Opening that exact deployment reached Vercel's sign-in page. Production runtime/source success is therefore **unverified**, not failed; authenticated owner access is the prerequisite and a newly available authorised session is the recheck trigger. No protection was changed. This receipt-only follow-up does not change the verified application files.
