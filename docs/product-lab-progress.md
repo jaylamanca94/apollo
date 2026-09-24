@@ -182,3 +182,11 @@ Continued the time-bound dependency of the trustworthy-briefing initiative. NASA
 138 checks pass. Live actual-handler Gallery image/source metadata verified at 390px and 1440px; 320px/200% text has no page/nested Gallery overflow. Controlled malformed-source Space retry retains focus; Enter retry to live content restores Refresh. Controlled alternate media has no iframe. Evidence and provider links: `docs/evidence/2026-09-24/README.md`. Hosted acceptance remains separate from local service/browser checks.
 
 Next useful outcome: resume the two-minute briefing's next-action hierarchy, with a bounded before/after experiment and the prepared five-person trial when real participants are available. Do not restart discovery or repeat APOD migration. Public replacement quota/SLA remains unknown; retain cache/timeout/rate-limit discipline. Preserve the production-protection, physical accessibility and NeoWs credential/rotation evidence gaps.
+
+## 2026-09-24 — Briefing next-action outcome (1.2.0)
+
+Resumed the user-facing initiative after APOD delivery. The Dashboard now puts a dated, source-attributed next action before the metrics, with six-source loaded/checking/limited/unavailable coverage and a distinct Last checked timestamp. Removed unsupported global calm/active and normal-orbit claims. Deterministic editorial ordering uses existing sources; no service, dependency or shared CSS change. Acadia's existing primitives cover the composition.
+
+145 checks pass. Matching-state phone/desktop comparison, dark tablet Gallery journey, partial/all-source-failure recovery, 320px/200% text and progressive keyboard focus are accepted locally. Real local handlers loaded 5/6 sources and routed the briefing to the matching USSF-385 detail/source; NeoWs lacks a local key. Evidence and limitations: `docs/evidence/2026-09-24/briefing/README.md`.
+
+Next useful outcome: conduct `docs/briefing-trial.md` when consenting participants and an accessible review environment are available; record comprehension, source-time confusion, effort against usual alternatives and actual voluntary return separately. No participant/contact evidence yet. Hosted runtime requires authenticated owner access; physical/reader acceptance and NeoWs credential/rotation remain separate external gaps. Do not restart discovery or reverse the hierarchy without evidence.

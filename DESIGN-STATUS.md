@@ -9,6 +9,8 @@ All seven routes now consume an unchanged Acadia 0.4.10 snapshot. Shared source 
 
 Gallery 1.1.2 adds live keyless APOD image/explanation/source evidence at 390px and 1440px, no page/nested overflow at 320px/200% text, controlled alternate-media hand-off and malformed-source keyboard recovery. See `docs/evidence/2026-09-24/README.md`. This resolves Gallery’s previous credential-dependent loaded-mobile gap; production and physical/reader acceptance remain open.
 
+Briefing 1.2.0 now precedes the metric grid, with one dated action and explicit six-source coverage. Phone/desktop before-after, dark tablet, 320px/200% text, source failure, progressive keyboard focus and actual-handler live launch hand-off are accepted locally. Evidence: `docs/evidence/2026-09-24/briefing/README.md`. Comprehension/return trial and hosted/physical/reader acceptance remain open.
+
 ## Active-flow headline
 
 Apollo's dashboard is the clearest expression of its purpose—plain-English understanding of space activity now—and its partial state now has accepted controlled 390px and 320px evidence; linked Asteroids recovery, ISS-and-crew local-function loaded/recovery, Launches overview/disclosure/recovery, Weather decision/source/recovery, mobile Watch keyboard navigation, and Sky Anomalies keyboard submission also extend beyond desktop proof.
@@ -27,5 +29,5 @@ Apollo's dashboard is the clearest expression of its purpose—plain-English und
 ## Highest-leverage design opportunities
 
 1. **P1 — Decide an explicit resilience policy for unavailable sources.** Either retain validated, visibly aged data with a maximum age or commit to the current no-stale-data experience; this affects the Dashboard, Launches, Weather, Asteroids, and Gallery flows.
-2. **P1 — Make the Dashboard's Space Brief the unambiguous primary moment.** Resolve whether it is a concise decision surface or a broad feed browser, then remove secondary structure that does not serve that choice; this affects the Dashboard, ISS, Launches, Weather, Asteroids, and Gallery flows.
+2. **P1 — Test the briefing’s comprehension and return value.** The primary-moment hierarchy and dated action are implemented in 1.2.0. Run `docs/briefing-trial.md` with real participants; do not redesign again without observed friction or changed requirements.
 3. **P2 — Keep Sky Anomalies deliberately bounded until its evidence improves.** Lower its prominence or define a focused pilot only after a small location-aware source set is ready; this affects the Anomalies flow and the Dashboard/Watch entry paths.

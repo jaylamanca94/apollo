@@ -197,3 +197,7 @@ Apollo uses Acadia's documented static consumption path. `vendor/acadia/source.j
 For a deliberate upgrade, review the source changes and run `npm run sync:acadia -- /path/to/reviewed/Acadia` from a clean Acadia checkout. Review the vendor diff, update the stylesheet cache version, run `npm run check`, and repeat the affected product journeys. Upstream publication alone is not adoption evidence.
 
 `npm run preview:fixtures -- 4183` starts an explicitly labelled synthetic-data preview at localhost. Use `?fixture=loaded|empty|partial|failure|loading`; add `&text=200` to test enlarged text. These fixtures exercise existing UI states without NASA credentials. They do not verify live provider accuracy, production or assistive technology. See `docs/acadia-audit/README.md` for ownership, coverage and release evidence.
+
+### Briefing verification
+
+The Dashboard leads with one source-dated action and six-source coverage. The page check time is distinct from the observation/event date. `npm run preview:fixtures -- 4183` also accepts `&brief=launch|gallery|old-weather|unknown-time|progressive`; these labelled synthetic scenarios cover ordering and delayed-source focus. Product ordering is documented in PRODUCT-README.md. The participant trial in `docs/briefing-trial.md` has not been run.

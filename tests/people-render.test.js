@@ -279,10 +279,10 @@ test("Space Brief keeps pending sources distinct from unavailable sources", () =
     renderSpaceBrief();
   `, context);
 
-  assert.match(spaceBriefBody.innerHTML, /Apollo has partial source context/);
-  assert.match(spaceBriefBody.innerHTML, /ISS position is still checking/);
+  assert.match(spaceBriefBody.innerHTML, /3 of 6 sources loaded/);
+  assert.match(spaceBriefBody.innerHTML, /Checking: Where the ISS At/);
   assert.doesNotMatch(spaceBriefBody.innerHTML, /ISS position is unavailable/);
-  assert.equal(pageSubtitle.textContent, "Space Activity: Partial");
+  assert.match(spaceBriefBody.innerHTML, /Unavailable: NASA NeoWs/);
 });
 
 test("Space Brief marks an unavailable core source as partial", () => {
@@ -328,8 +328,9 @@ test("Space Brief marks an unavailable core source as partial", () => {
     renderSpaceBrief();
   `, context);
 
-  assert.match(spaceBriefBody.innerHTML, /Space activity is calm where sources are available/);
-  assert.equal(pageSubtitle.textContent, "Space Activity: Partial");
+  assert.match(spaceBriefBody.innerHTML, /Next SpaceX launch/);
+  assert.doesNotMatch(spaceBriefBody.innerHTML, /calm|normal orbital|No hazardous asteroids/);
+  assert.match(spaceBriefBody.innerHTML, /Unavailable: NASA NeoWs/);
 });
 
 test("Sky Anomalies keeps broad launch timing as context, not a strong match", () => {
@@ -567,4 +568,123 @@ test('APOD WordPress video without direct media offers an honest source hand-off
   assert.match(apodBody.innerHTML, /Open NASA source for the original/);
   assert.match(apodBody.innerHTML, /href="https:\/\/science.nasa.gov\/image-article\/example\/"/);
   assert.doesNotMatch(apodBody.innerHTML, /<iframe|View video|View image/);
+});
+
+const briefNow = Date.parse('2026-09-24T19:00:00Z');
+function briefingFixture() {
+  return {
+    data: {
+      launches: [{ name: 'Example mission', status: 'Go', dateUtc: '2026-09-25T19:00:00Z' }],
+      spaceWeather: { kpIndex: 5, condition: 'Minor storm', observedAt: '2026-09-24T18:00:00Z' },
+      apod: { title: 'NASA selection', date: '2026-09-23' },
+      neo: { date: '2026-09-24', asteroids: [] }
+    },
+    statuses: ['apod', 'iss', 'people', 'launches', 'neo', 'spaceWeather'].map(id => ({ id, state: 'ok' }))
+  };
+}
+
+test('brief prioritises a dated recent weather observation without claiming local visibility', () => {
+  const { getSpaceBriefState } = loadDashboardHelpers();
+  const { data, statuses } = briefingFixture();
+  const brief = getSpaceBriefState(data, statuses, briefNow);
+  assert.equal(brief.href, './weather.html');
+  assert.match(brief.timing, /Observed.*2026.*NOAA SWPC/);
+  assert.match(brief.summary, /does not predict aurora visibility/);
+});
+
+test('old, future, absent and invalid weather dates cannot displace the next launch', () => {
+  const { getSpaceBriefState } = loadDashboardHelpers();
+  for (const observedAt of ['2026-09-23T19:00:00Z', '2026-09-24T20:00:00Z', '', 'invalid']) {
+    const { data, statuses } = briefingFixture();
+    data.spaceWeather.observedAt = observedAt;
+    const brief = getSpaceBriefState(data, statuses, briefNow);
+    assert.equal(brief.href, './launches.html', observedAt);
+    assert.match(brief.timing, /Target.*2026.*The Space Devs/);
+    assert.match(brief.summary, /times can change/);
+  }
+});
+
+test('next launch is chronological, future and not completed or cancelled', () => {
+  const { getSpaceBriefState } = loadDashboardHelpers();
+  const { data, statuses } = briefingFixture();
+  data.spaceWeather.kpIndex = 2;
+  data.launches = [
+    { name: 'Later', dateUtc: '2026-09-29T19:00:00Z' },
+    { name: 'Past', dateUtc: '2026-09-23T19:00:00Z' },
+    { name: 'Cancelled', dateUtc: '2026-09-24T20:00:00Z', status: 'Cancelled' },
+    { name: 'Completed', dateUtc: '2026-09-24T20:00:00Z', status: 'Launch Successful' },
+    { name: 'Soonest', dateUtc: '2026-09-25T19:00:00Z' },
+    { name: 'Unknown date', dateUtc: 'invalid' }
+  ];
+  assert.equal(getSpaceBriefState(data, statuses, briefNow).headline, 'Next SpaceX launch: Soonest');
+  data.launches = data.launches.filter(item => !['Later', 'Soonest'].includes(item.name));
+  const brief = getSpaceBriefState(data, statuses, briefNow);
+  assert.equal(brief.href, './gallery.html');
+  assert.match(brief.timing, /Published.*23.*2026.*NASA APOD/);
+});
+
+test('unavailable sources never recommend retained data; zero approaches remains scoped', () => {
+  const { getSpaceBriefState } = loadDashboardHelpers();
+  const { data, statuses } = briefingFixture();
+  statuses.forEach(status => status.state = 'error');
+  let brief = getSpaceBriefState(data, statuses, briefNow);
+  assert.equal(brief.href, '#sourceStatusTitle');
+  assert.match(brief.summary, /Missing data does not mean nothing/);
+  assert.match(brief.coverage, /0 of 6 sources loaded/);
+  statuses.find(status => status.id === 'neo').state = 'ok';
+  brief = getSpaceBriefState(data, statuses, briefNow);
+  assert.equal(brief.headline, 'No approaches in the daily list');
+  assert.match(brief.timing, /2026.*UTC/);
+  assert.match(brief.summary, /not a complete inventory or an impact prediction/);
+  assert.match(brief.coverage, /Unavailable:.*NOAA SWPC/);
+});
+
+test('brief distinguishes checking and limited coverage, including the APOD source', () => {
+  const { getSpaceBriefState } = loadDashboardHelpers();
+  const { data, statuses } = briefingFixture();
+  statuses.forEach(status => status.state = 'pending');
+  let brief = getSpaceBriefState(data, statuses, briefNow);
+  assert.equal(brief.headline, 'Your briefing is taking shape');
+  assert.match(brief.coverage, /Checking: NASA APOD/);
+  statuses.find(status => status.id === 'launches').state = 'attention';
+  data.launches = [];
+  brief = getSpaceBriefState(data, statuses, briefNow);
+  assert.match(brief.coverage, /Limited: The Space Devs/);
+  assert.doesNotMatch(brief.coverage, /Unavailable:/);
+});
+
+test('brief keeps keyboard focus on the same action or the new headline without stealing it', () => {
+  let focused = '';
+  const elements = {
+    '#spaceBriefBody': { innerHTML: '' },
+    '#briefNextAction': { focus() { focused = 'action'; } },
+    '#briefHeadline': { focus() { focused = 'headline'; } }
+  };
+  const context = loadDashboardHelpers({ elements });
+  context.document.activeElement = { id: 'briefNextAction', getAttribute() { return '#sourceStatusTitle'; } };
+  context.renderSpaceBrief();
+  assert.equal(focused, 'action');
+  context.document.activeElement.getAttribute = () => './launches.html';
+  context.renderSpaceBrief();
+  assert.equal(focused, 'headline');
+  focused = '';
+  context.document.activeElement = { id: 'briefHeadline' };
+  context.renderSpaceBrief();
+  assert.equal(focused, 'headline');
+  focused = '';
+  context.document.activeElement = { id: 'refreshButton' };
+  context.renderSpaceBrief();
+  assert.equal(focused, '');
+});
+
+test('brief treats provider text as escaped text', () => {
+  const body = { innerHTML: '' };
+  const context = loadDashboardHelpers({ elements: { '#spaceBriefBody': body } });
+  vm.runInContext(`
+    dashboardData.apod = { title: '<img src=x onerror=bad()>', date: '2026-09-24' };
+    latestSourceStatuses = new Map([['apod', createSourceStatus('apod', 'ok', '')]]);
+    renderSpaceBrief();
+  `, context);
+  assert.match(body.innerHTML, /&lt;img/);
+  assert.doesNotMatch(body.innerHTML, /<img/);
 });

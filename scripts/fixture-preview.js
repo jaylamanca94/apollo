@@ -39,6 +39,14 @@ function createFixtureServer() {
         // A local SVG exercises the iframe frame without contacting a video provider.
         payload.apod.mediaEmbedUrl = settings.get('media') === 'video' ? `${origin}/assets/favicon.svg` : '';
       }
+      const brief = settings.get('brief');
+      if (brief === 'launch' || brief === 'gallery') {
+        if (name === 'space-weather') Object.assign(payload.spaceWeather, { kpIndex: 2, condition: 'Quiet', severity: 'quiet' });
+        if (brief === 'gallery' && name === 'launches') payload = { launches: [] };
+      }
+      if (brief === 'old-weather' && name === 'space-weather') payload.spaceWeather.observedAt = new Date(Date.now() - 86400000).toISOString();
+      if (brief === 'unknown-time' && name === 'space-weather') payload.spaceWeather.observedAt = '';
+      if (brief === 'progressive' && name === 'space-weather') await new Promise(resolve => setTimeout(resolve, 3500));
       if (mode === 'empty') {
         if (name === 'launches') payload = { launches: [] };
         if (name === 'people') payload = { number: 0, people: [] };

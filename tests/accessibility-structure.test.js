@@ -502,7 +502,7 @@ test("freshness copy separates successful updates from failed checks", () => {
   const launchesJs = readProjectFile("launches.js");
 
   assert.match(appJs, /function formatLastChecked\(date = new Date\(\)\)/);
-  assert.match(appJs, /family === "live" \? formatUpdated\(checkedAt\) : family === "loading" \? "Last checked: Checking sources" : formatLastChecked\(checkedAt\)/);
+  assert.match(appJs, /isDashboardPage\(\) \? formatLastChecked\(checkedAt\)/);
   assert.match(launchesJs, /function formatLastChecked\(date = new Date\(\)\)/);
   assert.doesNotMatch(appJs, /Signal lost/);
   assert.doesNotMatch(launchesJs, /Signal lost/);
@@ -569,7 +569,7 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=1.1.2/, `${file} should load the current shared app script`);
+    assert.match(html, /app\.js\?v=1.2.0/, `${file} should load the current shared app script`);
   }
 
   assert.match(readProjectFile("launches.html"), /launches\.js\?v=1.1.0/);

@@ -2532,7 +2532,7 @@ function setDashboardFreshness(statuses, checkedAt = new Date()) {
   const family = getSourceStateFamily(statuses);
   const pendingCount = statuses.filter((status) => status?.state === "pending").length;
   setHeaderSourceState(family);
-  setDashboardUpdated(family === "live" ? formatUpdated(checkedAt) : family === "loading" ? "Last checked: Checking sources" : formatLastChecked(checkedAt));
+  setDashboardUpdated(family === "loading" ? "Last checked: Checking sources" : isDashboardPage() ? formatLastChecked(checkedAt) : family === "live" ? formatUpdated(checkedAt) : formatLastChecked(checkedAt));
   setDashboardStatus(
     pendingCount > 0
       ? "Checking sources; available data is shown as it loads."
@@ -2812,105 +2812,6 @@ function renderDashboardAnomalySummary() {
   `;
 }
 
-function getLaunchBrief(launches) {
-  const launch = launches[0];
-
-  if (!launch) {
-    if (isSourcePending("launches")) {
-      return "Launch activity is still checking The Space Devs source.";
-    }
-
-    return "Launch activity is unavailable from the current source.";
-  }
-
-  const launchName = splitLaunchName(launch.name);
-  const mission = launchName.mission ? ` ${launchName.mission}` : "";
-  const status = getText(launch.status, "status pending");
-  const countdown = formatCountdown(launch.dateUtc);
-  const statusLower = status.toLowerCase();
-
-  if (statusLower.includes("success")) {
-    return `${launchName.vehicle}${mission} launched successfully.`;
-  }
-
-  if (countdown === "Window has opened") {
-    return `${launchName.vehicle}${mission} is in its launch window now.`;
-  }
-
-  return `${launchName.vehicle}${mission} is next on the schedule, ${countdown.toLowerCase()}.`;
-}
-
-function getAsteroidBrief(neoSummary) {
-  const asteroids = Array.isArray(neoSummary?.asteroids) ? neoSummary.asteroids : null;
-
-  if (!asteroids) {
-    if (isSourcePending("neo")) {
-      return "Asteroid tracking is still checking NASA.";
-    }
-
-    return "Asteroid tracking is unavailable from NASA right now.";
-  }
-
-  const hazardous = asteroids.filter((item) => item.hazardous).length;
-
-  if (hazardous > 0) {
-    return `${hazardous.toLocaleString()} of ${asteroids.length.toLocaleString()} near-Earth ${asteroids.length === 1 ? "object is" : "objects are"} flagged for NASA tracking.`;
-  }
-
-  return "No hazardous asteroids are being tracked today.";
-}
-
-function getWeatherBrief(spaceWeather) {
-  if (!spaceWeather) {
-    if (isSourcePending("spaceWeather")) {
-      return "Space weather is still checking NOAA.";
-    }
-
-    return "Space weather is unavailable from NOAA right now.";
-  }
-
-  const kpDetail = spaceWeather.kpIndex === null || spaceWeather.kpIndex === undefined
-    ? "with the current Kp unavailable"
-    : `at Kp ${formatKpIndex(spaceWeather.kpIndex)}`;
-
-  return `Space weather remains ${getText(spaceWeather.condition, "unavailable").toLowerCase()} ${kpDetail}.`;
-}
-
-function getOrbitalBrief(peopleState, iss) {
-  const hasIssPosition = Boolean(iss && iss.latitude !== null && iss.longitude !== null);
-  const peoplePending = isSourcePending("people");
-  const issPending = isSourcePending("iss");
-
-  if (!peopleState && !hasIssPosition) {
-    if (peoplePending && issPending) {
-      return "Orbital operations are still checking crew and ISS position sources.";
-    }
-
-    if (peoplePending) {
-      return "Crew status is still checking, and ISS position is unavailable.";
-    }
-
-    if (issPending) {
-      return "ISS position is still checking, and crew status is unavailable.";
-    }
-
-    return "Orbital operations are partially unavailable from the current sources.";
-  }
-
-  if (!peopleState) {
-    return `The ISS is reporting normal orbital position; crew status is ${peoplePending ? "still checking" : "unavailable"}.`;
-  }
-
-  const crewWord = peopleState.count === 1 ? "person remains" : "people remain";
-  const issStatus = hasIssPosition
-    ? "and the ISS is reporting normal position"
-    : issPending
-      ? "while ISS position is still checking"
-      : "while ISS position is unavailable";
-
-  return `${peopleState.count.toLocaleString()} ${crewWord} in orbit, ${issStatus}.`;
-}
-
 function getIssRegion(latitude, longitude) {
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
     return "current orbital track";
@@ -2963,114 +2864,108 @@ function getIssRegion(latitude, longitude) {
   return "the current orbital track";
 }
 
-function getSpaceBriefState() {
-  const statuses = Array.from(latestSourceStatuses.values());
-  const pendingCount = statuses.filter((status) => status.state === "pending").length;
-  const sourceStates = [
-    { id: "iss", data: dashboardData.iss },
-    { id: "people", data: dashboardData.people },
-    { id: "launches", data: dashboardData.launches.length ? dashboardData.launches : null },
-    { id: "neo", data: dashboardData.neo },
-    { id: "spaceWeather", data: dashboardData.spaceWeather }
-  ];
-  const pendingDataCount = sourceStates.filter((item) => !item.data && getSourceStatusState(item.id) === "pending").length;
-  const unavailableCount = sourceStates.filter((item) => !item.data && getSourceStatusState(item.id) !== "pending").length;
-  const hazardous = dashboardData.neo?.asteroids?.filter((item) => item.hazardous).length || 0;
-  const weatherSeverity = dashboardData.spaceWeather?.severity || "unknown";
-  const isStorm = ["active", "storm"].includes(weatherSeverity);
-
-  if (pendingCount === statuses.length && pendingCount > 0) {
+// Editorial ordering for a short check-in, not a scientific risk score.
+// Six hours bounds which Kp observation can lead; older context remains readable.
+function getSpaceBriefState(data = dashboardData, statuses = Array.from(latestSourceStatuses.values()), now = Date.now()) {
+  const statusById = new Map(statuses.map((status) => [status.id, status]));
+  const usable = (id) => ["ok", "attention"].includes(statusById.get(id)?.state);
+  const loaded = statuses.filter((status) => status.state === "ok").length;
+  const groups = [
+    ["pending", "Checking"], ["error", "Unavailable"], ["attention", "Limited"]
+  ].map(([state, label]) => {
+    const names = SOURCE_FEEDS.filter((feed) => statusById.get(feed.id)?.state === state).map((feed) => feed.label);
+    return names.length ? `${label}: ${names.join(", ")}.` : "";
+  }).filter(Boolean);
+  const coverage = `${loaded} of ${SOURCE_FEEDS.length} sources loaded.${groups.length ? ` ${groups.join(" ")}` : ""}`;
+  const weather = usable("spaceWeather") ? data.spaceWeather : null;
+  const observation = Date.parse(weather?.observedAt);
+  const weatherAge = now - observation;
+  const weatherAction = weather ? {
+    headline: `NOAA observation: ${getText(weather.condition, "space weather")}`,
+    timing: Number.isFinite(observation) ? `Observed ${formatDateTime(weather.observedAt)} · NOAA SWPC` : "Observation time unavailable · NOAA SWPC",
+    summary: `${Number.isFinite(weather.kpIndex) ? `Kp ${formatKpIndex(weather.kpIndex)}. ` : "Kp unavailable. "}Open the outlook and notices for context. This does not predict aurora visibility at your location.`,
+    action: "Read the weather outlook", href: "./weather.html"
+  } : null;
+  if (weatherAction && Number.isFinite(weather.kpIndex) && weather.kpIndex >= 5 && weatherAge >= 0 && weatherAge <= 6 * 60 * 60 * 1000) {
+    return { ...weatherAction, coverage };
+  }
+  const launch = usable("launches") ? [...data.launches].filter((item) =>
+    Date.parse(item.dateUtc) > now && !/success|failure|cancel|aborted/i.test(item.status || "")
+  ).sort((a, b) => Date.parse(a.dateUtc) - Date.parse(b.dateUtc))[0] : null;
+  if (launch) {
     return {
-      label: "Loading",
-      tone: "pending",
-      headline: "Apollo is checking public sources."
+      headline: `Next SpaceX launch: ${launch.name}`,
+      timing: `Target ${formatDateTime(launch.dateUtc)} · The Space Devs`,
+      summary: `Status: ${getText(launch.status, "not supplied")}. Launch times can change. Open the mission for its launch window and original source.`,
+      action: "Explore the launch", href: "./launches.html", coverage
     };
   }
-
-  if (pendingDataCount > 0) {
+  if (usable("apod") && data.apod) {
     return {
-      label: unavailableCount > 0 ? "Partial" : "Checking",
-      tone: "pending",
-      headline: unavailableCount > 0
-        ? "Apollo has partial source context."
-        : "Apollo is still checking some public sources."
+      headline: data.apod.title,
+      timing: `Published ${formatDate(data.apod.date)} · NASA APOD`,
+      summary: "Take a closer look at NASA’s astronomy selection and the explanation behind it.",
+      action: "Explore NASA’s selection", href: "./gallery.html", coverage
     };
   }
-
-  if (hazardous > 0 || isStorm) {
+  if (weatherAction) return { ...weatherAction, coverage };
+  if (usable("iss") && data.iss) {
     return {
-      label: "Active",
-      tone: "attention",
-      headline: hazardous > 0
-        ? "Space activity needs monitoring."
-        : "Space activity is elevated."
+      headline: "Follow the station’s orbit",
+      timing: data.iss.observedAt ? `Position recorded ${formatDateTime(data.iss.observedAt)} · Where the ISS At` : "Position time unavailable · Where the ISS At",
+      summary: "Explore the reported ISS position and orbital context. A position on the map is not a visible-pass prediction.",
+      action: "Open the ISS track", href: "./iss.html", coverage
     };
   }
-
-  if (unavailableCount >= 2) {
+  if (usable("neo") && data.neo) {
+    const count = data.neo.asteroids.length;
     return {
-      label: "Partial",
-      tone: "error",
-      headline: "Space activity is only partially visible."
+      headline: count ? `${count} near-Earth ${count === 1 ? "approach" : "approaches"} listed` : "No approaches in the daily list",
+      timing: `NASA NeoWs · Approaches for ${data.neo.date ? formatDate(data.neo.date) + " (UTC)" : "an unavailable query date"}`,
+      summary: "Explore the listed distances and NASA tracking context. This list is not a complete inventory or an impact prediction.",
+      action: "Read the asteroid context", href: "./asteroids.html", coverage
     };
   }
-
-  if (unavailableCount === 1) {
+  if (usable("people") && data.people) {
     return {
-      label: "Partial",
-      tone: "attention",
-      headline: "Space activity is calm where sources are available."
+      headline: "Meet the people in orbit", timing: "People in Space · Roster observation time not supplied",
+      summary: "Explore the source’s crew roster and spacecraft. Source coverage and roster limits appear alongside the list.",
+      action: "Explore the crew", href: "./iss.html", coverage
     };
   }
-
+  const pending = statuses.some((status) => status.state === "pending");
   return {
-    label: "Calm",
-    tone: "ok",
-    headline: "Space activity remains calm."
+    headline: pending ? "Your briefing is taking shape" : "The briefing is unavailable",
+    timing: "Public source checks",
+    summary: pending ? "Available topics will appear as sources respond." : "Missing data does not mean nothing is happening. Check source availability or refresh to try again.",
+    action: "Check source availability", href: "#sourceStatusTitle", coverage
   };
 }
 
 function renderSpaceBrief() {
-  if (!els.spaceBriefBody) {
-    return;
-  }
-
+  if (!els.spaceBriefBody) return;
   const state = getSpaceBriefState();
-  const pendingStatuses = Array.from(latestSourceStatuses.values()).filter((status) => status.state === "pending");
-  const summary = pendingStatuses.length === latestSourceStatuses.size && pendingStatuses.length > 0
-    ? "Loaded source families will appear here as they finish; pending sources remain listed in Data Sources."
-    : [
-        getLaunchBrief(dashboardData.launches),
-        getAsteroidBrief(dashboardData.neo),
-        getWeatherBrief(dashboardData.spaceWeather),
-        getOrbitalBrief(dashboardData.people, dashboardData.iss)
-      ].join(" ");
-
-  if (els.dashboardSubtitle && isDashboardPage()) {
-    els.dashboardSubtitle.textContent = `Space Activity: ${state.label}`;
-  }
-
+  const focusedAction = document.activeElement?.id === "briefNextAction";
+  const focusedHeadline = document.activeElement?.id === "briefHeadline";
+  const previousHref = focusedAction ? document.activeElement.getAttribute("href") : "";
   els.spaceBriefBody.innerHTML = `
-    <div class="apollo-space-brief-header">
-      <div>
-        <p class="section-kicker acadia-kicker">Space Brief</p>
-        <h2 class="apollo-space-brief-title acadia-heading-small">${escapeHtml(state.headline)}</h2>
-      </div>
+    <div class="acadia-copy-stack">
+      <p class="section-kicker acadia-kicker">Space Brief · Start here</p>
+      <h3 id="briefHeadline" tabindex="-1" class="apollo-space-brief-title acadia-heading-small">${escapeHtml(state.headline)}</h3>
+      <p class="acadia-small acadia-text-muted">${escapeHtml(state.timing)}</p>
     </div>
-    <p class="apollo-space-brief-summary acadia-body acadia-text-measure-wide">${escapeHtml(summary)}</p>
+    <p class="apollo-space-brief-summary acadia-body acadia-text-measure-wide">${escapeHtml(state.summary)}</p>
+    <div><a id="briefNextAction" class="acadia-button acadia-button-secondary" href="${escapeHtml(state.href)}">${escapeHtml(state.action)}</a></div>
+    <p class="acadia-small acadia-text-muted">${escapeHtml(state.coverage)}</p>
   `;
+  // Independent source responses must not strand keyboard focus on a removed link.
+  if (focusedAction || focusedHeadline) {
+    document.querySelector(focusedAction && previousHref === state.href ? "#briefNextAction" : "#briefHeadline")?.focus();
+  }
 }
 
 function resetSpaceBrief() {
-  if (!els.spaceBriefBody) {
-    return;
-  }
-
-  if (els.dashboardSubtitle && isDashboardPage()) {
-    els.dashboardSubtitle.textContent = "Space Activity: Loading";
-  }
-
-  els.spaceBriefBody.innerHTML = stateMessage("Writing the space brief...");
+  if (els.spaceBriefBody) els.spaceBriefBody.innerHTML = stateMessage("Checking sources for your briefing...");
 }
 
 function commandPanelRow({ icon, label, title, detail, time, href }) {
@@ -3871,7 +3766,7 @@ async function loadNeo() {
   try {
     const date = todayIso();
     const neoSummary = normalizeNeo(await fetchJson(`${API.neo}?date=${date}`), date);
-    dashboardData.neo = neoSummary;
+    dashboardData.neo = { ...neoSummary, date };
     const { asteroids, hazardFlagContext, sentryContext } = neoSummary;
     const sortedAsteroids = [...asteroids].sort((a, b) => {
       const left = Number.isFinite(a.closestKilometers) ? a.closestKilometers : Number.POSITIVE_INFINITY;

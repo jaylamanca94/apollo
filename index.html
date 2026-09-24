@@ -65,18 +65,28 @@
         <div class="acadia-stack apollo-page-stack">
           <header class="apollo-page-header acadia-page-header acadia-surface acadia-panel">
             <div class="apollo-title-block acadia-copy-stack acadia-page-header-copy">
-              <p class="section-kicker acadia-kicker apollo-hero-kicker">Live space intelligence</p>
+              <p class="section-kicker acadia-kicker apollo-hero-kicker">Your space briefing</p>
               <h1 class="apollo-page-title acadia-display" id="dashboardTitle">Apollo</h1>
-              <p class="acadia-body apollo-page-subtitle acadia-text-muted">Space Activity: Loading</p>
+              <p class="acadia-body apollo-page-subtitle acadia-text-muted">A quick read. One thing to explore.</p>
             </div>
             <div class="apollo-dashboard-actions acadia-page-actions">
-              <p class="apollo-update-pill acadia-badge acadia-badge-grey acadia-badge-round" id="dashboardUpdated">Last updated: Standing by</p>
+              <p class="apollo-update-pill acadia-badge acadia-badge-grey acadia-badge-round" id="dashboardUpdated">Last checked: Standing by</p>
               <button class="apollo-refresh-button acadia-button acadia-button-primary" id="refreshButton" type="button" aria-describedby="dashboardStatus" aria-controls="quickStatsBody spaceBriefBody recentActivityBody watchItemsBody sourceStatusBody">
                 <i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i>
                 <span>Refresh data</span>
               </button>
             </div>
           </header>
+
+          <section class="acadia-card apollo-card acadia-surface apollo-space-brief" aria-labelledby="spaceBriefTitle">
+            <h2 class="acadia-visually-hidden" id="spaceBriefTitle">Space Brief</h2>
+            <div class="apollo-space-brief-body acadia-panel-dense" id="spaceBriefBody" aria-live="polite" aria-busy="true">
+              <div class="state-message acadia-alert">
+                <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
+                <span>Checking sources for your briefing...</span>
+              </div>
+            </div>
+          </section>
 
           <section class="apollo-quick-stats" aria-labelledby="quickStatsTitle">
             <h2 class="acadia-visually-hidden" id="quickStatsTitle">Dashboard snapshot</h2>
@@ -124,16 +134,6 @@
             </div>
           </section>
 
-          <section class="acadia-card apollo-card acadia-surface apollo-space-brief" aria-labelledby="spaceBriefTitle">
-            <h2 class="acadia-visually-hidden" id="spaceBriefTitle">Space Brief</h2>
-            <div class="apollo-space-brief-body acadia-panel-dense" id="spaceBriefBody" aria-live="polite" aria-busy="true">
-              <div class="state-message acadia-alert">
-                <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
-                <span>Writing the space brief...</span>
-              </div>
-            </div>
-          </section>
-
           <div class="apollo-command-grid" id="commandPanels">
             <section class="acadia-card apollo-card acadia-surface apollo-command-panel" id="recentActivityPanel" aria-labelledby="recentActivityTitle">
               <div class="section-card-header acadia-panel-dense">
@@ -168,7 +168,7 @@
             <div class="section-card-header acadia-panel-dense">
               <div class="dashboard-card-heading acadia-copy-stack">
                 <p class="section-kicker acadia-kicker">Data Sources</p>
-                <h2 class="section-title acadia-heading-small" id="sourceStatusTitle">Source availability</h2>
+                <h2 class="section-title acadia-heading-small" id="sourceStatusTitle" tabindex="-1">Source availability</h2>
               </div>
             </div>
             <div class="section-card-body acadia-panel-dense" id="sourceStatusBody" aria-live="polite" aria-busy="true">
@@ -184,6 +184,6 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="./app-shell.js?v=1.1.0"></script>
-    <script src="./app.js?v=1.1.2"></script>
+    <script src="./app.js?v=1.2.0"></script>
   </body>
 </html>
