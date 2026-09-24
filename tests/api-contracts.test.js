@@ -978,3 +978,18 @@ test('APOD falls back only on missing publication and keys cache by Eastern day'
   await assert.rejects(apodHandler.requestApodWithFallback(new Date('2026-09-14T12:00:00Z')), { status: 429 });
   assert.equal(calls.length, 1);
 });
+
+test('APOD missing-day fallback does not skip a publication across spring DST', async (t) => {
+  const originalFetch = global.fetch;
+  t.after(() => { global.fetch = originalFetch; });
+  const dates = [];
+  global.fetch = async url => {
+    const day = String(url).split('/').pop();
+    dates.push(day);
+    return { ok: day === '260308', status: day === '260308' ? 200 : 404,
+      json: async () => wordpressApod('2026-03-08') };
+  };
+  const result = await apodHandler.requestApodWithFallback(new Date('2026-03-09T04:30:00Z'));
+  assert.deepEqual(dates, ['260309', '260308']);
+  assert.equal(result.apod.date, '2026-03-08');
+});

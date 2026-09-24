@@ -26,10 +26,10 @@ function getIsoDateInTimeZone(date, timeZone) {
 }
 
 async function requestApodWithFallback(date = new Date()) {
-  const targetDates = [
-    getIsoDateInTimeZone(date, APOD_TIME_ZONE),
-    getIsoDateInTimeZone(addDays(date, -1), APOD_TIME_ZONE)
-  ].filter((value, index, values) => values.indexOf(value) === index);
+  const today = getIsoDateInTimeZone(date, APOD_TIME_ZONE);
+  // Subtract a calendar day, not 24 hours across an Eastern DST boundary.
+  const yesterday = addDays(new Date(`${today}T00:00:00Z`), -1).toISOString().slice(0, 10);
+  const targetDates = [today, yesterday];
   let lastError = null;
   for (const targetDate of targetDates) {
     const cached = getCached(cache, targetDate);
