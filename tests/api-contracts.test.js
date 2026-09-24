@@ -32,7 +32,7 @@ test("NASA routes never forward upstream error content or credentials", async (t
 
   for (const status of [400, 403, 429, 500, 503]) {
     global.fetch = async (url) => {
-      assert.equal(new URL(url).searchParams.get("api_key"), fixtureKey);
+      assert.equal(new URL(url).searchParams.get("api_key"), new URL(url).hostname === "api.nasa.gov" ? fixtureKey : null);
       return {
         ok: false,
         status,
@@ -91,7 +91,7 @@ test("NASA routes keep malformed and transport failures safe and non-cacheable",
   }
 
   delete process.env.NASA_API_KEY;
-  for (const handler of [apodHandler, neoHandler]) {
+  for (const handler of [neoHandler]) {
     const response = createResponse();
     await handler({ method: "GET", url: "/api/neo?date=2026-09-24" }, response);
     assert.equal(response.statusCode, 500);
@@ -406,22 +406,17 @@ test("normalizeApodPayload returns a stable dashboard contract", () => {
       mediaEmbedUrl: "",
       hdUrl: "https://apod.nasa.gov/image.jpg",
       copyright: "NASA",
+      alt: "Eagle Nebula",
       sourceUrl: "https://apod.nasa.gov/apod/ap260610.html"
     },
     source: "NASA APOD"
   });
 });
 
-test("normalizeApodPayload uses safe fallbacks for sparse payloads", () => {
-  const payload = normalizeApodPayload({
-    url: "javascript:alert(1)"
-  });
-
-  assert.equal(payload.apod.title, "Astronomy Picture of the Day");
-  assert.equal(payload.apod.explanation, "No description available.");
-  assert.equal(payload.apod.mediaUrl, "");
-  assert.equal(payload.apod.mediaEmbedUrl, "");
-  assert.equal(payload.apod.sourceUrl, "https://apod.nasa.gov/apod/");
+test("normalizeApodPayload rejects sparse or unusable success payloads", () => {
+  for (const payload of [null, {}, [], { url: "javascript:alert(1)" }]) {
+    assert.throws(() => normalizeApodPayload(payload), { status: 502 });
+  }
 });
 
 test("normalizeApodPayload exposes embeddable APOD video URLs", () => {
@@ -429,6 +424,7 @@ test("normalizeApodPayload exposes embeddable APOD video URLs", () => {
     date: "2026-06-10",
     media_type: "video",
     title: "Solar eruption",
+    explanation: "An eruption on the Sun.",
     url: "https://www.youtube.com/watch?v=abc123XYZ_8"
   });
 
@@ -902,4 +898,83 @@ test("NeoWs handler rejects invalid successes without caching them and recovers 
     }
     assert.equal(calls, 2);
   }
+});
+
+function wordpressApod(date = '2026-09-23', overrides = {}) {
+  return { date, title: 'Moon &amp; stars', media_type: 'image',
+    explanation: '<strong>Explanation:</strong> A <a href="https://example.com">lunar</a> scene. &#x1F319;',
+    copyright: '<b>Credit:</b> Example &amp; Team', alt: 'A crater &amp; ridges.',
+    permalink: 'https://science.nasa.gov/image-article/example/',
+    url: 'https://science.nasa.gov/image-article/example/',
+    hdurl: 'https://assets.science.nasa.gov/example.jpg', ...overrides };
+}
+
+test('APOD WordPress contract separates image, source, readable text and alt', () => {
+  const { apod } = normalizeApodPayload(wordpressApod());
+  assert.equal(apod.mediaUrl, 'https://assets.science.nasa.gov/example.jpg');
+  assert.equal(apod.sourceUrl, 'https://science.nasa.gov/image-article/example/');
+  assert.equal(apod.title, 'Moon & stars');
+  assert.equal(apod.explanation, 'A lunar scene. 🌙');
+  assert.equal(apod.copyright, 'Credit: Example & Team');
+  assert.equal(apod.alt, 'A crater & ridges.');
+  assert.equal(normalizeApodPayload(wordpressApod(undefined, { copyright: '', credit: 'Other author' })).apod.copyright, 'Other author');
+});
+
+test('APOD new video, iframe and unknown media keep the article hand-off without treating a thumbnail as video', () => {
+  for (const media_type of ['video', 'iframe', 'interactive']) {
+    const { apod } = normalizeApodPayload(wordpressApod(undefined, { media_type,
+      basic_html: '<iframe src="https://evil.example/"></iframe><script>alert(1)</script>' }));
+    assert.equal(apod.mediaUrl, '');
+    assert.equal(apod.hdUrl, '');
+    assert.equal(apod.mediaEmbedUrl, '');
+    assert.equal(apod.sourceUrl, 'https://science.nasa.gov/image-article/example/');
+  }
+});
+
+test('APOD rejects wrong dates, unsafe or missing image/source and incomplete metadata', () => {
+  for (const overrides of [{ date: '2026-02-30' }, { date: '2026-09-22' }, { title: '' }, { explanation: '' },
+    { media_type: '' }, { hdurl: 'javascript:alert(1)' }, { hdurl: '' },
+    { hdurl: 'https://science.nasa.gov/image-article/example/' },
+    { permalink: 'https://evil.example/' }, { permalink: 'javascript:alert(1)' }]) {
+    assert.throws(() => normalizeApodPayload(wordpressApod(undefined, overrides), '2026-09-23'), { status: 502 });
+  }
+  const { apod } = normalizeApodPayload(wordpressApod(undefined, {
+    explanation: '<script>bad()</script><style>bad</style><p>Actual &lt;img onerror=bad()&gt; text.</p>'
+  }));
+  assert.equal(apod.explanation, 'Actual <img onerror=bad()> text.'); // Escaped by renderer, never inserted as HTML.
+});
+
+test('APOD keyless request validates before cache and recovers after invalid HTTP 200', async (t) => {
+  const originalFetch = global.fetch;
+  t.after(() => { global.fetch = originalFetch; });
+  const { requestApodWithFallback } = apodHandler;
+  let calls = 0;
+  global.fetch = async url => {
+    calls++;
+    assert.equal(String(url), 'https://science.nasa.gov/wp-json/wp/v2/apod-basic/260910');
+    return { ok: true, status: 200, json: async () => calls === 1 ? {} : wordpressApod('2026-09-10') };
+  };
+  const date = new Date('2026-09-10T20:00:00Z');
+  await assert.rejects(requestApodWithFallback(date), { status: 502 });
+  assert.equal((await requestApodWithFallback(date)).apod.date, '2026-09-10');
+  await requestApodWithFallback(date);
+  assert.equal(calls, 2);
+});
+
+test('APOD falls back only on missing publication and keys cache by Eastern day', async (t) => {
+  const originalFetch = global.fetch;
+  t.after(() => { global.fetch = originalFetch; });
+  const calls = [];
+  global.fetch = async url => {
+    calls.push(String(url));
+    const previousDay = String(url).endsWith('260911');
+    return { ok: previousDay, status: previousDay ? 200 : 404, json: async () => wordpressApod('2026-09-11') };
+  };
+  const { apod } = await apodHandler.requestApodWithFallback(new Date('2026-09-13T01:00:00Z'));
+  assert.equal(apod.date, '2026-09-11');
+  assert.deepEqual(calls.map(url => url.split('/').pop()), ['260912', '260911']);
+  calls.length = 0;
+  global.fetch = async url => { calls.push(url); return { ok: false, status: 429, json: async () => ({ secret: 'diagnostic' }) }; };
+  await assert.rejects(apodHandler.requestApodWithFallback(new Date('2026-09-14T12:00:00Z')), { status: 429 });
+  assert.equal(calls.length, 1);
 });

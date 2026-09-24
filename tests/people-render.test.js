@@ -541,3 +541,30 @@ test("date-only asteroid approaches do not invent a midnight time", async () => 
   assert.match(neoBody.innerHTML, /2026-09-23 · Time unavailable/);
   assert.doesNotMatch(neoBody.innerHTML, /T00:00:00|12:00 AM/);
 });
+
+test('APOD image alt, credits and explanation remain escaped text after WordPress decoding', async () => {
+  const apodBody = { innerHTML: '' };
+  const { loadApod } = loadDashboardHelpers({ elements: { '#apodBody': apodBody }, fetchPayload: {
+    apod: { date: '2026-09-23', title: 'Lunar crater', explanation: '<img src=x onerror=bad()>',
+      alt: 'Ridges " around & across the crater', copyright: '<script>bad()</script>',
+      mediaType: 'image', mediaUrl: 'https://assets.science.nasa.gov/image.jpg',
+      sourceUrl: 'https://science.nasa.gov/image-article/example/' }
+  } });
+  await loadApod();
+  assert.match(apodBody.innerHTML, /alt="Ridges &quot; around &amp; across the crater"/);
+  assert.doesNotMatch(apodBody.innerHTML, /<script>|<img src=x/);
+  assert.match(apodBody.innerHTML, /&lt;img src=x onerror=bad\(\)&gt;/);
+});
+
+test('APOD WordPress video without direct media offers an honest source hand-off', async () => {
+  const apodBody = { innerHTML: '' };
+  const { loadApod } = loadDashboardHelpers({ elements: { '#apodBody': apodBody }, fetchPayload: {
+    apod: { date: '2026-09-23', title: 'A video', explanation: 'Source video.', mediaType: 'video', mediaUrl: '',
+      sourceUrl: 'https://science.nasa.gov/image-article/example/' }
+  } });
+  const status = await loadApod();
+  assert.equal(status.state, 'ok');
+  assert.match(apodBody.innerHTML, /Open NASA source for the original/);
+  assert.match(apodBody.innerHTML, /href="https:\/\/science.nasa.gov\/image-article\/example\/"/);
+  assert.doesNotMatch(apodBody.innerHTML, /<iframe|View video|View image/);
+});

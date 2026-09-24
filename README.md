@@ -21,7 +21,7 @@ Retain the vanilla/static architecture while it serves the product well. Evolve 
 
 ## APIs Used
 
-- NASA Astronomy Picture of the Day, proxied and normalized through `/api/apod` with safe image/video media URLs
+- NASA Astronomy Picture of the Day, proxied and normalized through `/api/apod` with a keyless NASA Science image contract and original-source hand-off for alternate media
 - NASA NeoWs Near-Earth Object Feed, proxied and normalized through `/api/neo`
 - The Space Devs SpaceX launch data, proxied and normalized through `/api/launches`
 - NOAA Space Weather Prediction Center K-index, forecast, and alert feeds, proxied and normalized through `/api/space-weather`
@@ -139,12 +139,14 @@ When `app.js`, `launches.js`, or `styles.css` changes, bump the matching query-s
 
 The NASA proxy includes lightweight caching:
 
-- APOD: 6 hours
+- APOD: 6 hours, keyed by Eastern publication date; only 404 tries the previous date. Invalid successful responses are rejected before caching. A ten-second request timeout and no retry on 429/outages bound provider load.
 - NeoWs daily feed: 30 minutes
 - The Space Devs SpaceX launch data: 15 minutes
 - NOAA SWPC space weather: 5 minutes
 
 This reduces rate-limit pressure and keeps the dashboard usable during normal traffic. It is intentionally simple and does not add persistence.
+
+APOD uses `https://science.nasa.gov/wp-json/wp/v2/apod-basic/YYMMDD`. Its `url` is an article permalink, not image media. Apollo maps `hdurl` for images, retains `permalink`, credits and alt text, and converts HTML explanation/credit fields to escaped plain text using the BSD-2-Clause `entities` package. It never renders provider `basic_html`; alternate media without a direct media field links to the NASA article. No replacement quota or SLA has been established. NeoWs continues to use the server-side NASA key.
 
 ## Checks
 
@@ -170,7 +172,7 @@ It returns the app version, timestamp, runtime status, and whether the server-si
 
 ## Known Limitations
 
-- NASA data depends on the server-side `NASA_API_KEY` being configured.
+- Near-Earth Object data requires the server-side `NASA_API_KEY`; Gallery/APOD does not.
 - Serverless in-memory cache is per warm function instance and may reset.
 - Public APIs can fail, timeout, or change response formats; Apollo normalizes key payloads before rendering, but source outages can still affect the dashboard.
 - Launch listings depend on The Space Devs launch data availability and the current SpaceX search result format.

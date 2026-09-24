@@ -1,4 +1,6 @@
-const { requestNasa } = require("./_nasa");
+const { getCached, setCached } = require("./_cache");
+const { fetchJson } = require("./_http");
+const cache = new Map();
 const { sendJson, sendMethodNotAllowed } = require("./_response");
 const { normalizeApodPayload } = require("./_space_data");
 
@@ -28,29 +30,25 @@ async function requestApodWithFallback(date = new Date()) {
     getIsoDateInTimeZone(date, APOD_TIME_ZONE),
     getIsoDateInTimeZone(addDays(date, -1), APOD_TIME_ZONE)
   ].filter((value, index, values) => values.indexOf(value) === index);
-  const candidates = [
-    {
-      cacheKey: "apod:default",
-      params: {}
-    },
-    ...targetDates.map((targetDate) => ({
-      cacheKey: `apod:${targetDate}`,
-      params: { date: targetDate }
-    }))
-  ];
   let lastError = null;
-
-  for (const candidate of candidates) {
-    try {
-      return await requestNasa(
-        "/planetary/apod",
-        candidate.params,
-        candidate.cacheKey,
-        APOD_CACHE_SECONDS
-      );
-    } catch (error) {
+  for (const targetDate of targetDates) {
+    const cached = getCached(cache, targetDate);
+    if (cached) return cached;
+    const compactDate = targetDate.replaceAll("-", "").slice(2);
+    const { response, payload } = await fetchJson(`https://science.nasa.gov/wp-json/wp/v2/apod-basic/${compactDate}`, { timeoutMs: 10000 });
+    if (!response.ok) {
+      const error = new Error("NASA APOD request failed");
+      error.status = response.status;
+      error.payload = { error: { code: "NASA_REQUEST_FAILED", message: "NASA request failed." } };
+      // Only a missing publication warrants yesterday's entry. Do not retry
+      // rate limits, outages, or malformed HTTP 200s against another date.
+      if (response.status !== 404) throw error;
       lastError = error;
+      continue;
     }
+    const normalized = normalizeApodPayload(payload, targetDate);
+    setCached(cache, targetDate, normalized, APOD_CACHE_SECONDS);
+    return normalized;
   }
 
   throw lastError;
@@ -63,7 +61,7 @@ module.exports = async function handler(request, response) {
   }
 
   try {
-    const payload = normalizeApodPayload(await requestApodWithFallback());
+    const payload = await requestApodWithFallback();
     sendJson(response, 200, payload, APOD_CACHE_SECONDS);
   } catch (error) {
     sendJson(response, error.status || 500, error.payload || {
@@ -74,3 +72,5 @@ module.exports = async function handler(request, response) {
     });
   }
 };
+
+module.exports.requestApodWithFallback = requestApodWithFallback;

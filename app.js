@@ -2028,6 +2028,7 @@ function normalizeApod(data) {
     mediaEmbedUrl: safeHttpUrl(apod?.mediaEmbedUrl) || getApodEmbedUrl(mediaUrl),
     hdUrl: safeHttpUrl(apod?.hdUrl || apod?.hdurl),
     copyright: getText(apod?.copyright),
+    alt: getText(apod?.alt) || getText(apod?.title),
     sourceUrl: safeHttpUrl(apod?.sourceUrl) || getApodSourceUrl(date)
   };
 }
@@ -2619,7 +2620,7 @@ function renderDashboardApodSummary(data) {
   els.apodBody.innerHTML = `
     <div class="dashboard-summary-card dashboard-summary-media-card">
       ${data.mediaUrl && data.mediaType === "image" ? `
-        <img class="dashboard-summary-thumb" src="${mediaUrl}" alt="${title}">
+        <img class="dashboard-summary-thumb" src="${mediaUrl}" alt="${escapeHtml(data.alt)}">
       ` : `
         <span class="stat-chip"><i class="fa-solid fa-image acadia-icon" aria-hidden="true"></i></span>
       `}
@@ -3378,14 +3379,14 @@ async function loadApod() {
     let media = `
       <div class="state-message acadia-alert apod-media-fallback">
         <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
-        <span>NASA media is unavailable right now.</span>
+        <span>NASA media preview is unavailable here. Open NASA source for the original.</span>
       </div>
     `;
 
     if (data.mediaUrl && data.mediaType === "image") {
       media = `
         <a class="acadia-link-card apod-media-link" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open full-size APOD image: ${title}">
-          <img class="apod-media" src="${mediaUrl}" alt="${title}">
+          <img class="apod-media" src="${mediaUrl}" alt="${escapeHtml(data.alt)}">
         </a>
       `;
     } else if (data.mediaType === "video" && data.mediaEmbedUrl) {

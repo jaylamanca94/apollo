@@ -27,7 +27,7 @@ Hypothesis: a calm, quickly understood briefing earns repeat use from occasional
 
 Keep baseline reading free. A future paid convenience such as a personalised digest or curated alerts is an option only after repeated-use and willingness-to-pay evidence; free specialist tools make a subscription for raw public data a weak proposition. No paid plan or new service is being launched.
 
-Use deterministic interpretation of existing feeds: no model calls, database, geolocation history or editorial publishing obligation. [NASA's published default limits](https://api.nasa.gov/) are 1,000 requests/hour per key across services; DEMO_KEY is limited to 30/hour per IP and 50/day. Existing in-memory caches are per function instance, so they do not guarantee a global quota ceiling. Before wider distribution, measure cold-instance/request volume and check all existing provider terms and hosting allowances. This run introduces no new provider or licence dependency; API availability does not grant blanket reuse rights for credited APOD imagery. Preserve source links and credits and review specific image rights before promotional reuse.
+Use deterministic interpretation of existing feeds: no model calls, database, geolocation history or editorial publishing obligation. [NASA's published default limits](https://api.nasa.gov/) are 1,000 requests/hour per key across services; DEMO_KEY is limited to 30/hour per IP and 50/day. Existing in-memory caches are per function instance, so they do not guarantee a global quota ceiling. Before wider distribution, measure cold-instance/request volume and check all existing provider terms and hosting allowances. The initial briefing direction introduced no new provider; API availability does not grant blanket reuse rights for credited APOD imagery. Preserve source links and credits and review specific image rights before promotional reuse.
 
 ### Active initiative: a briefing people can trust and return to
 
@@ -37,7 +37,9 @@ First delivery: validate the complete single-day NeoWs response before caching o
 
 Next outcome: review the Dashboard brief's hierarchy and source timing against this purpose, then implement a bounded improvement that makes the next useful action obvious. Prepare a five-person trial using the current dashboard and their usual alternative: ask what matters, what is uncertain, and what they would open next without coaching; record completion time and errors; offer an optional return visit a week later. Proposed directional thresholds: four of five distinguish unavailable from quiet and find a relevant next action within two minutes; three independently choose to return. These are experiment criteria, not statistical proof or simulated results. No participants have been contacted.
 
-Time-bound provider dependency discovered during research: [NASA's current API catalogue](https://api.nasa.gov/assets/json/apis.json) announces migration of APOD to WordPress and retirement of the legacy API on **1 December 2026**. Apollo still calls the legacy endpoint. Recheck the new contract and image/video/link semantics and deliver migration before that deadline; preserve provenance and image rights. This is a documented provider notice, not live endpoint acceptance.
+APOD dependency resolved in 1.1.2 (2026-09-24 UTC): [NASA's catalogue](https://api.nasa.gov/assets/json/apis.json) announces legacy retirement on 1 December; the [official service repository](https://github.com/nasa/apod-api) also says the legacy backend already forwards WordPress data. A live replacement response confirmed that `url` is the article permalink, explanation/credits can contain HTML, and `hdurl` holds the featured image. Apollo now reads the keyless NASA Science endpoint directly. Benefit: restore the daily exploration image and readable explanation while retaining date, credit, alt text and original source. The Gallery's existing Acadia composition is retained. Success: live image/source journey, safe alternate-media hand-off, validated fallback/recovery, and narrow-screen readability. These checks are local-service/browser evidence, not hosted acceptance.
+
+Operating decision: one public single-date request, a ten-second timeout and six-hour per-date cache; only a missing publication (404) tries the preceding Eastern date. Rate limits/outages/invalid bodies fail visibly rather than multiplying requests. No documented replacement quota or SLA was verified; a keyless public response is not a guarantee of unlimited use. No account, paid service, database or AI call is added. `entities` 6.0.1 (BSD-2-Clause, no runtime dependencies) decodes NASA text; provider markup is discarded and text is still escaped in the browser. APOD image rights remain item-specific; preserve credits and source links, with no promotional reuse authorised by this migration. WordPress video/iframe entries currently expose article and featured-image metadata rather than a dependable direct video field; use the NASA source hand-off, never infer a video from a thumbnail or execute `basic_html`. Resume the briefing next-action outcome above after this provider dependency.
 
 ## Goals
 
@@ -116,7 +118,7 @@ Historically deferred MVP capabilities (research candidates, not prohibitions or
 - Vercel for deployment and serverless API routes.
 - NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`, then normalized into dashboard-ready response contracts. APOD video links should keep the original source media URL while exposing an embeddable preview URL only for known video hosts.
 - NASA API keys stay server-side via `NASA_API_KEY`.
-- APOD tries NASA's default response first, then Eastern-date fallbacks to avoid UTC publish-window failures.
+- APOD requests the Eastern calendar date from NASA Science and tries yesterday only for a missing publication; displayed dates always remain source dates.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
 - NASA upstream failures expose only Apollo-owned error content, preserve the failure HTTP status, and are not cached. Upstream diagnostics must never be forwarded because they can contain credentials or request URLs.
 - SpaceX launch listings use The Space Devs launch data through `/api/launches`, with a normalized response shape before data reaches the dashboard and launches page.
@@ -148,7 +150,7 @@ Historically deferred MVP capabilities (research candidates, not prohibitions or
 
 ## Roadmap
 
-Continue the active trustworthy-briefing initiative above. Prioritise the APOD migration before its announced 1 December deadline, then the brief-to-next-action experiment. Revisit audience or positioning when user evidence warrants it; do not restart desk discovery each run.
+Continue the active trustworthy-briefing initiative above. The APOD migration is delivered in 1.1.2; continue the brief-to-next-action experiment. Revisit audience or positioning when user evidence warrants it; do not restart desk discovery each run.
 
 Existing technical review candidates below must be checked against current implementation and delivery evidence before acting; they are not a claim that each issue remains open:
 
@@ -170,7 +172,7 @@ Potential enhancements to evaluate under the product-development remit (no commi
 
 ## Known Limitations
 
-- NASA data depends on the configured Vercel `NASA_API_KEY`.
+- Near-Earth Object data depends on the configured Vercel `NASA_API_KEY`; APOD is keyless.
 - Vercel in-memory cache is per warm serverless function instance and may reset.
 - Third-party public APIs can fail or change response formats; Apollo now normalizes key server responses, but source outages can still affect sections.
 - Launch listings depend on The Space Devs launch data availability and its SpaceX search result format.

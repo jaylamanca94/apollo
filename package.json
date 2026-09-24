@@ -1,6 +1,6 @@
 {
   "name": "apollo",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "private": true,
   "scripts": {
     "dev": "bash ./scripts/vercel-dev.sh",
@@ -13,5 +13,8 @@
   },
   "devDependencies": {
     "vercel": "^34.0.0"
+  },
+  "dependencies": {
+    "entities": "6.0.1"
   }
 }

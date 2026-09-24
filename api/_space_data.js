@@ -1,3 +1,4 @@
+const { decodeHTML } = require("entities");
 const { getFiniteNumber, getText, safeHttpUrl } = require("./_normalize");
 
 function getApodEmbedUrl(value) {
@@ -59,21 +60,51 @@ const NEO_SENTRY_CONTEXT = {
   summary: "Sentry is NASA/JPL's automated monitoring system for possible future Earth impacts over the next 100 years."
 };
 
-function normalizeApodPayload(payload) {
+// This is text conversion, never HTML sanitisation for insertion. The frontend
+// must still escape every field. No provider markup or basic_html is rendered.
+function apodText(value) {
+  return decodeHTML(getText(value)
+    .replace(/<!--[^]*?-->/g, " ")
+    .replace(/<(script|style)\b[^>]*>[^]*?<\/\1\s*>/gi, " ")
+    .replace(/<[^>]*>/g, " "))
+    .replace(/\s+/g, " ").replace(/\s+([,.;!?])/g, "$1").trim();
+}
+
+function invalidApodResponse() {
+  const error = new Error("Invalid NASA APOD response");
+  error.status = 502;
+  error.payload = { error: { code: "APOD_RESPONSE_INVALID", message: "NASA APOD returned incomplete data." } };
+  return error;
+}
+
+function normalizeApodPayload(payload, expectedDate) {
   const date = getText(payload?.date);
-  const mediaUrl = safeHttpUrl(payload?.url);
+  const title = apodText(payload?.title);
+  const explanation = apodText(payload?.explanation).replace(/^Explanation:\s*/i, "");
+  const mediaType = getText(payload?.media_type);
+  const wordpress = Object.hasOwn(payload || {}, "permalink");
+  const sourceUrl = wordpress ? safeHttpUrl(payload.permalink) : getApodSourceUrl(date);
+  const hdUrl = safeHttpUrl(payload?.hdurl);
+  // WordPress url is an article, including on video days; hdurl is an image.
+  // Do not scrape basic_html to recreate third-party players.
+  const mediaUrl = wordpress ? (mediaType === "image" ? hdUrl : "") : safeHttpUrl(payload?.url);
+  const validDate = isIsoDate(date) && Number.isFinite(Date.parse(date)) && new Date(date).toISOString().slice(0, 10) === date;
+  const sourceHost = sourceUrl ? new URL(sourceUrl).hostname : "";
+  if (!payload || Array.isArray(payload) || !validDate || (expectedDate && date !== expectedDate)
+      || (expectedDate && !wordpress) || !title || !explanation || !mediaType || !sourceUrl
+      || (wordpress && sourceHost !== "science.nasa.gov")
+      || (mediaType === "image" && (!mediaUrl || mediaUrl === sourceUrl))) {
+    throw invalidApodResponse();
+  }
 
   return {
     apod: {
-      title: getText(payload?.title, "Astronomy Picture of the Day"),
-      date,
-      explanation: getText(payload?.explanation, "No description available."),
-      mediaType: getText(payload?.media_type),
-      mediaUrl,
-      mediaEmbedUrl: getApodEmbedUrl(mediaUrl),
-      hdUrl: safeHttpUrl(payload?.hdurl),
-      copyright: getText(payload?.copyright),
-      sourceUrl: getApodSourceUrl(date)
+      title, date, explanation, mediaType, mediaUrl,
+      mediaEmbedUrl: mediaType === "video" ? getApodEmbedUrl(mediaUrl) : "",
+      hdUrl: mediaType === "image" ? hdUrl : "",
+      copyright: apodText(payload?.copyright) || apodText(payload?.credit),
+      alt: apodText(payload?.alt) || title,
+      sourceUrl
     },
     source: "NASA APOD"
   };

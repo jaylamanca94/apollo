@@ -1,11 +1,13 @@
 # Apollo — Design Status
 
-**Last reviewed:** 2026-09-23
+**Last reviewed:** 2026-09-24
 **Canonical sources:** `FLOW-REGISTRY.md`, `PRODUCT-README.md`, `DESIGN-README.md`, `docs/product-lab-progress.md`, `product-review-2026-08-10/PRODUCT-REVIEW.md`, `product-review-2026-08-11/PRODUCT-REVIEW.md`
 
 ## Current adoption evidence
 
 All seven routes now consume an unchanged Acadia 0.4.10 snapshot. Shared source integrity, page/state coverage and responsive evidence are recorded in `docs/acadia-audit/README.md`. The prior observations below remain historical; they are not evidence of this new revision. Physical touch, screen-reader and hosted provider acceptance remain open.
+
+Gallery 1.1.2 adds live keyless APOD image/explanation/source evidence at 390px and 1440px, no page/nested overflow at 320px/200% text, controlled alternate-media hand-off and malformed-source keyboard recovery. See `docs/evidence/2026-09-24/README.md`. This resolves Gallery’s previous credential-dependent loaded-mobile gap; production and physical/reader acceptance remain open.
 
 ## Active-flow headline
 

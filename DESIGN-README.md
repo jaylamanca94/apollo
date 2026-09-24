@@ -266,3 +266,7 @@ Header slots wrap when their content needs room. Tablet navigation wraps so its 
 ### NeoWs source completeness and recovery (2026-09-23)
 
 Classification: reuse of the pinned Acadia unavailable/retry, panel and button patterns; interpretation remains Apollo-owned. Missing or invalid daily coverage enters source-unavailable, never a reassuring empty result. A validated empty day says no approaches are listed and explains the daily-feed limit. Tracking status describes flags in that list, not a calculated impact risk or the full Sentry catalogue. Successful source retry restores the persistent Refresh control when the retry disappears; repeated failure restores its replacement. Neither may steal focus after the user moves elsewhere. No shared component or stylesheet change is required.
+
+### APOD WordPress media contract (2026-09-24)
+
+Reuse the existing Acadia Gallery image, disclosure, source action and unavailable/retry patterns. Preserve source alt text, publication date and attribution. The article permalink is never an image or embedded player. Provider explanations and credits are plain text, escaped on rendering. For video/iframe/unknown media without a verified direct-media field, keep the stable preview fallback and NASA source action. Avoid claiming the original media is unavailable merely because Apollo cannot preview it. No shared styles or components change.
