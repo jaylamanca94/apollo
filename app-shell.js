@@ -1,6 +1,18 @@
 // Acadia owns navigation/menu anatomy and native details interaction.
 // Apollo supplies route-group behaviour and dismissal, shared by all pages.
 (() => {
+  // Source-recovery links reveal their supporting disclosure before navigation.
+  function revealSourceTarget(hash) {
+    if (hash !== "#sourceStatusTitle") return;
+    const disclosure = document.querySelector("#sourceDetails");
+    if (disclosure) disclosure.open = true;
+  }
+  revealSourceTarget(window.location.hash);
+  window.addEventListener("hashchange", () => revealSourceTarget(window.location.hash));
+  document.addEventListener("click", (event) => {
+    const anchor = event.target.closest("a[href='#sourceStatusTitle']");
+    if (anchor) revealSourceTarget(anchor.getAttribute("href"));
+  });
   const groups = [...document.querySelectorAll(".apollo-nav-more")];
   function close(group, restoreFocus = false) {
     if (!group.open) return;

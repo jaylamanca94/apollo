@@ -57,7 +57,6 @@ const pages = [
       "quickStatsBody",
       "spaceBriefBody",
       "recentActivityBody",
-      "watchItemsBody",
       "sourceStatusBody"
     ]
   },
@@ -217,10 +216,9 @@ for (const page of pages) {
     assert.ok(hasClass(navGroup, "acadia-navbar-links"));
     assert.ok(hasClass(main, "acadia-shell"));
     assert.ok(hasClass(pageHeader, "acadia-page-header"));
-    assert.ok(hasClass(pageHeader, "acadia-surface"));
-    assert.ok(hasClass(pageHeader, page.file === "index.html" ? "acadia-panel" : "acadia-panel-dense"));
+    assert.ok(!hasClass(pageHeader, "acadia-surface"), "page title should sit on the shared canvas");
     assert.ok(hasClass(refreshButton, "acadia-button"));
-    assert.ok(hasClass(refreshButton, "acadia-button-primary"));
+    assert.ok(hasClass(refreshButton, "acadia-button-secondary"));
 
     const topLevelNavItems = [
       ...getTags(html, "a").filter((tag) => /\bapollo-nav-link\b/.test(getAttribute(tag, "class"))),
@@ -272,11 +270,11 @@ test("skip link has a visible focus treatment", () => {
 test("ISS map is exposed as a named interactive region", () => {
   const js = readProjectFile("app.js");
 
-  assert.match(js, /class="iss-status-summary acadia-muted-panel"/);
+  assert.match(js, /class="iss-status-summary"/);
   assert.match(js, /id="issOrbitalBriefText"/);
-  assert.match(js, /Normal Operations/);
-  assert.match(js, /Current Position/);
-  assert.match(js, /Orbital Snapshot/);
+  assert.doesNotMatch(js, /Normal Operations/);
+  assert.match(js, /Position data does not predict local visibility/);
+  assert.match(js, /Orbital details/);
   assert.match(js, /Over \$\{escapeHtml\(issRegion\)\}/);
   assert.match(js, /id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"/);
   assert.doesNotMatch(js, /id="issMap" role="img"/);
@@ -344,22 +342,18 @@ test("Apollo brand mark uses the satellite icon on every page", () => {
   }
 });
 
-test("dashboard stops at command-center panels instead of duplicating detail pages", () => {
+test("dashboard provides a brief, linked snapshot, short activity and supporting source disclosure", () => {
   const html = readProjectFile("index.html");
   const js = readProjectFile("app.js");
-
-  assert.match(html, /\bid="commandPanels"/);
-  assert.match(html, /\bid="recentActivityPanel"/);
-  assert.match(html, /\bid="recentActivityBody"/);
-  assert.match(html, /\bid="watchItemsBody"/);
-  assert.match(html, /\bid="sourceStatusBody"/);
-  assert.match(html, /Data Sources/);
-  assert.match(js, /hasMeaningfulRecentActivity = rows\.some\(\(row\) => row\.label !== "ISS"\)/);
-  assert.match(js, /recentActivityPanel\.hidden = !hasMeaningfulRecentActivity/);
-  assert.match(js, /apollo-command-grid-single/);
-
+  assert.match(html, /id="recentActivityBody"/);
+  assert.doesNotMatch(html, /id="watchItemsBody"/);
+  assert.equal(getTags(html, "a").filter((tag) => getAttribute(tag, "data-quick-stat")).length, 5);
+  assert.match(html, /acadia-accordion-divided/);
+  assert.match(html, /<details[^>]+id="sourceDetails">/);
+  assert.match(html, /id="sourceStatusSummary"/);
+  assert.match(js, /recentActivityPanel.hidden = rows.length === 0/);
   for (const removedRegion of ["issBody", "peopleBody", "launchBody", "neoBody", "spaceWeatherBody", "apodBody", "skyAnomaliesBody"]) {
-    assert.doesNotMatch(html, new RegExp(`\\bid="${removedRegion}"`), `dashboard should not include ${removedRegion}`);
+    assert.ok(!html.includes(`id="${removedRegion}"`), `dashboard should not include ${removedRegion}`);
   }
 });
 
@@ -486,17 +480,6 @@ test("sky anomaly evidence ranks connected source context before planned gaps", 
   assert.match(js, /Connected sources are unavailable, so Apollo cannot list known-context explanations/);
 });
 
-test("watch items prioritize loaded signals before source unavailable rows", () => {
-  const js = readProjectFile("app.js");
-
-  assert.match(js, /const availableRows = \[\];/);
-  assert.match(js, /const limitationRows = \[\];/);
-  assert.match(js, /label:\s*"ISS track"/);
-  assert.match(js, /label:\s*"Orbital presence"/);
-  assert.match(js, /label:\s*"Source unavailable"/);
-  assert.match(js, /return \[\.\.\.availableRows, \.\.\.limitationRows\];/);
-});
-
 test("freshness copy separates successful updates from failed checks", () => {
   const appJs = readProjectFile("app.js");
   const launchesJs = readProjectFile("launches.js");
@@ -569,17 +552,17 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=1.2.0/, `${file} should load the current shared app script`);
+    assert.match(html, /app\.js\?v=1.3.0/, `${file} should load the current shared app script`);
   }
 
-  assert.match(readProjectFile("launches.html"), /launches\.js\?v=1.1.0/);
+  assert.match(readProjectFile("launches.html"), /launches\.js\?v=1.3.0/);
 });
 
 test("internal pages use compact headers instead of dashboard-scale heroes", () => {
   for (const file of allHtmlPages.filter((file) => file !== "index.html")) {
     const html = readProjectFile(file);
     assert.match(html, /apollo-page-title acadia-title/);
-    assert.match(html, /acadia-page-header acadia-surface acadia-panel-dense/);
+    assert.match(html, /apollo-page-header acadia-page-header/);
   }
 });
 
@@ -635,8 +618,8 @@ test("launch timeline exposes urgency context and current asset versions", () =>
   const js = readProjectFile("launches.js");
   const css = readProjectFile("styles.css");
 
-  assert.match(html, /styles\.css\?v=1.1.0/);
-  assert.match(html, /launches\.js\?v=1.1.0/);
+  assert.match(html, /styles\.css\?v=1.3.0/);
+  assert.match(html, /launches\.js\?v=1.3.0/);
   assert.match(js, /class="acadia-muted-panel launch-timeline-row\$\{index === 0 \?\s*" launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="acadia-visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
   assert.doesNotMatch(js, /class="launch-timeline-rail" aria-hidden="true"/);

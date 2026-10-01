@@ -1,0 +1,142 @@
+[
+  {
+    "check": "Native keyboard source disclosure opens",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Refresh preserves open source disclosure",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Refresh preserves closed source disclosure",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "All-source recovery reveals source disclosure and focuses heading",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Direct source hash opens disclosure",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "iss snapshot opens its detail",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "people snapshot opens its detail",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "launches snapshot opens its detail",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "neo snapshot opens its detail",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "spaceWeather snapshot opens its detail",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Watch Enter focuses first destination at 1440",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Watch menu stays in viewport at 1440",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Watch Escape closes and restores trigger at 1440",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Watch Enter focuses first destination at 834",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Watch menu stays in viewport at 834",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Watch Escape closes and restores trigger at 834",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Watch Enter focuses first destination at 390",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Watch menu stays in viewport at 390",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Watch Escape closes and restores trigger at 390",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Orbital details open by keyboard at enlarged text",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Expanded orbital details do not overflow",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Full NASA explanation opens by keyboard at enlarged text",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Expanded full explanation does not overflow",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Alternate media keeps source fallback without unverified iframe",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Changing recommendation preserves keyboard path through headline",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Source-link focus survives incremental source responses",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Activity-link focus survives incremental source responses",
+    "passed": true,
+    "result": true
+  },
+  {
+    "check": "Theme persists across routes",
+    "passed": true,
+    "result": true
+  }
+]

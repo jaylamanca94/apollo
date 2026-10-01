@@ -56,3 +56,11 @@ APOD 1.1.2 acceptance: 138 project checks pass. The real local handler returned 
 ## Briefing next action — 2026-09-24
 
 Dashboard → one dated recommendation → launch/weather/Gallery detail → original source. The brief precedes metrics; coverage includes APOD and distinguishes checking, limited, loaded and unavailable. No global calm/activity or normal-orbit judgement remains. Partial sources preserve a useful available action; all-source failure links by keyboard to the named source-status heading. Progressive responses preserve action focus or move it to the changed headline. Actual-handler live partial brief → USSF-385 launch detail/source was verified locally; controlled weather/Gallery, failure, 320px/200% text and desktop/tablet/phone evidence is in `docs/evidence/2026-09-24/briefing/README.md`. The five-person trial is prepared, unrun. Hosted and physical/reader acceptance remain separate.
+
+## Premium UX refinement — 2026-09-30
+
+Eight canonical goals and seven routes retained. Dashboard entry changes: one primary brief action; five direct snapshot links (Crew lands at its existing section); three activity cards without a repeated ISS track or Watch Items panel. Source diagnostics become a native divided disclosure, with six-source coverage visible when closed. Source recovery from the brief or a direct hash reveals the disclosure; refresh preserves its open/closed choice. Source/activity focus persists through incremental source responses. All routes adopt the unchanged Acadia 0.9.2 palette/type and the same unframed header with secondary Refresh.
+
+Required coverage: loaded, empty, partial, failure and delayed sources; all routes at desktop/tablet/phone/narrow widths and enlarged text; both themes; snapshot destinations, keyboard Watch/Escape, refresh/retry, source disclosure/recovery hashes and progressive focus. Current results: `docs/evidence/2026-09-30/refinement/README.md`. Hosted/runtime, physical touch, VoiceOver and reader comprehension remain separate.
+
+Gallery keeps original media, source title/date/credit and a 280-character explanation preview with disclosed full text; removes derived category/type and repeated explanation. ISS keeps its live region/metrics/map and source time; orbital estimates and coordinates use a native disclosure. No normal-operation assertion is inferred from position data.

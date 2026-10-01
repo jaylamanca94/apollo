@@ -1,7 +1,7 @@
 const LAUNCHES_API = "/api/launches?limit=20";
 const THEME_STORAGE_KEY = "apollo-theme";
 const THEME_COLORS = {
-  dark: "#181A1E",
+  dark: "#0B0B0B",
   light: "#F5F5F5"
 };
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;

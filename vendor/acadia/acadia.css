@@ -63,6 +63,8 @@
   --acadia-font-mono: "Geist Mono", "SFMono-Regular", Consolas,
     "Liberation Mono", monospace;
   --acadia-font-weight-regular: 400;
+  --acadia-font-weight-heading: 500;
+  --acadia-type-tracking-heading: -0.025em;
   --acadia-font-weight-medium: 600;
   --acadia-font-weight-bold: 700;
   --acadia-font-weight-strong: 800;
@@ -77,7 +79,7 @@
   --acadia-type-line-display: 1.05;
   --acadia-type-line-title: 1.1;
   --acadia-type-line-heading: 1.16;
-  --acadia-type-line-lead: 1.35;
+  --acadia-type-line-lead: 1.5;
   --acadia-type-line-copy: 1.5;
   --acadia-type-line-small: 1.45;
   --acadia-type-line-caption: 1.35;
@@ -216,10 +218,10 @@
   --acadia-color-control-placeholder: #6c757d;
   --acadia-field-background: var(--acadia-color-control);
   --acadia-field-background-hover: var(--acadia-color-control-hover);
-  --acadia-field-border: var(--acadia-color-control-border);
+  --acadia-field-border: color-mix(in srgb, var(--acadia-color-text) 48%, var(--acadia-surface-layer-base));
   --acadia-field-disabled-background: #e9ecef;
   --acadia-field-disabled-border: rgba(33, 37, 41, 0.1);
-  --acadia-field-disabled-text: #6c757d;
+  --acadia-field-disabled-text: #62696f;
   --acadia-field-label-color: var(--acadia-color-text-muted);
   --acadia-field-caption-color: var(--acadia-color-text-muted);
   --acadia-field-radius: var(--acadia-radius-control);
@@ -228,12 +230,9 @@
   --acadia-field-gap: 0.5rem;
   --acadia-field-caption-size: var(--acadia-type-size-caption);
   --acadia-field-caption-line-height: 1rem;
-  --acadia-field-vibrancy: blur(12px);
-  --acadia-field-elevation:
-    0 0.25rem 1.5rem rgba(0, 0, 0, 0.04),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.16),
-    inset 0 1px 1px rgba(255, 255, 255, 0.24),
-    inset -1px 1px 4px rgba(255, 255, 255, 0.08);
+  --acadia-field-vibrancy: none;
+  /* A zero shadow remains valid when composed with focus and error rings. */
+  --acadia-field-elevation: 0 0 0 0 transparent;
   --acadia-control-select-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
   /* Exact founder Text aliases. Small-text roles below account for surfaces. */
   --acadia-text-dark: var(--acadia-system-gray-cool-90);
@@ -364,7 +363,7 @@
   --acadia-surface-layer-raised: var(--acadia-color-surface-elevated);
   --acadia-surface-layer-muted: var(--acadia-color-surface-muted);
   --acadia-surface-layer-control: var(--acadia-color-control);
-  --acadia-surface-layer-inverse: #181a1e;
+  --acadia-surface-layer-inverse: #0b0b0b;
   --acadia-surface-border-color: var(--acadia-color-border);
   --acadia-color-inverse: #f8fafc;
   --acadia-interaction-hover-bg: color-mix(
@@ -520,7 +519,7 @@
   --acadia-accordion-background-hover: var(--acadia-field-background-hover);
   --acadia-accordion-border: var(--acadia-color-border);
   --acadia-accordion-elevation: var(--acadia-elevation-control);
-  --acadia-accordion-vibrancy: var(--acadia-field-vibrancy);
+  --acadia-accordion-vibrancy: blur(12px);
   --acadia-accordion-icon-filter: brightness(0.52);
   --acadia-disabled-opacity: 0.56;
   --acadia-hover-lift: -1px;
@@ -607,26 +606,26 @@
 :root:not([data-acadia-theme]),
 [data-acadia-theme="dark"] {
   color-scheme: dark;
-  --acadia-color-page: #181a1e;
-  --acadia-color-surface: #212529;
-  --acadia-color-surface-elevated: #2b2f32;
-  --acadia-color-surface-muted: #1e2024;
+  --acadia-color-page: #0b0b0b;
+  --acadia-color-surface: #202020;
+  --acadia-color-surface-elevated: #2b2b2b;
+  --acadia-color-surface-muted: #202020;
   --acadia-color-surface-raised: var(--acadia-color-surface-elevated);
-  --acadia-surface-fill: #212529;
-  --acadia-color-control: rgba(43, 47, 50, 0.94);
-  --acadia-color-control-hover: rgba(43, 47, 50, 0.98);
+  --acadia-surface-fill: #202020;
+  --acadia-color-control: #242424;
+  --acadia-color-control-hover: #2b2b2b;
   --acadia-color-control-border: rgba(255, 255, 255, 0.12);
   /* Keep every in-map action and disclosure surface on the same dark
      liquid-glass rail as the Map and location-filter tabs. */
   --acadia-map-control-fill: var(--acadia-surface-layer-control);
   --acadia-map-control-border: var(--acadia-surface-border-color);
-  --acadia-color-control-placeholder: #aeb6c2;
-  --acadia-field-background: #2b2f32;
-  --acadia-field-background-hover: #2b2f32;
-  --acadia-field-border: rgba(255, 255, 255, 0.1);
-  --acadia-field-disabled-background: #495057;
-  --acadia-field-disabled-border: #41474a;
-  --acadia-field-disabled-text: #c4c8cb;
+  --acadia-color-control-placeholder: #b5b5b5;
+  --acadia-field-background: #242424;
+  --acadia-field-background-hover: #2b2b2b;
+  --acadia-field-border: color-mix(in srgb, var(--acadia-color-text) 48%, var(--acadia-surface-layer-base));
+  --acadia-field-disabled-background: #363636;
+  --acadia-field-disabled-border: #646464;
+  --acadia-field-disabled-text: #b5b5b5;
   --acadia-field-label-color: var(--acadia-color-text);
   --acadia-field-caption-color: var(--acadia-color-text-muted);
   --acadia-accordion-icon-filter: none;
@@ -638,10 +637,10 @@
   --acadia-text-brand: var(--acadia-system-acadia-40);
   --acadia-text-green: var(--acadia-system-green-40);
   --acadia-text-red: var(--acadia-system-red-50);
-  --acadia-color-text: var(--acadia-text-dark);
-  --acadia-color-text-muted: var(--acadia-system-gray-cool-30);
-  --acadia-color-border: rgba(255, 255, 255, 0.1);
-  --acadia-color-border-strong: rgba(255, 255, 255, 0.17);
+  --acadia-color-text: #f2f2f2;
+  --acadia-color-text-muted: #b5b5b5;
+  --acadia-color-border: #363636;
+  --acadia-color-border-strong: #646464;
   --acadia-palette-tiffany-100: #00bdb6;
   --acadia-palette-tiffany-300: #009c96;
   --acadia-palette-tiffany-500: #007d79;
@@ -760,22 +759,22 @@
   :root:not([data-acadia-theme="light"]):not([data-acadia-theme="dark"]),
   [data-acadia-theme="system"] {
     color-scheme: dark;
-    --acadia-color-page: #181a1e;
-    --acadia-color-surface: #212529;
-    --acadia-color-surface-elevated: #2b2f32;
-    --acadia-color-surface-muted: #1e2024;
+    --acadia-color-page: #0b0b0b;
+    --acadia-color-surface: #202020;
+    --acadia-color-surface-elevated: #2b2b2b;
+    --acadia-color-surface-muted: #202020;
     --acadia-color-surface-raised: var(--acadia-color-surface-elevated);
-    --acadia-surface-fill: #212529;
-    --acadia-color-control: rgba(43, 47, 50, 0.94);
-    --acadia-color-control-hover: rgba(43, 47, 50, 0.98);
+    --acadia-surface-fill: #202020;
+    --acadia-color-control: #242424;
+    --acadia-color-control-hover: #2b2b2b;
     --acadia-color-control-border: rgba(255, 255, 255, 0.12);
-    --acadia-color-control-placeholder: #aeb6c2;
-    --acadia-field-background: #2b2f32;
-    --acadia-field-background-hover: #2b2f32;
-    --acadia-field-border: rgba(255, 255, 255, 0.1);
-    --acadia-field-disabled-background: #495057;
-    --acadia-field-disabled-border: #41474a;
-    --acadia-field-disabled-text: #c4c8cb;
+    --acadia-color-control-placeholder: #b5b5b5;
+    --acadia-field-background: #242424;
+    --acadia-field-background-hover: #2b2b2b;
+    --acadia-field-border: color-mix(in srgb, var(--acadia-color-text) 48%, var(--acadia-surface-layer-base));
+    --acadia-field-disabled-background: #363636;
+    --acadia-field-disabled-border: #646464;
+    --acadia-field-disabled-text: #b5b5b5;
     --acadia-field-label-color: var(--acadia-color-text);
     --acadia-field-caption-color: var(--acadia-color-text-muted);
     --acadia-accordion-icon-filter: none;
@@ -787,10 +786,10 @@
     --acadia-text-brand: var(--acadia-system-acadia-40);
     --acadia-text-green: var(--acadia-system-green-40);
     --acadia-text-red: var(--acadia-system-red-50);
-    --acadia-color-text: var(--acadia-text-dark);
-    --acadia-color-text-muted: var(--acadia-system-gray-cool-30);
-    --acadia-color-border: rgba(255, 255, 255, 0.1);
-    --acadia-color-border-strong: rgba(255, 255, 255, 0.17);
+    --acadia-color-text: #f2f2f2;
+    --acadia-color-text-muted: #b5b5b5;
+    --acadia-color-border: #363636;
+    --acadia-color-border-strong: #646464;
     --acadia-palette-tiffany-100: #00bdb6;
     --acadia-palette-tiffany-300: #009c96;
     --acadia-palette-tiffany-500: #007d79;
@@ -946,14 +945,14 @@ details > summary:focus-visible {
 [data-acadia-theme="dark"] .acadia-app,
 :root:not([data-acadia-theme]) .acadia-app,
 .acadia-app[data-acadia-theme="dark"] {
-  background: linear-gradient(180deg, #1e2024 0%, #181a1e 100%);
+  background: var(--acadia-color-page);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-acadia-theme="light"]):not([data-acadia-theme="dark"]) .acadia-app,
   [data-acadia-theme="system"] .acadia-app,
   .acadia-app[data-acadia-theme="system"] {
-    background: linear-gradient(180deg, #1e2024 0%, #181a1e 100%);
+    background: var(--acadia-color-page);
   }
 }
 
@@ -1056,6 +1055,10 @@ details > summary:focus-visible {
 .acadia-page-header-pattern.is-title-only .acadia-page-header-pattern-body,
 .acadia-page-header-pattern-body:not(:has(> .acadia-page-header-pattern-search)) {
   grid-template-columns: minmax(0, 1fr);
+}
+
+.acadia-page-header-pattern :is(.acadia-page-header-pattern-title, .acadia-page-header-pattern-body > h1, .acadia-page-header-pattern-body > h2, .acadia-page-header-pattern-body > h3) {
+  font-weight: var(--acadia-font-weight-bold);
 }
 
 .acadia-page-header-pattern-title {
@@ -1847,7 +1850,7 @@ details > summary:focus-visible {
   --acadia-chrome-color-brand: #00bdb6;
   --acadia-chrome-color-action: #00bdb6;
   --acadia-chrome-color-action-ink: var(--acadia-color-action-ink);
-  background: var(--acadia-surface-layer-base);
+  background: var(--acadia-color-page);
   border: 0;
   border-bottom: 1px solid var(--acadia-color-border);
   box-sizing: border-box;
@@ -2045,7 +2048,7 @@ main [id] {
   grid-row: 1;
   justify-content: flex-start;
   justify-self: start;
-  min-height: 2.5rem;
+  min-height: var(--acadia-target-size-touch);
   min-width: 0;
   padding-inline: 0;
   text-align: left;
@@ -3622,26 +3625,73 @@ main [id] {
   pointer-events: none;
 }
 
+/* Fixed phone insets remain usable when the reader enlarges text. */
+@media (max-width: 47.98rem) {
+  .acadia-search-dialog.acadia-dialog {
+    width: calc(100vw - (min(var(--acadia-page-margin-mobile), 16px) * 2));
+    max-width: calc(100vw - (min(var(--acadia-page-margin-mobile), 16px) * 2));
+  }
+  .acadia-search-dialog :is(.acadia-dialog-header, .acadia-dialog-body) {
+    padding-inline: min(var(--acadia-page-margin-mobile), 16px);
+  }
+}
+
 .acadia-search-dialog {
   width: min(42rem, calc(100vw - 2rem));
 }
 
+.acadia-search-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.acadia-search-dialog .acadia-dialog-header {
+  align-items: center;
+  border-bottom: 0;
+  flex-shrink: 0;
+  padding-bottom: 0;
+}
+
+.acadia-search-dialog .acadia-dialog-header .acadia-label {
+  margin: 0;
+}
+
+.acadia-search-dialog .acadia-dialog-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.acadia-search-dialog .acadia-search-control {
+  flex-shrink: 0;
+}
+
 .acadia-search-results {
   display: grid;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  grid-auto-rows: max-content;
+  gap: 0.125rem;
+  margin-top: 0.75rem;
   max-height: min(56vh, 28rem);
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.25rem;
 }
 
 .acadia-search-result {
+  align-items: center;
   background: transparent;
-  border: 1px solid var(--acadia-color-border);
+  border: 1px solid transparent;
   border-radius: var(--acadia-radius-control);
+  box-sizing: border-box;
   color: var(--acadia-color-text);
-  display: grid;
-  gap: 0.25rem;
-  padding: 0.75rem 0.875rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem 1rem;
+  justify-content: space-between;
+  min-height: var(--acadia-target-size-touch);
+  padding: 0.5rem 0.625rem;
+  overflow-wrap: anywhere;
   text-decoration: none;
   transition:
     background-color var(--acadia-motion-fast),
@@ -3660,12 +3710,21 @@ main [id] {
   box-shadow: var(--acadia-focus-ring);
 }
 
+@media (forced-colors: active) {
+  .acadia-search-result:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: -3px;
+  }
+}
+
 .acadia-search-result-kicker {
   color: var(--acadia-color-text-muted);
   font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.acadia-search-result strong {
+  font-weight: 600;
 }
 
 .acadia-search-empty {
@@ -4548,10 +4607,10 @@ main [id] {
   --acadia-button-background: transparent;
   --acadia-button-border-color: transparent;
   --acadia-button-color: var(--acadia-color-text);
-  --acadia-button-elevation: none;
+  --acadia-button-elevation: 0 0 0 0 transparent;
   align-items: center;
   appearance: none;
-  backdrop-filter: blur(12px);
+  backdrop-filter: none;
   background: var(--acadia-button-background);
   border: 1px solid var(--acadia-button-border-color);
   border-radius: 0.5rem;
@@ -4569,6 +4628,7 @@ main [id] {
   min-height: var(--acadia-target-size-control);
   min-width: 0;
   padding: 0.5rem 1rem;
+  position: relative;
   text-decoration: none;
   touch-action: manipulation;
   transition:
@@ -4588,11 +4648,15 @@ main [id] {
   transform: translateY(0) scale(var(--acadia-pressed-scale));
 }
 
-.acadia-button:focus-visible,
+.acadia-button:focus-visible {
+  box-shadow: var(--acadia-focus-ring), var(--acadia-button-elevation);
+  outline: 0;
+}
+
 .acadia-control:focus-visible {
   box-shadow:
     var(--acadia-focus-ring),
-    var(--acadia-elevation-control);
+    var(--acadia-field-elevation);
   outline: 0;
 }
 
@@ -4601,10 +4665,6 @@ main [id] {
   --acadia-button-background: var(--acadia-color-primary);
   --acadia-button-border-color: rgba(255, 255, 255, 0.1);
   --acadia-button-color: var(--acadia-color-primary-contrast);
-  --acadia-button-elevation:
-    0 0.25rem 1.5rem rgba(0, 0, 0, 0.08),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.16),
-    inset 0 1px 1px rgba(255, 255, 255, 0.24);
 }
 
 .acadia-button-brand:hover,
@@ -4627,36 +4687,30 @@ main [id] {
 }
 
 .acadia-button-secondary {
-  --acadia-button-background: var(--acadia-surface-layer-muted);
-  --acadia-button-border-color: var(--acadia-color-border);
+  --acadia-button-background: transparent;
+  --acadia-button-border-color: transparent;
   --acadia-button-color: var(--acadia-color-text);
-  --acadia-button-elevation: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.04);
 }
 
 .acadia-button-secondary:hover,
 .acadia-button-secondary:focus-visible {
-  --acadia-button-background: var(--acadia-color-control-hover);
-  --acadia-button-border-color: var(--acadia-color-border-strong);
+  --acadia-button-background: var(--acadia-interaction-hover-bg);
+}
+
+.acadia-button-secondary:active {
+  --acadia-button-background: var(--acadia-interaction-pressed-bg);
 }
 
 .acadia-button-light {
   --acadia-button-background: var(--acadia-surface-layer-inverse);
   --acadia-button-border-color: rgba(255, 255, 255, 0.1);
   --acadia-button-color: var(--acadia-color-inverse);
-  --acadia-button-elevation:
-    0 0.25rem 1.5rem rgba(0, 0, 0, 0.08),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.16),
-    inset 0 1px 1px rgba(255, 255, 255, 0.24);
 }
 
 .acadia-button-dark {
   --acadia-button-background: var(--acadia-color-inverse);
   --acadia-button-border-color: rgba(255, 255, 255, 0.1);
   --acadia-button-color: var(--acadia-surface-layer-inverse);
-  --acadia-button-elevation:
-    0 0.25rem 1.5rem rgba(0, 0, 0, 0.08),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.16),
-    inset 0 1px 1px rgba(255, 255, 255, 0.24);
 }
 
 .acadia-button-quiet {
@@ -4676,10 +4730,6 @@ main [id] {
   --acadia-button-background: var(--acadia-color-danger);
   --acadia-button-border-color: rgba(255, 255, 255, 0.1);
   --acadia-button-color: #fff;
-  --acadia-button-elevation:
-    0 0.25rem 1.5rem rgba(0, 0, 0, 0.08),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.16),
-    inset 0 1px 1px rgba(255, 255, 255, 0.24);
 }
 
 .acadia-button-danger:hover,
@@ -4696,7 +4746,7 @@ main [id] {
 .acadia-button-outline,
 .acadia-button.is-outline {
   --acadia-button-background: transparent;
-  --acadia-button-elevation: 0 0.25rem 1.5rem rgba(0, 0, 0, 0.04);
+  --acadia-button-border-color: var(--acadia-color-text-muted);
   border-width: 1.5px;
 }
 
@@ -4762,12 +4812,18 @@ main [id] {
 .acadia-button[aria-busy="true"]::before,
 .acadia-button.is-loading::before {
   animation: acadia-spin 800ms linear infinite;
-  border: 2px solid currentColor;
+  border: 1.5px solid currentColor;
   border-right-color: transparent;
   border-radius: var(--acadia-radius-pill);
+  box-sizing: border-box;
   content: "";
-  height: 1rem;
-  width: 1rem;
+  height: 0.75rem;
+  width: 0.75rem;
+  /* Use the existing inset, so text and neighbouring actions stay in place. */
+  inset-block: 0;
+  inset-inline-start: 0.125rem;
+  margin-block: auto;
+  position: absolute;
 }
 
 .acadia-button.is-success {
@@ -5798,6 +5854,22 @@ select.acadia-control {
   padding: var(--acadia-section-padding-dense);
 }
 
+/* Opt in to semantic groups without another enclosing surface. */
+.acadia-form-section.acadia-form-section-plain {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+.acadia-form-section-plain + .acadia-form-section-plain {
+  border-block-start: 1px solid var(--acadia-color-border);
+  padding-block-start: var(--acadia-space-5);
+}
+
 .acadia-field-grid {
   align-items: start;
   display: grid;
@@ -6055,6 +6127,17 @@ select.acadia-control {
   width: 100%;
 }
 
+/* Opt in when task groups share an existing page or section. */
+.acadia-checklist.acadia-checklist-plain {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
 .acadia-checklist.is-large,
 .acadia-checklist-large {
   --acadia-checklist-padding: 3rem;
@@ -6253,18 +6336,18 @@ select.acadia-control {
   appearance: none;
   background: transparent;
   border: 1px solid var(--acadia-checklist-header-color);
-  border-radius: 0.3125rem;
+  border-radius: 0.25rem;
   color: var(--acadia-color-action-ink);
   display: grid;
   flex: 0 0 auto;
-  height: 1.25rem;
+  height: 1rem;
   margin: 0;
   place-content: center;
   transition:
     background-color var(--acadia-motion-fast),
     border-color var(--acadia-motion-fast),
     box-shadow var(--acadia-motion-fast);
-  width: 1.25rem;
+  width: 1rem;
 }
 
 .acadia-checklist-item input[type="checkbox"]::after {
@@ -6481,10 +6564,11 @@ select.acadia-control {
 .acadia-title {
   font-family: var(--acadia-font-expression);
   font-size: var(--acadia-type-size-title);
-  font-weight: var(--acadia-font-weight-strong);
-  letter-spacing: 0;
+  font-weight: var(--acadia-font-weight-bold);
+  letter-spacing: var(--acadia-type-tracking-heading);
   line-height: var(--acadia-type-line-title);
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .acadia-section-title-row {
@@ -6497,34 +6581,37 @@ select.acadia-control {
 .acadia-display {
   font-family: var(--acadia-font-expression);
   font-size: var(--acadia-type-size-display);
-  font-weight: var(--acadia-font-weight-strong);
-  letter-spacing: 0;
+  font-weight: var(--acadia-font-weight-bold);
+  letter-spacing: var(--acadia-type-tracking-heading);
   line-height: var(--acadia-type-line-display);
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .acadia-heading-large {
   font-family: var(--acadia-font-expression);
   font-size: var(--acadia-type-size-heading-large);
-  font-weight: var(--acadia-font-weight-strong);
-  letter-spacing: 0;
+  font-weight: var(--acadia-font-weight-heading);
+  letter-spacing: var(--acadia-type-tracking-heading);
   line-height: var(--acadia-type-line-heading);
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .acadia-heading-small {
   font-family: var(--acadia-font-expression);
   font-size: var(--acadia-type-size-heading-small);
-  font-weight: var(--acadia-font-weight-strong);
-  letter-spacing: 0;
+  font-weight: var(--acadia-font-weight-heading);
+  letter-spacing: var(--acadia-type-tracking-heading);
   line-height: var(--acadia-type-line-heading);
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .acadia-lead {
   font-family: var(--acadia-font-expression);
   font-size: var(--acadia-type-size-lead);
-  font-weight: var(--acadia-font-weight-bold);
+  font-weight: var(--acadia-font-weight-regular);
   line-height: var(--acadia-type-line-lead);
   margin: 0;
 }
@@ -7959,18 +8046,18 @@ select.acadia-control {
 }
 
 .acadia-card {
-  -webkit-backdrop-filter: var(--acadia-surface-vibrancy);
-  backdrop-filter: var(--acadia-surface-vibrancy);
-  background: var(--acadia-surface-fill);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--acadia-surface-layer-base);
   background-clip: padding-box;
   border: 1px solid var(--acadia-color-border);
   border-radius: var(--acadia-radius-surface);
-  box-shadow: var(--acadia-elevation-surface);
+  box-shadow: none;
   min-width: 0;
   overflow: hidden;
 }
 
-.acadia-card:has(.acadia-card-actions > .acadia-action-menu[open]) {
+.acadia-card:has(.acadia-action-menu:not(.acadia-thumbnail-menu)[open]) {
   overflow: visible;
 }
 
@@ -8009,6 +8096,7 @@ select.acadia-control {
 
 .acadia-card-body {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--acadia-space-2);
 }
 
@@ -8069,7 +8157,7 @@ select.acadia-control {
 }
 
 .acadia-card.is-content.is-interactive:focus-visible {
-  box-shadow: var(--acadia-focus-ring), var(--acadia-elevation-surface);
+  box-shadow: var(--acadia-focus-ring);
 }
 
 .acadia-card.is-content > .acadia-card-actions {
@@ -8565,6 +8653,45 @@ select.acadia-control {
 
   .acadia-accordion-panel {
     padding: 0 var(--acadia-accordion-padding-mobile) var(--acadia-accordion-padding-mobile);
+  }
+}
+
+/* Supporting rows share the surrounding section's surface. Direct children
+   only: nested soft disclosures retain their own appearance. */
+.acadia-accordion-divided {
+  gap: 0;
+}
+
+.acadia-accordion-divided > .acadia-accordion-item {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: transparent;
+  border: 0;
+  border-block-end: 1px solid var(--acadia-accordion-border);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.acadia-accordion-divided > .acadia-accordion-item > .acadia-accordion-summary,
+.acadia-accordion-divided > .acadia-accordion-item > .acadia-accordion-panel {
+  padding-inline: 0;
+}
+
+.acadia-accordion-divided > .acadia-accordion-item:has(> .acadia-accordion-summary:active) {
+  background: transparent;
+}
+
+.acadia-accordion-divided > .acadia-accordion-item > .acadia-accordion-summary:active {
+  background: var(--acadia-accordion-background-hover);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .acadia-accordion-divided > .acadia-accordion-item:hover {
+    background: transparent;
+  }
+
+  .acadia-accordion-divided > .acadia-accordion-item > .acadia-accordion-summary:hover {
+    background: var(--acadia-accordion-background-hover);
   }
 }
 

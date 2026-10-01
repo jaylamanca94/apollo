@@ -147,7 +147,7 @@ Historically deferred MVP capabilities (research candidates, not prohibitions or
 - The dashboard ends with a compact data-source status card so public demos can distinguish a source outage from a broken product, see the timing or date behind key sources, and quickly open each upstream source.
 - The header avoids section jump navigation and uses compact primary page links only for meaningful detail pages such as Launches.
 - Refresh state uses one global freshness label. The Dashboard always uses "Last checked", distinct from recommendation observation/event dates. Detail pages use "Last updated" after successful source loads and "Last checked" when checking, partial, degraded, or unavailable.
-- Dashboard source families resolve independently during first load and refresh, so loaded cards, Watch Items, Recent Activity, Space Brief, and Data Sources can update while slower sources remain visibly checking.
+- Dashboard source families resolve independently during first load and refresh, so snapshot metrics, Recent activity, Space Brief and Source availability can update while slower sources remain visibly checking.
 - Dashboard data families use neutral cards, sparse icons, red action accents, and positive green styling for safe/good status messages.
 - Theme choice is stored locally in the browser; first-time visitors start from the operating system theme.
 - Controls such as export, search, notifications, settings, and new observations should appear only when their underlying workflows are implemented and verified. The agent may prioritise these capabilities under the product-development remit when user value and feasibility justify them.
@@ -184,3 +184,9 @@ Potential enhancements to evaluate under the product-development remit (no commi
 - Launch listings depend on The Space Devs launch data availability and its SpaceX search result format.
 - Space weather depends on NOAA SWPC public feeds.
 - Static accessibility structure checks are automated; no automated end-to-end browser suite yet.
+
+## UX refinement — 2026-09-30
+
+1.3.0 retains the two-minute briefing purpose and every existing detail route. The founder selected brief + snapshot + activity. Remove the repeated Watch Items panel; make the five source-backed snapshot metrics direct topic links; limit activity to launch/APOD/weather; disclose supporting source diagnostics with always-visible coverage. Keep observation/event timing and recovery semantics intact. All pages compose the reviewed Acadia 0.9.2 foundations with quiet shared headers. No new user account, feed, storage, service or acquisition promise. Expected outcome: less reading and clearer exploration; the existing participant trial remains unrun.
+
+Gallery and ISS also reduce duplicate context: original NASA title/date/credit and a disclosed full description; one station map/position summary and disclosed orbital estimates. The ISS position source does not establish station operational health.

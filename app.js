@@ -77,7 +77,7 @@ const NEO_SENTRY_CONTEXT = {
 };
 const THEME_STORAGE_KEY = "apollo-theme";
 const THEME_COLORS = {
-  dark: "#181A1E",
+  dark: "#0B0B0B",
   light: "#F5F5F5"
 };
 const EARTH_RADIUS_KM = 6371;
@@ -119,10 +119,8 @@ const els = {
   peopleBody: document.querySelector("#peopleBody"),
   quickStatsBody: document.querySelector("#quickStatsBody"),
   spaceBriefBody: document.querySelector("#spaceBriefBody"),
-  commandPanels: document.querySelector("#commandPanels"),
   recentActivityPanel: document.querySelector("#recentActivityPanel"),
   recentActivityBody: document.querySelector("#recentActivityBody"),
-  watchItemsBody: document.querySelector("#watchItemsBody"),
   issBody: document.querySelector("#issBody"),
   neoBody: document.querySelector("#neoBody"),
   neoRiskAlert: document.querySelector("#neoRiskAlert"),
@@ -1809,58 +1807,6 @@ function getApodSourceUrl(date) {
   return `https://apod.nasa.gov/apod/ap${year.slice(2)}${month}${day}.html`;
 }
 
-function getApodCategory(data) {
-  const text = `${data?.title || ""} ${data?.explanation || ""}`.toLowerCase();
-
-  if (/(nebula|supernova|star-forming|star forming|star birth|young star|stellar)/.test(text)) {
-    return "Deep sky";
-  }
-
-  if (/(eclipse|occult|conjunction|transit|meteor shower)/.test(text)) {
-    return "Sky event";
-  }
-
-  if (/(moon|lunar|venus|mars|jupiter|saturn|mercury|planet)/.test(text)) {
-    return "Planetary sky";
-  }
-
-  if (/(galaxy|galaxies|andromeda|milky way)/.test(text)) {
-    return "Galaxy";
-  }
-
-  if (/(aurora|cloud|atmosphere|earth)/.test(text)) {
-    return "Earth and sky";
-  }
-
-  return "Astronomy";
-}
-
-function getApodMediaTypeLabel(mediaType) {
-  const type = getText(mediaType).toLowerCase();
-
-  if (type === "image") {
-    return "Photography";
-  }
-
-  if (type === "video") {
-    return "Video";
-  }
-
-  return "NASA media";
-}
-
-function getApodWhyItMatters(data) {
-  const firstSentence = getText(data?.explanation)
-    .split(/(?<=[.!?])\s+/)
-    .find(Boolean);
-
-  if (firstSentence) {
-    return `Apollo pairs the live dashboard with visual context from NASA: ${firstSentence}`;
-  }
-
-  return "This image adds a visual counterpart to Apollo's live space context.";
-}
-
 function getStoredTheme() {
   let storedTheme = null;
 
@@ -2139,21 +2085,8 @@ function formatReadableList(items) {
   return `${values.slice(0, -1).join(", ")}, and ${values[values.length - 1]}`;
 }
 
-function getIssOrbitalBriefText(iss, peopleState) {
-  const hasPosition = Boolean(iss && iss.latitude !== null && iss.longitude !== null);
-  const region = hasPosition
-    ? getIssRegion(iss.latitude, iss.longitude)
-    : "its current orbital track";
-  const altitude = iss?.altitude !== null ? formatNumber(iss.altitude, { suffix: " km" }) : "current altitude";
-  const velocity = iss?.velocity !== null ? formatNumber(iss.velocity, { suffix: " km/h" }) : "orbital velocity";
-  const crewText = peopleState?.count
-    ? `${peopleState.count.toLocaleString()} ${peopleState.count === 1 ? "crew member" : "crew members"} aboard`
-    : "the current crew roster loading";
-  const craftList = peopleState?.craftGroups?.length
-    ? ` Crew are distributed across ${formatReadableList(peopleState.craftGroups.map((group) => group.craft))}.`
-    : "";
-
-  return `The International Space Station is operating normally with ${crewText}. The station is currently over ${region} at ${altitude} and traveling at ${velocity}.${craftList}`;
+function getIssOrbitalBriefText() {
+  return "Position data does not predict local visibility.";
 }
 
 function updateIssOrbitalBrief() {
@@ -2567,6 +2500,11 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
       ? `${updatedCount} of ${feedStatuses.length} sources loaded, ${pendingCount} checking`
       : `${updatedCount} of ${feedStatuses.length} sources loaded, ${attentionCount} need attention`;
 
+  const summaryLabel = document.querySelector("#sourceStatusSummary");
+  if (summaryLabel) summaryLabel.textContent = summary;
+  const activeSourceLabel = els.sourceStatusBody.contains(document.activeElement)
+    ? document.activeElement.getAttribute("aria-label") : null;
+
   els.sourceStatusBody.innerHTML = `
     <div class="source-status-summary acadia-muted-panel">
       <div>
@@ -2607,6 +2545,12 @@ function renderSourceStatus(statuses, checkedAt = new Date()) {
       }).join("")}
     </div>
   `;
+  if (activeSourceLabel) {
+    const replacement = [...els.sourceStatusBody.querySelectorAll("a")]
+      .find((link) => link.getAttribute("aria-label") === activeSourceLabel);
+    (replacement || document.querySelector("#sourceStatusTitle"))?.focus({ preventScroll: true });
+  }
+
 }
 
 function renderDashboardApodSummary(data) {
@@ -2896,7 +2840,7 @@ function getSpaceBriefState(data = dashboardData, statuses = Array.from(latestSo
     return {
       headline: `Next SpaceX launch: ${launch.name}`,
       timing: `Target ${formatDateTime(launch.dateUtc)} · The Space Devs`,
-      summary: `Status: ${getText(launch.status, "not supplied")}. Launch times can change. Open the mission for its launch window and original source.`,
+      summary: `${getText(launch.status, "Status not supplied")}. Launch times can change.`,
       action: "Explore the launch", href: "./launches.html", coverage
     };
   }
@@ -2950,13 +2894,14 @@ function renderSpaceBrief() {
   const previousHref = focusedAction ? document.activeElement.getAttribute("href") : "";
   els.spaceBriefBody.innerHTML = `
     <div class="acadia-copy-stack">
-      <p class="section-kicker acadia-kicker">Space Brief · Start here</p>
-      <h3 id="briefHeadline" tabindex="-1" class="apollo-space-brief-title acadia-heading-small">${escapeHtml(state.headline)}</h3>
+      <p class="section-kicker acadia-kicker">Space brief</p>
+      <h3 id="briefHeadline" tabindex="-1" class="apollo-space-brief-title acadia-heading-large">${escapeHtml(state.headline)}</h3>
       <p class="acadia-small acadia-text-muted">${escapeHtml(state.timing)}</p>
     </div>
     <p class="apollo-space-brief-summary acadia-body acadia-text-measure-wide">${escapeHtml(state.summary)}</p>
-    <div><a id="briefNextAction" class="acadia-button acadia-button-secondary" href="${escapeHtml(state.href)}">${escapeHtml(state.action)}</a></div>
-    <p class="acadia-small acadia-text-muted">${escapeHtml(state.coverage)}</p>
+    <div class="acadia-cluster"><a id="briefNextAction" class="acadia-button acadia-button-primary" href="${escapeHtml(state.href)}">${escapeHtml(state.action)}</a>
+      <span class="acadia-small acadia-text-muted">${escapeHtml(state.coverage)}</span>
+    </div>
   `;
   // Independent source responses must not strand keyboard focus on a removed link.
   if (focusedAction || focusedHeadline) {
@@ -3026,136 +2971,22 @@ function getRecentActivityRows() {
     });
   }
 
-  if (dashboardData.iss && dashboardData.iss.latitude !== null && dashboardData.iss.longitude !== null) {
-    const region = getIssRegion(dashboardData.iss.latitude, dashboardData.iss.longitude);
-
-    rows.push({
-      icon: "fa-satellite",
-      label: "ISS",
-      title: `ISS over ${region}`,
-      detail: dashboardData.iss.altitude !== null ? `${formatNumber(dashboardData.iss.altitude, { suffix: " km" })} altitude` : "Current station coordinates loaded",
-      time: formatRelativeTimestamp(dashboardData.iss.observedAt, "Live track"),
-      href: "./iss.html"
-    });
-  }
-
   return rows;
 }
 
-function getWatchItemRows() {
-  const availableRows = [];
-  const limitationRows = [];
-  const launch = dashboardData.launches[0];
-  const asteroids = Array.isArray(dashboardData.neo?.asteroids) ? dashboardData.neo.asteroids : [];
-  const hazardous = asteroids.filter((item) => item.hazardous).length;
-  const closestObject = [...asteroids].sort((a, b) => {
-    const left = Number.isFinite(a.closestKilometers) ? a.closestKilometers : Number.POSITIVE_INFINITY;
-    const right = Number.isFinite(b.closestKilometers) ? b.closestKilometers : Number.POSITIVE_INFINITY;
-    return left - right;
-  })[0];
-  const forecast = dashboardData.spaceWeather?.forecast?.[0];
-
-  if (dashboardData.iss && dashboardData.iss.latitude !== null && dashboardData.iss.longitude !== null) {
-    availableRows.push({
-      icon: "fa-satellite",
-      label: "ISS track",
-      title: `Over ${getIssRegion(dashboardData.iss.latitude, dashboardData.iss.longitude)}`,
-      detail: dashboardData.iss.altitude !== null ? `${formatNumber(dashboardData.iss.altitude, { suffix: " km" })} altitude` : "Station position loaded",
-      href: "./iss.html"
-    });
-  }
-
-  if (dashboardData.people) {
-    availableRows.push({
-      icon: "fa-user-astronaut",
-      label: "Orbital presence",
-      title: `${dashboardData.people.count.toLocaleString()} aboard`,
-      detail: `${dashboardData.people.locationCount.toLocaleString()} crew locations`,
-      href: "./iss.html"
-    });
-  }
-
-  if (launch) {
-    const launchName = splitLaunchName(launch.name);
-    availableRows.push({
-      icon: "fa-rocket",
-      label: "Next launch",
-      title: launchName.vehicle,
-      detail: formatCountdown(launch.dateUtc),
-      href: "./launches.html"
-    });
-  } else if (latestSourceStatuses.get("launches")?.state === "error") {
-    limitationRows.push({
-      icon: "fa-rocket",
-      label: "Source unavailable",
-      title: "Launch schedule unavailable",
-      detail: "The Space Devs source unavailable",
-      href: "./launches.html"
-    });
-  }
-
-  if (closestObject) {
-    availableRows.push({
-      icon: "fa-meteor",
-      label: "Closest asteroid",
-      title: formatLunarDistance(closestObject.lunarDistance),
-      detail: `${closestObject.name}${hazardous === 0 ? " · no hazards flagged" : ` · ${hazardous.toLocaleString()} flagged`}`,
-      href: "./asteroids.html"
-    });
-  } else if (latestSourceStatuses.get("neo")?.state === "error") {
-    limitationRows.push({
-      icon: "fa-meteor",
-      label: "Source unavailable",
-      title: "Asteroid list unavailable",
-      detail: "NASA NeoWs source unavailable",
-      href: "./asteroids.html"
-    });
-  }
-
-  if (dashboardData.spaceWeather) {
-    availableRows.push({
-      icon: "fa-sun",
-      label: "Kp forecast",
-      title: forecast?.maxKp !== null && forecast?.maxKp !== undefined ? `${formatKpIndex(forecast.maxKp)} ${forecast.date ? formatActivityDate(forecast.date, "") : ""}`.trim() : "Unavailable",
-      detail: forecast?.condition ? forecast.condition : "NOAA outlook unavailable",
-      href: "./weather.html"
-    });
-  } else if (latestSourceStatuses.get("spaceWeather")?.state === "error") {
-    limitationRows.push({
-      icon: "fa-sun",
-      label: "Source unavailable",
-      title: "Space weather unavailable",
-      detail: "NOAA SWPC source unavailable",
-      href: "./weather.html"
-    });
-  }
-
-  return [...availableRows, ...limitationRows];
-}
-
 function renderCommandPanels() {
-  if (els.recentActivityBody) {
-    const rows = getRecentActivityRows();
-    const hasMeaningfulRecentActivity = rows.some((row) => row.label !== "ISS");
-
-    if (els.recentActivityPanel) {
-      els.recentActivityPanel.hidden = !hasMeaningfulRecentActivity;
-    }
-
-    if (els.commandPanels) {
-      els.commandPanels.classList.toggle("apollo-command-grid-single", !hasMeaningfulRecentActivity);
-    }
-
-    els.recentActivityBody.innerHTML = rows.length
-      ? `<div class="command-panel-list">${rows.slice(0, 4).map(commandPanelRow).join("")}</div>`
-      : stateMessage("No recent activity is available yet.");
-  }
-
-  if (els.watchItemsBody) {
-    const rows = getWatchItemRows();
-    els.watchItemsBody.innerHTML = rows.length
-      ? `<div class="command-panel-list">${rows.slice(0, 4).map(commandPanelRow).join("")}</div>`
-      : stateMessage("No watch items are available yet.");
+  if (!els.recentActivityBody) return;
+  const rows = getRecentActivityRows();
+  if (els.recentActivityPanel) els.recentActivityPanel.hidden = rows.length === 0;
+  const activeRowHref = els.recentActivityBody.contains(document.activeElement)
+    ? document.activeElement.getAttribute("href") : null;
+  els.recentActivityBody.innerHTML = rows.length
+    ? `<div class="command-panel-list">${rows.slice(0, 3).map(commandPanelRow).join("")}</div>`
+    : stateMessage("No recent activity is available yet.");
+  if (activeRowHref) {
+    const replacement = [...els.recentActivityBody.querySelectorAll("a")]
+      .find((link) => link.getAttribute("href") === activeRowHref);
+    (replacement || document.querySelector("#briefHeadline"))?.focus({ preventScroll: true });
   }
 }
 
@@ -3174,7 +3005,6 @@ function updateDynamicRegionsFromStatuses(statuses, checkedAt = new Date(), opti
     renderCommandPanels();
     setBusy(els.spaceBriefBody, pendingCount > 0);
     setBusy(els.recentActivityBody, pendingCount > 0);
-    setBusy(els.watchItemsBody, pendingCount > 0);
     setBusy(els.quickStatsBody, pendingCount > 0);
   }
 
@@ -3196,7 +3026,6 @@ function updateDynamicRegionsFromStatuses(statuses, checkedAt = new Date(), opti
       els.quickStatsBody,
       els.spaceBriefBody,
       els.recentActivityBody,
-      els.watchItemsBody,
       els.sourceStatusBody,
       els.skyAnomaliesBody
     ].filter(Boolean).forEach((element) => setBusy(element, false));
@@ -3208,9 +3037,6 @@ function resetCommandPanels() {
     els.recentActivityBody.innerHTML = stateMessage("Checking recent activity...");
   }
 
-  if (els.watchItemsBody) {
-    els.watchItemsBody.innerHTML = stateMessage("Checking watch items...");
-  }
 }
 
 function getApiErrorMessage(error, fallback) {
@@ -3260,17 +3086,10 @@ async function loadApod() {
     const mediaEmbedUrl = escapeHtml(data.mediaEmbedUrl);
     const fullImageUrl = escapeHtml(data.hdUrl || data.mediaUrl);
     const sourceUrl = escapeHtml(data.sourceUrl);
-    const summaryText = truncateText(data.explanation, 520);
+    const summaryText = truncateText(data.explanation, 280);
     const explanation = escapeHtml(data.explanation);
     const summary = escapeHtml(summaryText);
     const hasLongExplanation = summaryText !== data.explanation;
-    const apodFacts = [
-      ["Category", getApodCategory(data)],
-      ["Date", data.date ? formatDate(data.date) : "Today"],
-      ["Source", "NASA APOD"],
-      ["Type", getApodMediaTypeLabel(data.mediaType)]
-    ];
-    const whyItMatters = getApodWhyItMatters(data);
     let media = `
       <div class="state-message acadia-alert apod-media-fallback">
         <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
@@ -3312,40 +3131,19 @@ async function loadApod() {
       <div class="apollo-card acadia-card acadia-surface apod-showcase">
         ${media}
         <aside class="apod-info-card acadia-panel-dense" aria-label="NASA astronomy picture context">
-          <div class="apod-info-header">
-            <i class="fa-solid fa-image acadia-icon apod-info-icon" aria-hidden="true"></i>
-            <div>
-              <p class="section-kicker acadia-kicker apod-kicker">NASA APOD</p>
-              <h2 class="apod-info-title acadia-lead">Astronomy Picture of the Day</h2>
-            </div>
-          </div>
-          <p class="apod-date acadia-badge">${data.date ? formatDate(data.date) : "Today"}</p>
-          <h3 class="apod-title acadia-heading-small">${title}</h3>
-          ${data.copyright ? `<p class="apod-credit acadia-body acadia-text-measure-wide">Credit: ${escapeHtml(data.copyright)}</p>` : ""}
+          <p class="section-kicker acadia-kicker apod-kicker">NASA APOD</p>
+          <h2 class="apod-title acadia-heading-small">${title}</h2>
+          <p class="apod-date acadia-small acadia-text-muted">${data.date ? formatDate(data.date) : "Publication date unavailable"}</p>
+          ${data.copyright ? `<p class="apod-credit acadia-small acadia-text-muted acadia-text-measure-wide">Credit: ${escapeHtml(data.copyright)}</p>` : ""}
           <p class="apod-summary acadia-body acadia-text-measure-wide">${summary}</p>
           ${hasLongExplanation ? `
-            <details class="apod-details acadia-accordion-item">
-              <summary class="acadia-accordion-summary" aria-label="Read full description for ${title}">Read full description</summary>
-              <p class="acadia-body ">${explanation}</p>
-            </details>
+            <div class="acadia-accordion acadia-accordion-divided apollo-source-disclosure">
+              <details class="apod-details acadia-accordion-item">
+                <summary class="acadia-accordion-summary" aria-label="Read full description for ${title}">Full description</summary>
+                <div class="acadia-accordion-panel"><p class="acadia-body">${explanation}</p></div>
+              </details>
+            </div>
           ` : ""}
-          <div class="apod-context-stack">
-            <section class="apod-quick-facts" aria-labelledby="apodQuickFactsTitle">
-              <h4 class="apod-panel-title acadia-body" id="apodQuickFactsTitle">Quick Facts</h4>
-              <dl class="apod-fact-grid">
-                ${apodFacts.map(([label, value]) => `
-                  <div>
-                    <dt>${escapeHtml(label)}</dt>
-                    <dd>${escapeHtml(value)}</dd>
-                  </div>
-                `).join("")}
-              </dl>
-            </section>
-            <section class="apod-why-matters acadia-muted-panel" aria-labelledby="apodWhyMattersTitle">
-              <h4 class="apod-panel-title acadia-body" id="apodWhyMattersTitle">Why It Matters</h4>
-              <p class="acadia-body ">${escapeHtml(whyItMatters)}</p>
-            </section>
-          </div>
           <div class="detail-action-row acadia-cluster apod-action-row">
             ${data.mediaType === "image" && fullImageUrl ? `
               <a class="source-link acadia-button acadia-button-secondary" href="${fullImageUrl}" target="_blank" rel="noopener noreferrer">
@@ -3431,73 +3229,52 @@ async function loadIss() {
     }
 
     els.issBody.innerHTML = `
-      <div class="iss-status-summary acadia-muted-panel">
+      <div class="iss-status-summary">
         <div class="iss-status-headline acadia-copy-stack">
-          <p class="section-kicker acadia-kicker">ISS Status</p>
-          <h2 class="iss-status-title acadia-heading-small">Normal Operations</h2>
+          <h2 class="iss-status-title acadia-heading-small">Over ${escapeHtml(issRegion)}</h2>
           <p class="iss-orbital-brief acadia-body acadia-text-measure-wide" id="issOrbitalBriefText">${escapeHtml(getIssOrbitalBriefText(data, dashboardData.people))}</p>
         </div>
         <p class="acadia-body iss-status-line">
           <span>${formatNumber(data.altitude, { suffix: " km" })} altitude</span>
           <span>${formatNumber(data.velocity, { suffix: " km/h" })}</span>
           <span>${escapeHtml(formatIssVisibility(data.visibility))}</span>
-          <span>Over ${escapeHtml(issRegion)}</span>
         </p>
       </div>
       <div class="iss-map" id="issMap" role="region" aria-label="Interactive map showing the current ISS position above Earth"></div>
       ${observedAtMarkup}
-      <div class="iss-current-position acadia-muted-panel">
-        <div class="iss-position-copy">
-          <p class="section-kicker acadia-kicker">Current Position</p>
-          <h3 class="iss-position-title acadia-heading-small">${escapeHtml(issRegion)}</h3>
-          <p class="acadia-body iss-position-summary">The station is moving at orbital speed while ${escapeHtml(formatIssVisibility(data.visibility).toLowerCase())}.</p>
-        </div>
-        <div class="iss-position-stats">
-          <div>
-            <span>Altitude</span>
-            <strong>${formatNumber(data.altitude, { suffix: " km" })}</strong>
+      <div class="acadia-accordion acadia-accordion-divided apollo-source-disclosure">
+        <details class="acadia-accordion-item" id="issOrbitDetails">
+          <summary class="acadia-accordion-summary">Orbital details</summary>
+          <div class="acadia-accordion-panel">
+            <div class="iss-orbit-context">
+              <div class="orbit-snapshot-list">
+                <article class="orbit-snapshot-item">
+                  <span><i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i></span>
+                  <strong>${formatOrbitsPerDay(data.orbitsPerDay)} orbits/day</strong>
+                </article>
+                <article class="orbit-snapshot-item">
+                  <span><i class="fa-solid fa-tower-broadcast acadia-icon" aria-hidden="true"></i></span>
+                  <strong>${formatFootprintKilometers(data.footprint)} footprint</strong>
+                </article>
+                <article class="orbit-snapshot-item">
+                  <span><i class="fa-regular fa-clock acadia-icon" aria-hidden="true"></i></span>
+                  <strong>One orbit every ${formatOrbitMinutes(data.orbitPeriodMinutes)}</strong>
+                </article>
+              </div>
+              <p class="orbit-context-note acadia-small acadia-text-muted">Orbit estimates use current altitude and velocity; sunlight and footprint come from the ISS position source.</p>
+            </div>
+            <div class="iss-coordinate-strip" aria-label="ISS coordinates">
+              <div>
+                <span>Latitude</span>
+                <strong>${formatNumber(data.latitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</strong>
+              </div>
+              <div>
+                <span>Longitude</span>
+                <strong>${formatNumber(data.longitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</strong>
+              </div>
+            </div>
           </div>
-          <div>
-            <span>Velocity</span>
-            <strong>${formatNumber(data.velocity, { suffix: " km/h" })}</strong>
-          </div>
-        </div>
-      </div>
-      <div class="iss-orbit-context acadia-muted-panel">
-        <p class="section-kicker acadia-kicker">Orbital Snapshot</p>
-        <div class="orbit-snapshot-list">
-          <article class="orbit-snapshot-item">
-            <span><i class="fa-solid fa-earth-americas acadia-icon" aria-hidden="true"></i></span>
-            <strong>Over ${escapeHtml(issRegion)}</strong>
-          </article>
-          <article class="orbit-snapshot-item">
-            <span><i class="fa-solid fa-sun acadia-icon" aria-hidden="true"></i></span>
-            <strong>${escapeHtml(formatIssVisibility(data.visibility))}</strong>
-          </article>
-          <article class="orbit-snapshot-item">
-            <span><i class="fa-solid fa-satellite acadia-icon" aria-hidden="true"></i></span>
-            <strong>${formatOrbitsPerDay(data.orbitsPerDay)} orbits/day</strong>
-          </article>
-          <article class="orbit-snapshot-item">
-            <span><i class="fa-solid fa-tower-broadcast acadia-icon" aria-hidden="true"></i></span>
-            <strong>${formatFootprintKilometers(data.footprint)} footprint</strong>
-          </article>
-          <article class="orbit-snapshot-item">
-            <span><i class="fa-regular fa-clock acadia-icon" aria-hidden="true"></i></span>
-            <strong>One orbit every ${formatOrbitMinutes(data.orbitPeriodMinutes)}</strong>
-          </article>
-        </div>
-        <p class="orbit-context-note acadia-small acadia-text-muted">Orbit estimates use current altitude and velocity; sunlight and footprint come from the ISS position source.</p>
-      </div>
-      <div class="iss-coordinate-strip" aria-label="ISS coordinates">
-        <div>
-          <span>Latitude</span>
-          <strong>${formatNumber(data.latitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</strong>
-        </div>
-        <div>
-          <span>Longitude</span>
-          <strong>${formatNumber(data.longitude, { maximumFractionDigits: 4, minimumFractionDigits: 4 })}</strong>
-        </div>
+        </details>
       </div>
       <div class="detail-action-row acadia-cluster iss-source-row">
         <a class="source-link acadia-button acadia-button-secondary" href="https://wheretheiss.at/" target="_blank" rel="noopener noreferrer">
@@ -4137,7 +3914,6 @@ async function loadDashboard({ focusRetrySourceId = "" } = {}) {
     els.quickStatsBody,
     els.spaceBriefBody,
     els.recentActivityBody,
-    els.watchItemsBody,
     els.apodBody,
     els.issBody,
     els.peopleBody,

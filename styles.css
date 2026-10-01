@@ -84,46 +84,7 @@ body { margin: 0; }
 .apollo-quick-stats-grid {
   display: grid;
   gap: var(--acadia-space-1);
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-
-.apollo-quick-stat {
-  align-items: center;
-  display: flex;
-  gap: var(--acadia-space-2);
-  isolation: isolate;
-  min-height: 88px;
-  min-width: 0;
-}
-
-.apollo-quick-stat-icon {
-  align-items: center;
-  color: var(--acadia-color-brand-ink);
-  display: inline-flex;
-  flex: 0 0 auto;
-  justify-content: center;
-}
-
-.apollo-quick-stat-value {
-  margin-top: var(--acadia-space-1);
-  overflow-wrap: anywhere;
-}
-
-.apollo-quick-stat-detail {
-  margin-top: var(--acadia-space-1);
-  overflow-wrap: anywhere;
-}
-
-.apollo-quick-stat[data-state="ok"] .apollo-quick-stat-icon {
-  color: var(--acadia-status-success-text);
-}
-
-.apollo-quick-stat[data-state="attention"] .apollo-quick-stat-icon {
-  color: var(--acadia-status-warning-text);
-}
-
-.apollo-quick-stat[data-state="error"] .apollo-quick-stat-icon {
-  color: var(--acadia-color-brand-ink);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
 }
 
 .apollo-space-brief-body {
@@ -139,10 +100,6 @@ body { margin: 0; }
   justify-content: space-between;
 }
 
-.apollo-space-brief-summary {
-  max-width: 980px;
-}
-
 .section-card-body {
   min-width: 0;
 }
@@ -153,25 +110,14 @@ body { margin: 0; }
   gap: var(--acadia-space-2);
 }
 
-.apollo-command-grid {
-  align-items: start;
-  display: grid;
-  gap: var(--acadia-section-padding-dense);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.apollo-command-grid-single {
-  grid-template-columns: minmax(0, 1fr);
-}
-
 .apollo-command-panel {
   min-width: 0;
 }
 
 .command-panel-list {
   display: grid;
-  gap: var(--acadia-space-1);
-  grid-template-columns: minmax(0, 1fr);
+  gap: var(--acadia-space-2);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
 }
 
 .command-panel-row {
@@ -271,22 +217,7 @@ body { margin: 0; }
   align-self: stretch;
   display: flex;
   flex-direction: column;
-  min-height: 480px;
   position: relative;
-}
-
-.apod-info-header {
-  align-items: flex-start;
-  display: flex;
-  gap: var(--acadia-space-2);
-  margin-bottom: var(--acadia-space-3);
-}
-
-.apod-info-icon {
-  color: var(--acadia-color-brand-ink);
-  font-size: var(--acadia-type-size-lead);
-  line-height: var(--acadia-type-line-copy);
-  margin-top: var(--acadia-space-1);
 }
 
 .apod-kicker {
@@ -294,18 +225,12 @@ body { margin: 0; }
   margin-bottom: var(--acadia-space-1) !important;
 }
 
-.apod-date {
-  align-self: start;
-  color: var(--acadia-color-text);
-  font-size: var(--acadia-type-size-caption);
-  margin-bottom: var(--acadia-space-2);
-}
+.apod-date { margin-bottom: var(--acadia-space-2); }
 
 .apod-title {
   margin-bottom: var(--acadia-space-2);
 }
 
-.apod-credit,
 .apod-summary,
 .apod-details {
   color: var(--acadia-color-text);
@@ -315,62 +240,6 @@ body { margin: 0; }
 
 .apod-summary {
   margin-bottom: 0;
-}
-
-.apod-context-stack {
-  display: grid;
-  gap: var(--acadia-space-2);
-  margin-top: var(--acadia-space-3);
-  padding-top: var(--acadia-space-2);
-}
-
-.apod-quick-facts,
-.apod-why-matters {
-  min-width: 0;
-}
-
-.apod-panel-title {
-  margin-bottom: var(--acadia-space-1);
-}
-
-.apod-fact-grid {
-  display: grid;
-  gap: var(--acadia-space-1);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.apod-fact-grid > div {
-  min-width: 0;
-  padding: var(--acadia-space-1) var(--acadia-space-2);
-}
-
-.apod-fact-grid dt {
-  color: var(--acadia-color-text-muted);
-  font-size: var(--acadia-type-size-caption);
-  font-weight: var(--acadia-font-weight-strong);
-  line-height: var(--acadia-type-line-copy);
-  margin-bottom: var(--acadia-space-1);
-  text-transform: uppercase;
-}
-
-.apod-fact-grid dd {
-  color: var(--acadia-color-text);
-  font-size: var(--acadia-type-size-small);
-  font-weight: var(--acadia-font-weight-strong);
-  line-height: var(--acadia-type-line-copy);
-  margin-bottom: 0;
-  overflow-wrap: anywhere;
-}
-
-.apod-why-matters p {
-  color: var(--acadia-color-text);
-  font-size: var(--acadia-type-size-small);
-  line-height: var(--acadia-type-line-copy);
-}
-
-.apod-action-row {
-  gap: var(--acadia-space-1) var(--acadia-space-2);
-  margin-top: auto;
 }
 
 .state-message {
@@ -1614,8 +1483,6 @@ html[data-acadia-theme="dark"] .iss-map .leaflet-tile {
   flex: 0 0 9rem;
 }
 
-
-
 .launch-detail-panel {
   overflow: hidden;
   position: relative;
@@ -1871,17 +1738,8 @@ html[data-acadia-theme="dark"] .iss-map .leaflet-tile {
 
 @media (max-width: 1199.98px) {
 .apod-showcase,
-.apod-loading-grid,
-.apollo-command-grid {
+.apod-loading-grid {
   grid-template-columns: minmax(0, 1fr);
-}
-
-.apollo-quick-stats-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.command-panel-list {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .apod-info-card {
@@ -1954,18 +1812,9 @@ summary,
   font-size: var(--acadia-type-size-body);
 }
 
-.apollo-quick-stats-grid {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.command-panel-list {
-  grid-template-columns: minmax(0, 1fr);
-}
-
 .sky-anomaly-form,
 .sky-context-grid,
-.sky-evidence-grid,
-.apod-fact-grid {
+.sky-evidence-grid {
   grid-template-columns: minmax(0, 1fr);
 }
 
@@ -2153,7 +2002,7 @@ summary,
 .apollo-app :is(.crew-manifest-list, .neo-object-list, .neo-watch-list, .space-weather-alerts ul) { list-style: none; margin: 0; padding-left: 0; }
 .apod-embed { --acadia-thumbnail-aspect-ratio: 16 / 9; aspect-ratio: 16 / 9; min-height: 0; width: 100%; align-self: start; }
 .apod-embed iframe { width: 100%; height: 100%; border: 0; }
-.apod-fact-grid > div, .metadata-grid > div, .detail-list > div, .next-launch-keyfacts > div { min-width: 0; }
+.metadata-grid > div, .detail-list > div, .next-launch-keyfacts > div { min-width: 0; }
 .sky-anomaly-form .acadia-choice { align-items: center; }
 .sky-anomaly-submit { grid-column: 1 / -1; }
 @media (max-width: 1199px) {
@@ -2164,7 +2013,6 @@ summary,
 }
 @media (max-width: 767px) {
   .apollo-dashboard-actions { justify-content: flex-start; }
-  .apollo-dashboard-actions .acadia-button { width: 100%; }
   .apollo-page-header { grid-template-columns: minmax(0, 1fr); }
   .apollo-app :is(a, button, input, summary, [tabindex]) { scroll-margin-block: var(--acadia-space-3) calc(var(--acadia-mobile-tabbar-height) + 3 * var(--acadia-space-2) + env(safe-area-inset-bottom)); }
 }
@@ -2182,8 +2030,8 @@ summary,
 .sky-anomaly-choice-group { border: 0; }
 .sky-anomaly-choice-row .acadia-choice { max-width: 100%; }
 @media (max-width: 767px) {
-  .sky-anomaly-form, .sky-context-grid, .sky-evidence-grid, .apod-fact-grid,
-  .apollo-quick-stats-grid, .command-panel-list, .launch-page-card, .launch-timeline-row,
+  .sky-anomaly-form, .sky-context-grid, .sky-evidence-grid ,
+  .launch-page-card, .launch-timeline-row,
   .space-weather-forecast-grid, .source-status-list, .source-status-summary {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2207,7 +2055,7 @@ summary,
 /* Compose header slots by their content width, including enlarged text. */
 .apollo-page-header { display: flex; flex-wrap: wrap; }
 .apollo-title-block { flex: 1 1 18rem; }
-.apollo-dashboard-actions { flex: 1 1 22rem; }
+.apollo-dashboard-actions { flex: 0 1 auto; }
 @media (min-width: 1200px) {
   .apollo-navigation .acadia-navbar {
     display: flex;
@@ -2220,3 +2068,14 @@ summary,
   }
   .apollo-navigation .acadia-navbar-links { flex: 1 1 auto; flex-wrap: wrap; overflow: visible; justify-content: center; }
 }
+
+/* Domain composition over unchanged Acadia: one briefing, linked topic snapshot,
+ * and compact activity. Supporting diagnostics reuse the divided Accordion. */
+.apollo-source-disclosure { inline-size: 100%; }
+.apollo-source-disclosure .acadia-accordion-summary { flex-wrap: wrap; justify-content: flex-start; }
+.apollo-source-disclosure .acadia-accordion-summary::after { margin-inline-start: auto; }
+.apollo-source-disclosure .acadia-accordion-summary h2 { margin: 0; }
+.apollo-command-panel[hidden] { display: none; }
+.apollo-command-panel { gap: var(--acadia-space-2); }
+.apollo-quick-stat.acadia-link-card { display: grid; }
+.apollo-page-header { align-items: center; }

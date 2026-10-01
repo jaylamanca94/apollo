@@ -11,7 +11,7 @@ Apollo's agent is authorised to evolve the audience, positioning, feature scope,
 The product currently uses a static frontend with serverless API routes.
 
 - Frontend: vanilla HTML, CSS, and JavaScript
-- UI: pinned Acadia 0.4.10 CSS/fonts/assets, Font Awesome Free, Leaflet and OpenStreetMap tiles
+- UI: pinned Acadia 0.9.2 CSS/fonts/assets, Font Awesome Free, Leaflet and OpenStreetMap tiles
 - Theme: defaults to the user's operating system setting with a Light/Dark mode toggle
 - API proxies: Vercel serverless functions in `/api`
 - Hosting: Vercel
@@ -200,4 +200,4 @@ For a deliberate upgrade, review the source changes and run `npm run sync:acadia
 
 ### Briefing verification
 
-The Dashboard leads with one source-dated action and six-source coverage. The page check time is distinct from the observation/event date. `npm run preview:fixtures -- 4183` also accepts `&brief=launch|gallery|old-weather|unknown-time|progressive`; these labelled synthetic scenarios cover ordering and delayed-source focus. Product ordering is documented in PRODUCT-README.md. The participant trial in `docs/briefing-trial.md` has not been run.
+The Dashboard leads with one source-dated action and six-source coverage, followed by five linked snapshot metrics and up to three activity cards. Source diagnostics use a divided Acadia disclosure. All seven routes share an unframed title/freshness/refresh header. The page check time is distinct from the observation/event date. `npm run preview:fixtures -- 4183` also accepts `&brief=launch|gallery|old-weather|unknown-time|progressive`; these labelled synthetic scenarios cover ordering and delayed-source focus. Product ordering is documented in PRODUCT-README.md. The participant trial in `docs/briefing-trial.md` has not been run.

@@ -123,8 +123,8 @@ test("page startup scripts initialize theme chrome color", () => {
   for (const fileName of ["index.html", "launches.html"]) {
     const html = fs.readFileSync(path.join(__dirname, "..", fileName), "utf8");
 
-    assert.match(html, /<meta name="theme-color" content="#181A1E" id="appThemeColor">/);
-    assert.match(html, /const themeColor = theme === "dark" \? "#181A1E" : "#F5F5F5";/);
+    assert.match(html, /<meta name="theme-color" content="#0B0B0B" id="appThemeColor">/);
+    assert.match(html, /const themeColor = theme === "dark" \? "#0B0B0B" : "#F5F5F5";/);
     assert.match(html, /themeColorMeta\?\.setAttribute\("content", themeColor\);/);
     assert.match(html, /setAttribute\("content", "#F5F5F5"\);/);
   }
@@ -134,7 +134,7 @@ test("dashboard theme updates browser chrome color", () => {
   const context = loadThemeHelpers("app.js", "async function loadLaunches");
 
   context.applyTheme("dark");
-  assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#181A1E");
+  assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#0B0B0B");
 
   context.applyTheme("light");
   assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#F5F5F5");
@@ -170,7 +170,7 @@ test("launches theme updates browser chrome color", () => {
   const context = loadThemeHelpers("launches.js", "function setBusy");
 
   context.applyTheme("dark");
-  assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#181A1E");
+  assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#0B0B0B");
 
   context.applyTheme("light");
   assert.equal(context.document.querySelector("meta[name='theme-color']").attributes.content, "#F5F5F5");

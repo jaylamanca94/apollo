@@ -1,11 +1,11 @@
 {
   "package": "@acadia/design-system",
-  "version": "0.4.10",
-  "commit": "4801afc0d1106fb1497946c8ca7db23114cee03b",
+  "version": "0.9.2",
+  "commit": "a3509fb6e8ae4498aa3a0c71651575253583373f",
   "source": "src/acadia.css, src/fonts, src/assets",
   "guide": "utilities/implementation/README.md",
   "files": {
-    "acadia.css": "fa9dd552e438840f02db3055d2b31df90e7dc51d04098ae5ba2abe9c9be456b9",
+    "acadia.css": "6a1e62885be3d1a863f82c55567bbd97ace7f3c28a2a7f1866fffb45eaecee17",
     "assets/accordion-minus.svg": "587006b203446002a6c628de93214f3b77605f86507362dadae3f43a24d221cb",
     "assets/accordion-plus.svg": "bb038194adaab565428aed5ffa8fb850f54b87e54605d92f4c9ade9431e48375",
     "assets/auth-divider.svg": "1b0af7a694de4dc52666aaed9e0351bb8e7f99199fcf13ec4c34415fae7e4940",
