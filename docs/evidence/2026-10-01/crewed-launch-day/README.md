@@ -34,3 +34,9 @@ Start `npm run preview:fixtures -- 4185` and open `/?crewed=today|tomorrow|compl
 ## Delivery and acceptance boundary
 
 Source, automated checks and local live/fixture browser acceptance are complete. Git delivery is recorded in the chat handoff. No manual production deployment was performed. Hosted runtime, physical touch/VoiceOver and reader comprehension/return acceptance remain separate. Source imagery, provider completeness and status freshness remain limited by the upstream public feed.
+
+## Git publication hold — 1 October 2026
+
+Validated implementation commit: `ee5cc8b` on local `main`. The automatic approval reviewer rejected `git push origin main`: it classified the operation as repository-content export to `https://github.com/jaylamanca94/apollo.git` and mutation of the shared default branch, stating that implementation had been authorised but this specific publication had not. The push did not execute; no alternate publication route was attempted.
+
+Pending decision: founder approval to push this verified feature and its delivery receipt from local `main` to that repository's `origin/main`. Recommendation: approve normal Git publication of the completed feature. Resume trigger: explicit approval naming this Apollo push; then push without rewriting history and verify remote SHA equality and a clean local `main`. No manual production deployment is included; hosted runtime verification remains separate.
