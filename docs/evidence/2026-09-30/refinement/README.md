@@ -33,3 +33,9 @@ Run `npm run preview:fixtures -- 4183`. Open any public route at the widths abov
 ## Limits and next acceptance
 
 These are controlled local browser results, not live NASA/NOAA correctness or deployed-production evidence. Existing hosting protection, physical touch/safe-area/orientation, VoiceOver, OS accessibility preference acceptance and the real-reader comprehension/return trial remain separate. No participant contact, new feed, account, persistence, paid service or manual production publication was performed. The refinement is a reversible implementation of the founder's design request, not proof of S-tier quality or demand.
+
+## Delivery hold — 30 September
+
+Validated application commit: `01e0c9f94796353a9c3498eb5658d5256650f443` on local `main`, with a clean working tree after commit. The automatic approval reviewer rejected `git push origin main`: it classified the push as external code/data egress and mutation of a shared default branch, and said trusted user content had not explicitly authorised the destination. No push succeeded and no alternate route was attempted.
+
+Pending decision: founder approval to push the validated UX commit and this receipt to `https://github.com/jaylamanca94/apollo.git`, branch `main`. Recommendation: approve that normal delivery step. Responsible: founder supplies destination-specific approval; Apollo agent then retries the normal push, verifies remote main and CI, and closes the goal. Resume trigger: an explicit user message approving that push. Implementation, local checks and local review evidence are complete; hosted/device/reader acceptance remains separate.
