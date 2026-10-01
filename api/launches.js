@@ -9,6 +9,63 @@ const LAUNCH_TIMEOUT_MS = 10000;
 const COMPLETED_LAUNCH_STATUS_PATTERN = /\b(success|successful|failure|failed|partial failure)\b/i;
 const cache = new Map();
 
+function invalidCrewedResponse() {
+  const error = new Error("Incomplete crewed launch schedule");
+  error.status = 502;
+  error.payload = { error: { code: "CREWED_LAUNCH_RESPONSE_INVALID", message: "The crewed launch schedule is unavailable." } };
+  return error;
+}
+
+// The provider's is_crewed filter describes the flight, not a human-rated
+// vehicle or a mission-name guess. Include completed launches on launch day.
+function normalizeCrewedLaunchPayload(payload, now = new Date()) {
+  if (!Array.isArray(payload?.results) || !Number.isSafeInteger(payload.count) ||
+      payload.count !== payload.results.length || payload.next) throw invalidCrewedResponse();
+  const launches = payload.results.map(raw => {
+    const launch = normalizeLaunch(raw);
+    if (!launch || !getText(raw.id) || !Number.isInteger(raw.status?.id)) throw invalidCrewedResponse();
+    const stages = Array.isArray(raw.rocket?.spacecraft_stage) ? raw.rocket.spacecraft_stage : [];
+    const crew = stages.flatMap(stage => Array.isArray(stage.launch_crew) ? stage.launch_crew : [])
+      .map(member => ({ name: getText(member.astronaut?.name), role: getText(member.role?.role) }))
+      .filter(member => member.name);
+    const watchUrls = (Array.isArray(raw.vid_urls) ? raw.vid_urls : []).map(item => safeHttpUrl(item.url)).filter(Boolean);
+    const infoUrls = (Array.isArray(raw.info_urls) ? raw.info_urls : []).map(item => safeHttpUrl(item.url)).filter(Boolean);
+    return { ...launch, id: raw.id, crewed: true, statusId: raw.status.id,
+      missionName: getText(raw.mission?.name), provider: getText(raw.launch_service_provider?.name) || "Provider not supplied",
+      datePrecision: getText(raw.net_precision?.name),
+      destination: stages.map(stage => getText(stage.destination)).filter(Boolean).join(" · "),
+      crew, watchUrl: watchUrls[0] || "", missionUrl: infoUrls[0] || launch.sourceUrl,
+      imageUrl: safeHttpUrl(raw.image?.image_url || raw.image?.thumbnail_url),
+      imageCredit: getText(raw.image?.credit), imageDescription: getText(raw.image?.name),
+      imageLicenseUrl: safeHttpUrl(raw.image?.license?.link) };
+  });
+  if (new Set(launches.map(launch => launch.id)).size !== launches.length) throw invalidCrewedResponse();
+  return { launches, source: "The Space Devs launch data", scope: "Crewed launches across providers",
+    checkedAt: new Date(now).toISOString() };
+}
+
+async function requestCrewedLaunches(now = new Date()) {
+  const day = new Date(now).toISOString().slice(0, 10);
+  const cacheKey = `launches:crewed:${day}`;
+  const cached = getCached(cache, cacheKey);
+  if (cached) return cached;
+  const start = new Date(`${day}T00:00:00Z`);
+  // Three UTC days cover today's date in every visitor timezone. Browser
+  // selection then uses local calendar boundaries, never a rolling 24 hours.
+  const url = new URL("https://ll.thespacedevs.com/2.3.0/launches/");
+  url.searchParams.set("is_crewed", "true");
+  url.searchParams.set("include_suborbital", "true");
+  url.searchParams.set("net__gte", new Date(+start - 86400000).toISOString());
+  url.searchParams.set("net__lt", new Date(+start + 2 * 86400000).toISOString());
+  url.searchParams.set("mode", "detailed");
+  url.searchParams.set("limit", "25");
+  const { response, payload } = await fetchJson(url, { timeoutMs: LAUNCH_TIMEOUT_MS });
+  if (!response.ok) throw invalidCrewedResponse();
+  const normalized = normalizeCrewedLaunchPayload(payload, now);
+  setCached(cache, cacheKey, normalized, LAUNCH_CACHE_SECONDS);
+  return normalized;
+}
+
 function getWindowDurationMinutes(windowStart, windowEnd) {
   const start = new Date(windowStart);
   const end = new Date(windowEnd);
@@ -139,7 +196,8 @@ async function handler(request, response) {
   }
 
   try {
-    const payload = await requestLaunches(getLaunchLimit(request));
+    const scope = request.query?.scope || new URL(request.url, `https://${request.headers?.host || "apollo.local"}`).searchParams.get("scope");
+    const payload = scope === "crewed" ? await requestCrewedLaunches() : await requestLaunches(getLaunchLimit(request));
     sendJson(response, 200, payload, LAUNCH_CACHE_SECONDS);
   } catch (error) {
     sendJson(response, error.status || 502, error.payload || {
@@ -154,3 +212,4 @@ async function handler(request, response) {
 module.exports = handler;
 module.exports.normalizeLaunchLibraryPayload = normalizeLaunchLibraryPayload;
 module.exports.getLaunchLimit = getLaunchLimit;
+module.exports.normalizeCrewedLaunchPayload = normalizeCrewedLaunchPayload;

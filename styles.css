@@ -93,6 +93,22 @@ body { margin: 0; }
   min-width: 0;
 }
 
+/* Launch-day feature composes Acadia Card, typography, Cluster and controls.
+ * Only the mission image proportions and domain layout belong to Apollo. */
+.apollo-crewed-feature[hidden], .apollo-crewed-media[hidden] { display: none; }
+.apollo-crewed-feature { display: grid; gap: var(--acadia-space-3); }
+.apollo-crewed-hero { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); overflow: hidden; }
+.apollo-crewed-hero:not(:has(.apollo-crewed-media)), .apollo-crewed-no-image { grid-template-columns: minmax(0, 1fr); }
+.apollo-crewed-copy { min-width: 0; justify-content: center; }
+.apollo-crewed-media { display: flex; flex-direction: column; min-width: 0; }
+.apollo-crewed-media img { width: 100%; height: 100%; max-height: 36rem; min-height: 18rem; object-fit: cover; border-radius: 0; }
+.apollo-crewed-media figcaption { padding: var(--acadia-space-2); }
+@media (max-width: 799.98px) {
+  .apollo-crewed-hero { grid-template-columns: minmax(0, 1fr); }
+  .apollo-crewed-media { order: -1; }
+  .apollo-crewed-media img { height: 12rem; min-height: 0; }
+}
+
 .apollo-space-brief-header {
   align-items: start;
   display: flex;

@@ -32,6 +32,28 @@ function createFixtureServer() {
       if (mode === 'loading') await new Promise(resolve => setTimeout(resolve, 5000));
       res.statusCode = failed ? 503 : 200;
       let payload = data[name] || {};
+      if (name === 'launches' && url.searchParams.get('scope') === 'crewed') {
+        const crewed = settings.get('crewed');
+        const now = new Date();
+        const target = new Date(now);
+        target.setHours(23, 30, 0, 0);
+        if (crewed === 'tomorrow') target.setDate(target.getDate() + 1);
+        if (crewed === 'completed') target.setHours(0, 0, 0, 0);
+        payload = { checkedAt: now.toISOString(), launches: crewed && crewed !== 'empty' ? [{
+          ...data.launches.launches[0], id: 'fixture-human-flight', crewed: true,
+          name: 'Fixture rocket | Example crewed mission', missionName: 'Example crewed mission',
+          dateUtc: target.toISOString(), datePrecision: 'Second', statusId: crewed === 'completed' ? 3 : crewed === 'scrubbed' ? 6 : 1,
+          status: crewed === 'completed' ? 'Launch Successful' : crewed === 'scrubbed' ? 'Launch Scrubbed' : 'Go for Launch',
+          destination: 'Example orbital destination', imageDescription: 'Synthetic space illustration', imageCredit: 'Acadia fixture',
+          crew: [{ name: 'Example astronaut A' }, { name: 'Example astronaut B' }],
+          watchUrl: 'https://example.com/fixture-coverage', missionUrl: 'https://example.com/fixture-mission',
+        }] : [] };
+        if (crewed === 'failure') { res.statusCode = 503; payload = { error: { message: 'Synthetic crewed schedule failure.' } }; }
+        if (crewed === 'no-image' && payload.launches?.[0]) payload.launches[0].imageUrl = '';
+        if (crewed === 'stale') payload.checkedAt = new Date(+now - 3600000).toISOString();
+        res.end(JSON.stringify(failed ? { error: { message: 'Synthetic source failure.' } } : payload));
+        return;
+      }
       if (name === 'apod' && settings.get('media')) {
         payload.apod.explanation = 'Synthetic long description for disclosure testing. '.repeat(20);
         payload.apod.mediaType = 'video';

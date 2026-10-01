@@ -72,6 +72,14 @@ Use green success styling for clearly positive safety/status messages. For examp
 
 Use Leaflet for spatial dashboard views. Keep map frames inside the related data card, match the existing `8px` radius, and mute map tiles in Dark Mode so the panel does not overpower nearby operational data.
 
+## Crewed launch-day homepage feature
+
+On the visitor's local launch date, lead the homepage with a Human spaceflight hero between the unframed page header and the ordinary Space Brief. This is the intentional exception to routine dashboard restraint: a flight carrying people is an event worth following. Keep the ordinary brief and snapshot beneath it, avoiding a repeated recommendation for the same mission.
+
+**Compose:** unchanged Acadia Card, Surface, Panel spacious, Stack/Copy stack, Cluster, Display, Badge and Button primitives. Apollo owns only mission eligibility, timing/status language, data mapping, image proportions and the responsive split. No shared CSS patch or new neutral component is needed. Image-led single-column phones and split desktop content retain source image descriptions, credit and licence links; unavailable images collapse to a complete text feature. Show all qualifying same-day missions, not a SpaceX/ISS preference. Use a primary coverage link when supplied and a mission-updates action; never imply a link is currently live or that a countdown establishes lift-off.
+
+Unknown roster/destination/image/coverage is omitted without invention. On source failure, show a compact Acadia alert and Retry launch schedule; on a valid non-launch day, hide the event feature. Preserve keyboard focus when refreshing or retiring the feature; a changed action destination returns focus to the feature heading, and disappearance returns it to the ordinary brief. Review the local composition for graduation only if another product needs the same neutral event-feature anatomy. Evidence: `docs/evidence/2026-10-01/crewed-launch-day/README.md`.
+
 ## Layout Grid
 
 - Dashboard pages lead with the Space briefing title, one Space Brief, five linked snapshot metrics, and up to three Recent activity cards. Apollo remains visible in the shared navigation. Avoid duplicating object pages: no giant maps, giant APOD media, full crew rosters or repeated Watch Items panel. Routine ISS position belongs in the snapshot; omit the activity section when no launch, APOD or weather activity is available.

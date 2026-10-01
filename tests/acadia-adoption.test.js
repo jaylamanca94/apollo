@@ -24,7 +24,7 @@ test('the deployed Acadia snapshot exactly matches its reviewed integrity manife
 
 test('every public route consumes the same Acadia snapshot before its product adapter', () => {
   const css = read('vendor/acadia/acadia.css');
-  const source = pages.map(page => read(`${page}.html`)).concat(read('app.js'), read('launches.js'));
+  const source = pages.map(page => read(`${page}.html`)).concat(read('app.js'), read('launches.js'), read('crewed-launches.js'));
   for (const [index, html] of source.entries()) {
     assert.doesNotMatch(html, /bootstrap(?:\.bundle)?(?:\.min)?\.(?:css|js)|data-bs-/i);
     if (index < pages.length) {

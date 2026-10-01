@@ -23,7 +23,7 @@ Retain the vanilla/static architecture while it serves the product well. Evolve 
 
 - NASA Astronomy Picture of the Day, proxied and normalized through `/api/apod` with a keyless NASA Science image contract and original-source hand-off for alternate media
 - NASA NeoWs Near-Earth Object Feed, proxied and normalized through `/api/neo`
-- The Space Devs SpaceX launch data, proxied and normalized through `/api/launches`
+- The Space Devs SpaceX schedule through `/api/launches`, plus crewed launches across providers through `/api/launches?scope=crewed` for the launch-day homepage hero
 - NOAA Space Weather Prediction Center K-index, forecast, and alert feeds, proxied and normalized through `/api/space-weather`
 - Apollo server health check through `/api/health`
 - Where the ISS At
@@ -42,6 +42,7 @@ Retain the vanilla/static architecture while it serves the product well. Evolve 
 - `site.webmanifest` - browser app manifest pointing to the SVG app icons
 - `app.js` - frontend data loading and rendering
 - `launches.js` - launches detail page data loading and rendering
+- `crewed-launches.js` - local launch-day homepage feature, schedule refresh/retry and source coverage actions
 - `api/_cache.js` - shared in-memory cache helpers for serverless API routes
 - `api/_http.js` - shared timeout-wrapped JSON fetch helper for serverless API routes
 - `api/_normalize.js` - shared text, number, and safe URL normalization helpers for serverless API routes
@@ -201,3 +202,9 @@ For a deliberate upgrade, review the source changes and run `npm run sync:acadia
 ### Briefing verification
 
 The Dashboard leads with one source-dated action and six-source coverage, followed by five linked snapshot metrics and up to three activity cards. Source diagnostics use a divided Acadia disclosure. All seven routes share an unframed title/freshness/refresh header. The page check time is distinct from the observation/event date. `npm run preview:fixtures -- 4183` also accepts `&brief=launch|gallery|old-weather|unknown-time|progressive`; these labelled synthetic scenarios cover ordering and delayed-source focus. Product ordering is documented in PRODUCT-README.md. The participant trial in `docs/briefing-trial.md` has not been run.
+
+## Crewed launch-day feature (1.3.1)
+
+The homepage features human spaceflight on the visitor's local launch day, with explicit source status, target time, crew/destination when supplied, and coverage/source actions. The general Launches detail page remains SpaceX-scoped. Feature data uses the existing provider with a separate 15-minute cache and validated complete three-day UTC response; browser snapshots older than 30 minutes become unavailable. The six routine briefing feeds keep their existing coverage; the crewed schedule exposes its own check time and failure/retry state.
+
+The fixture preview accepts `?crewed=today|tomorrow|completed|scrubbed|empty|failure|stale|no-image`, including `&text=200`. All fixture content is synthetic and visibly labelled. Evidence: `docs/evidence/2026-10-01/crewed-launch-day/README.md`.

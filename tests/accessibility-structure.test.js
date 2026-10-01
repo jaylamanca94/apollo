@@ -54,6 +54,7 @@ const pages = [
     activeNavLabel: "Dashboard",
     expectedNavLinks: dashboardNavLinks,
     controlledIds: [
+      "crewedLaunchFeature",
       "quickStatsBody",
       "spaceBriefBody",
       "recentActivityBody",
@@ -242,7 +243,7 @@ for (const page of pages) {
     assert.deepEqual(controlledIds, page.controlledIds);
 
     for (const id of page.controlledIds) {
-      const region = getTagByAttribute(html, "div", "id", id);
+      const region = getTagByAttribute(html, id === "crewedLaunchFeature" ? "section" : "div", "id", id);
       assert.equal(getAttribute(region, "aria-live"), "polite", `${id} should announce updates`);
       assert.equal(getAttribute(region, "aria-busy"), "true", `${id} should start busy while data loads`);
     }
@@ -552,7 +553,7 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.match(html, /app\.js\?v=1.3.0/, `${file} should load the current shared app script`);
+    assert.ok(html.includes(`app.js?v=${file === "index.html" ? "1.3.1" : "1.3.0"}`), `${file} should load the current shared app script`);
   }
 
   assert.match(readProjectFile("launches.html"), /launches\.js\?v=1.3.0/);

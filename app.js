@@ -2834,7 +2834,8 @@ function getSpaceBriefState(data = dashboardData, statuses = Array.from(latestSo
     return { ...weatherAction, coverage };
   }
   const launch = usable("launches") ? [...data.launches].filter((item) =>
-    Date.parse(item.dateUtc) > now && !/success|failure|cancel|aborted/i.test(item.status || "")
+    Date.parse(item.dateUtc) > now && !/success|failure|cancel|aborted/i.test(item.status || "") &&
+    !(data.crewedLaunches || []).some(feature => feature.name === item.name && feature.dateUtc === item.dateUtc)
   ).sort((a, b) => Date.parse(a.dateUtc) - Date.parse(b.dateUtc))[0] : null;
   if (launch) {
     return {

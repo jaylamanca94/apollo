@@ -64,3 +64,7 @@ Eight canonical goals and seven routes retained. Dashboard entry changes: one pr
 Required coverage: loaded, empty, partial, failure and delayed sources; all routes at desktop/tablet/phone/narrow widths and enlarged text; both themes; snapshot destinations, keyboard Watch/Escape, refresh/retry, source disclosure/recovery hashes and progressive focus. Current results: `docs/evidence/2026-09-30/refinement/README.md`. Hosted/runtime, physical touch, VoiceOver and reader comprehension remain separate.
 
 Gallery keeps original media, source title/date/credit and a 280-character explanation preview with disclosed full text; removes derived category/type and repeated explanation. ISS keeps its live region/metrics/map and source time; orbital estimates and coordinates use a native disclosure. No normal-operation assertion is inferred from position data.
+
+## 2026-10-01 — Crewed launch-day homepage feature
+
+Within the existing dashboard/launch journey: homepage → prominent same-day human spaceflight → coverage or mission updates → original source. Source-backed cross-provider crewed launches include orbital and suborbital flights, with crew/destination only when supplied. Non-launch day hides the feature; hold/scrub/outcome/elapsed-target states remain explicit. General SpaceX launch detail and all existing routes remain intact. The feature has its own freshness and retry status, plus focus retention through refresh or disappearance. Evidence: `docs/evidence/2026-10-01/crewed-launch-day/README.md`.

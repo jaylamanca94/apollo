@@ -1,7 +1,11 @@
 # Apollo — Design Status
 
-**Last reviewed:** 2026-09-30
+**Last reviewed:** 2026-10-01
 **Canonical sources:** `FLOW-REGISTRY.md`, `PRODUCT-README.md`, `DESIGN-README.md`, `docs/product-lab-progress.md`, `product-review-2026-08-10/PRODUCT-REVIEW.md`, `product-review-2026-08-11/PRODUCT-REVIEW.md`
+
+## Crewed launch-day feature
+
+Apollo 1.3.1 adds a homepage human-spaceflight feature within the unchanged Acadia snapshot. It covers same-local-day crewed launches across operators with source status, roster/destination when supplied and coverage/mission actions. Routine days retain the briefing. Source and local browser evidence: `docs/evidence/2026-10-01/crewed-launch-day/README.md`; hosted and physical/screen-reader acceptance remain separate.
 
 ## Current adoption evidence
 
