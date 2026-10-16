@@ -93,6 +93,9 @@ function normalizeLaunch(launch) {
   }
 
   return {
+    id: getText(launch.id),
+    datePrecision: getText(launch.net_precision?.name),
+    statusId: Number.isInteger(launch.status?.id) ? launch.status.id : null,
     name,
     dateUtc,
     status: getText(launch.status?.name) || "Upcoming",
@@ -134,7 +137,8 @@ function normalizeLaunchLibraryPayload(payload, options = {}) {
   return {
     launches,
     source: "The Space Devs launch data",
-    scope: "SpaceX upcoming launches"
+    scope: "SpaceX upcoming launches",
+    checkedAt: new Date(now).toISOString()
   };
 }
 

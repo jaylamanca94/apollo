@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Apollo//Launch calendar//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:apollo-launch-fixture-launch
+DTSTAMP:20261016T191809Z
+DTSTART:20261017T191808Z
+DTEND:20261017T201808Z
+SUMMARY:Launch target: Fixture rocket | Example mission with a long descrip
+ tive name
+STATUS:TENTATIVE
+TRANSP:TRANSPARENT
+DESCRIPTION:Scheduled launch target. Times can change.\nThis calendar file 
+ is a snapshot and will not update automatically. Recheck the mission sourc
+ e before watching.\nSchedule checked: 2026-10-16T19:18:08.511Z\nSource sta
+ tus: Go for Launch\nLaunch window (UTC): 2026-10-17T19:18:08.511Z to 2026-
+ 10-17T20:18:08.511Z\nSource: https://www.spacex.com/launches/\nReturn to A
+ pollo: http://127.0.0.1:4183/launches.html#launch-fixture-launch
+LOCATION:Example launch location
+URL:https://www.spacex.com/launches/
+END:VEVENT
+END:VCALENDAR

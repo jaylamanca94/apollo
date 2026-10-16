@@ -1,7 +1,13 @@
 # Apollo — Design Status
 
-**Last reviewed:** 2026-10-01
+**Last reviewed:** 2026-10-16
 **Canonical sources:** `FLOW-REGISTRY.md`, `PRODUCT-README.md`, `DESIGN-README.md`, `docs/product-lab-progress.md`, `product-review-2026-08-10/PRODUCT-REVIEW.md`, `product-review-2026-08-11/PRODUCT-REVIEW.md`
+
+## Current calendar hand-off
+
+Apollo 1.4.0 adds one supporting goal: keep a precise launch target in a local calendar file and return to its mission. **9 active flows; 9 designed; 9 with some automated/controlled coverage; 9 requiring broader acceptance; 0 missing a defined design.** No route, shared style or service added. Acadia actions sit outside nested mission details; unavailable saves explain their reason. Source day/month precision remains visibly unconfirmed. The 320px/200% inspection led to removal of the redundant outer launch card and wider, directly reachable actions with whole-word labels. Before/after, download/return, source failures and limits: `docs/evidence/2026-10-16/calendar/README.md`.
+
+Hosted health at the start of this run returned 200, Apollo 1.3.1 and configured NASA key. The older Vercel-access/key notes below are historical, not current blockers. Physical touch/VoiceOver, actual calendar-client import and real-reader return remain unverified.
 
 ## Crewed launch-day feature
 
@@ -19,7 +25,7 @@ Briefing 1.2.0 now precedes the metric grid, with one dated action and explicit 
 
 Apollo's dashboard is the clearest expression of its purpose—plain-English understanding of space activity now—and its partial state now has accepted controlled 390px and 320px evidence; linked Asteroids recovery, ISS-and-crew local-function loaded/recovery, Launches overview/disclosure/recovery, Weather decision/source/recovery, mobile Watch keyboard navigation, and Sky Anomalies keyboard submission also extend beyond desktop proof.
 
-## Signals
+## Historical baseline signals (superseded where noted above)
 
 | Signal | Verified status |
 | --- | --- |
@@ -32,6 +38,6 @@ Apollo's dashboard is the clearest expression of its purpose—plain-English und
 
 ## Highest-leverage design opportunities
 
-1. **P1 — Decide an explicit resilience policy for unavailable sources.** Either retain validated, visibly aged data with a maximum age or commit to the current no-stale-data experience; this affects the Dashboard, Launches, Weather, Asteroids, and Gallery flows.
-2. **P1 — Test the briefing’s comprehension and return value.** The primary-moment hierarchy and dated action are implemented in 1.2.0. Run `docs/briefing-trial.md` with real participants; do not redesign again without observed friction or changed requirements.
-3. **P2 — Keep Sky Anomalies deliberately bounded until its evidence improves.** Lower its prominence or define a focused pilot only after a small location-aware source set is ready; this affects the Anomalies flow and the Dashboard/Watch entry paths.
+1. **P1 — Test briefing comprehension and return value.** Run the existing trial with consenting readers, adding an optional calendar task and checking whether they understand that launch snapshots do not update. No participant evidence exists; preserve the current hierarchy until observed friction warrants change.
+2. **P2 — Carry launch precision through the Dashboard.** The launch detail now distinguishes day/month targets, but Dashboard snapshot/brief copy still formats launch timestamps as exact local times. Hypothesis: consistent approximate timing across the entry and detail would reduce false certainty. Preserve coverage and source failure recovery.
+3. **P2 — Keep Sky Anomalies deliberately bounded until its evidence improves.** Lower its prominence or define a focused pilot only after a small location-aware source set is ready; this affects the Anomalies flow and Dashboard/Watch entry paths.

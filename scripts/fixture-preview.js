@@ -32,6 +32,18 @@ function createFixtureServer() {
       if (mode === 'loading') await new Promise(resolve => setTimeout(resolve, 5000));
       res.statusCode = failed ? 503 : 200;
       let payload = data[name] || {};
+      if (name === 'launches' && url.searchParams.get('scope') !== 'crewed') {
+        payload.checkedAt = new Date().toISOString();
+        const launch = payload.launches[0];
+        Object.assign(launch, { id: 'fixture-launch', statusId: 1, status: 'Go for Launch', datePrecision: 'Second' });
+        const calendar = settings.get('calendar');
+        if (calendar === 'imprecise') launch.datePrecision = 'Day';
+        if (calendar === 'held') { launch.statusId = 5; launch.status = 'On Hold'; }
+        if (calendar === 'unknown') { launch.statusId = null; launch.datePrecision = ''; }
+        if (calendar === 'past') launch.dateUtc = new Date(Date.now() - 60000).toISOString();
+        if (calendar === 'stale') payload.checkedAt = new Date(Date.now() - 3600000).toISOString();
+        if (calendar === 'empty') payload.launches = [];
+      }
       if (name === 'launches' && url.searchParams.get('scope') === 'crewed') {
         const crewed = settings.get('crewed');
         const now = new Date();

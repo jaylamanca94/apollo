@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Apollo//Launch calendar//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:apollo-launch-3b430f81-0ff1-4d85-8a1a-cef0de326198
+DTSTAMP:20261016T191809Z
+DTSTART:20261019T103000Z
+DTEND:20261019T113000Z
+SUMMARY:Launch target: Falcon 9 Block 5 | Bandwagon 5 (Dedicated Mid-Inclin
+ ation Rideshare)
+STATUS:TENTATIVE
+TRANSP:TRANSPARENT
+DESCRIPTION:Scheduled launch target. Times can change.\nThis calendar file 
+ is a snapshot and will not update automatically. Recheck the mission sourc
+ e before watching.\nSchedule checked: 2026-10-16T19:11:03.321Z\nSource sta
+ tus: Go for Launch\nLaunch window (UTC): 2026-10-19T10:30:00.000Z to 2026-
+ 10-19T11:30:00.000Z\nSource: https://ll.thespacedevs.com/2.3.0/launches/3b
+ 430f81-0ff1-4d85-8a1a-cef0de326198/\nReturn to Apollo: http://127.0.0.1:41
+ 84/launches.html#launch-3b430f81-0ff1-4d85-8a1a-cef0de326198
+LOCATION:Cape Canaveral SFS\, FL\, USA
+URL:https://ll.thespacedevs.com/2.3.0/launches/3b430f81-0ff1-4d85-8a1a-cef0
+ de326198/
+END:VEVENT
+END:VCALENDAR

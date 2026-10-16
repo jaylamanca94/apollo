@@ -1,6 +1,6 @@
 # Apollo briefing comprehension and return trial
 
-Prepared 2026-09-24 for 1.2.0. **Not run; no participant evidence exists.**
+Prepared 2026-09-24 for 1.2.0; extended 2026-10-16 for the 1.4.0 calendar hand-off. **Not run; no participant evidence exists.**
 
 Hypothesis: curious non-specialists can understand the available picture, identify uncertainty and choose one worthwhile detail within two minutes, with less effort than their usual space-information source. This tests usefulness and repeat interest, not willingness to pay.
 
@@ -17,6 +17,10 @@ Prepare a source-backed loaded/partial state and an explicitly labelled all-sour
 3. In the partial/failure state, explain what is known and what cannot be concluded. Record any inference that missing data means quiet activity or no hazards.
 4. Try the equivalent check-in using your usual alternative. Record effort, completion time, what Apollo omitted and which you prefer, with the participant's own words.
 5. Ask whether they would independently choose to revisit Apollo and for what occasion. Offer one optional check-in a week later through separately authorised contact; do not schedule or send it automatically.
+
+## Optional launch-calendar task (1.4.0)
+
+After the uncoached core tasks, ask a reader interested in a scheduled launch how they would keep it for later. Record whether Save to calendar is found without prompting, whether its snapshot/no-automatic-update limit is understood, and whether the downloaded target imports at the expected local time in their chosen calendar. Ask how they would check a postponement; the mission/source return links should be discoverable. If they consent to import, use their chosen test calendar or a clearly synthetic fixture; do not write to a personal calendar on their behalf. Record client, target, timezone and result without collecting private calendar contents. Explain possible duplicate imports. This task is optional, not a reason to coach the primary briefing task or a substitute for observed voluntary return. Results remain unrun.
 
 ## Results sheet
 

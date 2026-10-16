@@ -1,0 +1,18 @@
+[
+  {
+    "file": "fixture-launch.ics",
+    "parser": "icalendar 6.3.2",
+    "events": 1,
+    "target": "2026-10-17T19:18:08+00:00",
+    "status": "TENTATIVE",
+    "errors": []
+  },
+  {
+    "file": "live-launch.ics",
+    "parser": "icalendar 6.3.2",
+    "events": 1,
+    "target": "2026-10-19T10:30:00+00:00",
+    "status": "TENTATIVE",
+    "errors": []
+  }
+]

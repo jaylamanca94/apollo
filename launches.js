@@ -7,6 +7,7 @@ const THEME_COLORS = {
 const REFRESH_BUTTON_HTML = `<i class="fa-solid fa-rotate-right acadia-icon" aria-hidden="true"></i><span>Refresh data</span>`;
 const REFRESHING_BUTTON_HTML = `<span class="apollo-button-spinner acadia-activity-indicator is-small" aria-hidden="true"></span><span>Refreshing data</span>`;
 const ERROR_PREFIX = "Data unavailable.";
+let calendarSchedule = { launches: [], checkedAt: "" };
 
 const els = {
   refreshButton: document.querySelector("#launchesRefreshButton"),
@@ -120,6 +121,7 @@ function formatCountdown(value) {
 }
 
 function formatLaunchWindow(launch) {
+  if (!hasPreciseLaunchTime(launch)) return "";
   if (!launch.windowStart && !launch.windowEnd) {
     return "";
   }
@@ -161,6 +163,7 @@ function getLaunchWindowDurationMinutes(launch) {
 }
 
 function formatLaunchWindowSummary(launch) {
+  if (!hasPreciseLaunchTime(launch)) return "Time not confirmed";
   const durationMinutes = getLaunchWindowDurationMinutes(launch);
 
   if (durationMinutes === null) {
@@ -197,11 +200,29 @@ function truncateText(value, maxLength = 420) {
   return `${clipped}...`;
 }
 
+function hasPreciseLaunchTime(launch) {
+  return /^(second|minute)$/i.test(launch?.datePrecision || "");
+}
+
+function formatLaunchTarget(launch) {
+  if (hasPreciseLaunchTime(launch)) return `${formatDateShort(launch.dateUtc)} · ${formatLaunchTime(launch.dateUtc)}`;
+  if (/^(day|month)$/i.test(launch?.datePrecision || "") && Number.isFinite(Date.parse(launch.dateUtc))) {
+    const date = new Date(launch.dateUtc).toLocaleDateString([], {
+      month: "short", year: "numeric", ...(/^day$/i.test(launch.datePrecision) ? { day: "numeric" } : {}), timeZone: "UTC"
+    });
+    return `${date} · ${/^day$/i.test(launch.datePrecision) ? "Time" : "Day"} unconfirmed (source date)`;
+  }
+  return "Date and time unconfirmed";
+}
+
 function normalizeLaunches(data) {
   const launches = Array.isArray(data?.launches) ? data.launches : [];
 
   return launches
     .map((launch) => ({
+      id: getText(launch?.id),
+      datePrecision: getText(launch?.datePrecision),
+      statusId: Number.isInteger(launch?.statusId) ? launch.statusId : null,
       name: getText(launch?.name),
       dateUtc: getText(launch?.dateUtc),
       status: getText(launch?.status, "Upcoming"),
@@ -401,23 +422,59 @@ function renderLaunchesUnavailable(message) {
 
 async function fetchJson(url, options = {}) {
   const controller = new AbortController();
-  const timeoutId = window.setTimeout(() => controller.abort(), 10000);
-
-  const response = await fetch(url, {
-    ...options,
-    signal: controller.signal
-  }).finally(() => window.clearTimeout(timeoutId));
-
-  if (!response.ok) {
-    const error = new Error(`Request failed with status ${response.status}`);
-    error.status = response.status;
-    throw error;
+  const timeoutId = window.setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    if (!response.ok) {
+      const error = new Error(`Request failed with status ${response.status}`);
+      error.status = response.status;
+      throw error;
+    }
+    return await response.json();
+  } finally {
+    window.clearTimeout(timeoutId);
   }
-
-  return response.json();
 }
 
-function renderLaunches(launches) {
+function calendarAction(launch, index, checkedAt, context) {
+  const reason = LaunchCalendar.unavailableReason(launch, checkedAt);
+  const helpId = `launchCalendarHelp-${context}-${index}`;
+  return `<div class="acadia-copy-stack">
+    <div class="acadia-cluster">
+      ${launch.sourceUrl ? `<a class="source-link acadia-button acadia-button-secondary" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">Launch source</a>` : ""}
+      <button type="button" class="acadia-button acadia-button-secondary" data-launch-calendar="${index}" aria-describedby="${helpId}"${reason ? " disabled" : ""}>Save to calendar<span class="acadia-visually-hidden">: ${escapeHtml(launch.name)}</span></button>
+    </div>
+    <p id="${helpId}" class="acadia-small acadia-text-muted">${escapeHtml(reason || "Downloads a calendar file. Times can change; saved entries will not update.")}</p>
+    <p class="acadia-small" role="status" data-calendar-result></p>
+  </div>`;
+}
+
+function saveLaunchCalendar(index, button) {
+  const launch = calendarSchedule.launches[index];
+  const status = button.closest(".acadia-copy-stack").querySelector("[data-calendar-result]");
+  const returnUrl = new URL(`./launches.html#launch-${encodeURIComponent(launch?.id || "")}`, window.location.href).href;
+  const content = LaunchCalendar.build(launch, calendarSchedule.checkedAt, returnUrl);
+  if (!content) {
+    if (status) status.textContent = LaunchCalendar.unavailableReason(launch, calendarSchedule.checkedAt);
+    return;
+  }
+  try {
+    const url = URL.createObjectURL(new Blob([content], { type: "text/calendar;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `apollo-launch-${launch.id}.ics`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+    if (status) status.textContent = "Calendar file ready. Open it in your calendar to add this target.";
+  } catch {
+    if (status) status.textContent = "The calendar file could not be prepared. Try again or keep the launch source link.";
+  }
+}
+
+function renderLaunches(launches, checkedAt = "") {
+  calendarSchedule = { launches, checkedAt };
   if (!launches.length) {
     els.launchPageBody.innerHTML = stateMessage("No upcoming SpaceX launches are available from the current launch source.");
     return;
@@ -431,7 +488,7 @@ function renderLaunches(launches) {
   const scheduleRows = launches.map((launch, index) => {
     const launchName = splitLaunchName(launch.name);
     const missionLabel = getLaunchMissionLabel(launchName);
-    const countdownLabel = formatCountdown(launch.dateUtc);
+    const countdownLabel = hasPreciseLaunchTime(launch) ? formatCountdown(launch.dateUtc) : "Time unconfirmed";
     const launchWindow = formatLaunchWindow(launch);
     const launchWindowSummary = formatLaunchWindowSummary(launch);
     const launchLocation = formatLaunchLocation(launch);
@@ -453,14 +510,14 @@ function renderLaunches(launches) {
       .join("");
 
     return `
-      <article class="acadia-muted-panel launch-timeline-row${index === 0 ? " launch-timeline-row-next" : ""}" aria-labelledby="${rowTitleId}">
+      <article id="${launch.id ? `launch-${escapeHtml(encodeURIComponent(launch.id))}` : `launch-row-${index}`}" class="acadia-muted-panel launch-timeline-row${index === 0 ? " launch-timeline-row-next" : ""}" aria-labelledby="${rowTitleId}">
         <div class="launch-timeline-rail">
           <span><span class="acadia-visually-hidden">Countdown </span>${escapeHtml(countdownLabel)}</span>
         </div>
         <div class="launch-timeline-main">
           <div class="launch-timeline-header">
             <div>
-              <p class="launch-timeline-when acadia-small acadia-text-muted">${escapeHtml(formatDateShort(launch.dateUtc))} · ${escapeHtml(formatLaunchTime(launch.dateUtc))}</p>
+              <p class="launch-timeline-when acadia-small acadia-text-muted">${escapeHtml(formatLaunchTarget(launch))}</p>
               <h3 class="launch-timeline-title acadia-lead" id="${rowTitleId}">${escapeHtml(missionLabel)}</h3>
               ${launchName.mission && missionLabel !== launchName.vehicle ? `<p class="launch-timeline-vehicle acadia-small acadia-text-muted">${escapeHtml(launchName.vehicle)}</p>` : ""}
             </div>
@@ -475,21 +532,16 @@ function renderLaunches(launches) {
             <div class="data-detail-panel acadia-accordion-panel">
               <p class="acadia-body ">${escapeHtml(truncateText(launch.details, 360))}</p>
               ${detailRows ? `<dl class="detail-list">${detailRows}</dl>` : ""}
-              ${launch.sourceUrl ? `
-                <a class="source-link acadia-button acadia-button-secondary" href="${escapeHtml(launch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(launch.name)}">
-                  <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
-                  Launch source
-                </a>
-              ` : ""}
             </div>
           </details>
+          ${calendarAction(launch, index, checkedAt, "schedule")}
         </div>
       </article>
     `;
   }).join("");
   const nextLaunchFacts = [
-    ["Liftoff", `${formatDateShort(nextLaunch.dateUtc)} · ${formatLaunchTime(nextLaunch.dateUtc)}`],
-    ["Countdown", formatCountdown(nextLaunch.dateUtc)],
+    ["Target", formatLaunchTarget(nextLaunch)],
+    ["Countdown", hasPreciseLaunchTime(nextLaunch) ? formatCountdown(nextLaunch.dateUtc) : "Time unconfirmed"],
     ["Window", nextLaunchWindowSummary],
     ["Location", nextLaunchLocation]
   ]
@@ -501,15 +553,6 @@ function renderLaunches(launches) {
       </div>
     `)
     .join("");
-  const nextLaunchActionItems = [
-    nextLaunch.sourceUrl ? `
-      <a class="source-link acadia-button acadia-button-secondary" href="${escapeHtml(nextLaunch.sourceUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open launch source for ${escapeHtml(nextLaunch.name)}">
-        <i class="fa-solid fa-up-right-from-square acadia-icon" aria-hidden="true"></i>
-        Launch source
-      </a>
-    ` : "",
-    nextLaunchWindow ? `<span>${escapeHtml(nextLaunchWindow)}</span>` : ""
-  ].filter(Boolean).join("");
 
   els.launchPageBody.innerHTML = `
     <section class="next-launch-spotlight acadia-muted-panel" aria-labelledby="nextLaunchTitle">
@@ -531,7 +574,8 @@ function renderLaunches(launches) {
         </div>
         <div class="next-launch-keyfacts">${nextLaunchFacts}</div>
         <p class="acadia-body launch-page-summary">${escapeHtml(truncateText(nextLaunch.details, 300))}</p>
-        ${nextLaunchActionItems ? `<div class="next-launch-actions">${nextLaunchActionItems}</div>` : ""}
+        ${nextLaunchWindow ? `<p class="acadia-small acadia-text-muted">${escapeHtml(nextLaunchWindow)}</p>` : ""}
+        ${calendarAction(nextLaunch, 0, checkedAt, "spotlight")}
       </div>
     </section>
     <section class="launch-timeline-section" aria-labelledby="upcomingLaunchesTitle">
@@ -547,10 +591,28 @@ function renderLaunches(launches) {
   `;
 }
 
+function openSavedMission() {
+  if (!window.location.hash.startsWith("#launch-")) return;
+  // An unavailable source cannot establish that a saved mission is absent.
+  if (!calendarSchedule.checkedAt) return;
+  const mission = document.getElementById(window.location.hash.slice(1));
+  if (mission) {
+    mission.querySelector("details").open = true;
+    const title = mission.querySelector("h3");
+    title.tabIndex = -1;
+    title.focus();
+  } else {
+    const status = document.querySelector("#launchCalendarStatus");
+    if (status) { status.hidden = false; status.textContent = "The saved mission is not in this upcoming list. Check its original source for schedule changes."; }
+  }
+}
+
 async function loadLaunches({ restoreRetryFocus = false } = {}) {
   const retryTrigger = restoreRetryFocus ? document.querySelector("[data-launches-retry]") : null;
   const retryHadFocus = retryTrigger && document.activeElement === retryTrigger;
   setLaunchPageStatus("Loading launch schedule.");
+  const calendarStatus = document.querySelector("#launchCalendarStatus");
+  if (calendarStatus) { calendarStatus.textContent = ""; calendarStatus.hidden = true; }
   setBusy(els.launchPageBody, true);
 
   if (els.refreshButton) {
@@ -559,10 +621,12 @@ async function loadLaunches({ restoreRetryFocus = false } = {}) {
   }
 
   try {
-    renderLaunches(normalizeLaunches(await fetchJson(LAUNCHES_API)));
+    const data = await fetchJson(LAUNCHES_API);
+    renderLaunches(normalizeLaunches(data), data.checkedAt);
     setLaunchPageStatus("Launch schedule loaded.");
     setLaunchesUpdated();
   } catch (error) {
+    calendarSchedule = { launches: [], checkedAt: "" };
     setError("Launch schedule source unavailable. Try refreshing in a moment.");
     setLaunchPageStatus("Data unavailable. Launch schedule source unavailable.");
     setLaunchesUpdated(formatLastChecked());
@@ -592,10 +656,13 @@ if (els.refreshButton) {
 }
 
 document.addEventListener("click", (event) => {
+  const calendarButton = event.target.closest("[data-launch-calendar]");
+  if (calendarButton && !calendarButton.disabled) saveLaunchCalendar(Number(calendarButton.dataset.launchCalendar), calendarButton);
   if (event.target.closest("[data-launches-retry]")) {
     loadLaunches({ restoreRetryFocus: true });
   }
 });
 
 initThemeControl();
-loadLaunches();
+window.addEventListener("hashchange", openSavedMission);
+loadLaunches().then(openSavedMission);

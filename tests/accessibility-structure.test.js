@@ -556,7 +556,7 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
     assert.ok(html.includes(`app.js?v=${file === "index.html" ? "1.3.1" : "1.3.0"}`), `${file} should load the current shared app script`);
   }
 
-  assert.match(readProjectFile("launches.html"), /launches\.js\?v=1.3.0/);
+  assert.match(readProjectFile("launches.html"), /launches\.js\?v=1.4.0/);
 });
 
 test("internal pages use compact headers instead of dashboard-scale heroes", () => {
@@ -620,7 +620,8 @@ test("launch timeline exposes urgency context and current asset versions", () =>
   const css = readProjectFile("styles.css");
 
   assert.match(html, /styles\.css\?v=1.3.0/);
-  assert.match(html, /launches\.js\?v=1.3.0/);
+  assert.match(html, /launches\.js\?v=1.4.0/);
+  assert.match(html, /launch-calendar\.js\?v=1.4.0/);
   assert.match(js, /class="acadia-muted-panel launch-timeline-row\$\{index === 0 \?\s*" launch-timeline-row-next" : ""\}" aria-labelledby="\$\{rowTitleId\}"/);
   assert.match(js, /<span class="acadia-visually-hidden">Countdown <\/span>\$\{escapeHtml\(countdownLabel\)\}/);
   assert.doesNotMatch(js, /class="launch-timeline-rail" aria-hidden="true"/);

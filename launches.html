@@ -76,19 +76,21 @@
             </div>
           </header>
 
-          <section class="acadia-card apollo-card acadia-surface launch-detail-panel">
-            <div class="section-card-body acadia-panel-dense launch-detail-body" id="launchPageBody" aria-live="polite" aria-busy="true">
+          <section class="launch-detail-panel">
+            <div class="section-card-body launch-detail-body" id="launchPageBody" aria-live="polite" aria-busy="true">
               <div class="state-message acadia-alert">
                 <i class="fa-solid fa-circle-info acadia-icon" aria-hidden="true"></i>
                 <span>Loading launch schedule...</span>
               </div>
             </div>
+            <p id="launchCalendarStatus" class="acadia-small acadia-text-muted acadia-panel-dense" role="status" hidden></p>
           </section>
         </div>
       </main>
     </div>
 
     <script src="./app-shell.js?v=1.3.0"></script>
-    <script src="./launches.js?v=1.3.0"></script>
+    <script src="./launch-calendar.js?v=1.4.0"></script>
+    <script src="./launches.js?v=1.4.0"></script>
   </body>
 </html>

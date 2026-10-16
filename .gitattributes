@@ -1,0 +1,2 @@
+# Calendar evidence retains RFC 5545 CRLF and significant spaces at fold points.
+*.ics -text whitespace=cr-at-eol,-blank-at-eol

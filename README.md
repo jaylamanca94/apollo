@@ -43,6 +43,7 @@ Retain the vanilla/static architecture while it serves the product well. Evolve 
 - `app.js` - frontend data loading and rendering
 - `launches.js` - launches detail page data loading and rendering
 - `crewed-launches.js` - local launch-day homepage feature, schedule refresh/retry and source coverage actions
+- `launch-calendar.js` - dependency-free iCalendar snapshot formatting and eligibility checks
 - `api/_cache.js` - shared in-memory cache helpers for serverless API routes
 - `api/_http.js` - shared timeout-wrapped JSON fetch helper for serverless API routes
 - `api/_normalize.js` - shared text, number, and safe URL normalization helpers for serverless API routes
@@ -180,7 +181,7 @@ It returns the app version, timestamp, runtime status, and whether the server-si
 - Space weather depends on NOAA SWPC public feeds.
 - Static accessibility structure is covered by tests, but full browser-level accessibility and interaction coverage is not automated yet.
 - This MVP does not include charts, filters, auth, saved settings, or persistence.
-- Export, search, notifications, and observation-creation workflows are intentionally not included yet.
+- Search, managed notifications and observation creation remain unimplemented. Launch calendar snapshots are available in 1.4.0; they do not update automatically.
 
 ## Production Notes
 
@@ -208,3 +209,9 @@ The Dashboard leads with one source-dated action and six-source coverage, follow
 The homepage features human spaceflight on the visitor's local launch day, with explicit source status, target time, crew/destination when supplied, and coverage/source actions. The general Launches detail page remains SpaceX-scoped. Feature data uses the existing provider with a separate 15-minute cache and validated complete three-day UTC response; browser snapshots older than 30 minutes become unavailable. The six routine briefing feeds keep their existing coverage; the crewed schedule exposes its own check time and failure/retry state.
 
 The fixture preview accepts `?crewed=today|tomorrow|completed|scrubbed|empty|failure|stale|no-image`, including `&text=200`. All fixture content is synthetic and visibly labelled. Evidence: `docs/evidence/2026-10-01/crewed-launch-day/README.md`.
+
+## Launch calendar snapshots (1.4.0)
+
+Launches offers Save to calendar beside each source action. The browser downloads an `.ics` file for a future precise target with an eligible source status and a recent original proxy check. The file retains UTC target/window, source check time and mission/source return links. It is tentative, does not block calendar availability, has no alarm and never updates automatically. Open the file in a calendar to import it; Apollo does not write to a connected calendar. Re-importing may create duplicates depending on the client.
+
+Missing precision/status/identity, holds/scrubs, past targets and checks older than 30 minutes explain why saving is unavailable. The backend retains these fields from the existing response without another provider request. Launches now labels day/month targets as unconfirmed source dates instead of exact local launch times. Fixture preview cases: `launches.html?calendar=imprecise|held|unknown|past|stale|empty`, plus existing `?fixture=failure` and `?text=200`. Evidence and acceptance limits: `docs/evidence/2026-10-16/calendar/README.md`.

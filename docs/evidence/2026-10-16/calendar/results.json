@@ -1,0 +1,189 @@
+[
+  {
+    "theme": "light",
+    "width": 1440,
+    "scroll": 1440,
+    "buttons": [
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      },
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "theme": "light",
+    "width": 834,
+    "scroll": 834,
+    "buttons": [
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      },
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "scroll": 390,
+    "buttons": [
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      },
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "scroll": 320,
+    "buttons": [
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      },
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "theme": "dark",
+    "width": 1440,
+    "scroll": 1440,
+    "buttons": [
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      },
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "theme": "dark",
+    "width": 834,
+    "scroll": 834,
+    "buttons": [
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      },
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "scroll": 390,
+    "buttons": [
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      },
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "scroll": 320,
+    "buttons": [
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      },
+      {
+        "disabled": false,
+        "width": 166.046875,
+        "height": 44
+      }
+    ]
+  },
+  {
+    "keyboardDownload": true,
+    "focusRetained": true
+  },
+  {
+    "preparationErrorExplained": true
+  },
+  {
+    "returnToMission": true
+  },
+  {
+    "removedMissionExplained": true
+  },
+  {
+    "calendar": "imprecise",
+    "exportDisabled": true
+  },
+  {
+    "calendar": "held",
+    "exportDisabled": true
+  },
+  {
+    "calendar": "unknown",
+    "exportDisabled": true
+  },
+  {
+    "calendar": "past",
+    "exportDisabled": true
+  },
+  {
+    "calendar": "stale",
+    "exportDisabled": true
+  },
+  {
+    "failureNoExport": true,
+    "retryFocus": true
+  },
+  {
+    "text200NoOverflow": true,
+    "emptyNoExport": true
+  },
+  {
+    "dwellStalenessEnforced": true
+  },
+  {
+    "failedRefreshClearsExports": true
+  },
+  {
+    "liveDownload": "apollo-launch-3b430f81-0ff1-4d85-8a1a-cef0de326198.ics",
+    "liveTitle": "Bandwagon 5 (Dedicated Mid-Inclination Rideshare)\nFalcon 9 Block 5"
+  }
+]
