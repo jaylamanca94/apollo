@@ -34,4 +34,8 @@ Run `npm run preview:fixtures -- 4183`, then open `launches.html`. Use `?calenda
 
 ## Delivery
 
-Normal Git-linked delivery is being completed after project and browser checks. The previous production revision is `18038653d77a51bea185ad680f6ee47d778630d2`; recovery is an ordinary revert through the existing workflow. No manual deployment, access-control change or secret operation is needed. Exact implementation/hosted receipt is appended after verification.
+Implementation `8b3386327807e56bca11071d4bbb34b2bec9d1be` was committed and pushed to `main`; [exact-commit CI](https://github.com/jaylamanca94/apollo/actions/runs/38954283832) passed. Its Git-linked Production deployment [apollo-adx3v8u9d](https://apollo-adx3v8u9d-jayson-lamanca-s-projects.vercel.app) succeeded. At 19:22 UTC, the [production alias](https://apollo-eight-mu.vercel.app/launches.html) returned HTTP 200 health, version 1.4.0 and runtime ok. Both changed JavaScript assets exactly matched local committed bytes. Hosted Enter download produced the expected source launch file; the file parsed independently, contained the production mission-return URL, and the return journey opened/focused the matching mission with no browser errors. `production-results.json` records checks and asset hashes.
+
+No manual deployment, access-control change, secret operation or calendar write occurred. The previous production revision is `18038653d77a51bea185ad680f6ee47d778630d2`; recovery is an ordinary revert of the implementation through the existing workflow. This receipt is a documentation-only follow-up. Native-calendar/device/reader acceptance remains open.
+
+The shared Markdown checker found no errors in the changed Apollo records; its overall run reports two pre-existing Sylo portfolio links to a missing Acadia heading. Those unrelated records were preserved.

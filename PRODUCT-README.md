@@ -191,7 +191,7 @@ Historically deferred MVP capabilities (research candidates, not prohibitions or
 
 ## Roadmap
 
-Continue the active trustworthy-briefing initiative above. APOD 1.1.2 and the brief-to-next-action experience in 1.2.0 are delivered; continue the prepared comprehension/return experiment. Revisit audience or positioning when user evidence warrants it; do not restart desk discovery each run.
+Continue the active trustworthy-briefing initiative above. APOD 1.1.2, the brief-to-next-action experience in 1.2.0 and the launch-calendar hand-off in 1.4.0 are delivered. Next independent outcome: carry launch target precision consistently through Dashboard brief/snapshot and detail/calendar, with honest malformed-source recovery. Run the prepared comprehension/return experiment, including the optional calendar task, when consenting participants are available. Revisit audience or positioning when user evidence warrants it; do not restart desk discovery each run.
 
 Existing technical review candidates below must be checked against current implementation and delivery evidence before acting; they are not a claim that each issue remains open:
 

@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-10-16T19:22:04.594Z",
+  "origin": "https://apollo-eight-mu.vercel.app",
+  "healthStatus": 200,
+  "version": "1.4.0",
+  "runtime": "ok",
+  "nasaApiKey": "configured",
+  "assets": [
+    {
+      "file": "launch-calendar.js",
+      "sha256": "3b66346a976f51dc9ef46247a0256d0624f77cba07865bc8165cb9a00bfabde7"
+    },
+    {
+      "file": "launches.js",
+      "sha256": "37da0e2f82771bc955181c1ad75ba2ea27c55900e1deb1df0ce141e1948d6162"
+    }
+  ],
+  "download": "apollo-launch-3b430f81-0ff1-4d85-8a1a-cef0de326198.ics",
+  "missionReturn": "https://apollo-eight-mu.vercel.app/launches.html#launch-3b430f81-0ff1-4d85-8a1a-cef0de326198",
+  "focus": "launchTimelineTitle-0",
+  "errors": []
+}

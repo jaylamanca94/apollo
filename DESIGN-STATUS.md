@@ -7,7 +7,7 @@
 
 Apollo 1.4.0 adds one supporting goal: keep a precise launch target in a local calendar file and return to its mission. **9 active flows; 9 designed; 9 with some automated/controlled coverage; 9 requiring broader acceptance; 0 missing a defined design.** No route, shared style or service added. Acadia actions sit outside nested mission details; unavailable saves explain their reason. Source day/month precision remains visibly unconfirmed. The 320px/200% inspection led to removal of the redundant outer launch card and wider, directly reachable actions with whole-word labels. Before/after, download/return, source failures and limits: `docs/evidence/2026-10-16/calendar/README.md`.
 
-Hosted health at the start of this run returned 200, Apollo 1.3.1 and configured NASA key. The older Vercel-access/key notes below are historical, not current blockers. Physical touch/VoiceOver, actual calendar-client import and real-reader return remain unverified.
+Hosted 1.4.0 health returns 200 with configured NASA key; deployed asset bytes and the actual keyboard download → mission return/focus journey passed on 16 October. The older Vercel-access/key notes below are historical, not current blockers. Physical touch/VoiceOver, actual calendar-client import and real-reader return remain unverified.
 
 ## Crewed launch-day feature
 
