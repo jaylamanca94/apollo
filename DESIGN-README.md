@@ -86,6 +86,12 @@ Unknown roster/destination/image/coverage is omitted without invention. On sourc
 
 Save to calendar downloads a file, so explain that near the control and say saved entries will not update. Disable unavailable actions with their specific reason in `aria-describedby`; unknown precision/status must not look confirmed. Announce file preparation or errors locally with `role=status`, retaining focus on the activated button. Never say the calendar itself was updated. A source identity in the return URL opens the matching mission disclosure and focuses its heading after loading; an absent mission has an explicit source-check explanation. Date-only and month-only targets retain source-date context, and elapsed targets never imply launch success. Controlled browser evidence: `docs/evidence/2026-10-16/calendar/README.md`; actual calendar-client/device/reader acceptance remains separate.
 
+## Launch timing consistency (1.4.1)
+
+**Reuse/compose:** unchanged pinned Acadia Metric, typography, Button and unavailable/retry states. `launch-timing.js` owns Apollo's source-period formatting and recommendation/countdown eligibility across the Dashboard and Launches. Source day/month/year remain UTC calendar context with explicit unconfirmed precision. Status-aware countdowns never imply that an elapsed target launched. Unknown/held targets cannot drive explanatory sighting matches. No shared component or stylesheet fork.
+
+Dashboard snapshot uses “No time” plus the complete source-date context when no precise time is supplied. Tablet inspection exposed mid-word values in five narrow cards; increase the intrinsic grid minimum to 10rem using the existing `auto-fit` composition. Preserve two columns on ordinary phones, content-driven fewer columns on tablet and one column with enlarged text. This is Apollo data-layout geometry; revisit only for observed readability needs. Before/after, recovery focus and limits: `docs/evidence/2026-10-19/precision/README.md`.
+
 ## Layout Grid
 
 - Dashboard pages lead with the Space briefing title, one Space Brief, five linked snapshot metrics, and up to three Recent activity cards. Apollo remains visible in the shared navigation. Avoid duplicating object pages: no giant maps, giant APOD media, full crew rosters or repeated Watch Items panel. Routine ISS position belongs in the snapshot; omit the activity section when no launch, APOD or weather activity is available.

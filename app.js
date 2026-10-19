@@ -342,35 +342,6 @@ function truncateText(value, maxLength = 360) {
   return `${clipped}...`;
 }
 
-function formatCountdown(value) {
-  const launchDate = new Date(value);
-
-  if (!Number.isFinite(launchDate.getTime())) {
-    return "Date unavailable";
-  }
-
-  const diffMs = launchDate.getTime() - Date.now();
-  const absMs = Math.abs(diffMs);
-  const days = Math.floor(absMs / 86400000);
-  const hours = Math.floor((absMs % 86400000) / 3600000);
-
-  if (diffMs < 0) {
-    return "Window has opened";
-  }
-
-  if (days > 0) {
-    return `T-${days}d ${hours}h`;
-  }
-
-  if (hours > 0) {
-    return `T-${hours}h`;
-  }
-
-  const minutes = Math.floor((absMs % 3600000) / 60000);
-
-  return minutes > 0 ? `T-${minutes}m` : "T-<1m";
-}
-
 function getLocalDateKey(date) {
   if (!Number.isFinite(date.getTime())) {
     return "";
@@ -886,6 +857,7 @@ function getNearestLaunchMatch(observedAt) {
 
   return launches
     .map((launch) => {
+      if (!LaunchTiming.precise(launch) || ![1, 8].includes(launch.statusId)) return null;
       const launchDate = new Date(launch.dateUtc);
 
       if (!Number.isFinite(launchDate.getTime())) {
@@ -942,8 +914,8 @@ function getSkyExplanationRows(observedAt) {
     rows.push({
       label: "Launch activity",
       state: "unknown",
-      headline: "Launch source unavailable",
-      detail: "Launch source unavailable for this sighting time.",
+      headline: dashboardData.launches.length ? "Precise launch timing unavailable" : "Launch source unavailable",
+      detail: dashboardData.launches.length ? "The loaded schedule has no usable precise target for comparison. Unconfirmed or held targets cannot establish a timing match." : "Launch source unavailable for this sighting time.",
       source: "The Space Devs launch source"
     });
   }
@@ -1241,6 +1213,7 @@ function initSkyAnomalyEngine() {
 }
 
 function formatLaunchWindow(launch) {
+  if (!LaunchTiming.precise(launch)) return "";
   if (!launch.windowStart && !launch.windowEnd) {
     return "";
   }
@@ -1273,6 +1246,7 @@ function getLaunchWindowDurationMinutes(launch) {
 }
 
 function formatLaunchWindowSummary(launch) {
+  if (!LaunchTiming.precise(launch)) return "Time not confirmed";
   const durationMinutes = getLaunchWindowDurationMinutes(launch);
 
   if (durationMinutes === null) {
@@ -2098,10 +2072,14 @@ function updateIssOrbitalBrief() {
 }
 
 function normalizeLaunches(data) {
-  const launches = Array.isArray(data?.launches) ? data.launches : [];
+  if (!Array.isArray(data?.launches) || data.launches.some(launch => !getText(launch?.name) || !Number.isFinite(LaunchTiming.timestamp(launch?.dateUtc)))) throw new Error("Launch schedule response invalid");
+  const launches = data.launches;
 
   return launches
     .map((launch) => ({
+      id: getText(launch?.id),
+      datePrecision: getText(launch?.datePrecision),
+      statusId: Number.isInteger(launch?.statusId) ? launch.statusId : null,
       name: getText(launch?.name),
       dateUtc: getText(launch?.dateUtc),
       status: getText(launch?.status, "Upcoming"),
@@ -2658,7 +2636,7 @@ function renderDashboardLaunchSummary(launches) {
       <div class="metadata-grid">
         <div>
           <p class="acadia-text-muted acadia-small">Countdown</p>
-          <p class="acadia-body ">${formatCountdown(nextLaunch.dateUtc)}</p>
+          <p class="acadia-body ">${escapeHtml(LaunchTiming.countdown(nextLaunch))}</p>
         </div>
         <div>
           <p class="acadia-text-muted acadia-small">Status</p>
@@ -2834,13 +2812,13 @@ function getSpaceBriefState(data = dashboardData, statuses = Array.from(latestSo
     return { ...weatherAction, coverage };
   }
   const launch = usable("launches") ? [...data.launches].filter((item) =>
-    Date.parse(item.dateUtc) > now && !/success|failure|cancel|aborted/i.test(item.status || "") &&
+    LaunchTiming.upcoming(item, now) &&
     !(data.crewedLaunches || []).some(feature => feature.name === item.name && feature.dateUtc === item.dateUtc)
   ).sort((a, b) => Date.parse(a.dateUtc) - Date.parse(b.dateUtc))[0] : null;
   if (launch) {
     return {
       headline: `Next SpaceX launch: ${launch.name}`,
-      timing: `Target ${formatDateTime(launch.dateUtc)} · The Space Devs`,
+      timing: `Target ${LaunchTiming.target(launch)} · The Space Devs`,
       summary: `${getText(launch.status, "Status not supplied")}. Launch times can change.`,
       action: "Explore the launch", href: "./launches.html", coverage
     };
@@ -2945,7 +2923,7 @@ function getRecentActivityRows() {
       label: "Launches",
       title: getText(launch.status, "Launch status loaded"),
       detail: launchName.mission ? `${launchName.vehicle} ${launchName.mission}` : launchName.vehicle,
-      time: formatCountdown(launch.dateUtc),
+      time: LaunchTiming.countdown(launch),
       href: "./launches.html"
     });
   }
@@ -3484,7 +3462,7 @@ async function loadLaunches() {
             <article class="launch-card acadia-muted-panel">
               ${launch.imageUrl ? `<img src="${escapeHtml(launch.imageUrl)}" alt="${escapeHtml(formatLaunchImageAlt(launch, launchName))}" class="launch-thumb acadia-thumbnail">` : `<span class="stat-chip"><i class="fa-solid fa-rocket acadia-icon" aria-hidden="true"></i></span>`}
               <div class="launch-main">
-                <p class="launch-meta acadia-small acadia-text-muted">${formatDateTime(launch.dateUtc)} · ${formatCountdown(launch.dateUtc)}</p>
+                <p class="launch-meta acadia-small acadia-text-muted">${escapeHtml(LaunchTiming.target(launch))} · ${escapeHtml(LaunchTiming.countdown(launch))}</p>
                 <div class="launch-title-row">
                   <h3 class="launch-vehicle acadia-lead">${escapeHtml(launchName.vehicle)}</h3>
                   ${launchName.mission ? `<span class="launch-mission acadia-lead">${escapeHtml(launchName.mission)}</span>` : ""}
@@ -3523,11 +3501,11 @@ async function loadLaunches() {
       renderLaunchRows();
     }
     setQuickStat("launches", {
-      value: formatLaunchQuickDate(launches[0].dateUtc),
-      detail: formatCountdown(launches[0].dateUtc),
+      value: LaunchTiming.precise(launches[0]) ? formatLaunchQuickDate(launches[0].dateUtc) : "No time",
+      detail: LaunchTiming.precise(launches[0]) ? LaunchTiming.countdown(launches[0]) : LaunchTiming.target(launches[0]),
       state: "ok"
     });
-    return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded; next launch ${formatDateTime(launches[0].dateUtc)} (${formatLaunchWindowSummary(launches[0])}).`);
+    return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded; next target ${LaunchTiming.target(launches[0])} (${formatLaunchWindowSummary(launches[0])}).`);
   } catch (error) {
     dashboardData.launches = [];
     setError(els.launchBody, "Launch schedule source unavailable. Other dashboard sections remain available.");

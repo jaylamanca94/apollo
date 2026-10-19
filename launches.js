@@ -91,35 +91,6 @@ function formatLaunchTime(value) {
   }).format(date);
 }
 
-function formatCountdown(value) {
-  const launchDate = new Date(value);
-
-  if (!Number.isFinite(launchDate.getTime())) {
-    return "Date unavailable";
-  }
-
-  const diffMs = launchDate.getTime() - Date.now();
-  const absMs = Math.abs(diffMs);
-  const days = Math.floor(absMs / 86400000);
-  const hours = Math.floor((absMs % 86400000) / 3600000);
-
-  if (diffMs < 0) {
-    return "Window has opened";
-  }
-
-  if (days > 0) {
-    return `T-${days}d ${hours}h`;
-  }
-
-  if (hours > 0) {
-    return `T-${hours}h`;
-  }
-
-  const minutes = Math.floor((absMs % 3600000) / 60000);
-
-  return minutes > 0 ? `T-${minutes}m` : "T-<1m";
-}
-
 function formatLaunchWindow(launch) {
   if (!hasPreciseLaunchTime(launch)) return "";
   if (!launch.windowStart && !launch.windowEnd) {
@@ -201,22 +172,16 @@ function truncateText(value, maxLength = 420) {
 }
 
 function hasPreciseLaunchTime(launch) {
-  return /^(second|minute)$/i.test(launch?.datePrecision || "");
+  return LaunchTiming.precise(launch);
 }
 
 function formatLaunchTarget(launch) {
-  if (hasPreciseLaunchTime(launch)) return `${formatDateShort(launch.dateUtc)} · ${formatLaunchTime(launch.dateUtc)}`;
-  if (/^(day|month)$/i.test(launch?.datePrecision || "") && Number.isFinite(Date.parse(launch.dateUtc))) {
-    const date = new Date(launch.dateUtc).toLocaleDateString([], {
-      month: "short", year: "numeric", ...(/^day$/i.test(launch.datePrecision) ? { day: "numeric" } : {}), timeZone: "UTC"
-    });
-    return `${date} · ${/^day$/i.test(launch.datePrecision) ? "Time" : "Day"} unconfirmed (source date)`;
-  }
-  return "Date and time unconfirmed";
+  return LaunchTiming.target(launch, true);
 }
 
 function normalizeLaunches(data) {
-  const launches = Array.isArray(data?.launches) ? data.launches : [];
+  if (!Array.isArray(data?.launches) || data.launches.some(launch => !getText(launch?.name) || !Number.isFinite(LaunchTiming.timestamp(launch?.dateUtc)))) throw new Error("Launch schedule response invalid");
+  const launches = data.launches;
 
   return launches
     .map((launch) => ({
@@ -488,7 +453,7 @@ function renderLaunches(launches, checkedAt = "") {
   const scheduleRows = launches.map((launch, index) => {
     const launchName = splitLaunchName(launch.name);
     const missionLabel = getLaunchMissionLabel(launchName);
-    const countdownLabel = hasPreciseLaunchTime(launch) ? formatCountdown(launch.dateUtc) : "Time unconfirmed";
+    const countdownLabel = LaunchTiming.countdown(launch);
     const launchWindow = formatLaunchWindow(launch);
     const launchWindowSummary = formatLaunchWindowSummary(launch);
     const launchLocation = formatLaunchLocation(launch);
@@ -541,7 +506,7 @@ function renderLaunches(launches, checkedAt = "") {
   }).join("");
   const nextLaunchFacts = [
     ["Target", formatLaunchTarget(nextLaunch)],
-    ["Countdown", hasPreciseLaunchTime(nextLaunch) ? formatCountdown(nextLaunch.dateUtc) : "Time unconfirmed"],
+    ["Countdown", LaunchTiming.countdown(nextLaunch)],
     ["Window", nextLaunchWindowSummary],
     ["Location", nextLaunchLocation]
   ]

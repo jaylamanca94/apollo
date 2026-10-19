@@ -1,3 +1,4 @@
+const LaunchTiming = require("../launch-timing");
 const { getCached, setCached } = require("./_cache");
 const { fetchJson } = require("./_http");
 const { getText, safeHttpUrl } = require("./_normalize");
@@ -84,11 +85,10 @@ function normalizeLaunch(launch) {
 
   const name = getText(launch.name);
   const dateUtc = getText(launch.net);
-  const launchDate = new Date(dateUtc);
   const windowStart = getText(launch.window_start);
   const windowEnd = getText(launch.window_end);
 
-  if (!name || !dateUtc || !Number.isFinite(launchDate.getTime())) {
+  if (!name || !dateUtc || !Number.isFinite(LaunchTiming.timestamp(dateUtc))) {
     return null;
   }
 
@@ -126,10 +126,23 @@ function isPastCompletedLaunch(launch, now = new Date()) {
 function normalizeLaunchLibraryPayload(payload, options = {}) {
   const limit = Number.isInteger(options.limit) ? options.limit : 5;
   const now = options.now || new Date();
-  const results = Array.isArray(payload?.results) ? payload.results : [];
-  const launches = results
-    .map(normalizeLaunch)
-    .filter(Boolean)
+  const results = payload?.results;
+  const invalid = () => {
+    const error = new Error("Invalid launch schedule");
+    error.status = 502;
+    error.payload = { error: { code: "LAUNCH_RESPONSE_INVALID", message: "The launch schedule is unavailable." } };
+    return error;
+  };
+  // A page is intentionally bounded. Validate every received row before
+  // filtering outcomes or limiting display; never silently publish a subset.
+  if (!Array.isArray(results) || (!results.length && (payload.count !== 0 || payload.next)) ||
+      (payload.count !== undefined && (!Number.isSafeInteger(payload.count) || payload.count < results.length ||
+        (payload.count > results.length && !payload.next))) ||
+      (payload.next && !safeHttpUrl(payload.next))) throw invalid();
+  const normalized = results.map(normalizeLaunch);
+  const identities = normalized.filter(Boolean).map(launch => launch.id).filter(Boolean);
+  if (normalized.some(launch => !launch) || new Set(identities).size !== identities.length) throw invalid();
+  const launches = normalized
     .filter((launch) => !isPastCompletedLaunch(launch, now))
     .sort((a, b) => new Date(a.dateUtc) - new Date(b.dateUtc))
     .slice(0, limit);
@@ -177,11 +190,8 @@ async function requestLaunches(limit = 5) {
   if (!response.ok) {
     const error = new Error(`Launch Library request failed with status ${response.status}`);
     error.status = response.status;
-    error.payload = payload || {
-      error: {
-        code: "LAUNCH_LIBRARY_REQUEST_FAILED",
-        message: "Launch Library request failed."
-      }
+    error.payload = {
+      error: { code: "LAUNCH_LIBRARY_REQUEST_FAILED", message: "The launch schedule is unavailable." }
     };
     throw error;
   }

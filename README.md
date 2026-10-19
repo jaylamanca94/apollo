@@ -43,6 +43,7 @@ Retain the vanilla/static architecture while it serves the product well. Evolve 
 - `app.js` - frontend data loading and rendering
 - `launches.js` - launches detail page data loading and rendering
 - `crewed-launches.js` - local launch-day homepage feature, schedule refresh/retry and source coverage actions
+- `launch-timing.js` - shared source-period formatting and status-aware countdown/recommendation rules
 - `launch-calendar.js` - dependency-free iCalendar snapshot formatting and eligibility checks
 - `api/_cache.js` - shared in-memory cache helpers for serverless API routes
 - `api/_http.js` - shared timeout-wrapped JSON fetch helper for serverless API routes
@@ -215,3 +216,7 @@ The fixture preview accepts `?crewed=today|tomorrow|completed|scrubbed|empty|fai
 Launches offers Save to calendar beside each source action. The browser downloads an `.ics` file for a future precise target with an eligible source status and a recent original proxy check. The file retains UTC target/window, source check time and mission/source return links. It is tentative, does not block calendar availability, has no alarm and never updates automatically. Open the file in a calendar to import it; Apollo does not write to a connected calendar. Re-importing may create duplicates depending on the client.
 
 Missing precision/status/identity, holds/scrubs, past targets and checks older than 30 minutes explain why saving is unavailable. The backend retains these fields from the existing response without another provider request. Launches now labels day/month targets as unconfirmed source dates instead of exact local launch times. Fixture preview cases: `launches.html?calendar=imprecise|held|unknown|past|stale|empty`, plus existing `?fixture=failure` and `?text=200`. Evidence and acceptance limits: `docs/evidence/2026-10-16/calendar/README.md`.
+
+## Consistent launch uncertainty (1.4.1)
+
+Dashboard and Launches share source-date interpretation, with unconfirmed day/month/year targets kept in UTC and held/unknown/past targets withheld from countdowns. Malformed upstream pages are unavailable, not empty or silently filtered; an explicit count-zero page remains empty. Browser normalizers also reject malformed response envelopes/rows. Fixture cases extend `calendar=` with `month|year|malformed`; use `?brief=launch&calendar=imprecise` on the Dashboard. Current evidence: `docs/evidence/2026-10-19/precision/README.md`.

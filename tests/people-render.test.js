@@ -14,6 +14,7 @@ function loadDashboardHelpers({
   const source = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
   const helperSource = source.slice(0, source.indexOf("async function loadDashboard"));
   const context = {
+    LaunchTiming: require("../launch-timing"),
     AbortController,
     document: {
       documentElement: {
@@ -260,7 +261,7 @@ test("Space Brief keeps pending sources distinct from unavailable sources", () =
   vm.runInContext(`
     dashboardData.people = { count: 7, locationCount: 2 };
     dashboardData.launches = [{
-      name: "Falcon 9 | Demo Mission",
+      name: "Falcon 9 | Demo Mission", datePrecision: "Second", statusId: 1,
       dateUtc: new Date(Date.now() + 7200000).toISOString(),
       status: "Go"
     }];
@@ -309,7 +310,7 @@ test("Space Brief marks an unavailable core source as partial", () => {
     dashboardData.iss = { latitude: 0, longitude: 0, altitude: 420, velocity: 27600 };
     dashboardData.people = { count: 7, locationCount: 2 };
     dashboardData.launches = [{
-      name: "Falcon 9 | Demo Mission",
+      name: "Falcon 9 | Demo Mission", datePrecision: "Second", statusId: 1,
       dateUtc: new Date(Date.now() + 7200000).toISOString(),
       status: "Go"
     }];
@@ -563,7 +564,7 @@ const briefNow = Date.parse('2026-09-24T19:00:00Z');
 function briefingFixture() {
   return {
     data: {
-      launches: [{ name: 'Example mission', status: 'Go', dateUtc: '2026-09-25T19:00:00Z' }],
+      launches: [{ name: 'Example mission', status: 'Go', dateUtc: '2026-09-25T19:00:00Z', datePrecision: 'Second', statusId: 1 }],
       spaceWeather: { kpIndex: 5, condition: 'Minor storm', observedAt: '2026-09-24T18:00:00Z' },
       apod: { title: 'NASA selection', date: '2026-09-23' },
       neo: { date: '2026-09-24', asteroids: [] }
@@ -598,11 +599,11 @@ test('next launch is chronological, future and not completed or cancelled', () =
   const { data, statuses } = briefingFixture();
   data.spaceWeather.kpIndex = 2;
   data.launches = [
-    { name: 'Later', dateUtc: '2026-09-29T19:00:00Z' },
+    { name: 'Later', dateUtc: '2026-09-29T19:00:00Z', datePrecision: 'Second', statusId: 1 },
     { name: 'Past', dateUtc: '2026-09-23T19:00:00Z' },
-    { name: 'Cancelled', dateUtc: '2026-09-24T20:00:00Z', status: 'Cancelled' },
-    { name: 'Completed', dateUtc: '2026-09-24T20:00:00Z', status: 'Launch Successful' },
-    { name: 'Soonest', dateUtc: '2026-09-25T19:00:00Z' },
+    { name: 'Cancelled', dateUtc: '2026-09-24T20:00:00Z', status: 'Cancelled', datePrecision: 'Second', statusId: 7 },
+    { name: 'Completed', dateUtc: '2026-09-24T20:00:00Z', status: 'Launch Successful', datePrecision: 'Second', statusId: 3 },
+    { name: 'Soonest', dateUtc: '2026-09-25T19:00:00Z', datePrecision: 'Second', statusId: 1 },
     { name: 'Unknown date', dateUtc: 'invalid' }
   ];
   assert.equal(getSpaceBriefState(data, statuses, briefNow).headline, 'Next SpaceX launch: Soonest');
@@ -676,4 +677,24 @@ test('brief treats provider text as escaped text', () => {
   `, context);
   assert.match(body.innerHTML, /&lt;img/);
   assert.doesNotMatch(body.innerHTML, /<img/);
+});
+
+test('Dashboard keeps source precision through normalization, briefing, activity and failure recovery', async () => {
+  const raw = { launches: [{ id: 'mission', name: 'Example mission', dateUtc: '2026-11-01T00:00:00Z',
+    datePrecision: 'Day', statusId: 1, status: 'Go for Launch' }] };
+  const h = loadDashboardHelpers({ fetchPayload: raw });
+  const normalized = h.normalizeLaunches(raw);
+  assert.equal(normalized[0].datePrecision, 'Day');
+  assert.equal(normalized[0].statusId, 1);
+  const brief = h.getSpaceBriefState({ launches: normalized }, [{ id: 'launches', state: 'ok' }], Date.parse('2026-11-01T12:00:00Z'));
+  assert.match(brief.timing, /Nov 1, 2026.*Time unconfirmed.*source date/);
+  assert.doesNotMatch(brief.timing, /AM|PM/);
+  h.rawLaunches = normalized;
+  vm.runInContext('dashboardData.launches = rawLaunches;', h);
+  assert.equal(h.getRecentActivityRows()[0].time, 'Time unconfirmed');
+  assert.equal(h.getNearestLaunchMatch(new Date(raw.launches[0].dateUtc)), null);
+  for (const payload of [{}, { launches: null }, { launches: [{}] }, { launches: [...raw.launches, {}] }]) {
+    assert.throws(() => h.normalizeLaunches(payload), /invalid/);
+  }
+  assert.equal(h.normalizeLaunches({ launches: [] }).length, 0);
 });

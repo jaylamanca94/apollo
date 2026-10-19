@@ -84,7 +84,7 @@ body { margin: 0; }
 .apollo-quick-stats-grid {
   display: grid;
   gap: var(--acadia-space-1);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
 }
 
 .apollo-space-brief-body {

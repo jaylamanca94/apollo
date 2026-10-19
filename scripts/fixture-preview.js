@@ -38,6 +38,9 @@ function createFixtureServer() {
         Object.assign(launch, { id: 'fixture-launch', statusId: 1, status: 'Go for Launch', datePrecision: 'Second' });
         const calendar = settings.get('calendar');
         if (calendar === 'imprecise') launch.datePrecision = 'Day';
+        if (calendar === 'month') launch.datePrecision = 'Month';
+        if (calendar === 'year') launch.datePrecision = 'Year';
+        if (calendar === 'malformed') payload = { launches: [{}] };
         if (calendar === 'held') { launch.statusId = 5; launch.status = 'On Hold'; }
         if (calendar === 'unknown') { launch.statusId = null; launch.datePrecision = ''; }
         if (calendar === 'past') launch.dateUtc = new Date(Date.now() - 60000).toISOString();

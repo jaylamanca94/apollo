@@ -1,7 +1,11 @@
 # Apollo — Design Status
 
-**Last reviewed:** 2026-10-16
+**Last reviewed:** 2026-10-19
 **Canonical sources:** `FLOW-REGISTRY.md`, `PRODUCT-README.md`, `DESIGN-README.md`, `docs/product-lab-progress.md`, `product-review-2026-08-10/PRODUCT-REVIEW.md`, `product-review-2026-08-11/PRODUCT-REVIEW.md`
+
+## Current timing consistency
+
+Apollo 1.4.1 preserves source-date uncertainty from briefing to launch detail/calendar, rejects malformed schedules into recovery, and gives tablet snapshot text enough width. **9 active/designed goals, each with some automated/controlled coverage; broader device/reader acceptance remains open.** Equivalent 390/1280px comparisons, 834px dark tablet, 320px enlarged text, malformed retry focus and live local-handler hand-off are in `docs/evidence/2026-10-19/precision/README.md`. Current delivery status belongs to that receipt; older evidence below retains its dates.
 
 ## Current calendar hand-off
 
@@ -39,5 +43,5 @@ Apollo's dashboard is the clearest expression of its purpose—plain-English und
 ## Highest-leverage design opportunities
 
 1. **P1 — Test briefing comprehension and return value.** Run the existing trial with consenting readers, adding an optional calendar task and checking whether they understand that launch snapshots do not update. No participant evidence exists; preserve the current hierarchy until observed friction warrants change.
-2. **P2 — Carry launch precision through the Dashboard.** The launch detail now distinguishes day/month targets, but Dashboard snapshot/brief copy still formats launch timestamps as exact local times. Hypothesis: consistent approximate timing across the entry and detail would reduce false certainty. Preserve coverage and source failure recovery.
+2. **P2 — Keep an open briefing honest as time passes.** Hypothesis from the current refresh-based model: readers who leave the page open may see an expired target or an observation with outdated prominence. Evaluate time-aware interpretation and a clear refresh cue without adding a notification service or making stale data look live.
 3. **P2 — Keep Sky Anomalies deliberately bounded until its evidence improves.** Lower its prominence or define a focused pilot only after a small location-aware source set is ready; this affects the Anomalies flow and Dashboard/Watch entry paths.

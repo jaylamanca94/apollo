@@ -9,6 +9,7 @@ const { normalizeCrewedLaunchPayload } = handler;
 function helpers() {
   const app = fs.readFileSync(path.join(__dirname, '..', 'app.js'), 'utf8');
   const context = { document: { querySelector: () => null }, window: {}, URL };
+  context.LaunchTiming = require("../launch-timing");
   vm.createContext(context);
   vm.runInContext(app.slice(0, app.indexOf('async function loadDashboard')), context);
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'crewed-launches.js'), 'utf8'), context);

@@ -526,9 +526,6 @@ test("normalizeLaunchLibraryPayload sorts, limits, and sanitizes launches", () =
   const payload = normalizeLaunchLibraryPayload({
     results: [
       {
-        name: "Incomplete launch"
-      },
-      {
         name: "Later mission",
         net: "2026-06-12T12:27:00Z",
         status: { name: "Go for Launch" },
