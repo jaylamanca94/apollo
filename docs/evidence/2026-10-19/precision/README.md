@@ -16,4 +16,8 @@ The source responses and fixture scenarios establish implementation behaviour. T
 
 ## Delivery
 
-Pending exact-revision Git-linked CI/Production verification. Recovery baseline: prior production/main `63b6e6859ff762456cdfd6b50b373395d3fda95a`. Revert this implementation through the ordinary Git workflow if necessary; no schema or persistent-data migration.
+Implementation `378ed3517a79e49301aeeab81809b5da435f843e` is pushed to `main`. [Exact-revision CI](https://github.com/jaylamanca94/apollo/actions/runs/39310567870) passed; Git-linked Production deployment 7182827303 succeeded at 19:23:36 UTC ([deployment](https://apollo-mc15b8bzm-jayson-lamanca-s-projects.vercel.app)). At 19:24 UTC the [public production alias](https://apollo-eight-mu.vercel.app/) returned healthy 1.4.1 with configured NASA key. All four changed JavaScript/CSS assets exactly matched the committed bytes; the launch API returned a validated Minute-precision target with original check time. `production-check.json` holds response and asset hashes.
+
+The production Dashboard loaded all six sources. Enter on its briefing action opened the same Bandwagon 5 target/time on Launches with an eligible calendar action and no browser errors (`production-browser.json`, `production-brief-1280.png`). A brief navigation timeout resolved into the expected loaded page; no product change or credential operation was required. Production download was not repeated; actual-handler download evidence is recorded above. Management connector lookup remains 404 for the configured project, so runtime management logs were not inspected; GitHub deployment and public alias acceptance are verified independently.
+
+This delivery receipt is a documentation-only follow-up. Recovery baseline: prior production/main `63b6e6859ff762456cdfd6b50b373395d3fda95a`. Revert implementation `378ed35` through the ordinary Git workflow if necessary; no schema or persistent-data migration.

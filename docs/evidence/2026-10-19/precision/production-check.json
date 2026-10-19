@@ -1,0 +1,45 @@
+{
+  "verifiedAt": "2026-10-19T19:24:47.157138+00:00",
+  "implementation": "378ed3517a79e49301aeeab81809b5da435f843e",
+  "production": "https://apollo-eight-mu.vercel.app",
+  "assets": {
+    "app.js": {
+      "sha256": "84c3f4bb5cc0b14e078e52eafd4bb7fdb540cc780bd41498cd7ed689556a86e8",
+      "matchesCommitted": true
+    },
+    "launches.js": {
+      "sha256": "f52a6250b46eebece53e33560a13b8438ca4bcfc0bc397fd53818e43cc1b3818",
+      "matchesCommitted": true
+    },
+    "launch-timing.js": {
+      "sha256": "ff0ae50c31d91735470d4dcbc48be844095e8b5c213019bc762b82ad84629353",
+      "matchesCommitted": true
+    },
+    "styles.css": {
+      "sha256": "c001fa04c5246063d268d4249a8447e9fdc3100833a821974805f71b2ee29769",
+      "matchesCommitted": true
+    }
+  },
+  "health": {
+    "http": 200,
+    "service": "apollo",
+    "version": "1.4.1",
+    "status": "ok",
+    "timestamp": "2026-10-19T19:24:47.702Z",
+    "checks": {
+      "runtime": "ok",
+      "nasaApiKey": "configured"
+    }
+  },
+  "launches": {
+    "http": 200,
+    "checkedAt": "2026-10-19T19:23:37.741Z",
+    "count": 5,
+    "first": {
+      "id": "3b430f81-0ff1-4d85-8a1a-cef0de326198",
+      "dateUtc": "2026-10-20T10:30:00Z",
+      "datePrecision": "Minute",
+      "statusId": 1
+    }
+  }
+}
