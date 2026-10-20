@@ -220,3 +220,7 @@ Missing precision/status/identity, holds/scrubs, past targets and checks older t
 ## Consistent launch uncertainty (1.4.1)
 
 Dashboard and Launches share source-date interpretation, with unconfirmed day/month/year targets kept in UTC and held/unknown/past targets withheld from countdowns. Malformed upstream pages are unavailable, not empty or silently filtered; an explicit count-zero page remains empty. Browser normalizers also reject malformed response envelopes/rows. Fixture cases extend `calendar=` with `month|year|malformed`; use `?brief=launch&calendar=imprecise` on the Dashboard. Current evidence: `docs/evidence/2026-10-19/precision/README.md`.
+
+## Open-page briefing (1.4.2)
+
+The Dashboard re-evaluates loaded recommendations, launch countdowns and activity ages once a visible minute and on tab/page return. This does not fetch ordinary feeds or advance their check time. After 30 minutes without a completed check, a dated Refresh briefing state identifies earlier snapshot/activity; its action uses the existing full-page refresh. Failed refresh clears prior values. The separate crewed schedule retains its own refresh policy. Fixture scenarios: `?brief=launch&dwell=launch` (target in 30 seconds) and `?dwell=weather` (observation crosses the six-hour prominence bound in 30 seconds). Controlled clock, responsive/focus/recovery evidence and delivery: `docs/evidence/2026-10-20/dwell/README.md`.

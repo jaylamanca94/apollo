@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-10-20T19:10:40.161Z",
+  "runtime": "Chromium with synthetic sources and controlled clock; not device or reader evidence",
+  "results": [
+    {
+      "width": 390,
+      "launchExpired": true,
+      "unchangedActionPreserved": true,
+      "staleCue": true,
+      "clockFetches": 0,
+      "refreshRequests": 6,
+      "refreshFocus": "briefHeadline"
+    },
+    {
+      "width": 1280,
+      "launchExpired": true,
+      "unchangedActionPreserved": true,
+      "staleCue": true,
+      "clockFetches": 0,
+      "refreshRequests": 6,
+      "refreshFocus": "briefHeadline"
+    },
+    {
+      "weatherProminenceExpires": true,
+      "externalFocusPreserved": true,
+      "hiddenReturn": true,
+      "text200NoOverflow": true,
+      "failedRefreshClearsSnapshot": true
+    }
+  ],
+  "errors": []
+}

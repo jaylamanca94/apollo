@@ -244,7 +244,10 @@ for (const page of pages) {
 
     for (const id of page.controlledIds) {
       const region = getTagByAttribute(html, id === "crewedLaunchFeature" ? "section" : "div", "id", id);
-      assert.equal(getAttribute(region, "aria-live"), "polite", `${id} should announce updates`);
+      // The briefing/status announce meaningful changes. Minute-by-minute
+      // countdowns and observation ages stay readable without repeated speech.
+      const live = ["quickStatsBody", "recentActivityBody"].includes(id) ? "off" : "polite";
+      assert.equal(getAttribute(region, "aria-live"), live, `${id} should use its update announcement policy`);
       assert.equal(getAttribute(region, "aria-busy"), "true", `${id} should start busy while data loads`);
     }
   });
@@ -553,7 +556,7 @@ test("refresh loading copy stays source-neutral across shared pages", () => {
 
   for (const file of allHtmlPages.filter((page) => page !== "launches.html")) {
     const html = readProjectFile(file);
-    assert.ok(html.includes(`app.js?v=1.4.1`), `${file} should load the current shared app script`);
+    assert.ok(html.includes(`app.js?v=1.4.2`), `${file} should load the current shared app script`);
   }
 
   assert.match(readProjectFile("launches.html"), /launches\.js\?v=1.4.1/);

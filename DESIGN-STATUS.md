@@ -1,7 +1,11 @@
 # Apollo — Design Status
 
-**Last reviewed:** 2026-10-19
+**Last reviewed:** 2026-10-20
 **Canonical sources:** `FLOW-REGISTRY.md`, `PRODUCT-README.md`, `DESIGN-README.md`, `docs/product-lab-progress.md`, `product-review-2026-08-10/PRODUCT-REVIEW.md`, `product-review-2026-08-11/PRODUCT-REVIEW.md`
+
+## Current open-page timing
+
+Apollo 1.4.2 retires expired recommendations, updates observation ages and asks for a new check after 30 minutes. Same Acadia composition; no new flow or style. Controlled launch/weather expiry, background return, zero ordinary timer fetches, primary refresh/failure, DOM/focus retention, dark tablet and enlarged text passed. [Evidence](docs/evidence/2026-10-20/dwell/README.md). **9 active/designed goals; all have some automated/controlled coverage and require broader reader/device acceptance.**
 
 ## Current timing consistency
 
@@ -43,5 +47,5 @@ Apollo's dashboard is the clearest expression of its purpose—plain-English und
 ## Highest-leverage design opportunities
 
 1. **P1 — Test briefing comprehension and return value.** Run the existing trial with consenting readers, adding an optional calendar task and checking whether they understand that launch snapshots do not update. No participant evidence exists; preserve the current hierarchy until observed friction warrants change.
-2. **P2 — Keep an open briefing honest as time passes.** Hypothesis from the current refresh-based model: readers who leave the page open may see an expired target or an observation with outdated prominence. Evaluate time-aware interpretation and a clear refresh cue without adding a notification service or making stale data look live.
+2. **P2 — Validate calendar return and refresh understanding in a real calendar.** The browser hand-off is delivered, but import, changed-target comprehension and the return action still need native-client/reader observation. Use the existing optional trial task before expanding reminders.
 3. **P2 — Keep Sky Anomalies deliberately bounded until its evidence improves.** Lower its prominence or define a focused pilot only after a small location-aware source set is ready; this affects the Anomalies flow and Dashboard/Watch entry paths.

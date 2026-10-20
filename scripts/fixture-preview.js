@@ -83,6 +83,9 @@ function createFixtureServer() {
       }
       if (brief === 'old-weather' && name === 'space-weather') payload.spaceWeather.observedAt = new Date(Date.now() - 86400000).toISOString();
       if (brief === 'unknown-time' && name === 'space-weather') payload.spaceWeather.observedAt = '';
+      // Near-boundary snapshots for clock/visibility verification, never live data.
+      if (settings.get('dwell') === 'launch' && name === 'launches') payload.launches[0].dateUtc = new Date(Date.now() + 30000).toISOString();
+      if (settings.get('dwell') === 'weather' && name === 'space-weather') payload.spaceWeather.observedAt = new Date(Date.now() - 6 * 3600000 + 30000).toISOString();
       if (brief === 'progressive' && name === 'space-weather') await new Promise(resolve => setTimeout(resolve, 3500));
       if (mode === 'empty') {
         if (name === 'launches') payload = { launches: [] };

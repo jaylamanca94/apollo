@@ -138,6 +138,10 @@ const els = {
 };
 let latestSourceStatuses = new Map();
 let dashboardLoadSequence = 0;
+let lastDashboardCheckedAt = null;
+const BRIEF_CHECK_MAX_AGE = 30 * 60000;
+let renderedSpaceBriefHtml = "";
+let renderedActivityHtml = "";
 
 function formatUpdated(date = new Date()) {
   return `Last updated: ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
@@ -2243,8 +2247,10 @@ function setQuickStat(id, options = {}) {
   const { value = "Unavailable", detail = "", state = "ok" } = options;
   const safeState = ["ok", "attention", "error", "loading"].includes(state) ? state : "ok";
   stat.dataset.state = safeState;
-  stat.querySelector(".apollo-quick-stat-value").textContent = value;
-  stat.querySelector(".apollo-quick-stat-detail").textContent = detail;
+  const valueElement = stat.querySelector(".apollo-quick-stat-value");
+  const detailElement = stat.querySelector(".apollo-quick-stat-detail");
+  if (valueElement.textContent !== value) valueElement.textContent = value;
+  if (detailElement.textContent !== detail) detailElement.textContent = detail;
 }
 
 function setDashboardStatus(message) {
@@ -2426,6 +2432,10 @@ function setHeaderSourceState(family) {
     loading: {
       label: "Checking data",
       aria: "Public space data loading"
+    },
+    stale: {
+      label: "Refresh needed",
+      aria: "Space data needs a new source check"
     }
   };
   const copy = stateCopy[family] || stateCopy.unavailable;
@@ -2788,7 +2798,7 @@ function getIssRegion(latitude, longitude) {
 
 // Editorial ordering for a short check-in, not a scientific risk score.
 // Six hours bounds which Kp observation can lead; older context remains readable.
-function getSpaceBriefState(data = dashboardData, statuses = Array.from(latestSourceStatuses.values()), now = Date.now()) {
+function getSpaceBriefState(data = dashboardData, statuses = Array.from(latestSourceStatuses.values()), now = Date.now(), checkedAt = lastDashboardCheckedAt) {
   const statusById = new Map(statuses.map((status) => [status.id, status]));
   const usable = (id) => ["ok", "attention"].includes(statusById.get(id)?.state);
   const loaded = statuses.filter((status) => status.state === "ok").length;
@@ -2799,6 +2809,14 @@ function getSpaceBriefState(data = dashboardData, statuses = Array.from(latestSo
     return names.length ? `${label}: ${names.join(", ")}.` : "";
   }).filter(Boolean);
   const coverage = `${loaded} of ${SOURCE_FEEDS.length} sources loaded.${groups.length ? ` ${groups.join(" ")}` : ""}`;
+  if (checkedAt && now - +checkedAt >= BRIEF_CHECK_MAX_AGE && !statuses.some(status => status.state === "pending")) {
+    return {
+      headline: "Refresh your space briefing",
+      timing: `Last checked ${formatDateTime(new Date(checkedAt).toISOString())}`,
+      summary: "This page has not checked its sources for at least 30 minutes. The snapshot and activity below are from that earlier check. Refresh before following a launch target or treating observations as current.",
+      action: "Refresh briefing", refresh: true, coverage: `From the last check: ${coverage}`
+    };
+  }
   const weather = usable("spaceWeather") ? data.spaceWeather : null;
   const observation = Date.parse(weather?.observedAt);
   const weatherAge = now - observation;
@@ -2865,31 +2883,72 @@ function getSpaceBriefState(data = dashboardData, statuses = Array.from(latestSo
   };
 }
 
-function renderSpaceBrief() {
+function renderSpaceBrief({ onlyIfChanged = false } = {}) {
   if (!els.spaceBriefBody) return;
   const state = getSpaceBriefState();
   const focusedAction = document.activeElement?.id === "briefNextAction";
   const focusedHeadline = document.activeElement?.id === "briefHeadline";
   const previousHref = focusedAction ? document.activeElement.getAttribute("href") : "";
-  els.spaceBriefBody.innerHTML = `
+  const html = `
     <div class="acadia-copy-stack">
       <p class="section-kicker acadia-kicker">Space brief</p>
       <h3 id="briefHeadline" tabindex="-1" class="apollo-space-brief-title acadia-heading-large">${escapeHtml(state.headline)}</h3>
       <p class="acadia-small acadia-text-muted">${escapeHtml(state.timing)}</p>
     </div>
     <p class="apollo-space-brief-summary acadia-body acadia-text-measure-wide">${escapeHtml(state.summary)}</p>
-    <div class="acadia-cluster"><a id="briefNextAction" class="acadia-button acadia-button-primary" href="${escapeHtml(state.href)}">${escapeHtml(state.action)}</a>
+    <div class="acadia-cluster">${state.refresh
+      ? `<button id="briefNextAction" type="button" data-brief-refresh class="acadia-button acadia-button-primary">${escapeHtml(state.action)}</button>`
+      : `<a id="briefNextAction" class="acadia-button acadia-button-primary" href="${escapeHtml(state.href)}">${escapeHtml(state.action)}</a>`}
       <span class="acadia-small acadia-text-muted">${escapeHtml(state.coverage)}</span>
     </div>
   `;
+  if (onlyIfChanged && renderedSpaceBriefHtml === html) return;
+  els.spaceBriefBody.innerHTML = html;
+  renderedSpaceBriefHtml = html;
   // Independent source responses must not strand keyboard focus on a removed link.
   if (focusedAction || focusedHeadline) {
-    document.querySelector(focusedAction && previousHref === state.href ? "#briefNextAction" : "#briefHeadline")?.focus();
+    document.querySelector(focusedAction && previousHref === (state.href || null) ? "#briefNextAction" : "#briefHeadline")?.focus();
   }
 }
 
 function resetSpaceBrief() {
+  renderedSpaceBriefHtml = "";
   if (els.spaceBriefBody) els.spaceBriefBody.innerHTML = stateMessage("Checking sources for your briefing...");
+}
+
+function updateLaunchQuickStat() {
+  const launch = dashboardData.launches.find(item => LaunchTiming.upcoming(item)) || dashboardData.launches[0];
+  if (!launch) return; // Preserve empty, checking and failed-source states.
+  const upcoming = LaunchTiming.upcoming(launch);
+  setQuickStat("launches", {
+    value: !upcoming ? "Check target" : LaunchTiming.precise(launch) ? formatLaunchQuickDate(launch.dateUtc) : "No time",
+    detail: LaunchTiming.precise(launch) ? LaunchTiming.countdown(launch) : LaunchTiming.target(launch),
+    state: upcoming ? "ok" : "attention"
+  });
+}
+
+function updateOpenBriefing() {
+  if (getPageType() !== "dashboard" || document.visibilityState === "hidden" || !lastDashboardCheckedAt) return;
+  const statuses = Array.from(latestSourceStatuses.values());
+  if (statuses.some(status => status.state === "pending")) return;
+  renderSpaceBrief({ onlyIfChanged: true });
+  renderCommandPanels({ onlyIfChanged: true });
+  updateLaunchQuickStat();
+  if (Date.now() - +lastDashboardCheckedAt >= BRIEF_CHECK_MAX_AGE) {
+    setHeaderSourceState("stale");
+    setDashboardUpdated(`Last checked: ${formatDateTime(lastDashboardCheckedAt.toISOString())}`);
+    const message = "This briefing needs a new source check. Refresh briefing to update it.";
+    if (els.dashboardStatus?.textContent !== message) setDashboardStatus(message);
+  }
+}
+
+function initBriefingClock() {
+  if (getPageType() !== "dashboard") return;
+  // Reinterpret the loaded snapshot; this timer never fetches or advances its
+  // source-check time. Background tabs catch up when the reader returns.
+  window.setInterval(updateOpenBriefing, 60000);
+  document.addEventListener("visibilitychange", updateOpenBriefing);
+  window.addEventListener("pageshow", updateOpenBriefing);
 }
 
 function commandPanelRow({ icon, label, title, detail, time, href }) {
@@ -2944,8 +3003,8 @@ function getRecentActivityRows() {
       icon: "fa-sun",
       label: "Weather",
       title: dashboardData.spaceWeather.condition,
-      detail: dashboardData.spaceWeather.kpIndex === null ? "Current Kp unavailable" : `Current Kp ${formatKpIndex(dashboardData.spaceWeather.kpIndex)}`,
-      time: formatRelativeTimestamp(dashboardData.spaceWeather.observedAt, "Live"),
+      detail: dashboardData.spaceWeather.kpIndex === null ? "Reported Kp unavailable" : `Reported Kp ${formatKpIndex(dashboardData.spaceWeather.kpIndex)}`,
+      time: formatRelativeTimestamp(dashboardData.spaceWeather.observedAt, "Observation time unavailable"),
       href: "./weather.html"
     });
   }
@@ -2953,15 +3012,18 @@ function getRecentActivityRows() {
   return rows;
 }
 
-function renderCommandPanels() {
+function renderCommandPanels({ onlyIfChanged = false } = {}) {
   if (!els.recentActivityBody) return;
   const rows = getRecentActivityRows();
   if (els.recentActivityPanel) els.recentActivityPanel.hidden = rows.length === 0;
   const activeRowHref = els.recentActivityBody.contains(document.activeElement)
     ? document.activeElement.getAttribute("href") : null;
-  els.recentActivityBody.innerHTML = rows.length
+  const html = rows.length
     ? `<div class="command-panel-list">${rows.slice(0, 3).map(commandPanelRow).join("")}</div>`
     : stateMessage("No recent activity is available yet.");
+  if (onlyIfChanged && renderedActivityHtml === html) return;
+  els.recentActivityBody.innerHTML = html;
+  renderedActivityHtml = html;
   if (activeRowHref) {
     const replacement = [...els.recentActivityBody.querySelectorAll("a")]
       .find((link) => link.getAttribute("href") === activeRowHref);
@@ -3012,6 +3074,7 @@ function updateDynamicRegionsFromStatuses(statuses, checkedAt = new Date(), opti
 }
 
 function resetCommandPanels() {
+  renderedActivityHtml = "";
   if (els.recentActivityBody) {
     els.recentActivityBody.innerHTML = stateMessage("Checking recent activity...");
   }
@@ -3500,11 +3563,7 @@ async function loadLaunches() {
     } else {
       renderLaunchRows();
     }
-    setQuickStat("launches", {
-      value: LaunchTiming.precise(launches[0]) ? formatLaunchQuickDate(launches[0].dateUtc) : "No time",
-      detail: LaunchTiming.precise(launches[0]) ? LaunchTiming.countdown(launches[0]) : LaunchTiming.target(launches[0]),
-      state: "ok"
-    });
+    updateLaunchQuickStat();
     return createSourceStatus("launches", "ok", `${launches.length} upcoming SpaceX launches loaded; next target ${LaunchTiming.target(launches[0])} (${formatLaunchWindowSummary(launches[0])}).`);
   } catch (error) {
     dashboardData.launches = [];
@@ -3861,9 +3920,10 @@ function restoreSourceRetryFocus(sourceId) {
   (retry || els.refreshButton)?.focus();
 }
 
-async function loadDashboard({ focusRetrySourceId = "" } = {}) {
+async function loadDashboard({ focusRetrySourceId = "", focusBriefRefresh = document.activeElement?.matches?.("[data-brief-refresh]") || false } = {}) {
   const loadId = dashboardLoadSequence + 1;
   dashboardLoadSequence = loadId;
+  lastDashboardCheckedAt = null;
   setDashboardStatus("Refreshing live data.");
   setHeaderSourceState("loading");
   dashboardData.apod = null;
@@ -3952,6 +4012,7 @@ async function loadDashboard({ focusRetrySourceId = "" } = {}) {
   }
 
   const checkedAt = new Date();
+  lastDashboardCheckedAt = checkedAt;
 
   busyElements.forEach((element) => setBusy(element, false));
   updateDynamicRegionsFromStatuses(statuses, checkedAt, { complete: true });
@@ -3965,6 +4026,9 @@ async function loadDashboard({ focusRetrySourceId = "" } = {}) {
   }
 
   restoreSourceRetryFocus(focusRetrySourceId);
+  if (focusBriefRefresh && (!document.activeElement || document.activeElement === document.body)) {
+    document.querySelector("#briefHeadline")?.focus({ preventScroll: true });
+  }
 }
 
 [els.refreshButton, els.refreshButtonMobile].filter(Boolean).forEach((button) => {
@@ -3978,6 +4042,10 @@ async function loadDashboard({ focusRetrySourceId = "" } = {}) {
 });
 
 document.addEventListener("click", (event) => {
+  if (event.target.closest("[data-brief-refresh]")) {
+    els.refreshButton?.click();
+    return;
+  }
   const retry = event.target.closest("[data-source-retry]");
   if (retry) {
     loadDashboard({ focusRetrySourceId: retry.dataset.sourceRetry });
@@ -3994,4 +4062,5 @@ document.addEventListener("keydown", (event) => {
 
 initThemeControl();
 initSkyAnomalyEngine();
+initBriefingClock();
 loadDashboard();

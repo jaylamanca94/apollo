@@ -1,7 +1,7 @@
 # Apollo Flow Registry
 
 **Registry status:** Nine active canonical goals across seven routes. Each has a defined design and some automated or controlled coverage; complete device, assistive-technology and real-reader acceptance is still open. Older rows below retain their dated evidence limits.
-**Last reviewed:** 2026-10-19 (launch timing consistency; prior flow evidence keeps its original scope)
+**Last reviewed:** 2026-10-20 (open-page timing; prior flow evidence keeps its original scope)
 
 ## Active-flow headline
 
@@ -81,3 +81,7 @@ One supporting flow added; checking an upcoming launch changes to preserve sourc
 Change the existing briefing, launch exploration and calendar hand-off; no new canonical goal or route. Dashboard brief, snapshot, activity and source diagnostics must preserve the same source-date precision as Launches. A held/unknown/elapsed target cannot become a countdown or an explanatory sighting match. Malformed upstream schedules enter unavailable/retry, while explicit verified empty results remain empty. Reuse current Acadia typography, metrics and recovery composition. Required QA: target precision/status/timezone boundaries, malformed/partial/empty handler recovery without cache poisoning, Dashboard → mission detail/calendar consistency, keyboard retry/focus, equivalent before/after phone/desktop and narrow enlarged text in both themes.
 
 Acceptance: 167 checks pass. Controlled Dashboard day/month/year/unknown/held/past/malformed/empty states, matching phone/desktop comparisons, enlarged text and tablet layout inspected. Malformed Launches Space retry preserves focus; day-only detail/calendar remains unavailable with its reason. Live local handlers carry Bandwagon 5 from the briefing to matching detail and download a source-timed calendar file. Headline remains nine active/designed goals with partial controlled coverage; native-calendar, physical accessibility and reader-return acceptance remain separate. Evidence: `docs/evidence/2026-10-19/precision/README.md`.
+
+## Open-page briefing coverage — 2026-10-20
+
+Impact: change the existing “Understand space activity now” flow; no canonical goal added. States: elapsed launch, weather prominence expiry, unchanged clock tick, hidden/page return, 30-minute refresh cue, explicit refresh success/failure. Reuse the existing Acadia composition. Required and completed controlled checks: phone/desktop before-after, stale original timestamp/coverage, no ordinary timer requests, keyboard primary refresh and focus, failure clears old values, dark tablet and 320px enlarged text. Snapshot/activity no longer announce every clock change; briefing/status retain polite announcements. [Evidence](docs/evidence/2026-10-20/dwell/README.md). Nine active/designed goals retain broader device/reader acceptance gaps.

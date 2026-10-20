@@ -4,7 +4,15 @@
 
 Deliver Apollo as a focused, trustworthy space-activity dashboard through bounded, validated milestones. This is the durable record for current delivery decisions and evidence.
 
-## Current milestone
+## Current continuation — 20 October 2026
+
+1.4.2 completes the prior open-page timing candidate. Browser reproduction found a passed target still leading with `T-<1m`; the ordinary Dashboard now reinterprets loaded data each visible minute/on return and gives a dated refresh cue after 30 minutes. No ordinary timer fetches, new dependency, CSS, account or service. Failed refresh clears earlier data. Existing crewed-schedule policy remains independent. Nine canonical goals unchanged.
+
+172 checks pass, with controlled phone/desktop before-after, weather expiry, hidden return, original check timestamp, unchanged DOM/focus, full primary refresh/failure, dark tablet and 320px/200% text. [Evidence and Git/production receipt](evidence/2026-10-20/dwell/README.md) owns current delivery status. Recovery: revert this focused implementation through the normal checked Git-linked workflow; baseline `02a0036`.
+
+Next user outcome remains the prepared reader trial, including calendar import/return and refresh comprehension. Founder supplies consenting participants and outreach authority; resume when supplied, with no recruitment sent or simulated demand. Physical touch/Safari/Home Screen/VoiceOver and native-calendar import remain acceptance gaps. Independent next candidate: verify and bound the local-preview static-file surface before any broader local-network use; keep it separate from reader-value claims. Do not restart discovery or redesign the recent hierarchy without new evidence.
+
+## Historical milestones
 
 **2026-09-23 — Trustworthy briefing direction and NeoWs integrity (1.1.1).** Current baseline was clean `main` at `3f913d9`, including the separately delivered Acadia 1.1.0 adoption. Established the audience/purpose hypothesis, competitor and manual alternatives, free-core constraints and a real-user trial plan in `PRODUCT-README.md`. No customer validation or willingness-to-pay is claimed. Existing eight canonical goals remain; no source/account/service is added.
 
