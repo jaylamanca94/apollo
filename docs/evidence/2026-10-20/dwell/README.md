@@ -12,4 +12,8 @@ No participant, demand, retention, native-calendar import or physical touch/Safa
 
 ## Delivery
 
-Pending final commit, exact-revision CI and Git-linked production verification. Recovery baseline: `02a003671f1b374249cdb52ebbc5b649767d0141`; revert the focused implementation through the same checked workflow. No schema or persistent-data migration.
+Implementation `40a3e301bf62916bf8704a21ef337c53727997ba` is on remote `main`. [Exact-revision CI](https://github.com/jaylamanca94/apollo/actions/runs/39481283489) passed. Git-linked Production deployment 7208717563 succeeded at 19:11:27 UTC ([deployment](https://apollo-c32shwj2n-jayson-lamanca-s-projects.vercel.app)). At 19:11 UTC the [public alias](https://apollo-eight-mu.vercel.app/) returned healthy 1.4.2 with configured NASA key; app.js matched committed bytes and all six changed HTML pages loaded its new cache version.
+
+`production.json`, `production-brief-390.png` and `production-stale-390.png` record six loaded ordinary sources, the Starlink Group 15-15 recommendation, retained dated check after a controlled 31-minute browser-clock advance, Enter refresh with focus on the new headline, and Enter hand-off to loaded Launches without browser errors. This combines current public sources with a controlled clock; it is not a real-time 31-minute observation or physical/reader acceptance. The separate crewed schedule can show unavailable in that deliberately advanced clock because it retains its original source-check time. No Vercel settings, credentials or calendar changed.
+
+This documentation-only receipt follows the verified implementation. Recovery baseline: `02a003671f1b374249cdb52ebbc5b649767d0141`; revert the focused implementation through the same checked workflow. No schema or persistent-data migration.

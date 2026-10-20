@@ -1,6 +1,6 @@
 # Apollo briefing comprehension and return trial
 
-Prepared 2026-09-24 for 1.2.0; extended 2026-10-16 for the 1.4.0 calendar hand-off. **Not run; no participant evidence exists.**
+Prepared 2026-09-24 for 1.2.0; extended 2026-10-16 for the 1.4.0 calendar hand-off and 2026-10-20 for the 1.4.2 refresh cue. **Not run; no participant evidence exists.**
 
 Hypothesis: curious non-specialists can understand the available picture, identify uncertainty and choose one worthwhile detail within two minutes, with less effort than their usual space-information source. This tests usefulness and repeat interest, not willingness to pay.
 
@@ -13,7 +13,7 @@ Prepare a source-backed loaded/partial state and an explicitly labelled all-sour
 ## Uncoached tasks
 
 1. Starting at the Dashboard, explain what you would follow and why. Open the relevant detail and its original source. Stop timing at the source action or two minutes.
-2. Explain when the highlighted information applies and what “Last checked” means. Record target versus observation versus publication interpretation, including any confusion.
+2. Explain when the highlighted information applies and what “Last checked” means. Record target versus observation versus publication interpretation, including any confusion. In an explicitly labelled older open-page state, explain Refresh briefing and whether the snapshot below has been newly checked.
 3. In the partial/failure state, explain what is known and what cannot be concluded. Record any inference that missing data means quiet activity or no hazards.
 4. Try the equivalent check-in using your usual alternative. Record effort, completion time, what Apollo omitted and which you prefer, with the participant's own words.
 5. Ask whether they would independently choose to revisit Apollo and for what occasion. Offer one optional check-in a week later through separately authorised contact; do not schedule or send it automatically.

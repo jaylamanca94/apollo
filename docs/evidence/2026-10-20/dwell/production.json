@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-10-20T19:11:54.996Z",
+  "health": {
+    "service": "apollo",
+    "version": "1.4.2",
+    "status": "ok",
+    "timestamp": "2026-10-20T19:11:52.431Z",
+    "checks": {
+      "runtime": "ok",
+      "nasaApiKey": "configured"
+    }
+  },
+  "appHash": "8ef6fcf7f6d7ae49baec7783915605d5cd9d931be46fdfc062247786fd227225",
+  "allChangedPagesVersioned": true,
+  "headline": "Next SpaceX launch: Falcon 9 Block 5 | Starlink Group 15-15",
+  "coverage": "Explore the launch\n6 of 6 sources loaded.",
+  "checked": "Last checked: 3:11 PM",
+  "href": "./launches.html",
+  "datedCheck": "Last checked: Oct 20, 2026, 3:11 PM EDT",
+  "staleCue": true,
+  "refreshFocus": "briefHeadline",
+  "refreshed": "Next SpaceX launch: Falcon 9 Block 5 | Starlink Group 15-15",
+  "destination": "https://apollo-eight-mu.vercel.app/launches.html",
+  "errors": [],
+  "limits": "Public production sources plus controlled browser clock; not an elapsed real-time trial, native import, physical accessibility or reader acceptance."
+}
