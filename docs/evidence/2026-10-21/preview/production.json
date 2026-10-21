@@ -1,0 +1,51 @@
+{
+  "checkedAt": "2026-10-21T19:06:10.397Z",
+  "alias": "https://apollo-eight-mu.vercel.app",
+  "health": {
+    "status": "ok",
+    "version": "1.4.2"
+  },
+  "hashes": [
+    {
+      "file": "index.html",
+      "sha256": "dde5da189459c9a07bc04bf7fe7323d13c017d6bc0f0f640b20f3eda90badb0e"
+    },
+    {
+      "file": "iss.html",
+      "sha256": "2601ff575a403e18a5c54318b50827dd62d47b53a3fe25a92aa65c255eea74ef"
+    },
+    {
+      "file": "launches.html",
+      "sha256": "a08ba5c689c0a043af6c1e12136cfb48509538586c7c837e0b0cf75296ba1e20"
+    },
+    {
+      "file": "weather.html",
+      "sha256": "feed465e1c5ad054fb682ac3b99fd37830b3d60ce25d4398fd5d662b109925de"
+    },
+    {
+      "file": "asteroids.html",
+      "sha256": "0f346dec0df9b7ff308029c98cabc6d7b47a03f33d461772881e5b7953c90f5a"
+    },
+    {
+      "file": "gallery.html",
+      "sha256": "04259491d313d26e1aea66b60f2985e3fc61703bb387f96d7a50bdd4027aae80"
+    },
+    {
+      "file": "anomalies.html",
+      "sha256": "76bc7f1041fc8b4054ec390fd95779181e48950a07a6bc919df00a55797311c5"
+    },
+    {
+      "file": "app.js",
+      "sha256": "8ef6fcf7f6d7ae49baec7783915605d5cd9d931be46fdfc062247786fd227225"
+    },
+    {
+      "file": "styles.css",
+      "sha256": "c001fa04c5246063d268d4249a8447e9fdc3100833a821974805f71b2ee29769"
+    },
+    {
+      "file": "scripts/local-preview.js",
+      "sha256": "d1c1426f6b1baff09fbc976c23b492dfa8fa5ed0a5d9b172f8c70bd4de9f759c"
+    }
+  ],
+  "limits": "GitHub exact-SHA Production receipt plus public alias health and byte identity. Development-only server restriction is verified locally; deployment does not execute that preview server."
+}

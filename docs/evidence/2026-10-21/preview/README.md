@@ -12,6 +12,8 @@ The preview now serves an explicit set of public pages/browser scripts/styles/ma
 
 ## Delivery
 
-Implementation and documentation are prepared for the normal direct-main/Git-linked workflow. Record the exact commit, CI and Production receipt after push. Recovery: revert the focused implementation through the same checked workflow to baseline `b45e901`; that would also restore the old preview exposure. No schema or persistent-data migration.
+Implementation `3ec24fee9eb969560e2312b787e888bbed16c6ca` is on remote `main`. [Exact-revision CI](https://github.com/jaylamanca94/apollo/actions/runs/39658525972) passed. Git-linked Production deployment 7234807493 succeeded at 19:05:30 UTC ([deployment](https://apollo-c9xvvn6bd-jayson-lamanca-s-projects.vercel.app)). At 19:06 UTC the [public alias](https://apollo-eight-mu.vercel.app/) returned healthy 1.4.2; seven HTML routes, app.js, styles.css and the delivered preview script matched committed bytes. `production.json` records the hashes. This verifies revision delivery; Vercel does not execute the development preview server, whose restriction is verified locally above.
+
+This documentation-only receipt follows the verified implementation. Recovery: revert the focused implementation through the same checked workflow to baseline `b45e901`; that would also restore the old preview exposure. No schema or persistent-data migration.
 
 The existing Vercel connector project lookup still returns 404 for the verified local project/team link. No settings, protection, credentials or external service changed. Public production delivery is verified separately through GitHub's deployment receipt and the existing public alias.
