@@ -112,7 +112,9 @@ For an authentication-free local preview that serves Apollo's static files and i
 npm run preview -- --port 4173
 ```
 
-This preview is for local function and browser verification only; it does not prove Vercel deployment behaviour.
+This preview is for local function and browser verification only; it does not prove Vercel deployment behaviour. It binds to `127.0.0.1` by default. Static requests serve only the named public HTML pages, browser scripts, stylesheet, manifest and Acadia stylesheet, plus images in `assets/` and `vendor/acadia/assets/` and fonts in `vendor/acadia/fonts/`. Add a new browser entry point to the explicit list in `scripts/local-preview.js`; the resource regression check verifies existing page/CSS references.
+
+Private checkout files (including environment files, Git/Vercel metadata, API source, dependencies, tests and documentation) are unavailable through static requests. Symlinked files/directories are rejected, malformed URLs return 400, and missing/non-public files return 404 with `no-store`. The existing named API handlers still execute normally. Keep private files out of public asset directories. This is a trusted-checkout development server, without authentication or protection against concurrent hostile filesystem changes; using `--host` to expose it beyond loopback does not turn it into a production server. The synthetic fixture preview shares this static-file boundary.
 
 If the Vercel CLI prompts for authentication on a new machine, sign in with:
 

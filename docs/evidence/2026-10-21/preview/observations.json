@@ -1,0 +1,78 @@
+{
+  "checkedAt": "2026-10-21T19:04:00.091Z",
+  "comparisons": [
+    {
+      "target": "/.env.local",
+      "before": 200,
+      "after": 404
+    },
+    {
+      "target": "/assets/probe.svg",
+      "before": 200,
+      "after": 404
+    }
+  ],
+  "denied": [
+    {
+      "target": "/scripts/local-preview.js",
+      "status": 404
+    },
+    {
+      "target": "/api/_nasa.js",
+      "status": 404
+    },
+    {
+      "target": "/package.json",
+      "status": 404
+    },
+    {
+      "target": "/docs/product-lab-progress.md",
+      "status": 404
+    },
+    {
+      "target": "/%2eenv.local",
+      "status": 404
+    },
+    {
+      "target": "/assets%2f..%2f.env.local",
+      "status": 404
+    },
+    {
+      "target": "/vendor/acadia/source.json",
+      "status": 404
+    }
+  ],
+  "malformedTargets": 400,
+  "staticPost": 405,
+  "headBodyEmpty": true,
+  "apiQueryForwarded": true,
+  "health": {
+    "version": "1.4.2",
+    "status": "degraded"
+  },
+  "pages": [
+    {
+      "width": 390,
+      "headline": "Next SpaceX launch: Fixture rocket | Example mission with a long descriptive name",
+      "destination": "/launches.html",
+      "fonts": {
+        "status": "loaded",
+        "geist": true
+      },
+      "errors": [],
+      "failed": []
+    },
+    {
+      "width": 1280,
+      "headline": "Next SpaceX launch: Fixture rocket | Example mission with a long descriptive name",
+      "destination": "/launches.html",
+      "fonts": {
+        "status": "loaded",
+        "geist": true
+      },
+      "errors": [],
+      "failed": []
+    }
+  ],
+  "limits": "Synthetic private files and controlled fixture sources; real local HTTP routing and Chromium. No real secret was requested or read. No reader, device or production security acceptance."
+}

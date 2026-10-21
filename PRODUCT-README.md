@@ -175,6 +175,7 @@ Historically deferred MVP capabilities (research candidates, not prohibitions or
 - Vercel for deployment and serverless API routes.
 - NASA APOD and NeoWs are proxied through `/api/apod` and `/api/neo`, then normalized into dashboard-ready response contracts. APOD video links should keep the original source media URL while exposing an embeddable preview URL only for known video hosts.
 - NASA API keys stay server-side via `NASA_API_KEY`.
+- Local verification must not expose the checkout: the function/fixture preview's static boundary permits explicit browser entry points and public image/font directories, rejects private paths and symlinks, and retains loopback by default. Verified on 21 October 2026 with synthetic private files and actual HTTP/Chromium checks; see [preview evidence](docs/evidence/2026-10-21/preview/README.md). Development-tool hardening leaves the product version at 1.4.2 and adds no canonical flow or reader-validation claim.
 - APOD requests the Eastern calendar date from NASA Science and tries yesterday only for a missing publication; displayed dates always remain source dates.
 - NASA proxy responses scrub `api_key` values from NASA-provided links before returning data to the browser.
 - NASA upstream failures expose only Apollo-owned error content, preserve the failure HTTP status, and are not cached. Upstream diagnostics must never be forwarded because they can contain credentials or request URLs.

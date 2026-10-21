@@ -4,13 +4,21 @@
 
 Deliver Apollo as a focused, trustworthy space-activity dashboard through bounded, validated milestones. This is the durable record for current delivery decisions and evidence.
 
-## Current continuation — 20 October 2026
+## Current continuation — 21 October 2026
+
+Closed the previously identified local-preview boundary risk. Baseline requests returned internal source; real HTTP tests with synthetic private files also reproduced environment-file and symlink access (200). Static serving now permits explicit browser entry points and public image/font directories, rejects private paths and symlinks (404/no-store), and handles malformed URL targets (400). Named APIs and query forwarding remain usable; the fixture server shares the boundary. No new dependency, provider, product flow, styling or version bump. This is development-tool security work, distinct from reader value.
+
+177 project checks pass. Real local HTTP comparisons, seven-page/resource coverage and controlled 390/1280px Chromium briefing → Enter → Launches checks passed with loaded fonts, no local resource failures and no browser errors. [Preview evidence and delivery](evidence/2026-10-21/preview/README.md) owns this run's receipt. The production product remains 1.4.2. Vercel management still returns project-not-found for the existing scoped link; use the established GitHub deployment receipt and public-alias verification, without changing project settings or credentials.
+
+Next meaningful product outcome remains the prepared reader trial, including calendar import/return and refresh comprehension. Founder supplies consenting participants and any outreach authority; resume when supplied. No participant prerequisite change was found and no recruitment was sent. Physical touch/Safari/Home Screen/VoiceOver and native-calendar import remain acceptance gaps. Preserve the two-minute briefing direction and recent hierarchy; do not invent another maintenance milestone to replace this trial. Recheck current feedback/participant availability at the next normal run; a no-change outcome is valid if no worthwhile independent work is justified.
+
+## Previous delivery — 20 October 2026
 
 1.4.2 completes the prior open-page timing candidate. Browser reproduction found a passed target still leading with `T-<1m`; the ordinary Dashboard now reinterprets loaded data each visible minute/on return and gives a dated refresh cue after 30 minutes. No ordinary timer fetches, new dependency, CSS, account or service. Failed refresh clears earlier data. Existing crewed-schedule policy remains independent. Nine canonical goals unchanged.
 
 172 checks pass, with controlled phone/desktop before-after, weather expiry, hidden return, original check timestamp, unchanged DOM/focus, full primary refresh/failure, dark tablet and 320px/200% text. [Evidence and Git/production receipt](evidence/2026-10-20/dwell/README.md) owns current delivery status. Implementation `40a3e30` has passing exact-commit CI and successful Git-linked Production delivery; healthy 1.4.2, exact app.js bytes, six loaded sources and the controlled-clock primary refresh → Launches journey are verified on the public alias. Recovery: revert this focused implementation through the normal checked Git-linked workflow; baseline `02a0036`.
 
-Next user outcome remains the prepared reader trial, including calendar import/return and refresh comprehension. Founder supplies consenting participants and outreach authority; resume when supplied, with no recruitment sent or simulated demand. Physical touch/Safari/Home Screen/VoiceOver and native-calendar import remain acceptance gaps. Independent next candidate: verify and bound the local-preview static-file surface before any broader local-network use; keep it separate from reader-value claims. Do not restart discovery or redesign the recent hierarchy without new evidence.
+The open-page timing outcome remains delivered. Its local-preview follow-up is completed in the current continuation above; reader/physical acceptance remains separate.
 
 ## Historical milestones
 

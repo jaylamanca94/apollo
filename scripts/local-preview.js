@@ -19,15 +19,37 @@ const contentTypes = {
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
   ".svg": "image/svg+xml",
+  ".woff2": "font/woff2",
+  ".ttf": "font/ttf",
   ".webmanifest": "application/manifest+json; charset=utf-8"
 };
 
+// The checkout contains private development files. Only these browser entry
+// points and media/font directories belong to the preview's public surface.
+const publicFiles = new Set([
+  "/index.html", "/iss.html", "/launches.html", "/weather.html",
+  "/asteroids.html", "/gallery.html", "/anomalies.html",
+  "/app.js", "/app-shell.js", "/launches.js", "/crewed-launches.js",
+  "/launch-timing.js", "/launch-calendar.js", "/styles.css",
+  "/site.webmanifest", "/vendor/acadia/acadia.css"
+]);
+
 function getStaticFilePath(pathname, root = projectRoot) {
   const requestedPath = pathname === "/" ? "/index.html" : pathname;
-  const filePath = path.resolve(root, `.${requestedPath}`);
+  if (/[\\\x00%]/.test(requestedPath) || requestedPath.split("/").some(part => part.startsWith("."))) {
+    return null;
+  }
 
-  if (!filePath.startsWith(`${root}${path.sep}`)) {
+  const publicAsset = /^\/(?:assets|vendor\/acadia\/assets)\/.+\.(?:png|jpe?g|svg)$/.test(requestedPath);
+  const publicFont = /^\/vendor\/acadia\/fonts\/[^/]+\.(?:woff2|ttf)$/.test(requestedPath);
+  if (!publicFiles.has(requestedPath) && !publicAsset && !publicFont) return null;
+
+  const resolvedRoot = path.resolve(root);
+  const filePath = path.resolve(resolvedRoot, `.${requestedPath}`);
+  if (!filePath.startsWith(`${resolvedRoot}${path.sep}`)) {
     return null;
   }
 
@@ -50,7 +72,17 @@ function serveStatic(request, response, pathname, root) {
 
   const filePath = getStaticFilePath(pathname, root);
 
-  if (!filePath || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+  // Reject links at every component, including links within the public tree.
+  // This preview assumes a trusted checkout, not concurrently hostile writers.
+  try {
+    if (!filePath) throw new Error("Non-public path");
+    let current = path.resolve(root);
+    for (const component of path.relative(current, filePath).split(path.sep)) {
+      current = path.join(current, component);
+      if (fs.lstatSync(current).isSymbolicLink()) throw new Error("Symbolic link");
+    }
+    if (!fs.statSync(filePath).isFile()) throw new Error("Not a file");
+  } catch {
     sendPlainText(response, 404, "Not found.");
     return;
   }
@@ -64,15 +96,31 @@ function serveStatic(request, response, pathname, root) {
     return;
   }
 
-  fs.createReadStream(filePath).pipe(response);
+  const stream = fs.createReadStream(filePath);
+  stream.on("error", () => {
+    if (!response.headersSent) sendPlainText(response, 404, "Not found.");
+    else response.destroy();
+  });
+  stream.pipe(response);
 }
 
 async function handleLocalPreviewRequest(request, response, options = {}) {
   const root = options.root || projectRoot;
   const handlers = options.apiHandlers || apiHandlers;
 
-  const requestUrl = new URL(request.url || "/", `http://${request.headers.host || "localhost"}`);
-  const handler = handlers[requestUrl.pathname];
+  let requestUrl;
+  let pathname;
+  try {
+    const target = request.url || "/";
+    if (!target.startsWith("/") || target.startsWith("//") || target.includes("\\")) throw new Error("Invalid request target");
+    // Host is untrusted and is not needed to route local requests.
+    requestUrl = new URL(target, "http://localhost");
+    pathname = decodeURIComponent(requestUrl.pathname);
+  } catch {
+    sendPlainText(response, 400, "Invalid request URL.");
+    return;
+  }
+  const handler = handlers[pathname];
 
   if (handler) {
     request.query = Object.fromEntries(requestUrl.searchParams.entries());
@@ -85,7 +133,7 @@ async function handleLocalPreviewRequest(request, response, options = {}) {
     return;
   }
 
-  serveStatic(request, response, requestUrl.pathname, root);
+  serveStatic(request, response, pathname, root);
 }
 
 function createLocalPreviewServer(options = {}) {
