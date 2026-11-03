@@ -1,14 +1,8 @@
 # Apollo Project Notes
 
-## Private Sites migration preview · 3 November 2026
+## Historical product record
 
-Founder-selected scope: preserve Apollo in an owner-private ChatGPT Sites preview before deciding on a hosting cutover. [Open preview](https://apollo-preview.jaylamanca.chatgpt.site). Site ID: `appgprj_6aea0e30f6288191bfb3db8bcaf78c7b`. Preview source: `../Sites/apollo-preview`; baseline Apollo commit `7038a4a`, Sites source `b5e4d4d5564e325efaf519fcb4e379f128c41407`, deployed version 2. Current Apollo product code and hosting configuration are unchanged; no public audience/domain cutover is authorised by this preview.
-
-The seven pages, nine existing flows, pinned Acadia assets, source validation, freshness and calendar behaviour are retained. The Sites Worker adapts the existing handlers and uses a named cache because the hosted platform rejects the default cache. 177 original checks and 7 migration checks pass. Local browser checks covered briefing → launches, 390px layout without horizontal overflow, theme switching and a downloaded tentative/non-blocking calendar snapshot. No native-calendar import, physical-device or full assistive-technology acceptance is claimed.
-
-Hosted verification: all seven pages return 200 (Sites redirects `.html` links to clean paths); APOD, ISS, people and space weather APIs return 200; private source/configuration paths return 404. Owner-only access was read back. Browser sign-in requires the founder; authenticated service checks verify the hosted routes without changing access.
-
-**Remaining gates:** NASA NeoWs is unavailable and health is degraded until `NASA_API_KEY` is added as a Sites runtime secret and applied by deployment. Automatic approval review rejected broad environment export and then a targeted transfer that would expose the key in command output; no key was retrieved or saved. Founder owns secure entry through Sites settings; resume with deployment and a live asteroid/health check once configured. Hosted SpaceX launches returned provider HTTP 429, while the separate crewed schedule returned its existing unavailable response; the same handlers returned 200 locally. Retain honest unavailable states; verify provider access and sustainable caching before public cutover. Do not infer an empty crewed schedule, relax validators, repeatedly retry a throttled provider, change audience, retire Vercel or add paid services. Resume on configured secret and restored/supported hosted provider access, then complete the hosted briefing → detail → source → calendar acceptance.
+This document describes the retired implementation. Current product direction and migration follow-through live in `../Sites/apollo-preview/apollo/PRODUCT-README.md`; current hosting and recovery are in [README.md](README.md). Public Sites access and retirement were explicitly requested on 3 November 2026, superseding the earlier private-preview restrictions. The historical product decisions below remain evidence, not a competing current handoff.
 
 ## Product Identity
 
